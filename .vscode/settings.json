@@ -1,0 +1,20 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/dpemmons/src/zbuild/",
+            "binaryPath": "/home/dpemmons/src/zbuild/build/zbuild",
+            "binaryArgs": ["examples/BUILD.zb"],
+            "stopAtEntry": true,
+        }
+    ],
+    "makefile.configurations": [
+        {
+            "makeArgs": [
+                "-j4",
+                "CXXFLAGS='-g'"
+            ],
+            "name": "makefile debug config",
+            "makePath": "/home/dpemmons/src/zbuild/"
+        }
+    ]
+}
