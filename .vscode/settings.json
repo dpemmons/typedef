@@ -1,10 +1,17 @@
 {
     "makefile.launchConfigurations": [
         {
-            "cwd": "/home/dpemmons/src/zbuild/",
-            "binaryPath": "/home/dpemmons/src/zbuild/build/zbuild",
-            "binaryArgs": ["examples/BUILD.zb"],
+            "cwd": "/home/dpemmons/src/typedef/",
+            "binaryPath": "/home/dpemmons/src/typedef/build/typedef",
+            "binaryArgs": [
+                "examples/BUILD.zb"
+            ],
             "stopAtEntry": true,
+        },
+        {
+            "cwd": "/home/dpemmons/src/typedef/build",
+            "binaryPath": "/home/dpemmons/src/typedef/build/typedef",
+            "binaryArgs": []
         }
     ],
     "makefile.configurations": [
@@ -14,7 +21,6 @@
                 "CXXFLAGS='-g'"
             ],
             "name": "makefile debug config",
-            "makePath": "/home/dpemmons/src/zbuild/"
         }
     ]
 }
