@@ -5,24 +5,23 @@
 #include "gen/TypedefLexer.h"
 #include "gen/TypedefParser.h"
 #include "antlr4-runtime.h"
-#include "CLI/CLI.hpp"
+#include "args.h"
 
 using namespace antlr4;
 
 int main(int argc, const char** argv) {
-  CLI::App app{"digc"};
+  // Parse args, or die trying.
+  auto maybeArgs = Args::ParseArgs(argc, argv);
+  if (maybeArgs.index() == 1) {
+    return std::get<int>(maybeArgs);
+  }
+  Args args = std::get<Args>(maybeArgs);
 
-  std::string filename = "input.dig";
-  app.add_option("-f,--file", filename, "The root build ninja file")
-      ->required();
-
-  CLI11_PARSE(app, argc, argv);
-
-  std::ifstream baseFile(filename);
+  std::ifstream baseFile(args.getInpuFilename());
   if (baseFile.is_open()) {
-    std::cout << "Processing file: " << filename << "\n";
+    std::cout << "Processing file: " << args.getInpuFilename() << "\n";
   } else {
-    std::cout << "Unable to open file:" << filename << "\n";
+    std::cout << "Unable to open file:" << args.getInpuFilename() << "\n";
     return 0;
   }
 
