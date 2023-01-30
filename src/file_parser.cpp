@@ -7,7 +7,17 @@
 
 using namespace antlr4;
 
-bool ParseFile(std::istream& input) {
+class TypedefListenerImpl : public TypedefBaseListener {
+ public:
+  void enterTypedefVersionDeclaration(
+      TypedefParser::TypedefVersionDeclarationContext *ctx) override {
+    printf("hi: %s\n", ctx->STRING_LITERAL()->getText().c_str());
+  }
+  void exitTypedefVersionDeclaration(
+      TypedefParser::TypedefVersionDeclarationContext *ctx) override {}
+};
+
+std::variant<ParsedFile, bool> ParseFile(std::istream &input) {
   ANTLRInputStream inputStream(input);
   TypedefLexer lexer(&inputStream);
   CommonTokenStream tokens(&lexer);
@@ -18,12 +28,14 @@ bool ParseFile(std::istream& input) {
     std::cout << token->toString() << std::endl;
   }
 
-  // EvalListener listener;
-  // antlr4::tree::ParseTreeWalker::DEFAULT.walk(&listener, tree);
-
   TypedefParser parser(&tokens);
-  tree::ParseTree* tree = parser.compilationUnit();
 
-  std::cout << "Here's the parse tree:" << std::endl;
-  std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
+  tree::ParseTree *tree = parser.compilationUnit();
+  TypedefListenerImpl listener;
+  tree::ParseTreeWalker::DEFAULT.walk(&listener, tree);
+
+  //   std::cout << "Here's the parse tree:" << std::endl;
+  //   std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
+
+  return ParsedFile();
 }

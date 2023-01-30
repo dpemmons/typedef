@@ -1,9 +1,8 @@
 #pragma once
 
 #include <istream>
+#include <variant>
 
-struct ParsedFile {
+struct ParsedFile {};
 
-};
-
-bool ParseFile(std::istream& input);
+std::variant<ParsedFile, bool> ParseFile(std::istream& input);

@@ -1,3 +1,4 @@
+typedef: "1.3.4";
 module TestModule.ModuleA;
 
 import TestModule.ModuleB.thisThing;
