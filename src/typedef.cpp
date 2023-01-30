@@ -1,13 +1,9 @@
+#include <fstream>
 #include <iostream>
 #include <string>
 
-#include "gen/TypedefBaseListener.h"
-#include "gen/TypedefLexer.h"
-#include "gen/TypedefParser.h"
-#include "antlr4-runtime.h"
 #include "args.h"
-
-using namespace antlr4;
+#include "file_parser.h"
 
 int main(int argc, const char** argv) {
   // Parse args, or die trying.
@@ -25,25 +21,12 @@ int main(int argc, const char** argv) {
     return 0;
   }
 
-  ANTLRInputStream input(baseFile);
-  TypedefLexer lexer(&input);
-  CommonTokenStream tokens(&lexer);
-
-  tokens.fill();
-  std::cout << "Here are the tokens:" << std::endl;
-  for (auto token : tokens.getTokens()) {
-    std::cout << token->toString() << std::endl;
+  std::variant<ParsedFile, bool> maybeParsedFile = ParseFile(baseFile);
+  if (maybeParsedFile.index() == 1) {
+    return std::get<int>(maybeArgs);
   }
-
-  TypedefParser parser(&tokens);
-  tree::ParseTree* tree = parser.compilationUnit();
-
-  // EvalListener listener;
-  // antlr4::tree::ParseTreeWalker::DEFAULT.walk(&listener, tree);
-
-  std::cout << "Here's the parse tree:" << std::endl;
-  std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
-
+  ParsedFile parsedFile = std::get<ParsedFile>(maybeParsedFile);
   baseFile.close();
+
   return 0;
 }
