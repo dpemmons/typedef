@@ -5,6 +5,9 @@
 #include "args.h"
 #include "file_parser.h"
 
+#define FMT_HEADER_ONLY
+#include "fmt/core.h"
+
 int main(int argc, const char** argv) {
   // Parse args, or die trying.
   auto maybeArgs = Args::ParseArgs(argc, argv);
@@ -15,17 +18,17 @@ int main(int argc, const char** argv) {
 
   std::ifstream baseFile(args.getInpuFilename());
   if (baseFile.is_open()) {
-    std::cout << "Processing file: " << args.getInpuFilename() << "\n";
+    fmt::print("Processing file: {}\n", args.getInpuFilename());
   } else {
-    std::cout << "Unable to open file:" << args.getInpuFilename() << "\n";
+    fmt::print("Unable to open file: {}\n", args.getInpuFilename());
     return 0;
   }
 
-  std::variant<ParsedFile, bool> maybeParsedFile = ParseFile(baseFile);
+  std::variant<IntermediateTree, bool> maybeParsedFile = ParseFile(baseFile);
   if (maybeParsedFile.index() == 1) {
     return std::get<int>(maybeArgs);
   }
-  ParsedFile parsedFile = std::get<ParsedFile>(maybeParsedFile);
+  IntermediateTree ir_tree = std::get<IntermediateTree>(maybeParsedFile);
   baseFile.close();
 
   return 0;

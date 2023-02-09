@@ -13,16 +13,17 @@ class  TypedefParser : public antlr4::Parser {
 public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
-    BOOL = 8, BYTE = 9, CHAR = 10, FLOAT16 = 11, FLOAT32 = 12, FLOAT64 = 13, 
-    INT8 = 14, INT16 = 15, INT32 = 16, INT64 = 17, UINT8 = 18, UINT16 = 19, 
-    UINT32 = 20, UINT64 = 21, DEFAULT = 22, ENUM = 23, EXPORTS = 24, EXTENDS = 25, 
-    IMPLEMENTS = 26, INTERFACE = 27, MESSAGE = 28, MODULE = 29, PACKAGE = 30, 
-    DECIMAL_LITERAL = 31, QUALIFIED_DECIMAL_LITERAL = 32, UNQUALIFIED_DECIMAL_LITERAL = 33, 
-    HEX_LITERAL = 34, OCT_LITERAL = 35, BINARY_LITERAL = 36, FLOAT_LITERAL = 37, 
-    HEX_FLOAT_LITERAL = 38, BOOL_LITERAL = 39, CHAR_LITERAL = 40, STRING_LITERAL = 41, 
-    TEXT_BLOCK = 42, LPAREN = 43, RPAREN = 44, LBRACE = 45, RBRACE = 46, 
-    LBRACK = 47, RBRACK = 48, SEMI = 49, COLON = 50, COMMA = 51, DOT = 52, 
-    EQ = 53, AT = 54, WS = 55, COMMENT = 56, LINE_COMMENT = 57, IDENTIFIER = 58
+    BOOL = 8, BYTE = 9, FLOAT32 = 10, FLOAT64 = 11, INT8 = 12, INT16 = 13, 
+    INT32 = 14, INT64 = 15, UINT8 = 16, UINT16 = 17, UINT32 = 18, UINT64 = 19, 
+    FLOAT16 = 20, BFLAOT16 = 21, DEFAULT = 22, ENUM = 23, EXPORTS = 24, 
+    EXTENDS = 25, IMPLEMENTS = 26, INTERFACE = 27, MESSAGE = 28, MODULE = 29, 
+    PACKAGE = 30, SEMVER = 31, DECIMAL_LITERAL = 32, QUALIFIED_DECIMAL_LITERAL = 33, 
+    UNQUALIFIED_DECIMAL_LITERAL = 34, HEX_LITERAL = 35, OCT_LITERAL = 36, 
+    BINARY_LITERAL = 37, FLOAT_LITERAL = 38, HEX_FLOAT_LITERAL = 39, BOOL_LITERAL = 40, 
+    CHAR_LITERAL = 41, STRING_LITERAL = 42, TEXT_BLOCK = 43, LPAREN = 44, 
+    RPAREN = 45, LBRACE = 46, RBRACE = 47, LBRACK = 48, RBRACK = 49, SEMI = 50, 
+    COLON = 51, COMMA = 52, DOT = 53, EQ = 54, AT = 55, WS = 56, COMMENT = 57, 
+    LINE_COMMENT = 58, IDENTIFIER = 59
   };
 
   enum {
@@ -32,8 +33,9 @@ public:
     RuleMessageBody = 10, RuleFieldDeclaration = 11, RuleValue = 12, RuleArray = 13, 
     RuleMap = 14, RuleKeyValue = 15, RuleType = 16, RuleArrayIdentifier = 17, 
     RuleQualifiedName = 18, RuleModuleName = 19, RulePosition = 20, RuleIdentifier = 21, 
-    RuleLiteral = 22, RuleBoolLiteral = 23, RuleIntegerLiteral = 24, RuleFloatLiteral = 25, 
-    RuleTypeType = 26, RulePrimitiveFixedPointType = 27, RulePrimitiveType = 28
+    RuleLiteral = 22, RuleSemver = 23, RuleBoolLiteral = 24, RuleIntegerLiteral = 25, 
+    RuleFloatLiteral = 26, RuleTypeType = 27, RulePrimitiveFixedPointType = 28, 
+    RulePrimitiveType = 29
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -69,6 +71,7 @@ public:
   class PositionContext;
   class IdentifierContext;
   class LiteralContext;
+  class SemverContext;
   class BoolLiteralContext;
   class IntegerLiteralContext;
   class FloatLiteralContext;
@@ -81,6 +84,7 @@ public:
     CompilationUnitContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     TypedefVersionDeclarationContext *typedefVersionDeclaration();
+    ModuleDeclarationContext *moduleDeclaration();
     antlr4::tree::TerminalNode *EOF();
     std::vector<ImportStatementContext *> importStatement();
     ImportStatementContext* importStatement(size_t i);
@@ -100,8 +104,8 @@ public:
   public:
     TypedefVersionDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *COLON();
-    antlr4::tree::TerminalNode *STRING_LITERAL();
+    antlr4::tree::TerminalNode *EQ();
+    SemverContext *semver();
     antlr4::tree::TerminalNode *SEMI();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -447,6 +451,19 @@ public:
 
   LiteralContext* literal();
 
+  class  SemverContext : public antlr4::ParserRuleContext {
+  public:
+    SemverContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *SEMVER();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  SemverContext* semver();
+
   class  BoolLiteralContext : public antlr4::ParserRuleContext {
   public:
     BoolLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -514,7 +531,6 @@ public:
     PrimitiveFixedPointTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *BYTE();
-    antlr4::tree::TerminalNode *CHAR();
     antlr4::tree::TerminalNode *INT8();
     antlr4::tree::TerminalNode *UINT8();
     antlr4::tree::TerminalNode *INT16();
@@ -537,7 +553,6 @@ public:
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *BOOL();
     antlr4::tree::TerminalNode *BYTE();
-    antlr4::tree::TerminalNode *CHAR();
     antlr4::tree::TerminalNode *INT8();
     antlr4::tree::TerminalNode *UINT8();
     antlr4::tree::TerminalNode *INT16();
@@ -546,6 +561,7 @@ public:
     antlr4::tree::TerminalNode *UINT32();
     antlr4::tree::TerminalNode *INT64();
     antlr4::tree::TerminalNode *UINT64();
+    antlr4::tree::TerminalNode *FLOAT16();
     antlr4::tree::TerminalNode *FLOAT32();
     antlr4::tree::TerminalNode *FLOAT64();
 

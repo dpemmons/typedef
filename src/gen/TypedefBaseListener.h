@@ -85,6 +85,9 @@ public:
   virtual void enterLiteral(TypedefParser::LiteralContext * /*ctx*/) override { }
   virtual void exitLiteral(TypedefParser::LiteralContext * /*ctx*/) override { }
 
+  virtual void enterSemver(TypedefParser::SemverContext * /*ctx*/) override { }
+  virtual void exitSemver(TypedefParser::SemverContext * /*ctx*/) override { }
+
   virtual void enterBoolLiteral(TypedefParser::BoolLiteralContext * /*ctx*/) override { }
   virtual void exitBoolLiteral(TypedefParser::BoolLiteralContext * /*ctx*/) override { }
 

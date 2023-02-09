@@ -1,12 +1,12 @@
 grammar Typedef;
 
 compilationUnit:
-	typedefVersionDeclaration importStatement* (
+	typedefVersionDeclaration moduleDeclaration importStatement* (
 		enumDeclaration
 		| messageDeclaration
 	)* EOF;
 
-typedefVersionDeclaration: 'typedef' COLON STRING_LITERAL SEMI;
+typedefVersionDeclaration: 'typedef' EQ semver SEMI;
 moduleDeclaration: 'module' moduleName SEMI;
 
 // Imports
@@ -55,6 +55,8 @@ literal:
 	| boolLiteral
 	| TEXT_BLOCK;
 
+semver: SEMVER;
+
 boolLiteral: 'true' | 'false';
 
 integerLiteral:
@@ -71,7 +73,6 @@ typeType: (identifier | primitiveType) (
 
 primitiveFixedPointType:
 	BYTE
-	| CHAR
 	| INT8
 	| UINT8
 	| INT16
@@ -84,7 +85,6 @@ primitiveFixedPointType:
 primitiveType:
 	BOOL
 	| BYTE
-	| CHAR
 	| INT8
 	| UINT8
 	| INT16
@@ -93,15 +93,14 @@ primitiveType:
 	| UINT32
 	| INT64
 	| UINT64
+	| FLOAT16
 	| FLOAT32
 	| FLOAT64;
 
 // Primitive types
 BOOL: 'bool';
 BYTE: 'byte';
-CHAR: 'char';
 
-FLOAT16: 'float16';
 FLOAT32: 'float32';
 FLOAT64: 'float64';
 
@@ -115,6 +114,10 @@ UINT16: 'uint16';
 UINT32: 'uint32';
 UINT64: 'uint64';
 
+// reserved
+FLOAT16: 'float16';
+BFLAOT16: 'bfloat16';
+
 // Keywords
 DEFAULT: 'default';
 ENUM: 'enum';
@@ -125,6 +128,11 @@ INTERFACE: 'interface';
 MESSAGE: 'message';
 MODULE: 'module';
 PACKAGE: 'package';
+
+// Incomplete semver. TODO: use a standards-compliant semver parser
+// TODO: semvers and decimal numbers need to be parser rules
+SEMVER:
+	UNQUALIFIED_DECIMAL_LITERAL DOT UNQUALIFIED_DECIMAL_LITERAL DOT UNQUALIFIED_DECIMAL_LITERAL;
 
 // Literals
 DECIMAL_LITERAL:
@@ -181,12 +189,14 @@ fragment EscapeSequence:
 	| '\\' ([0-3]? [0-7])? [0-7]
 	| '\\' 'u'+ HexDigit HexDigit HexDigit HexDigit;
 
+// TODO: Separate Digits and DigitsWithDelimiter so the former can use a faster conversion function.
 fragment HexDigits: HexDigit ((HexDigit | '_')* HexDigit)?;
 fragment HexDigit: [0-9a-fA-F];
 fragment Digits: [0-9] ([0-9_]* [0-9])?;
 fragment LetterOrDigit: Letter | [0-9];
 fragment Letter:
 	[a-zA-Z$_] // these are the "java letters" below 0x7F
-	| ~[\u0000-\u007F\uD800-\uDBFF] // covers all characters above 0x7F which are not a surrogate
+	| ~[\u0000-\u007F\uD800-\uDBFF]
+	// covers all characters above 0x7F which are not a surrogate
 	| [\uD800-\uDBFF] [\uDC00-\uDFFF];
 // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF

@@ -83,6 +83,9 @@ public:
   virtual void enterLiteral(TypedefParser::LiteralContext *ctx) = 0;
   virtual void exitLiteral(TypedefParser::LiteralContext *ctx) = 0;
 
+  virtual void enterSemver(TypedefParser::SemverContext *ctx) = 0;
+  virtual void exitSemver(TypedefParser::SemverContext *ctx) = 0;
+
   virtual void enterBoolLiteral(TypedefParser::BoolLiteralContext *ctx) = 0;
   virtual void exitBoolLiteral(TypedefParser::BoolLiteralContext *ctx) = 0;
 
