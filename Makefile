@@ -1,53 +1,94 @@
-# From https://makefiletutorial.com/
-# Thanks to Job Vranish (https://spin.atomicobject.com/2016/08/26/makefile-c-projects/)
-TARGET_EXEC := typedef
+BASE_BUILD_DIR := ./build
 
-BUILD_DIR := ./build
-SRC_DIRS := ./src
+#------------------------------------------------------------------------------
+# LIB Rules
+#------------------------------------------------------------------------------
+LIB_SRC_DIRS := ./src/lib
+LIB_BUILD_DIR := $(BASE_BUILD_DIR)/lib
+LIB_STATIC_OBJ := $(LIB_BUILD_DIR)/libtypedef.a
 
-# Find all the C and C++ files we want to compile
-# Note the single quotes around the * expressions. Make will incorrectly expand these otherwise.
-SRCS := $(shell find $(SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
+LIB_SRCS := $(shell find $(LIB_SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
+LIB_OBJS := $(LIB_SRCS:%=$(LIB_BUILD_DIR)/%.o)
+LIB_DEPS := $(LIB_OBJS:.o=.d)
+LIB_INC_DIRS := $(shell find $(LIB_SRC_DIRS) -type d)
+LIB_INC_FLAGS := $(addprefix -I,$(LIB_INC_DIRS))
+LIB_CPPFLAGS := $(LIB_INC_FLAGS) -std=c++17 -w -MMD -MP
 
-# String substitution for every C/C++ file.
-# As an example, hello.cpp turns into ./build/hello.cpp.o
-OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
-
-# String substitution (suffix version without %).
-# As an example, ./build/hello.cpp.o turns into ./build/hello.cpp.d
-DEPS := $(OBJS:.o=.d)
-
-# Every folder in ./src will need to be passed to GCC so that it can find header files
-INC_DIRS := $(shell find $(SRC_DIRS) -type d)
-# Add a prefix to INC_DIRS. So moduleA would become -ImoduleA. GCC understands this -I flag
-INC_FLAGS := $(addprefix -I,$(INC_DIRS))
-
-# The -MMD and -MP flags together generate Makefiles for us!
-# These files will have .d instead of .o as the output.
-CPPFLAGS := $(INC_FLAGS) -std=c++17 -w -MMD -MP
-
-# The final build step.
-$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
-	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
-
-# Build step for C source
-$(BUILD_DIR)/%.c.o: %.c
+$(LIB_BUILD_DIR)/%.c.o: %.c
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) $(LIB_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-# Build step for C++ source
-$(BUILD_DIR)/%.cpp.o: %.cpp
+$(LIB_BUILD_DIR)/%.cpp.o: %.cpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(LIB_CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
+$(LIB_STATIC_OBJ): $(LIB_OBJS)
+	ar $(ARFLAGS) $@ $^
+
+#------------------------------------------------------------------------------
+# CMD Rules
+#------------------------------------------------------------------------------
+CMD_SRC_DIRS := ./src/cmd
+CMD_BUILD_DIR := $(BASE_BUILD_DIR)/cmd
+CMD_EXEC := $(CMD_BUILD_DIR)/typedef
+
+CMD_SRCS := $(shell find $(CMD_SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
+CMD_OBJS := $(CMD_SRCS:%=$(CMD_BUILD_DIR)/%.o)
+CMD_DEPS := $(CMD_OBJS:.o=.d)
+CMD_INC_DIRS := $(shell find $(CMD_SRC_DIRS) -type d)
+CMD_INC_FLAGS := $(addprefix -I,$(CMD_INC_DIRS))
+CMD_CPPFLAGS := $(CMD_INC_FLAGS) $(LIB_INC_FLAGS) -std=c++17 -w -MMD -MP
+
+$(CMD_BUILD_DIR)/%.c.o: %.c
+	mkdir -p $(dir $@)
+	$(CC) $(CMD_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+$(CMD_BUILD_DIR)/%.cpp.o: %.cpp
+	mkdir -p $(dir $@)
+	$(CXX) $(CMD_CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+$(CMD_EXEC): $(CMD_OBJS) $(LIB_STATIC_OBJ)
+	$(CXX) $(CMD_OBJS) $(LIB_STATIC_OBJ) -o $@ $(LDFLAGS)
+
+#------------------------------------------------------------------------------
+# TEST Rules
+#------------------------------------------------------------------------------
+TEST_SRC_DIRS := ./src/test
+TEST_BUILD_DIR := $(BASE_BUILD_DIR)/test
+TEST_EXEC := $(TEST_BUILD_DIR)/testmain
+
+TEST_SRCS := $(shell find $(TEST_SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
+TEST_OBJS := $(TEST_SRCS:%=$(TEST_BUILD_DIR)/%.o)
+TEST_DEPS := $(TEST_OBJS:.o=.d)
+TEST_INC_DIRS := $(shell find $(TEST_SRC_DIRS) -type d)
+TEST_INC_FLAGS := $(addprefix -I,$(TEST_INC_DIRS))
+TEST_CPPFLAGS := $(TEST_INC_FLAGS) $(LIB_INC_FLAGS) -std=c++17 -w -MMD -MP
+
+$(TEST_BUILD_DIR)/%.c.o: %.c
+	mkdir -p $(dir $@)
+	$(CC) $(TEST_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+$(TEST_BUILD_DIR)/%.cpp.o: %.cpp
+	mkdir -p $(dir $@)
+	$(CXX) $(TEST_CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+$(TEST_EXEC): $(TEST_OBJS) $(LIB_STATIC_OBJ)
+	$(CXX) $(TEST_OBJS) $(LIB_STATIC_OBJ) -o $@ $(LDFLAGS)
 
 .PHONY: clean
 clean:
-	rm -r $(BUILD_DIR)
+	rm -r $(BASE_BUILD_DIR)
 
-all: $(BUILD_DIR)/$(TARGET_EXEC)
+.PHONY: test
+test: $(TEST_EXEC)
+	$(TEST_EXEC)
+
+lib: $(LIB_STATIC_OBJ)
+cmd: $(CMD_EXEC)
+test-bin: $(TEST_EXEC)
+all: lib cmd test-bin
 
 # Include the .d makefiles. The - at the front suppresses the errors of missing
 # Makefiles. Initially, all the .d files will be missing, and we don't want those
 # errors to show up.
--include $(DEPS)
+-include $(LIB_DEPS)
