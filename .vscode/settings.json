@@ -6,11 +6,16 @@
             "binaryArgs": [
                 "examples/example.td"
             ],
-            "stopAtEntry": true,
+            "stopAtEntry": true
         },
         {
             "cwd": "/home/dpemmons/src/typedef/build",
             "binaryPath": "/home/dpemmons/src/typedef/build/typedef",
+            "binaryArgs": []
+        },
+        {
+            "cwd": "/home/dpemmons/src/typedef/build/test",
+            "binaryPath": "/home/dpemmons/src/typedef/build/test/testmain",
             "binaryArgs": []
         }
     ],
