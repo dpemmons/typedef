@@ -1,101 +1,4 @@
-grammar Typedef;
-
-compilationUnit:
-	typedefVersionDeclaration moduleDeclaration importStatement* (
-		enumDeclaration
-		| messageDeclaration
-	)* EOF;
-
-typedefVersionDeclaration: 'typedef' EQ semver SEMI;
-moduleDeclaration: 'module' moduleName SEMI;
-
-// Imports
-importStatement:
-	singleImportStatement
-	| wildcardImportStatement;
-singleImportStatement:
-	'import' qualifiedName ('as' identifier)? SEMI;
-wildcardImportStatement: 'import' qualifiedName '.*' SEMI;
-
-// Enums
-enumDeclaration:
-	ENUM identifier (COLON primitiveFixedPointType) LBRACE enumBody RBRACE SEMI;
-enumBody: ( enumField COMMA)+ (enumField COMMA?)?;
-enumField: identifier EQ integerLiteral;
-
-// Messages
-messageDeclaration:
-	'message' identifier LBRACE messageBody RBRACE SEMI;
-messageBody: (fieldDeclaration | enumDeclaration)*;
-
-fieldDeclaration:
-	identifier COLON type position (EQ value)? SEMI;
-
-// Value definitions ----------------------------------------------------------
-value: literal | array | map | identifier;
-
-array: LBRACK (value (COMMA value)*)? COMMA? RBRACK;
-map: LBRACE (keyValue (COMMA keyValue)* COMMA?)? RBRACE;
-keyValue: identifier COLON value;
-
-type: arrayIdentifier | typeType;
-arrayIdentifier: typeType LBRACK integerLiteral? RBRACK;
-
-qualifiedName: (moduleName '::')* identifier ('.' identifier)*;
-moduleName: identifier ('::' identifier)*;
-
-position: AT integerLiteral;
-identifier: IDENTIFIER;
-
-literal:
-	integerLiteral
-	| floatLiteral
-	| CHAR_LITERAL
-	| STRING_LITERAL
-	| boolLiteral
-	| TEXT_BLOCK;
-
-semver: SEMVER;
-
-boolLiteral: 'true' | 'false';
-
-integerLiteral:
-	DECIMAL_LITERAL
-	| HEX_LITERAL
-	| OCT_LITERAL
-	| BINARY_LITERAL;
-
-floatLiteral: FLOAT_LITERAL | HEX_FLOAT_LITERAL;
-
-typeType: (identifier | primitiveType) (
-		LBRACK integerLiteral RBRACK
-	)*;
-
-primitiveFixedPointType:
-	BYTE
-	| INT8
-	| UINT8
-	| INT16
-	| UINT16
-	| INT32
-	| UINT32
-	| INT64
-	| UINT64;
-
-primitiveType:
-	BOOL
-	| BYTE
-	| INT8
-	| UINT8
-	| INT16
-	| UINT16
-	| INT32
-	| UINT32
-	| INT64
-	| UINT64
-	| FLOAT16
-	| FLOAT32
-	| FLOAT64;
+lexer grammar TypedefLexer;
 
 // Primitive types
 BOOL: 'bool';
@@ -123,11 +26,16 @@ DEFAULT: 'default';
 ENUM: 'enum';
 EXPORTS: 'exports';
 EXTENDS: 'extends';
+IMPORT: 'import';
 IMPLEMENTS: 'implements';
 INTERFACE: 'interface';
 MESSAGE: 'message';
 MODULE: 'module';
 PACKAGE: 'package';
+TRUE: 'true';
+FALSE: 'false';
+TYPEDEF: 'typedef';
+AS: 'as';
 
 // Incomplete semver. TODO: use a standards-compliant semver parser
 // TODO: semvers and decimal numbers need to be parser rules
@@ -154,7 +62,7 @@ FLOAT_LITERAL: (Digits '.' Digits? | '.' Digits) ExponentPart? [fFdD]?
 HEX_FLOAT_LITERAL:
 	'0' [xX] (HexDigits '.'? | HexDigits? '.' HexDigits) [pP] [+-]? Digits [fFdD]?;
 
-BOOL_LITERAL: 'true' | 'false';
+BOOL_LITERAL: TRUE | FALSE;
 
 CHAR_LITERAL: '\'' (~['\\\r\n] | EscapeSequence) '\'';
 
@@ -172,8 +80,10 @@ SEMI: ';';
 COLON: ':';
 COMMA: ',';
 DOT: '.';
+DOTSTAR: '.*';
 EQ: '=';
 AT: '@';
+PS: '::'; // Path Separator
 
 // Whitespace and comments
 WS: [ \t\r\n\u000C]+ -> channel(HIDDEN);

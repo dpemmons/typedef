@@ -1,16 +1,18 @@
-typedef = 0.0.1;
+typedef-alpha;
 module TestModule::ModuleA;
 
 import TestModule::ModuleB::thisThing;
 import TestModule::ModuleB::something;
 import TestModule::ModuleB::*;
 
-enum TestEnum: uint8 {
+SomeValue: int8;
+
+TestEnum: Enum<uint32> {
   EnumValueA = 0,
   EnumValueB = 1,
 };
 
-message TestMessage {
+TestMessage: message {
   //__next = 24; // optional
 
   // Scalar types:
