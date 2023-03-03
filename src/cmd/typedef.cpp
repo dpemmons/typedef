@@ -24,11 +24,7 @@ int main(int argc, const char** argv) {
     return 0;
   }
 
-  std::variant<IntermediateTree, bool> maybeParsedFile = ParseFile(baseFile);
-  if (maybeParsedFile.index() == 1) {
-    return std::get<int>(maybeArgs);
-  }
-  IntermediateTree ir_tree = std::get<IntermediateTree>(maybeParsedFile);
+  ParseResult parseResult = ParseFile(baseFile);
   baseFile.close();
 
   return 0;

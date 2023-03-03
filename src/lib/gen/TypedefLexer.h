@@ -22,8 +22,8 @@ public:
     HEX_FLOAT_LITERAL = 37, BOOL_LITERAL = 38, CHAR_LITERAL = 39, STRING_LITERAL = 40, 
     TEXT_BLOCK = 41, LPAREN = 42, RPAREN = 43, LBRACE = 44, RBRACE = 45, 
     LBRACK = 46, RBRACK = 47, SEMI = 48, COLON = 49, COMMA = 50, DOT = 51, 
-    EQ = 52, AT = 53, PS = 54, WS = 55, COMMENT = 56, LINE_COMMENT = 57, 
-    IDENTIFIER = 58
+    DOTSTAR = 52, EQ = 53, AT = 54, PS = 55, WS = 56, COMMENT = 57, LINE_COMMENT = 58, 
+    IDENTIFIER = 59
   };
 
   TypedefLexer(antlr4::CharStream *input);

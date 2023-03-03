@@ -3,35 +3,25 @@
 #include <charconv>
 
 #include "antlr4-runtime.h"
-#include "gen/TypedefBaseListener.h"
 #include "gen/TypedefLexer.h"
 #include "gen/TypedefParser.h"
+#include "gen/TypedefParserBaseListener.h"
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"
 
 using namespace antlr4;
 
-class TypedefListenerImpl : public TypedefBaseListener {
+class TypedefListenerImpl : public TypedefParserBaseListener {
  public:
-  TypedefListenerImpl() {}
-  struct Error {
-    std::errc err;
-    size_t line;
-    size_t pos_in_line;
-  };
-
-  bool HasErrors() const {
-    return errors_.size();
-  }
-  const std::vector<Error>& GetErrors() const {
-    return errors_;
-  } 
+  TypedefListenerImpl(ParseResult& result)
+      : result_(result), itree_(result.tree), errors_(result.errors) {}
 
   void enterTypedefVersionDeclaration(
       TypedefParser::TypedefVersionDeclarationContext* ctx) override {
     // auto* sv = ctx->semver();
     // auto semver_token = sv->getTokens(TypedefParser::SEMVER);
-    // auto decimal_tokens = semver_token[0]->getSymbol()(TypedefParser::UNQUALIFIED_DECIMAL_LITERAL);
+    // auto decimal_tokens =
+    // semver_token[0]->getSymbol()(TypedefParser::UNQUALIFIED_DECIMAL_LITERAL);
     // for (auto token : decimal_tokens) {
     //   fmt::print("Token: {}\n", token->toString());
     // }
@@ -46,11 +36,12 @@ class TypedefListenerImpl : public TypedefBaseListener {
       TypedefParser::TypedefVersionDeclarationContext* ctx) override {}
 
  private:
-  IntermediateTree itree_;
-  std::vector<Error> errors_;
+  ParseResult& result_;
+  IntermediateTree& itree_;
+  std::vector<ParseError>& errors_;
 
-  Error makeError(std::errc err, antlr4::tree::TerminalNode* node) {
-    Error error;
+  ParseError makeError(std::errc err, antlr4::tree::TerminalNode* node) {
+    ParseError error;
     error.err = err;
     error.line = node->getSymbol()->getLine();
     error.pos_in_line = node->getSymbol()->getCharPositionInLine();
@@ -74,7 +65,7 @@ class TypedefListenerImpl : public TypedefBaseListener {
 
 void PrintIR(const IntermediateTree& tree) {}
 
-std::variant<IntermediateTree, bool> ParseFile(std::istream& input) {
+ParseResult ParseFile(std::istream& input) {
   ANTLRInputStream inputStream(input);
   TypedefLexer lexer(&inputStream);
   CommonTokenStream tokens(&lexer);
@@ -88,11 +79,13 @@ std::variant<IntermediateTree, bool> ParseFile(std::istream& input) {
   TypedefParser parser(&tokens);
 
   tree::ParseTree* tree = parser.compilationUnit();
-  TypedefListenerImpl listener;
+
+  ParseResult result;
+  TypedefListenerImpl listener(result);
   tree::ParseTreeWalker::DEFAULT.walk(&listener, tree);
 
   //   std::cout << "Here's the parse tree:" << std::endl;
   //   std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
 
-  return IntermediateTree();
+  return result;
 }

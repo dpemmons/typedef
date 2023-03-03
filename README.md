@@ -1,5 +1,12 @@
 # typedef
 
+Typedef is a data serizliation, interface definition and configuration language, designed with the following goals in mind:
+
+- fast and efficient encoding that minimizes data copying
+- strong typing
+- forwards and backwards compatibility of serialized messages
+
+
 ## Building typedef
 
 Building typedef uses simple make files.

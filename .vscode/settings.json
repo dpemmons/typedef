@@ -100,7 +100,9 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "filesystem": "cpp",
-        "charconv": "cpp"
+        "charconv": "cpp",
+        "regex": "cpp",
+        "future": "cpp"
     },
     "makefile.panel.visibility": {
         "debug": true,

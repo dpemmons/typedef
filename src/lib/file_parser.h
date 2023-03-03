@@ -83,6 +83,21 @@ struct IntermediateTree {
   std::vector<MessageDecl> mesg_decls;
 };
 
-std::variant<IntermediateTree, bool> ParseFile(std::istream& input);
+struct ParseError {
+  std::errc err;
+  size_t line;
+  size_t pos_in_line;
+};
+
+struct ParseResult {
+  std::vector<ParseError> errors;
+  IntermediateTree tree;
+
+  bool HasErrors() const {
+    return errors.size() > 0;
+  }
+};
+
+ParseResult ParseFile(std::istream& input);
 
 void PrintIR(const IntermediateTree& tree);
