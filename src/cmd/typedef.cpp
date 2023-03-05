@@ -16,16 +16,14 @@ int main(int argc, const char** argv) {
   }
   Args args = std::get<Args>(maybeArgs);
 
-  std::ifstream baseFile(args.getInpuFilename());
-  if (baseFile.is_open()) {
+  std::ifstream inputStream(args.getInpuFilename());
+  if (inputStream.is_open()) {
     fmt::print("Processing file: {}\n", args.getInpuFilename());
   } else {
     fmt::print("Unable to open file: {}\n", args.getInpuFilename());
     return 0;
   }
 
-  ParseResult parseResult = ParseFile(baseFile);
-  baseFile.close();
-
+  td::ParseResult parseResult = td::Parse(inputStream);
   return 0;
 }

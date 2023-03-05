@@ -10,6 +10,7 @@
 #include "fmt/core.h"
 
 using namespace antlr4;
+using namespace td;
 
 class TypedefListenerImpl : public TypedefParserBaseListener {
  public:
@@ -18,19 +19,7 @@ class TypedefListenerImpl : public TypedefParserBaseListener {
 
   void enterTypedefVersionDeclaration(
       TypedefParser::TypedefVersionDeclarationContext* ctx) override {
-    // auto* sv = ctx->semver();
-    // auto semver_token = sv->getTokens(TypedefParser::SEMVER);
-    // auto decimal_tokens =
-    // semver_token[0]->getSymbol()(TypedefParser::UNQUALIFIED_DECIMAL_LITERAL);
-    // for (auto token : decimal_tokens) {
-    //   fmt::print("Token: {}\n", token->toString());
-    // }
-    // int32_t major_val, minor_val, patch_val = 0;
-    // if (nodeToInteger(sv->UNQUALIFIED_DECIMAL_LITERAL(0), major_val) &&
-    //     nodeToInteger(sv->UNQUALIFIED_DECIMAL_LITERAL(1), minor_val) &&
-    //     nodeToInteger(sv->UNQUALIFIED_DECIMAL_LITERAL(2), patch_val)) {
-    //   itree_.version.Set(major_val, minor_val, patch_val);
-    // }
+    itree_.version = ctx->IDENTIFIER()->toString();
   }
   void exitTypedefVersionDeclaration(
       TypedefParser::TypedefVersionDeclarationContext* ctx) override {}
@@ -63,29 +52,34 @@ class TypedefListenerImpl : public TypedefParserBaseListener {
   }
 };
 
-void PrintIR(const IntermediateTree& tree) {}
+void td::PrintIR(const IntermediateTree& tree) {}
 
-ParseResult ParseFile(std::istream& input) {
+ParseResult td::Parse(std::string s) {
+  std::istringstream ss(s);
+  return Parse(ss);
+}
+
+ParseResult td::Parse(std::istream& input) {
+  ParseResult result;
+
   ANTLRInputStream inputStream(input);
   TypedefLexer lexer(&inputStream);
-  CommonTokenStream tokens(&lexer);
+  lexer.removeErrorListener(&ConsoleErrorListener::INSTANCE);
 
+  CommonTokenStream tokens(&lexer);
   tokens.fill();
-  std::cout << "Here are the tokens:" << std::endl;
-  for (auto token : tokens.getTokens()) {
-    std::cout << token->toString() << std::endl;
-  }
+  // std::cout << "Here are the tokens:" << std::endl;
+  // for (auto token : tokens.getTokens()) {
+  //   std::cout << token->toString() << std::endl;
+  // }
 
   TypedefParser parser(&tokens);
+  parser.removeErrorListener(&ConsoleErrorListener::INSTANCE);
 
   tree::ParseTree* tree = parser.compilationUnit();
 
-  ParseResult result;
   TypedefListenerImpl listener(result);
   tree::ParseTreeWalker::DEFAULT.walk(&listener, tree);
-
-  //   std::cout << "Here's the parse tree:" << std::endl;
-  //   std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
 
   return result;
 }

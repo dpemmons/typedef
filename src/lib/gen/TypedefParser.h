@@ -106,7 +106,7 @@ public:
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *TYPEDEF();
     antlr4::tree::TerminalNode *EQ();
-    SemverContext *semver();
+    antlr4::tree::TerminalNode *IDENTIFIER();
     antlr4::tree::TerminalNode *SEMI();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;

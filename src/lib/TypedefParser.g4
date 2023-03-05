@@ -8,7 +8,7 @@ compilationUnit:
 		| messageDeclaration
 	)* EOF;
 
-typedefVersionDeclaration: TYPEDEF EQ semver SEMI;
+typedefVersionDeclaration: TYPEDEF EQ IDENTIFIER SEMI;
 moduleDeclaration: MODULE moduleName SEMI;
 
 // Imports

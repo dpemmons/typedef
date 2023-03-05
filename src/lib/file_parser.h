@@ -6,6 +6,8 @@
 #include <variant>
 #include <vector>
 
+namespace td {
+
 class TypeDeclaration {
  public:
  private:
@@ -77,7 +79,7 @@ struct IntermediateTree {
     struct FieldDecl {};
     std::vector<FieldDecl> field_decls;
   };
-  SemVer version;
+  std::string version;
   std::vector<std::string> imports;
   std::vector<EnumDecl> enum_decls;
   std::vector<MessageDecl> mesg_decls;
@@ -93,11 +95,14 @@ struct ParseResult {
   std::vector<ParseError> errors;
   IntermediateTree tree;
 
-  bool HasErrors() const {
-    return errors.size() > 0;
-  }
+  bool HasErrors() const { return errors.size() > 0; }
 };
 
-ParseResult ParseFile(std::istream& input);
+// Inefficient convenience method.
+ParseResult Parse(std::string s);
+
+ParseResult Parse(std::istream& input);
 
 void PrintIR(const IntermediateTree& tree);
+
+}  // namespace td
