@@ -1,5 +1,8 @@
 typedef-alpha;
 
+// Files parse to a set of types and values.
+// (meaning sets need to be able to handle both? Are types values? I guess so...)
+// Curly brackets contain sets and blocks. Square brackets contain ordered sets (arrays).
 
 // Aliases i32 to SomeType.
 SomeType: i32;
