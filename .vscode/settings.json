@@ -16,14 +16,27 @@
         {
             "cwd": "/home/dpemmons/src/typedef/build/test",
             "binaryPath": "/home/dpemmons/src/typedef/build/test/testmain",
-            "binaryArgs": []
+            "binaryArgs": [],
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
         }
     ],
     "makefile.configurations": [
         {
             "makeArgs": [
                 "-j4",
-                "CXXFLAGS='-g'"
+                "CXXFLAGS=-ggdb3 -O0",
+                "LDFLAGS=-ggdb3",
             ],
             "name": "makefile debug config",
         }
@@ -123,5 +136,8 @@
     "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
     "C_Cpp.intelliSenseEngineFallback": "enabled",
     "C_Cpp.default.compilerPath": "/usr/bin/g++",
-    "C_Cpp.default.cppStandard": "c++17"
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.autocompleteAddParentheses": true,
+    "C_Cpp.clang_format_style": "Google",
+    "C_Cpp.debugShortcut": true
 }

@@ -57,8 +57,6 @@ literal:
 	| boolLiteral
 	| TEXT_BLOCK;
 
-semver: SEMVER;
-
 boolLiteral: TRUE | FALSE;
 
 integerLiteral:

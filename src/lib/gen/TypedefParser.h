@@ -33,9 +33,8 @@ public:
     RuleMessageBody = 10, RuleFieldDeclaration = 11, RuleValue = 12, RuleArray = 13, 
     RuleMap = 14, RuleKeyValue = 15, RuleType = 16, RuleArrayIdentifier = 17, 
     RuleQualifiedName = 18, RuleModuleName = 19, RulePosition = 20, RuleIdentifier = 21, 
-    RuleLiteral = 22, RuleSemver = 23, RuleBoolLiteral = 24, RuleIntegerLiteral = 25, 
-    RuleFloatLiteral = 26, RuleTypeType = 27, RulePrimitiveFixedPointType = 28, 
-    RulePrimitiveType = 29
+    RuleLiteral = 22, RuleBoolLiteral = 23, RuleIntegerLiteral = 24, RuleFloatLiteral = 25, 
+    RuleTypeType = 26, RulePrimitiveFixedPointType = 27, RulePrimitiveType = 28
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -71,7 +70,6 @@ public:
   class PositionContext;
   class IdentifierContext;
   class LiteralContext;
-  class SemverContext;
   class BoolLiteralContext;
   class IntegerLiteralContext;
   class FloatLiteralContext;
@@ -459,19 +457,6 @@ public:
   };
 
   LiteralContext* literal();
-
-  class  SemverContext : public antlr4::ParserRuleContext {
-  public:
-    SemverContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *SEMVER();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  SemverContext* semver();
 
   class  BoolLiteralContext : public antlr4::ParserRuleContext {
   public:

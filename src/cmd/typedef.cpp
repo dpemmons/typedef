@@ -3,7 +3,7 @@
 #include <string>
 
 #include "args.h"
-#include "file_parser.h"
+#include "typedef_parser.h"
 
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"
@@ -24,6 +24,8 @@ int main(int argc, const char** argv) {
     return 0;
   }
 
-  td::ParseResult parseResult = td::Parse(inputStream);
+  auto parser = td::Parse(inputStream);
+
+  fmt::print("Has errors: {}\n", parser->HasErrors());
   return 0;
 }

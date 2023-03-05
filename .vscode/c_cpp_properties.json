@@ -3,7 +3,11 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/src/lib",
+                "${workspaceFolder}/src/lib/antlr4",
+                "${workspaceFolder}/src/test",
+                "${workspaceFolder}/src/test/catch2"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",
@@ -11,7 +15,7 @@
             "cppStandard": "c++17",
             "intelliSenseMode": "linux-gcc-x64",
             "compilerArgs": [],
-            "configurationProvider": "ms-vscode.makefile-tools"
+            "mergeConfigurations": true
         }
     ],
     "version": 4
