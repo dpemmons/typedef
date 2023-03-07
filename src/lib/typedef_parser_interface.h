@@ -25,8 +25,10 @@ struct ParserErrorInfo {
   size_t length;
 };
 
+typedef std::vector<std::string> QualifiedIdentifier;
+
 struct Import {
-  std::string fully_qualified_name;
+  FullyQualifiedIdentifier fully_qualified_name;
   std::string alias;
   bool is_wildcard;
 };
@@ -42,6 +44,7 @@ class TypedefParserInterface {
   virtual const std::vector<ParserErrorInfo>& GetErrors() const = 0;
 
   virtual std::string GetLanguageVersion() const = 0;
+  virtual FullyQualifiedIdentifier GetModule() const = 0;
   virtual std::vector<td::Import> GetImports() const = 0;
 
  protected:

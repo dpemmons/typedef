@@ -25,14 +25,14 @@ public:
   virtual void enterModuleDeclaration(TypedefParser::ModuleDeclarationContext * /*ctx*/) override { }
   virtual void exitModuleDeclaration(TypedefParser::ModuleDeclarationContext * /*ctx*/) override { }
 
-  virtual void enterImportStatement(TypedefParser::ImportStatementContext * /*ctx*/) override { }
-  virtual void exitImportStatement(TypedefParser::ImportStatementContext * /*ctx*/) override { }
+  virtual void enterUseDeclaration(TypedefParser::UseDeclarationContext * /*ctx*/) override { }
+  virtual void exitUseDeclaration(TypedefParser::UseDeclarationContext * /*ctx*/) override { }
 
-  virtual void enterSingleImportStatement(TypedefParser::SingleImportStatementContext * /*ctx*/) override { }
-  virtual void exitSingleImportStatement(TypedefParser::SingleImportStatementContext * /*ctx*/) override { }
+  virtual void enterSingleUseDeclaration(TypedefParser::SingleUseDeclarationContext * /*ctx*/) override { }
+  virtual void exitSingleUseDeclaration(TypedefParser::SingleUseDeclarationContext * /*ctx*/) override { }
 
-  virtual void enterWildcardImportStatement(TypedefParser::WildcardImportStatementContext * /*ctx*/) override { }
-  virtual void exitWildcardImportStatement(TypedefParser::WildcardImportStatementContext * /*ctx*/) override { }
+  virtual void enterWildcardUseDeclaration(TypedefParser::WildcardUseDeclarationContext * /*ctx*/) override { }
+  virtual void exitWildcardUseDeclaration(TypedefParser::WildcardUseDeclarationContext * /*ctx*/) override { }
 
   virtual void enterEnumDeclaration(TypedefParser::EnumDeclarationContext * /*ctx*/) override { }
   virtual void exitEnumDeclaration(TypedefParser::EnumDeclarationContext * /*ctx*/) override { }
@@ -70,11 +70,8 @@ public:
   virtual void enterArrayIdentifier(TypedefParser::ArrayIdentifierContext * /*ctx*/) override { }
   virtual void exitArrayIdentifier(TypedefParser::ArrayIdentifierContext * /*ctx*/) override { }
 
-  virtual void enterQualifiedName(TypedefParser::QualifiedNameContext * /*ctx*/) override { }
-  virtual void exitQualifiedName(TypedefParser::QualifiedNameContext * /*ctx*/) override { }
-
-  virtual void enterModuleName(TypedefParser::ModuleNameContext * /*ctx*/) override { }
-  virtual void exitModuleName(TypedefParser::ModuleNameContext * /*ctx*/) override { }
+  virtual void enterSimplePath(TypedefParser::SimplePathContext * /*ctx*/) override { }
+  virtual void exitSimplePath(TypedefParser::SimplePathContext * /*ctx*/) override { }
 
   virtual void enterPosition(TypedefParser::PositionContext * /*ctx*/) override { }
   virtual void exitPosition(TypedefParser::PositionContext * /*ctx*/) override { }

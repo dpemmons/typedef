@@ -25,6 +25,7 @@ class TypedefParserContext : public TypedefParserInterface {
   }
 
   virtual std::string GetLanguageVersion() const;
+  virtual FullyQualifiedIdentifier GetModule() const = 0;
   virtual std::vector<td::Import> GetImports() const;
 
  private:

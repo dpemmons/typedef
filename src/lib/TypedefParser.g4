@@ -3,21 +3,21 @@ parser grammar TypedefParser;
 options { tokenVocab=TypedefLexer; }
 
 compilationUnit:
-	typedefVersionDeclaration moduleDeclaration importStatement* (
+	typedefVersionDeclaration moduleDeclaration useDeclaration* (
 		enumDeclaration
 		| messageDeclaration
 	)* EOF;
 
 typedefVersionDeclaration: TYPEDEF EQ IDENTIFIER SEMI;
-moduleDeclaration: MODULE moduleName SEMI;
+moduleDeclaration: MODULE simplePath SEMI;
 
 // Imports
-importStatement:
-	singleImportStatement
-	| wildcardImportStatement;
-singleImportStatement:
-	IMPORT qualifiedName (AS identifier)? SEMI;
-wildcardImportStatement: IMPORT qualifiedName '.*' SEMI;
+useDeclaration:
+	singleUseDeclaration
+	| wildcardUseDeclaration;
+singleUseDeclaration:
+	IMPORT simplePath (AS identifier)? SEMI;
+wildcardUseDeclaration: IMPORT simplePath '.*' SEMI;
 
 // Enums
 enumDeclaration:
@@ -43,8 +43,7 @@ keyValue: identifier COLON value;
 type: arrayIdentifier | typeType;
 arrayIdentifier: typeType LBRACK integerLiteral? RBRACK;
 
-qualifiedName: (moduleName PS)* identifier (DOT identifier)*;
-moduleName: identifier (PS identifier)*;
+simplePath: PS? identifier (PS identifier)*;
 
 position: AT integerLiteral;
 identifier: IDENTIFIER;

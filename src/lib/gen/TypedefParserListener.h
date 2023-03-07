@@ -23,14 +23,14 @@ public:
   virtual void enterModuleDeclaration(TypedefParser::ModuleDeclarationContext *ctx) = 0;
   virtual void exitModuleDeclaration(TypedefParser::ModuleDeclarationContext *ctx) = 0;
 
-  virtual void enterImportStatement(TypedefParser::ImportStatementContext *ctx) = 0;
-  virtual void exitImportStatement(TypedefParser::ImportStatementContext *ctx) = 0;
+  virtual void enterUseDeclaration(TypedefParser::UseDeclarationContext *ctx) = 0;
+  virtual void exitUseDeclaration(TypedefParser::UseDeclarationContext *ctx) = 0;
 
-  virtual void enterSingleImportStatement(TypedefParser::SingleImportStatementContext *ctx) = 0;
-  virtual void exitSingleImportStatement(TypedefParser::SingleImportStatementContext *ctx) = 0;
+  virtual void enterSingleUseDeclaration(TypedefParser::SingleUseDeclarationContext *ctx) = 0;
+  virtual void exitSingleUseDeclaration(TypedefParser::SingleUseDeclarationContext *ctx) = 0;
 
-  virtual void enterWildcardImportStatement(TypedefParser::WildcardImportStatementContext *ctx) = 0;
-  virtual void exitWildcardImportStatement(TypedefParser::WildcardImportStatementContext *ctx) = 0;
+  virtual void enterWildcardUseDeclaration(TypedefParser::WildcardUseDeclarationContext *ctx) = 0;
+  virtual void exitWildcardUseDeclaration(TypedefParser::WildcardUseDeclarationContext *ctx) = 0;
 
   virtual void enterEnumDeclaration(TypedefParser::EnumDeclarationContext *ctx) = 0;
   virtual void exitEnumDeclaration(TypedefParser::EnumDeclarationContext *ctx) = 0;
@@ -68,11 +68,8 @@ public:
   virtual void enterArrayIdentifier(TypedefParser::ArrayIdentifierContext *ctx) = 0;
   virtual void exitArrayIdentifier(TypedefParser::ArrayIdentifierContext *ctx) = 0;
 
-  virtual void enterQualifiedName(TypedefParser::QualifiedNameContext *ctx) = 0;
-  virtual void exitQualifiedName(TypedefParser::QualifiedNameContext *ctx) = 0;
-
-  virtual void enterModuleName(TypedefParser::ModuleNameContext *ctx) = 0;
-  virtual void exitModuleName(TypedefParser::ModuleNameContext *ctx) = 0;
+  virtual void enterSimplePath(TypedefParser::SimplePathContext *ctx) = 0;
+  virtual void exitSimplePath(TypedefParser::SimplePathContext *ctx) = 0;
 
   virtual void enterPosition(TypedefParser::PositionContext *ctx) = 0;
   virtual void exitPosition(TypedefParser::PositionContext *ctx) = 0;

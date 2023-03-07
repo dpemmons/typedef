@@ -28,13 +28,13 @@ public:
 
   enum {
     RuleCompilationUnit = 0, RuleTypedefVersionDeclaration = 1, RuleModuleDeclaration = 2, 
-    RuleImportStatement = 3, RuleSingleImportStatement = 4, RuleWildcardImportStatement = 5, 
+    RuleUseDeclaration = 3, RuleSingleUseDeclaration = 4, RuleWildcardUseDeclaration = 5, 
     RuleEnumDeclaration = 6, RuleEnumBody = 7, RuleEnumField = 8, RuleMessageDeclaration = 9, 
     RuleMessageBody = 10, RuleFieldDeclaration = 11, RuleValue = 12, RuleArray = 13, 
     RuleMap = 14, RuleKeyValue = 15, RuleType = 16, RuleArrayIdentifier = 17, 
-    RuleQualifiedName = 18, RuleModuleName = 19, RulePosition = 20, RuleIdentifier = 21, 
-    RuleLiteral = 22, RuleBoolLiteral = 23, RuleIntegerLiteral = 24, RuleFloatLiteral = 25, 
-    RuleTypeType = 26, RulePrimitiveFixedPointType = 27, RulePrimitiveType = 28
+    RuleSimplePath = 18, RulePosition = 19, RuleIdentifier = 20, RuleLiteral = 21, 
+    RuleBoolLiteral = 22, RuleIntegerLiteral = 23, RuleFloatLiteral = 24, 
+    RuleTypeType = 25, RulePrimitiveFixedPointType = 26, RulePrimitiveType = 27
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -50,9 +50,9 @@ public:
   class CompilationUnitContext;
   class TypedefVersionDeclarationContext;
   class ModuleDeclarationContext;
-  class ImportStatementContext;
-  class SingleImportStatementContext;
-  class WildcardImportStatementContext;
+  class UseDeclarationContext;
+  class SingleUseDeclarationContext;
+  class WildcardUseDeclarationContext;
   class EnumDeclarationContext;
   class EnumBodyContext;
   class EnumFieldContext;
@@ -65,8 +65,7 @@ public:
   class KeyValueContext;
   class TypeContext;
   class ArrayIdentifierContext;
-  class QualifiedNameContext;
-  class ModuleNameContext;
+  class SimplePathContext;
   class PositionContext;
   class IdentifierContext;
   class LiteralContext;
@@ -84,8 +83,8 @@ public:
     TypedefVersionDeclarationContext *typedefVersionDeclaration();
     ModuleDeclarationContext *moduleDeclaration();
     antlr4::tree::TerminalNode *EOF();
-    std::vector<ImportStatementContext *> importStatement();
-    ImportStatementContext* importStatement(size_t i);
+    std::vector<UseDeclarationContext *> useDeclaration();
+    UseDeclarationContext* useDeclaration(size_t i);
     std::vector<EnumDeclarationContext *> enumDeclaration();
     EnumDeclarationContext* enumDeclaration(size_t i);
     std::vector<MessageDeclarationContext *> messageDeclaration();
@@ -119,7 +118,7 @@ public:
     ModuleDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *MODULE();
-    ModuleNameContext *moduleName();
+    SimplePathContext *simplePath();
     antlr4::tree::TerminalNode *SEMI();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -129,26 +128,26 @@ public:
 
   ModuleDeclarationContext* moduleDeclaration();
 
-  class  ImportStatementContext : public antlr4::ParserRuleContext {
+  class  UseDeclarationContext : public antlr4::ParserRuleContext {
   public:
-    ImportStatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    UseDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    SingleImportStatementContext *singleImportStatement();
-    WildcardImportStatementContext *wildcardImportStatement();
+    SingleUseDeclarationContext *singleUseDeclaration();
+    WildcardUseDeclarationContext *wildcardUseDeclaration();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
    
   };
 
-  ImportStatementContext* importStatement();
+  UseDeclarationContext* useDeclaration();
 
-  class  SingleImportStatementContext : public antlr4::ParserRuleContext {
+  class  SingleUseDeclarationContext : public antlr4::ParserRuleContext {
   public:
-    SingleImportStatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    SingleUseDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *IMPORT();
-    QualifiedNameContext *qualifiedName();
+    SimplePathContext *simplePath();
     antlr4::tree::TerminalNode *SEMI();
     antlr4::tree::TerminalNode *AS();
     IdentifierContext *identifier();
@@ -158,14 +157,14 @@ public:
    
   };
 
-  SingleImportStatementContext* singleImportStatement();
+  SingleUseDeclarationContext* singleUseDeclaration();
 
-  class  WildcardImportStatementContext : public antlr4::ParserRuleContext {
+  class  WildcardUseDeclarationContext : public antlr4::ParserRuleContext {
   public:
-    WildcardImportStatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    WildcardUseDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *IMPORT();
-    QualifiedNameContext *qualifiedName();
+    SimplePathContext *simplePath();
     antlr4::tree::TerminalNode *DOTSTAR();
     antlr4::tree::TerminalNode *SEMI();
 
@@ -174,7 +173,7 @@ public:
    
   };
 
-  WildcardImportStatementContext* wildcardImportStatement();
+  WildcardUseDeclarationContext* wildcardUseDeclaration();
 
   class  EnumDeclarationContext : public antlr4::ParserRuleContext {
   public:
@@ -377,29 +376,9 @@ public:
 
   ArrayIdentifierContext* arrayIdentifier();
 
-  class  QualifiedNameContext : public antlr4::ParserRuleContext {
+  class  SimplePathContext : public antlr4::ParserRuleContext {
   public:
-    QualifiedNameContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    std::vector<IdentifierContext *> identifier();
-    IdentifierContext* identifier(size_t i);
-    std::vector<ModuleNameContext *> moduleName();
-    ModuleNameContext* moduleName(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> PS();
-    antlr4::tree::TerminalNode* PS(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> DOT();
-    antlr4::tree::TerminalNode* DOT(size_t i);
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  QualifiedNameContext* qualifiedName();
-
-  class  ModuleNameContext : public antlr4::ParserRuleContext {
-  public:
-    ModuleNameContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    SimplePathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<IdentifierContext *> identifier();
     IdentifierContext* identifier(size_t i);
@@ -411,7 +390,7 @@ public:
    
   };
 
-  ModuleNameContext* moduleName();
+  SimplePathContext* simplePath();
 
   class  PositionContext : public antlr4::ParserRuleContext {
   public:
