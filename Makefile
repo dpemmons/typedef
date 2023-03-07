@@ -79,14 +79,14 @@ $(TEST_EXEC): $(TEST_OBJS) $(LIB_STATIC_OBJ)
 clean:
 	rm -r $(BASE_BUILD_DIR)
 
-.PHONY: run-test
-run-test: $(TEST_EXEC)
+.PHONY: run
+test: $(TEST_EXEC)
 	$(TEST_EXEC)
 
 lib: $(LIB_STATIC_OBJ)
 cmd: $(CMD_EXEC)
-test: $(TEST_EXEC)
-all: lib cmd test
+test-bin: $(TEST_EXEC)
+all: lib cmd test-bin
 
 # Include the .d makefiles. The - at the front suppresses the errors of missing
 # Makefiles. Initially, all the .d files will be missing, and we don't want those
