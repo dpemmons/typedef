@@ -4,6 +4,7 @@
   - [x] change over to using normal VS.Code tasks, instead of makefile extension.
   - [ ] parse module import statements
   - [ ] parse a very basic struct statement
+  - [ ] Idea to experiment with: basing lexer (and part of parser) on the available Rust grammars?
 
 - [ ] Command line util basics
   - [ ] print default formatting to stdout
