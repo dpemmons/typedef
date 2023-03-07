@@ -8,32 +8,6 @@
 #include "gen/TypedefParserBaseListener.h"
 #include "typedef_parser_interface.h"
 
-// class TypedefListenerImpl : public TypedefParserBaseListener {
-//  public:
-//   TypedefListenerImpl(ParseResult& result)
-//       : result_(result), itree_(result.tree), errors_(result.errors) {}
-
-//   void enterTypedefVersionDeclaration(
-//       TypedefParser::TypedefVersionDeclarationContext* ctx) override {
-//     itree_.version = ctx->IDENTIFIER()->toString();
-//   }
-//   void exitTypedefVersionDeclaration(
-//       TypedefParser::TypedefVersionDeclarationContext* ctx) override {}
-
-//  private:
-//   ParseResult& result_;
-//   IntermediateTree& itree_;
-//   std::vector<ParseError>& errors_;
-
-//   ParseError makeError(std::errc err, antlr4::tree::TerminalNode* node) {
-//     ParseError error;
-//     error.err = err;
-//     error.line = node->getSymbol()->getLine();
-//     error.pos_in_line = node->getSymbol()->getCharPositionInLine();
-//     return error;
-//   }
-
-//   // returns true on success
 //   template <typename T>
 //   bool nodeToInteger(antlr4::tree::TerminalNode* node, T& numVal) {
 //     static_assert(std::is_integral<T>::value, "Integral required.");
@@ -47,7 +21,6 @@
 //     }
 //     return true;
 //   }
-// };
 
 td::TypedefParserContext::TypedefParserContext()
     : lexer_(&input_),
