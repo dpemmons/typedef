@@ -2,10 +2,10 @@
 
 #include <vector>
 
-#include "antlr4-runtime.h"
-#include "gen/TypedefLexer.h"
-#include "gen/TypedefParser.h"
-#include "gen/TypedefParserBaseListener.h"
+#include "antlr4/antlr4-runtime.h"
+#include "grammar/TypedefLexer.h"
+#include "grammar/TypedefParser.h"
+#include "grammar/TypedefParserBaseListener.h"
 #include "typedef_parser_interface.h"
 
 //   template <typename T>
@@ -92,33 +92,37 @@ std::string td::TypedefParserContext::GetLanguageVersion() const {
   return decl->IDENTIFIER()->toString();
 }
 
+td::QualifiedIdentifier td::TypedefParserContext::GetModule() const {
+  return QualifiedIdentifier();
+}
+
 std::vector<td::Import> td::TypedefParserContext::GetImports() const {
   std::vector<td::Import> imports;
   if (compilation_unit_ == nullptr) {
     return imports;
   }
-  auto importStatements = compilation_unit_->importStatement();
-  for (auto importStatement : importStatements) {
-    td::Import import;
-    if (auto single_import = importStatement->singleImportStatement()) {
-      import.is_wildcard = false;
-      if (single_import->qualifiedName()) {
-        // TODO(dpemmons) this stuff...
-        auto qualifiedName = single_import->qualifiedName();
-      }
-      if (single_import->identifier()) {
-        import.alias = single_import->identifier()->toString();
-      }
-    } else if (auto wildcard_import =
-                   importStatement->wildcardImportStatement()) {
-      import.is_wildcard = true;
-      if (wildcard_import->qualifiedName()) {
-        import.fully_qualified_name =
-            wildcard_import->qualifiedName()->toString();
-      }
-    }
-    imports.push_back(import);
-  }
+  // auto useDeclaration = compilation_unit_->useDeclaration();
+  // for (auto useDeclaration : importStatements) {
+  //   td::Import import;
+  //   if (auto single_import = importStatement->singleImportStatement()) {
+  //     import.is_wildcard = false;
+  //     if (single_import->qualifiedName()) {
+  //       // TODO(dpemmons) this stuff...
+  //       auto qualifiedName = single_import->qualifiedName();
+  //     }
+  //     if (single_import->identifier()) {
+  //       import.alias = single_import->identifier()->toString();
+  //     }
+  //   } else if (auto wildcard_import =
+  //                  importStatement->wildcardImportStatement()) {
+  //     import.is_wildcard = true;
+  //     if (wildcard_import->qualifiedName()) {
+  //       import.qualified_identifier =
+  //           wildcard_import->qualifiedName()->toString();
+  //     }
+  //   }
+  //   imports.push_back(import);
+  // }
   return imports;
 }
 

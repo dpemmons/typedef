@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 
-#include "antlr4-runtime.h"
-#include "gen/TypedefLexer.h"
-#include "gen/TypedefParser.h"
-#include "gen/TypedefParserBaseListener.h"
+#include "antlr4/antlr4-runtime.h"
+#include "grammar/TypedefLexer.h"
+#include "grammar/TypedefParser.h"
+#include "grammar/TypedefParserBaseListener.h"
 #include "typedef_parser_interface.h"
 
 namespace td {
@@ -25,7 +25,7 @@ class TypedefParserContext : public TypedefParserInterface {
   }
 
   virtual std::string GetLanguageVersion() const;
-  virtual FullyQualifiedIdentifier GetModule() const = 0;
+  virtual QualifiedIdentifier GetModule() const;
   virtual std::vector<td::Import> GetImports() const;
 
  private:

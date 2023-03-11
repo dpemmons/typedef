@@ -75,6 +75,13 @@ $(TEST_BUILD_DIR)/%.cpp.o: %.cpp
 $(TEST_EXEC): $(TEST_OBJS) $(LIB_STATIC_OBJ)
 	$(CXX) $(TEST_OBJS) $(LIB_STATIC_OBJ) -o $@ $(LDFLAGS)
 
+# ANTLR4 Grammar
+
+GRAMMAR:=./src/lib/grammar/TypedefParser.g4 ./src/lib/grammar/TypedefLexer.g4
+
+antlr4:
+	/usr/bin/antlr4 -Dlanguage=Cpp $(GRAMMAR)
+
 .PHONY: clean
 clean:
 	rm -r $(BASE_BUILD_DIR)

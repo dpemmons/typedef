@@ -16,6 +16,6 @@ module someModule;
     )");
     REQUIRE(!parser->HasErrors());
     auto moduleDecl = parser->GetImports();
-    CHECK_THAT(1);
+    // CHECK_THAT(1);
   }
 }
