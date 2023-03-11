@@ -84,7 +84,7 @@ $(TEST_EXEC): $(TEST_OBJS) $(LIB_STATIC_OBJ)
 # Note that because the resulting code is checked in, this target is *NOT* run
 # automatically with the other rules. You must run it  manually if you change
 # the grammar.
-./src/lib/grammar/TypedefParser.cpp: ./src/lib/grammar/TypedefParser.g4 
+./src/lib/grammar/TypedefParser.cpp: ./src/lib/grammar/TypedefLexer.cpp ./src/lib/grammar/TypedefParser.g4 
 	/usr/bin/antlr4 -Dlanguage=Cpp ./src/lib/grammar/TypedefParser.g4 
 
 ./src/lib/grammar/TypedefLexer.cpp: ./src/lib/grammar/TypedefLexer.g4
