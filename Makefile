@@ -1,8 +1,7 @@
 BASE_BUILD_DIR := ./build
 
-#------------------------------------------------------------------------------
+###############################################################################
 # LIB Rules
-#------------------------------------------------------------------------------
 LIB_SRC_DIRS := ./src/lib
 LIB_BUILD_DIR := $(BASE_BUILD_DIR)/lib
 LIB_STATIC_OBJ := $(LIB_BUILD_DIR)/libtypedef.a
@@ -24,10 +23,11 @@ $(LIB_BUILD_DIR)/%.cpp.o: %.cpp
 
 $(LIB_STATIC_OBJ): $(LIB_OBJS)
 	ar $(ARFLAGS) $@ $^
+#
+###############################################################################
 
-#------------------------------------------------------------------------------
+###############################################################################
 # CMD Rules
-#------------------------------------------------------------------------------
 CMD_SRC_DIRS := ./src/cmd
 CMD_BUILD_DIR := $(BASE_BUILD_DIR)/cmd
 CMD_EXEC := $(CMD_BUILD_DIR)/typedef
@@ -49,10 +49,11 @@ $(CMD_BUILD_DIR)/%.cpp.o: %.cpp
 
 $(CMD_EXEC): $(CMD_OBJS) $(LIB_STATIC_OBJ)
 	$(CXX) $(CMD_OBJS) $(LIB_STATIC_OBJ) -o $@ $(LDFLAGS)
+#
+###############################################################################
 
-#------------------------------------------------------------------------------
+###############################################################################
 # TEST Rules
-#------------------------------------------------------------------------------
 TEST_SRC_DIRS := ./src/test
 TEST_BUILD_DIR := $(BASE_BUILD_DIR)/test
 TEST_EXEC := $(TEST_BUILD_DIR)/testmain
@@ -74,13 +75,24 @@ $(TEST_BUILD_DIR)/%.cpp.o: %.cpp
 
 $(TEST_EXEC): $(TEST_OBJS) $(LIB_STATIC_OBJ)
 	$(CXX) $(TEST_OBJS) $(LIB_STATIC_OBJ) -o $@ $(LDFLAGS)
+#
+###############################################################################
 
+###############################################################################
 # ANTLR4 Grammar
+#
+# Note that because the resulting code is checked in, this target is *NOT* run
+# automatically with the other rules. You must run it  manually if you change
+# the grammar.
+./src/lib/grammar/TypedefParser.cpp: ./src/lib/grammar/TypedefParser.g4 
+	/usr/bin/antlr4 -Dlanguage=Cpp ./src/lib/grammar/TypedefParser.g4 
 
-GRAMMAR:=./src/lib/grammar/TypedefParser.g4 ./src/lib/grammar/TypedefLexer.g4
+./src/lib/grammar/TypedefLexer.cpp: ./src/lib/grammar/TypedefLexer.g4
+	/usr/bin/antlr4 -Dlanguage=Cpp ./src/lib/grammar/TypedefLexer.g4
 
-antlr4:
-	/usr/bin/antlr4 -Dlanguage=Cpp $(GRAMMAR)
+grammar: ./src/lib/grammar/TypedefLexer.cpp ./src/lib/grammar/TypedefParser.cpp
+#
+###############################################################################
 
 .PHONY: clean
 clean:
