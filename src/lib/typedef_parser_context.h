@@ -29,31 +29,6 @@ class TypedefParserContext : public TypedefParserInterface {
   virtual std::vector<td::Import> GetImports();
 
  private:
-  class LexerErrorListener : public antlr4::BaseErrorListener {
-   public:
-    LexerErrorListener(TypedefParserContext *owner) : owner_(owner) {}
-
-    virtual void syntaxError(antlr4::Recognizer *recognizer,
-                             antlr4::Token *offendingSymbol, size_t line,
-                             size_t charPositionInLine, const std::string &msg,
-                             std::exception_ptr e) override;
-
-   private:
-    TypedefParserContext *owner_;
-  };
-
-  class ParserErrorListener : public antlr4::BaseErrorListener {
-   public:
-    ParserErrorListener(TypedefParserContext *owner) : owner_(owner) {}
-
-    virtual void syntaxError(antlr4::Recognizer *recognizer,
-                             antlr4::Token *offendingSymbol, size_t line,
-                             size_t charPositionInLine, const std::string &msg,
-                             std::exception_ptr e) override;
-
-   private:
-    TypedefParserContext *owner_;
-  };
 
   antlr4::ANTLRInputStream input_;
   TypedefLexer lexer_;

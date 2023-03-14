@@ -7,25 +7,6 @@
 
 namespace td {
 
-struct ParserErrorInfo {
-  enum Type {
-    UNKNOWN = 0,
-    LEXER_ERROR = 1,
-    PARSE_ERROR = 2,
-  };
-  Type error_type;
-
-  std::string message;
-  size_t token_type;
-
-  size_t char_offset;  // from the beginning of the file.
-
-  size_t line;
-  size_t line_offset;  // from the beginning of the line.
-
-  size_t length;
-};
-
 typedef std::vector<std::string> QualifiedIdentifier;
 
 class LanguageVersion {

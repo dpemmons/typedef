@@ -7,9 +7,67 @@
 #include "grammar/TypedefLexer.h"
 #include "grammar/TypedefParser.h"
 #include "grammar/TypedefParserBaseListener.h"
+#include "parser_error_info.h"
 #include "typedef_parser_interface.h"
 
 namespace {
+
+class LexerErrorListener : public antlr4::BaseErrorListener {
+ public:
+  LexerErrorListener(std::vector<td::ParserErrorInfo> &errors_list)
+      : errors_list_(errors_list) {}
+
+  virtual void syntaxError(antlr4::Recognizer *recognizer,
+                           antlr4::Token *offendingSymbol, size_t line,
+                           size_t charPositionInLine, const std::string &,
+                           std::exception_ptr ep) override {
+    std::string message;
+    try {
+      std::rethrow_exception(ep);
+    } catch (antlr4::LexerNoViableAltException &) {
+      antlr4::Lexer *lexer = dynamic_cast<antlr4::Lexer *>(recognizer);
+
+      errors_list_.push_back(td::ParserErrorInfo::Builder()
+                                 .SetType(td::ParserErrorInfo::LEXER_ERROR)
+                                 .SetMessage("Lexer error")
+                                 .SetTokenType(0)
+                                 .SetCharOffset(lexer->tokenStartCharIndex)
+                                 .SetLine(line)
+                                 .SetLineOffset(charPositionInLine)
+                                 .SetLength(lexer->getInputStream()->index() -
+                                            lexer->tokenStartCharIndex)
+                                 .build());
+    }
+  }
+
+ private:
+  std::vector<td::ParserErrorInfo> &errors_list_;
+};
+
+class ParserErrorListener : public antlr4::BaseErrorListener {
+ public:
+  ParserErrorListener(std::vector<td::ParserErrorInfo> &errors_list)
+      : errors_list_(errors_list) {}
+
+  virtual void syntaxError(antlr4::Recognizer *recognizer,
+                           antlr4::Token *offendingSymbol, size_t line,
+                           size_t charPositionInLine, const std::string &,
+                           std::exception_ptr ep) override {
+    errors_list_.push_back(td::ParserErrorInfo::Builder()
+                               .SetType(td::ParserErrorInfo::PARSE_ERROR)
+                               .SetMessage("Parse error")
+                               .SetTokenType(offendingSymbol->getType())
+                               .SetCharOffset(offendingSymbol->getStartIndex())
+                               .SetLine(line)
+                               .SetLineOffset(charPositionInLine)
+                               .SetLength(offendingSymbol->getStopIndex() -
+                                          offendingSymbol->getStartIndex() + 1)
+                               .build());
+  };
+
+ private:
+  std::vector<td::ParserErrorInfo> &errors_list_;
+};
 
 // Pull an idientifier string from something that has one.
 template <class CTX>
@@ -33,51 +91,14 @@ bool SetContains(std::set<T> set, T &x) {
   return set.find(x) != set.end();
 }
 
-class ErrorBuilder {
- public:
-  td::ParserErrorInfo build() { return info_; }
-  ErrorBuilder &SetType(td::ParserErrorInfo::Type type) {
-    info_.error_type = type;
-  }
-  ErrorBuilder &SetMessage(const std::string &msg) { info_.message = msg; }
-  ErrorBuilder &SetTokenType(size_t token_type) {
-    info_.token_type = token_type;
-  }
-  ErrorBuilder &SetCharOffset(size_t char_offset) {
-    info_.char_offset = char_offset;
-  }
-  ErrorBuilder &SetLine(size_t line) { info_.line = line; }
-  ErrorBuilder &SetLineOffset(size_t line_offset) {
-    info_.line_offset = line_offset;
-  }
-  ErrorBuilder &SetLength(size_t length) { info_.length = length; }
-
- private:
-  td::ParserErrorInfo info_;
-};
-
 }  // namespace
-
-//   template <typename T>
-//   bool nodeToInteger(antlr4::tree::TerminalNode* node, T& numVal) {
-//     static_assert(std::is_integral<T>::value, "Integral required.");
-//     const std::string& text = node->getText();
-//     auto [ptr,
-//           ec]{std::from_chars(text.data(), text.data() + text.size(),
-//           numVal)};
-//     if (ec != std::errc()) {
-//       errors_.push_back(makeError(ec, node));
-//       return false;
-//     }
-//     return true;
-//   }
 
 td::TypedefParserContext::TypedefParserContext()
     : lexer_(&input_),
       tokens_(&lexer_),
       parser_(&tokens_),
-      lexerErrorListener_(this),
-      parserErrorListener_(this) {
+      lexerErrorListener_(errors_),
+      parserErrorListener_(errors_) {
   lexer_.removeErrorListeners();
   lexer_.addErrorListener(&lexerErrorListener_);
 
@@ -180,41 +201,4 @@ std::vector<td::Import> td::TypedefParserContext::GetImports() {
   //   imports.push_back(import);
   // }
   return imports;
-}
-
-void td::TypedefParserContext::LexerErrorListener::syntaxError(
-    antlr4::Recognizer *recognizer, antlr4::Token *offendingSymbol, size_t line,
-    size_t charPositionInLine, const std::string &, std::exception_ptr ep) {
-  std::string message;
-  try {
-    std::rethrow_exception(ep);
-  } catch (antlr4::LexerNoViableAltException &) {
-    antlr4::Lexer *lexer = dynamic_cast<antlr4::Lexer *>(recognizer);
-    antlr4::CharStream *input = lexer->getInputStream();
-
-    ParserErrorInfo errorInfo;
-    errorInfo.error_type = ParserErrorInfo::LEXER_ERROR;
-    errorInfo.message = "Lexer error";
-    errorInfo.token_type = 0;
-    errorInfo.char_offset = lexer->tokenStartCharIndex;
-    errorInfo.line = line;
-    errorInfo.line_offset = charPositionInLine;
-    errorInfo.length = input->index() - lexer->tokenStartCharIndex;
-    owner_->errors_.push_back(errorInfo);
-  }
-}
-
-void td::TypedefParserContext::ParserErrorListener::syntaxError(
-    antlr4::Recognizer *recognizer, antlr4::Token *offendingSymbol, size_t line,
-    size_t charPositionInLine, const std::string &, std::exception_ptr ep) {
-  ParserErrorInfo errorInfo;
-  errorInfo.error_type = ParserErrorInfo::PARSE_ERROR;
-  errorInfo.message = "Parse error";
-  errorInfo.token_type = offendingSymbol->getType();
-  errorInfo.char_offset = offendingSymbol->getStartIndex();
-  errorInfo.line = line;
-  errorInfo.line_offset = charPositionInLine;
-  errorInfo.length =
-      offendingSymbol->getStopIndex() - offendingSymbol->getStartIndex() + 1;
-  owner_->errors_.push_back(errorInfo);
 }
