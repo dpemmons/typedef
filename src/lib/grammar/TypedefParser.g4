@@ -1,97 +1,129 @@
 parser grammar TypedefParser;
 
-options { tokenVocab=TypedefLexer; }
+options {
+	tokenVocab = TypedefLexer;
+}
 
 compilationUnit:
 	typedefVersionDeclaration moduleDeclaration useDeclaration* (
 		enumDeclaration
-		| messageDeclaration
+		| structDeclaration
 	)* EOF;
 
-typedefVersionDeclaration: TYPEDEF EQ IDENTIFIER SEMI;
-moduleDeclaration: MODULE simplePath SEMI;
+typedefVersionDeclaration: KW_TYPEDEF EQ identifier SEMI;
+moduleDeclaration: KW_MODULE simplePath SEMI;
 
-// Imports
-useDeclaration:
-	singleUseDeclaration
-	| wildcardUseDeclaration;
-singleUseDeclaration:
-	IMPORT simplePath (AS identifier)? SEMI;
-wildcardUseDeclaration: IMPORT simplePath '.*' SEMI;
+useDeclaration: 'use' useTree ';';
+useTree: (simplePath? '::')? (
+		'*'
+		| '{' ( useTree (',' useTree)* ','?)? '}'
+	)
+	| simplePath ('as' identifier)?;
 
 // Enums
-enumDeclaration:
-	ENUM identifier (COLON primitiveFixedPointType) LBRACE enumBody RBRACE SEMI;
-enumBody: ( enumField COMMA)+ (enumField COMMA?)?;
-enumField: identifier EQ integerLiteral;
+enumDeclaration: KW_ENUM identifier LBRACE enumBody RBRACE SEMI;
+enumBody: ( identifier COMMA)+ (identifier COMMA?)?;
 
-// Messages
-messageDeclaration:
-	MESSAGE identifier LBRACE messageBody RBRACE SEMI;
+// Strucvt
+structDeclaration:
+	KW_STRUCT identifier LBRACE messageBody RBRACE SEMI;
 messageBody: (fieldDeclaration | enumDeclaration)*;
 
-fieldDeclaration:
-	identifier COLON type position (EQ value)? SEMI;
+fieldDeclaration: identifier COLON identifier (EQ value)? SEMI;
 
 // Value definitions ----------------------------------------------------------
-value: literal | array | map | identifier;
+value: literalExpression | array | map | identifier;
 
 array: LBRACK (value (COMMA value)*)? COMMA? RBRACK;
 map: LBRACE (keyValue (COMMA keyValue)* COMMA?)? RBRACE;
 keyValue: identifier COLON value;
 
-type: arrayIdentifier | typeType;
-arrayIdentifier: typeType LBRACK integerLiteral? RBRACK;
+simplePath: '::'? identifier ('::' identifier)*;
 
-simplePath: PS? identifier (PS identifier)*;
-
-position: AT integerLiteral;
-identifier: IDENTIFIER;
-
-literal:
-	integerLiteral
-	| floatLiteral
-	| CHAR_LITERAL
+literalExpression:
+	CHAR_LITERAL
 	| STRING_LITERAL
-	| boolLiteral
-	| TEXT_BLOCK;
+	| RAW_STRING_LITERAL
+	| BYTE_LITERAL
+	| BYTE_STRING_LITERAL
+	| RAW_BYTE_STRING_LITERAL
+	| INTEGER_LITERAL
+	| FLOAT_LITERAL
+	| KW_TRUE
+	| KW_FALSE;
 
-boolLiteral: TRUE | FALSE;
+// technical
+identifier: NON_KEYWORD_IDENTIFIER | RAW_IDENTIFIER;
+keyword:
+	KW_AS
+	| KW_ENUM
+	| KW_FALSE
+	| KW_FN
+	| KW_IMPL
+	| KW_MODULE
+	| KW_STRUCT
+	| KW_TRUE
+	| KW_TYPE
+	| KW_TYPEDEF
+	| KW_USE
 
-integerLiteral:
-	DECIMAL_LITERAL
-	| HEX_LITERAL
-	| OCT_LITERAL
-	| BINARY_LITERAL;
+	// reserved misc
+	| KW_AND
+	| KW_IN
+	| KW_LET
+	| KW_NOT
+	| KW_OR
+	| KW_SIZEOF
+	| KW_THIS
+	| KW_TRAIT
+	| KW_WHERE
+	| KW_XOR
 
-floatLiteral: FLOAT_LITERAL | HEX_FLOAT_LITERAL;
+	// reserved control flow
+	| KW_BREAK
+	| KW_CONTINUE
+	| KW_DEFAULT
+	| KW_DO
+	| KW_ELSE
+	| KW_FOR
+	| KW_GOTO
+	| KW_IF
+	| KW_LOOP
+	| KW_MATCH
+	| KW_MOVE
+	| KW_RETURN
+	| KW_TRY
+	| KW_WHILE
+	| KW_YIELD
 
-typeType: (identifier | primitiveType) (
-		LBRACK integerLiteral RBRACK
-	)*;
-
-primitiveFixedPointType:
-	BYTE
-	| INT8
-	| UINT8
-	| INT16
-	| UINT16
-	| INT32
-	| UINT32
-	| INT64
-	| UINT64;
-
-primitiveType:
-	BOOL
-	| BYTE
-	| INT8
-	| UINT8
-	| INT16
-	| UINT16
-	| INT32
-	| UINT32
-	| INT64
-	| UINT64
-	| FLOAT16
-	| FLOAT32
-	| FLOAT64;
+	// reserved type-related
+	| KW_ABSTRACT
+	| KW_AUTO
+	| KW_CHAR
+	| KW_CONST
+	| KW_DOUBLE
+	| KW_EXTERN
+	| KW_FINAL
+	| KW_FLOAT
+	| KW_INT
+	| KW_LONG
+	| KW_MACRO
+	| KW_MUT
+	| KW_OVERRIDE
+	| KW_PRIVATE
+	| KW_PUB
+	| KW_REF
+	| KW_SELFTYPE
+	| KW_SELFVALUE
+	| KW_SIGNED
+	| KW_STATIC
+	| KW_SUPER
+	| KW_SWITCH
+	| KW_TYPEOF
+	| KW_UNION
+	| KW_UNSAFE
+	| KW_UNSIGNED
+	| KW_UNSIZED
+	| KW_VIRTUAL
+	| KW_VOID
+	| KW_VOLATILE;

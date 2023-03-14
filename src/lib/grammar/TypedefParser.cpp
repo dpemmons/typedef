@@ -65,12 +65,12 @@ TypedefParser::EnumDeclarationContext* TypedefParser::CompilationUnitContext::en
   return getRuleContext<TypedefParser::EnumDeclarationContext>(i);
 }
 
-std::vector<TypedefParser::MessageDeclarationContext *> TypedefParser::CompilationUnitContext::messageDeclaration() {
-  return getRuleContexts<TypedefParser::MessageDeclarationContext>();
+std::vector<TypedefParser::StructDeclarationContext *> TypedefParser::CompilationUnitContext::structDeclaration() {
+  return getRuleContexts<TypedefParser::StructDeclarationContext>();
 }
 
-TypedefParser::MessageDeclarationContext* TypedefParser::CompilationUnitContext::messageDeclaration(size_t i) {
-  return getRuleContext<TypedefParser::MessageDeclarationContext>(i);
+TypedefParser::StructDeclarationContext* TypedefParser::CompilationUnitContext::structDeclaration(size_t i) {
+  return getRuleContext<TypedefParser::StructDeclarationContext>(i);
 }
 
 
@@ -100,49 +100,49 @@ TypedefParser::CompilationUnitContext* TypedefParser::compilationUnit() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(56);
+    setState(36);
     typedefVersionDeclaration();
-    setState(57);
+    setState(37);
     moduleDeclaration();
-    setState(61);
+    setState(41);
     _errHandler->sync(this);
     _la = _input->LA(1);
-    while (_la == TypedefParser::IMPORT) {
-      setState(58);
+    while (_la == TypedefParser::KW_USE) {
+      setState(38);
       useDeclaration();
-      setState(63);
+      setState(43);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
-    setState(68);
+    setState(48);
     _errHandler->sync(this);
     _la = _input->LA(1);
-    while (_la == TypedefParser::ENUM
+    while (_la == TypedefParser::KW_ENUM
 
-    || _la == TypedefParser::MESSAGE) {
-      setState(66);
+    || _la == TypedefParser::KW_STRUCT) {
+      setState(46);
       _errHandler->sync(this);
       switch (_input->LA(1)) {
-        case TypedefParser::ENUM: {
-          setState(64);
+        case TypedefParser::KW_ENUM: {
+          setState(44);
           enumDeclaration();
           break;
         }
 
-        case TypedefParser::MESSAGE: {
-          setState(65);
-          messageDeclaration();
+        case TypedefParser::KW_STRUCT: {
+          setState(45);
+          structDeclaration();
           break;
         }
 
       default:
         throw NoViableAltException(this);
       }
-      setState(70);
+      setState(50);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
-    setState(71);
+    setState(51);
     match(TypedefParser::EOF);
    
   }
@@ -161,16 +161,16 @@ TypedefParser::TypedefVersionDeclarationContext::TypedefVersionDeclarationContex
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::TypedefVersionDeclarationContext::TYPEDEF() {
-  return getToken(TypedefParser::TYPEDEF, 0);
+tree::TerminalNode* TypedefParser::TypedefVersionDeclarationContext::KW_TYPEDEF() {
+  return getToken(TypedefParser::KW_TYPEDEF, 0);
 }
 
 tree::TerminalNode* TypedefParser::TypedefVersionDeclarationContext::EQ() {
   return getToken(TypedefParser::EQ, 0);
 }
 
-tree::TerminalNode* TypedefParser::TypedefVersionDeclarationContext::IDENTIFIER() {
-  return getToken(TypedefParser::IDENTIFIER, 0);
+TypedefParser::IdentifierContext* TypedefParser::TypedefVersionDeclarationContext::identifier() {
+  return getRuleContext<TypedefParser::IdentifierContext>(0);
 }
 
 tree::TerminalNode* TypedefParser::TypedefVersionDeclarationContext::SEMI() {
@@ -203,13 +203,13 @@ TypedefParser::TypedefVersionDeclarationContext* TypedefParser::typedefVersionDe
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(73);
-    match(TypedefParser::TYPEDEF);
-    setState(74);
+    setState(53);
+    match(TypedefParser::KW_TYPEDEF);
+    setState(54);
     match(TypedefParser::EQ);
-    setState(75);
-    match(TypedefParser::IDENTIFIER);
-    setState(76);
+    setState(55);
+    identifier();
+    setState(56);
     match(TypedefParser::SEMI);
    
   }
@@ -228,8 +228,8 @@ TypedefParser::ModuleDeclarationContext::ModuleDeclarationContext(ParserRuleCont
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::ModuleDeclarationContext::MODULE() {
-  return getToken(TypedefParser::MODULE, 0);
+tree::TerminalNode* TypedefParser::ModuleDeclarationContext::KW_MODULE() {
+  return getToken(TypedefParser::KW_MODULE, 0);
 }
 
 TypedefParser::SimplePathContext* TypedefParser::ModuleDeclarationContext::simplePath() {
@@ -266,11 +266,11 @@ TypedefParser::ModuleDeclarationContext* TypedefParser::moduleDeclaration() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(78);
-    match(TypedefParser::MODULE);
-    setState(79);
+    setState(58);
+    match(TypedefParser::KW_MODULE);
+    setState(59);
     simplePath();
-    setState(80);
+    setState(60);
     match(TypedefParser::SEMI);
    
   }
@@ -289,12 +289,16 @@ TypedefParser::UseDeclarationContext::UseDeclarationContext(ParserRuleContext *p
   : ParserRuleContext(parent, invokingState) {
 }
 
-TypedefParser::SingleUseDeclarationContext* TypedefParser::UseDeclarationContext::singleUseDeclaration() {
-  return getRuleContext<TypedefParser::SingleUseDeclarationContext>(0);
+tree::TerminalNode* TypedefParser::UseDeclarationContext::KW_USE() {
+  return getToken(TypedefParser::KW_USE, 0);
 }
 
-TypedefParser::WildcardUseDeclarationContext* TypedefParser::UseDeclarationContext::wildcardUseDeclaration() {
-  return getRuleContext<TypedefParser::WildcardUseDeclarationContext>(0);
+TypedefParser::UseTreeContext* TypedefParser::UseDeclarationContext::useTree() {
+  return getRuleContext<TypedefParser::UseTreeContext>(0);
+}
+
+tree::TerminalNode* TypedefParser::UseDeclarationContext::SEMI() {
+  return getToken(TypedefParser::SEMI, 0);
 }
 
 
@@ -322,24 +326,13 @@ TypedefParser::UseDeclarationContext* TypedefParser::useDeclaration() {
     exitRule();
   });
   try {
-    setState(84);
-    _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 3, _ctx)) {
-    case 1: {
-      enterOuterAlt(_localctx, 1);
-      setState(82);
-      singleUseDeclaration();
-      break;
-    }
-
-    case 2: {
-      enterOuterAlt(_localctx, 2);
-      setState(83);
-      wildcardUseDeclaration();
-      break;
-    }
-
-    }
+    enterOuterAlt(_localctx, 1);
+    setState(62);
+    match(TypedefParser::KW_USE);
+    setState(63);
+    useTree();
+    setState(64);
+    match(TypedefParser::SEMI);
    
   }
   catch (RecognitionException &e) {
@@ -351,142 +344,185 @@ TypedefParser::UseDeclarationContext* TypedefParser::useDeclaration() {
   return _localctx;
 }
 
-//----------------- SingleUseDeclarationContext ------------------------------------------------------------------
+//----------------- UseTreeContext ------------------------------------------------------------------
 
-TypedefParser::SingleUseDeclarationContext::SingleUseDeclarationContext(ParserRuleContext *parent, size_t invokingState)
+TypedefParser::UseTreeContext::UseTreeContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::SingleUseDeclarationContext::IMPORT() {
-  return getToken(TypedefParser::IMPORT, 0);
+tree::TerminalNode* TypedefParser::UseTreeContext::STAR() {
+  return getToken(TypedefParser::STAR, 0);
 }
 
-TypedefParser::SimplePathContext* TypedefParser::SingleUseDeclarationContext::simplePath() {
+tree::TerminalNode* TypedefParser::UseTreeContext::LBRACE() {
+  return getToken(TypedefParser::LBRACE, 0);
+}
+
+tree::TerminalNode* TypedefParser::UseTreeContext::RBRACE() {
+  return getToken(TypedefParser::RBRACE, 0);
+}
+
+tree::TerminalNode* TypedefParser::UseTreeContext::PATHSEP() {
+  return getToken(TypedefParser::PATHSEP, 0);
+}
+
+std::vector<TypedefParser::UseTreeContext *> TypedefParser::UseTreeContext::useTree() {
+  return getRuleContexts<TypedefParser::UseTreeContext>();
+}
+
+TypedefParser::UseTreeContext* TypedefParser::UseTreeContext::useTree(size_t i) {
+  return getRuleContext<TypedefParser::UseTreeContext>(i);
+}
+
+TypedefParser::SimplePathContext* TypedefParser::UseTreeContext::simplePath() {
   return getRuleContext<TypedefParser::SimplePathContext>(0);
 }
 
-tree::TerminalNode* TypedefParser::SingleUseDeclarationContext::SEMI() {
-  return getToken(TypedefParser::SEMI, 0);
+std::vector<tree::TerminalNode *> TypedefParser::UseTreeContext::COMMA() {
+  return getTokens(TypedefParser::COMMA);
 }
 
-tree::TerminalNode* TypedefParser::SingleUseDeclarationContext::AS() {
-  return getToken(TypedefParser::AS, 0);
+tree::TerminalNode* TypedefParser::UseTreeContext::COMMA(size_t i) {
+  return getToken(TypedefParser::COMMA, i);
 }
 
-TypedefParser::IdentifierContext* TypedefParser::SingleUseDeclarationContext::identifier() {
+tree::TerminalNode* TypedefParser::UseTreeContext::KW_AS() {
+  return getToken(TypedefParser::KW_AS, 0);
+}
+
+TypedefParser::IdentifierContext* TypedefParser::UseTreeContext::identifier() {
   return getRuleContext<TypedefParser::IdentifierContext>(0);
 }
 
 
-size_t TypedefParser::SingleUseDeclarationContext::getRuleIndex() const {
-  return TypedefParser::RuleSingleUseDeclaration;
+size_t TypedefParser::UseTreeContext::getRuleIndex() const {
+  return TypedefParser::RuleUseTree;
 }
 
-void TypedefParser::SingleUseDeclarationContext::enterRule(tree::ParseTreeListener *listener) {
+void TypedefParser::UseTreeContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterSingleUseDeclaration(this);
+    parserListener->enterUseTree(this);
 }
 
-void TypedefParser::SingleUseDeclarationContext::exitRule(tree::ParseTreeListener *listener) {
+void TypedefParser::UseTreeContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitSingleUseDeclaration(this);
+    parserListener->exitUseTree(this);
 }
 
-TypedefParser::SingleUseDeclarationContext* TypedefParser::singleUseDeclaration() {
-  SingleUseDeclarationContext *_localctx = _tracker.createInstance<SingleUseDeclarationContext>(_ctx, getState());
-  enterRule(_localctx, 8, TypedefParser::RuleSingleUseDeclaration);
+TypedefParser::UseTreeContext* TypedefParser::useTree() {
+  UseTreeContext *_localctx = _tracker.createInstance<UseTreeContext>(_ctx, getState());
+  enterRule(_localctx, 8, TypedefParser::RuleUseTree);
   size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
-    enterOuterAlt(_localctx, 1);
-    setState(86);
-    match(TypedefParser::IMPORT);
-    setState(87);
-    simplePath();
-    setState(90);
-    _errHandler->sync(this);
-
-    _la = _input->LA(1);
-    if (_la == TypedefParser::AS) {
-      setState(88);
-      match(TypedefParser::AS);
-      setState(89);
-      identifier();
-    }
-    setState(92);
-    match(TypedefParser::SEMI);
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- WildcardUseDeclarationContext ------------------------------------------------------------------
-
-TypedefParser::WildcardUseDeclarationContext::WildcardUseDeclarationContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* TypedefParser::WildcardUseDeclarationContext::IMPORT() {
-  return getToken(TypedefParser::IMPORT, 0);
-}
-
-TypedefParser::SimplePathContext* TypedefParser::WildcardUseDeclarationContext::simplePath() {
-  return getRuleContext<TypedefParser::SimplePathContext>(0);
-}
-
-tree::TerminalNode* TypedefParser::WildcardUseDeclarationContext::DOTSTAR() {
-  return getToken(TypedefParser::DOTSTAR, 0);
-}
-
-tree::TerminalNode* TypedefParser::WildcardUseDeclarationContext::SEMI() {
-  return getToken(TypedefParser::SEMI, 0);
-}
-
-
-size_t TypedefParser::WildcardUseDeclarationContext::getRuleIndex() const {
-  return TypedefParser::RuleWildcardUseDeclaration;
-}
-
-void TypedefParser::WildcardUseDeclarationContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterWildcardUseDeclaration(this);
-}
-
-void TypedefParser::WildcardUseDeclarationContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitWildcardUseDeclaration(this);
-}
-
-TypedefParser::WildcardUseDeclarationContext* TypedefParser::wildcardUseDeclaration() {
-  WildcardUseDeclarationContext *_localctx = _tracker.createInstance<WildcardUseDeclarationContext>(_ctx, getState());
-  enterRule(_localctx, 10, TypedefParser::RuleWildcardUseDeclaration);
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(94);
-    match(TypedefParser::IMPORT);
+    size_t alt;
     setState(95);
-    simplePath();
-    setState(96);
-    match(TypedefParser::DOTSTAR);
-    setState(97);
-    match(TypedefParser::SEMI);
+    _errHandler->sync(this);
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 10, _ctx)) {
+    case 1: {
+      enterOuterAlt(_localctx, 1);
+      setState(70);
+      _errHandler->sync(this);
+
+      _la = _input->LA(1);
+      if (((((_la - 67) & ~ 0x3fULL) == 0) &&
+        ((1ULL << (_la - 67)) & ((1ULL << (TypedefParser::NON_KEYWORD_IDENTIFIER - 67))
+        | (1ULL << (TypedefParser::RAW_IDENTIFIER - 67))
+        | (1ULL << (TypedefParser::PATHSEP - 67)))) != 0)) {
+        setState(67);
+        _errHandler->sync(this);
+
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 3, _ctx)) {
+        case 1: {
+          setState(66);
+          simplePath();
+          break;
+        }
+
+        }
+        setState(69);
+        match(TypedefParser::PATHSEP);
+      }
+      setState(88);
+      _errHandler->sync(this);
+      switch (_input->LA(1)) {
+        case TypedefParser::STAR: {
+          setState(72);
+          match(TypedefParser::STAR);
+          break;
+        }
+
+        case TypedefParser::LBRACE: {
+          setState(73);
+          match(TypedefParser::LBRACE);
+          setState(85);
+          _errHandler->sync(this);
+
+          _la = _input->LA(1);
+          if (((((_la - 67) & ~ 0x3fULL) == 0) &&
+            ((1ULL << (_la - 67)) & ((1ULL << (TypedefParser::NON_KEYWORD_IDENTIFIER - 67))
+            | (1ULL << (TypedefParser::RAW_IDENTIFIER - 67))
+            | (1ULL << (TypedefParser::STAR - 67))
+            | (1ULL << (TypedefParser::PATHSEP - 67)))) != 0) || _la == TypedefParser::LBRACE) {
+            setState(74);
+            useTree();
+            setState(79);
+            _errHandler->sync(this);
+            alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 5, _ctx);
+            while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
+              if (alt == 1) {
+                setState(75);
+                match(TypedefParser::COMMA);
+                setState(76);
+                useTree(); 
+              }
+              setState(81);
+              _errHandler->sync(this);
+              alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 5, _ctx);
+            }
+            setState(83);
+            _errHandler->sync(this);
+
+            _la = _input->LA(1);
+            if (_la == TypedefParser::COMMA) {
+              setState(82);
+              match(TypedefParser::COMMA);
+            }
+          }
+          setState(87);
+          match(TypedefParser::RBRACE);
+          break;
+        }
+
+      default:
+        throw NoViableAltException(this);
+      }
+      break;
+    }
+
+    case 2: {
+      enterOuterAlt(_localctx, 2);
+      setState(90);
+      simplePath();
+      setState(93);
+      _errHandler->sync(this);
+
+      _la = _input->LA(1);
+      if (_la == TypedefParser::KW_AS) {
+        setState(91);
+        match(TypedefParser::KW_AS);
+        setState(92);
+        identifier();
+      }
+      break;
+    }
+
+    }
    
   }
   catch (RecognitionException &e) {
@@ -504,8 +540,8 @@ TypedefParser::EnumDeclarationContext::EnumDeclarationContext(ParserRuleContext 
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::EnumDeclarationContext::ENUM() {
-  return getToken(TypedefParser::ENUM, 0);
+tree::TerminalNode* TypedefParser::EnumDeclarationContext::KW_ENUM() {
+  return getToken(TypedefParser::KW_ENUM, 0);
 }
 
 TypedefParser::IdentifierContext* TypedefParser::EnumDeclarationContext::identifier() {
@@ -528,14 +564,6 @@ tree::TerminalNode* TypedefParser::EnumDeclarationContext::SEMI() {
   return getToken(TypedefParser::SEMI, 0);
 }
 
-tree::TerminalNode* TypedefParser::EnumDeclarationContext::COLON() {
-  return getToken(TypedefParser::COLON, 0);
-}
-
-TypedefParser::PrimitiveFixedPointTypeContext* TypedefParser::EnumDeclarationContext::primitiveFixedPointType() {
-  return getRuleContext<TypedefParser::PrimitiveFixedPointTypeContext>(0);
-}
-
 
 size_t TypedefParser::EnumDeclarationContext::getRuleIndex() const {
   return TypedefParser::RuleEnumDeclaration;
@@ -555,29 +583,24 @@ void TypedefParser::EnumDeclarationContext::exitRule(tree::ParseTreeListener *li
 
 TypedefParser::EnumDeclarationContext* TypedefParser::enumDeclaration() {
   EnumDeclarationContext *_localctx = _tracker.createInstance<EnumDeclarationContext>(_ctx, getState());
-  enterRule(_localctx, 12, TypedefParser::RuleEnumDeclaration);
+  enterRule(_localctx, 10, TypedefParser::RuleEnumDeclaration);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(99);
-    match(TypedefParser::ENUM);
-    setState(100);
+    setState(97);
+    match(TypedefParser::KW_ENUM);
+    setState(98);
     identifier();
-
-    setState(101);
-    match(TypedefParser::COLON);
-    setState(102);
-    primitiveFixedPointType();
-    setState(104);
+    setState(99);
     match(TypedefParser::LBRACE);
-    setState(105);
+    setState(100);
     enumBody();
-    setState(106);
+    setState(101);
     match(TypedefParser::RBRACE);
-    setState(107);
+    setState(102);
     match(TypedefParser::SEMI);
    
   }
@@ -596,12 +619,12 @@ TypedefParser::EnumBodyContext::EnumBodyContext(ParserRuleContext *parent, size_
   : ParserRuleContext(parent, invokingState) {
 }
 
-std::vector<TypedefParser::EnumFieldContext *> TypedefParser::EnumBodyContext::enumField() {
-  return getRuleContexts<TypedefParser::EnumFieldContext>();
+std::vector<TypedefParser::IdentifierContext *> TypedefParser::EnumBodyContext::identifier() {
+  return getRuleContexts<TypedefParser::IdentifierContext>();
 }
 
-TypedefParser::EnumFieldContext* TypedefParser::EnumBodyContext::enumField(size_t i) {
-  return getRuleContext<TypedefParser::EnumFieldContext>(i);
+TypedefParser::IdentifierContext* TypedefParser::EnumBodyContext::identifier(size_t i) {
+  return getRuleContext<TypedefParser::IdentifierContext>(i);
 }
 
 std::vector<tree::TerminalNode *> TypedefParser::EnumBodyContext::COMMA() {
@@ -631,7 +654,7 @@ void TypedefParser::EnumBodyContext::exitRule(tree::ParseTreeListener *listener)
 
 TypedefParser::EnumBodyContext* TypedefParser::enumBody() {
   EnumBodyContext *_localctx = _tracker.createInstance<EnumBodyContext>(_ctx, getState());
-  enterRule(_localctx, 14, TypedefParser::RuleEnumBody);
+  enterRule(_localctx, 12, TypedefParser::RuleEnumBody);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -640,15 +663,15 @@ TypedefParser::EnumBodyContext* TypedefParser::enumBody() {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(112); 
+    setState(107); 
     _errHandler->sync(this);
     alt = 1;
     do {
       switch (alt) {
         case 1: {
-              setState(109);
-              enumField();
-              setState(110);
+              setState(104);
+              identifier();
+              setState(105);
               match(TypedefParser::COMMA);
               break;
             }
@@ -656,23 +679,25 @@ TypedefParser::EnumBodyContext* TypedefParser::enumBody() {
       default:
         throw NoViableAltException(this);
       }
-      setState(114); 
+      setState(109); 
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 5, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 11, _ctx);
     } while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER);
-    setState(120);
+    setState(115);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
-    if (_la == TypedefParser::IDENTIFIER) {
-      setState(116);
-      enumField();
-      setState(118);
+    if (_la == TypedefParser::NON_KEYWORD_IDENTIFIER
+
+    || _la == TypedefParser::RAW_IDENTIFIER) {
+      setState(111);
+      identifier();
+      setState(113);
       _errHandler->sync(this);
 
       _la = _input->LA(1);
       if (_la == TypedefParser::COMMA) {
-        setState(117);
+        setState(112);
         match(TypedefParser::COMMA);
       }
     }
@@ -687,134 +712,73 @@ TypedefParser::EnumBodyContext* TypedefParser::enumBody() {
   return _localctx;
 }
 
-//----------------- EnumFieldContext ------------------------------------------------------------------
+//----------------- StructDeclarationContext ------------------------------------------------------------------
 
-TypedefParser::EnumFieldContext::EnumFieldContext(ParserRuleContext *parent, size_t invokingState)
+TypedefParser::StructDeclarationContext::StructDeclarationContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-TypedefParser::IdentifierContext* TypedefParser::EnumFieldContext::identifier() {
+tree::TerminalNode* TypedefParser::StructDeclarationContext::KW_STRUCT() {
+  return getToken(TypedefParser::KW_STRUCT, 0);
+}
+
+TypedefParser::IdentifierContext* TypedefParser::StructDeclarationContext::identifier() {
   return getRuleContext<TypedefParser::IdentifierContext>(0);
 }
 
-tree::TerminalNode* TypedefParser::EnumFieldContext::EQ() {
-  return getToken(TypedefParser::EQ, 0);
-}
-
-TypedefParser::IntegerLiteralContext* TypedefParser::EnumFieldContext::integerLiteral() {
-  return getRuleContext<TypedefParser::IntegerLiteralContext>(0);
-}
-
-
-size_t TypedefParser::EnumFieldContext::getRuleIndex() const {
-  return TypedefParser::RuleEnumField;
-}
-
-void TypedefParser::EnumFieldContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterEnumField(this);
-}
-
-void TypedefParser::EnumFieldContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitEnumField(this);
-}
-
-TypedefParser::EnumFieldContext* TypedefParser::enumField() {
-  EnumFieldContext *_localctx = _tracker.createInstance<EnumFieldContext>(_ctx, getState());
-  enterRule(_localctx, 16, TypedefParser::RuleEnumField);
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(122);
-    identifier();
-    setState(123);
-    match(TypedefParser::EQ);
-    setState(124);
-    integerLiteral();
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- MessageDeclarationContext ------------------------------------------------------------------
-
-TypedefParser::MessageDeclarationContext::MessageDeclarationContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* TypedefParser::MessageDeclarationContext::MESSAGE() {
-  return getToken(TypedefParser::MESSAGE, 0);
-}
-
-TypedefParser::IdentifierContext* TypedefParser::MessageDeclarationContext::identifier() {
-  return getRuleContext<TypedefParser::IdentifierContext>(0);
-}
-
-tree::TerminalNode* TypedefParser::MessageDeclarationContext::LBRACE() {
+tree::TerminalNode* TypedefParser::StructDeclarationContext::LBRACE() {
   return getToken(TypedefParser::LBRACE, 0);
 }
 
-TypedefParser::MessageBodyContext* TypedefParser::MessageDeclarationContext::messageBody() {
+TypedefParser::MessageBodyContext* TypedefParser::StructDeclarationContext::messageBody() {
   return getRuleContext<TypedefParser::MessageBodyContext>(0);
 }
 
-tree::TerminalNode* TypedefParser::MessageDeclarationContext::RBRACE() {
+tree::TerminalNode* TypedefParser::StructDeclarationContext::RBRACE() {
   return getToken(TypedefParser::RBRACE, 0);
 }
 
-tree::TerminalNode* TypedefParser::MessageDeclarationContext::SEMI() {
+tree::TerminalNode* TypedefParser::StructDeclarationContext::SEMI() {
   return getToken(TypedefParser::SEMI, 0);
 }
 
 
-size_t TypedefParser::MessageDeclarationContext::getRuleIndex() const {
-  return TypedefParser::RuleMessageDeclaration;
+size_t TypedefParser::StructDeclarationContext::getRuleIndex() const {
+  return TypedefParser::RuleStructDeclaration;
 }
 
-void TypedefParser::MessageDeclarationContext::enterRule(tree::ParseTreeListener *listener) {
+void TypedefParser::StructDeclarationContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterMessageDeclaration(this);
+    parserListener->enterStructDeclaration(this);
 }
 
-void TypedefParser::MessageDeclarationContext::exitRule(tree::ParseTreeListener *listener) {
+void TypedefParser::StructDeclarationContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitMessageDeclaration(this);
+    parserListener->exitStructDeclaration(this);
 }
 
-TypedefParser::MessageDeclarationContext* TypedefParser::messageDeclaration() {
-  MessageDeclarationContext *_localctx = _tracker.createInstance<MessageDeclarationContext>(_ctx, getState());
-  enterRule(_localctx, 18, TypedefParser::RuleMessageDeclaration);
+TypedefParser::StructDeclarationContext* TypedefParser::structDeclaration() {
+  StructDeclarationContext *_localctx = _tracker.createInstance<StructDeclarationContext>(_ctx, getState());
+  enterRule(_localctx, 14, TypedefParser::RuleStructDeclaration);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(126);
-    match(TypedefParser::MESSAGE);
-    setState(127);
+    setState(117);
+    match(TypedefParser::KW_STRUCT);
+    setState(118);
     identifier();
-    setState(128);
+    setState(119);
     match(TypedefParser::LBRACE);
-    setState(129);
+    setState(120);
     messageBody();
-    setState(130);
+    setState(121);
     match(TypedefParser::RBRACE);
-    setState(131);
+    setState(122);
     match(TypedefParser::SEMI);
    
   }
@@ -868,7 +832,7 @@ void TypedefParser::MessageBodyContext::exitRule(tree::ParseTreeListener *listen
 
 TypedefParser::MessageBodyContext* TypedefParser::messageBody() {
   MessageBodyContext *_localctx = _tracker.createInstance<MessageBodyContext>(_ctx, getState());
-  enterRule(_localctx, 20, TypedefParser::RuleMessageBody);
+  enterRule(_localctx, 16, TypedefParser::RuleMessageBody);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -876,23 +840,24 @@ TypedefParser::MessageBodyContext* TypedefParser::messageBody() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(137);
+    setState(128);
     _errHandler->sync(this);
     _la = _input->LA(1);
-    while (_la == TypedefParser::ENUM
+    while (_la == TypedefParser::KW_ENUM || _la == TypedefParser::NON_KEYWORD_IDENTIFIER
 
-    || _la == TypedefParser::IDENTIFIER) {
-      setState(135);
+    || _la == TypedefParser::RAW_IDENTIFIER) {
+      setState(126);
       _errHandler->sync(this);
       switch (_input->LA(1)) {
-        case TypedefParser::IDENTIFIER: {
-          setState(133);
+        case TypedefParser::NON_KEYWORD_IDENTIFIER:
+        case TypedefParser::RAW_IDENTIFIER: {
+          setState(124);
           fieldDeclaration();
           break;
         }
 
-        case TypedefParser::ENUM: {
-          setState(134);
+        case TypedefParser::KW_ENUM: {
+          setState(125);
           enumDeclaration();
           break;
         }
@@ -900,7 +865,7 @@ TypedefParser::MessageBodyContext* TypedefParser::messageBody() {
       default:
         throw NoViableAltException(this);
       }
-      setState(139);
+      setState(130);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
@@ -921,20 +886,16 @@ TypedefParser::FieldDeclarationContext::FieldDeclarationContext(ParserRuleContex
   : ParserRuleContext(parent, invokingState) {
 }
 
-TypedefParser::IdentifierContext* TypedefParser::FieldDeclarationContext::identifier() {
-  return getRuleContext<TypedefParser::IdentifierContext>(0);
+std::vector<TypedefParser::IdentifierContext *> TypedefParser::FieldDeclarationContext::identifier() {
+  return getRuleContexts<TypedefParser::IdentifierContext>();
+}
+
+TypedefParser::IdentifierContext* TypedefParser::FieldDeclarationContext::identifier(size_t i) {
+  return getRuleContext<TypedefParser::IdentifierContext>(i);
 }
 
 tree::TerminalNode* TypedefParser::FieldDeclarationContext::COLON() {
   return getToken(TypedefParser::COLON, 0);
-}
-
-TypedefParser::TypeContext* TypedefParser::FieldDeclarationContext::type() {
-  return getRuleContext<TypedefParser::TypeContext>(0);
-}
-
-TypedefParser::PositionContext* TypedefParser::FieldDeclarationContext::position() {
-  return getRuleContext<TypedefParser::PositionContext>(0);
 }
 
 tree::TerminalNode* TypedefParser::FieldDeclarationContext::SEMI() {
@@ -968,7 +929,7 @@ void TypedefParser::FieldDeclarationContext::exitRule(tree::ParseTreeListener *l
 
 TypedefParser::FieldDeclarationContext* TypedefParser::fieldDeclaration() {
   FieldDeclarationContext *_localctx = _tracker.createInstance<FieldDeclarationContext>(_ctx, getState());
-  enterRule(_localctx, 22, TypedefParser::RuleFieldDeclaration);
+  enterRule(_localctx, 18, TypedefParser::RuleFieldDeclaration);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -976,25 +937,23 @@ TypedefParser::FieldDeclarationContext* TypedefParser::fieldDeclaration() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(140);
+    setState(131);
     identifier();
-    setState(141);
+    setState(132);
     match(TypedefParser::COLON);
-    setState(142);
-    type();
-    setState(143);
-    position();
-    setState(146);
+    setState(133);
+    identifier();
+    setState(136);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == TypedefParser::EQ) {
-      setState(144);
+      setState(134);
       match(TypedefParser::EQ);
-      setState(145);
+      setState(135);
       value();
     }
-    setState(148);
+    setState(138);
     match(TypedefParser::SEMI);
    
   }
@@ -1013,8 +972,8 @@ TypedefParser::ValueContext::ValueContext(ParserRuleContext *parent, size_t invo
   : ParserRuleContext(parent, invokingState) {
 }
 
-TypedefParser::LiteralContext* TypedefParser::ValueContext::literal() {
-  return getRuleContext<TypedefParser::LiteralContext>(0);
+TypedefParser::LiteralExpressionContext* TypedefParser::ValueContext::literalExpression() {
+  return getRuleContext<TypedefParser::LiteralExpressionContext>(0);
 }
 
 TypedefParser::ArrayContext* TypedefParser::ValueContext::array() {
@@ -1048,49 +1007,49 @@ void TypedefParser::ValueContext::exitRule(tree::ParseTreeListener *listener) {
 
 TypedefParser::ValueContext* TypedefParser::value() {
   ValueContext *_localctx = _tracker.createInstance<ValueContext>(_ctx, getState());
-  enterRule(_localctx, 24, TypedefParser::RuleValue);
+  enterRule(_localctx, 20, TypedefParser::RuleValue);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
-    setState(154);
+    setState(144);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case TypedefParser::TRUE:
-      case TypedefParser::FALSE:
-      case TypedefParser::DECIMAL_LITERAL:
-      case TypedefParser::HEX_LITERAL:
-      case TypedefParser::OCT_LITERAL:
-      case TypedefParser::BINARY_LITERAL:
-      case TypedefParser::FLOAT_LITERAL:
-      case TypedefParser::HEX_FLOAT_LITERAL:
+      case TypedefParser::KW_FALSE:
+      case TypedefParser::KW_TRUE:
       case TypedefParser::CHAR_LITERAL:
       case TypedefParser::STRING_LITERAL:
-      case TypedefParser::TEXT_BLOCK: {
+      case TypedefParser::RAW_STRING_LITERAL:
+      case TypedefParser::BYTE_LITERAL:
+      case TypedefParser::BYTE_STRING_LITERAL:
+      case TypedefParser::RAW_BYTE_STRING_LITERAL:
+      case TypedefParser::INTEGER_LITERAL:
+      case TypedefParser::FLOAT_LITERAL: {
         enterOuterAlt(_localctx, 1);
-        setState(150);
-        literal();
+        setState(140);
+        literalExpression();
         break;
       }
 
       case TypedefParser::LBRACK: {
         enterOuterAlt(_localctx, 2);
-        setState(151);
+        setState(141);
         array();
         break;
       }
 
       case TypedefParser::LBRACE: {
         enterOuterAlt(_localctx, 3);
-        setState(152);
+        setState(142);
         map();
         break;
       }
 
-      case TypedefParser::IDENTIFIER: {
+      case TypedefParser::NON_KEYWORD_IDENTIFIER:
+      case TypedefParser::RAW_IDENTIFIER: {
         enterOuterAlt(_localctx, 4);
-        setState(153);
+        setState(143);
         identifier();
         break;
       }
@@ -1158,7 +1117,7 @@ void TypedefParser::ArrayContext::exitRule(tree::ParseTreeListener *listener) {
 
 TypedefParser::ArrayContext* TypedefParser::array() {
   ArrayContext *_localctx = _tracker.createInstance<ArrayContext>(_ctx, getState());
-  enterRule(_localctx, 26, TypedefParser::RuleArray);
+  enterRule(_localctx, 22, TypedefParser::RuleArray);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -1167,53 +1126,53 @@ TypedefParser::ArrayContext* TypedefParser::array() {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(156);
+    setState(146);
     match(TypedefParser::LBRACK);
-    setState(165);
+    setState(155);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
-    if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << TypedefParser::TRUE)
-      | (1ULL << TypedefParser::FALSE)
-      | (1ULL << TypedefParser::DECIMAL_LITERAL)
-      | (1ULL << TypedefParser::HEX_LITERAL)
-      | (1ULL << TypedefParser::OCT_LITERAL)
-      | (1ULL << TypedefParser::BINARY_LITERAL)
-      | (1ULL << TypedefParser::FLOAT_LITERAL)
-      | (1ULL << TypedefParser::HEX_FLOAT_LITERAL)
-      | (1ULL << TypedefParser::CHAR_LITERAL)
-      | (1ULL << TypedefParser::STRING_LITERAL)
-      | (1ULL << TypedefParser::TEXT_BLOCK)
-      | (1ULL << TypedefParser::LBRACE)
-      | (1ULL << TypedefParser::LBRACK)
-      | (1ULL << TypedefParser::IDENTIFIER))) != 0)) {
-      setState(157);
+    if (_la == TypedefParser::KW_FALSE
+
+    || _la == TypedefParser::KW_TRUE || ((((_la - 67) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 67)) & ((1ULL << (TypedefParser::NON_KEYWORD_IDENTIFIER - 67))
+      | (1ULL << (TypedefParser::RAW_IDENTIFIER - 67))
+      | (1ULL << (TypedefParser::CHAR_LITERAL - 67))
+      | (1ULL << (TypedefParser::STRING_LITERAL - 67))
+      | (1ULL << (TypedefParser::RAW_STRING_LITERAL - 67))
+      | (1ULL << (TypedefParser::BYTE_LITERAL - 67))
+      | (1ULL << (TypedefParser::BYTE_STRING_LITERAL - 67))
+      | (1ULL << (TypedefParser::RAW_BYTE_STRING_LITERAL - 67))
+      | (1ULL << (TypedefParser::INTEGER_LITERAL - 67))
+      | (1ULL << (TypedefParser::FLOAT_LITERAL - 67)))) != 0) || _la == TypedefParser::LBRACE
+
+    || _la == TypedefParser::LBRACK) {
+      setState(147);
       value();
-      setState(162);
+      setState(152);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 12, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 18, _ctx);
       while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
         if (alt == 1) {
-          setState(158);
+          setState(148);
           match(TypedefParser::COMMA);
-          setState(159);
+          setState(149);
           value(); 
         }
-        setState(164);
+        setState(154);
         _errHandler->sync(this);
-        alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 12, _ctx);
+        alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 18, _ctx);
       }
     }
-    setState(168);
+    setState(158);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == TypedefParser::COMMA) {
-      setState(167);
+      setState(157);
       match(TypedefParser::COMMA);
     }
-    setState(170);
+    setState(160);
     match(TypedefParser::RBRACK);
    
   }
@@ -1275,7 +1234,7 @@ void TypedefParser::MapContext::exitRule(tree::ParseTreeListener *listener) {
 
 TypedefParser::MapContext* TypedefParser::map() {
   MapContext *_localctx = _tracker.createInstance<MapContext>(_ctx, getState());
-  enterRule(_localctx, 28, TypedefParser::RuleMap);
+  enterRule(_localctx, 24, TypedefParser::RuleMap);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -1284,39 +1243,41 @@ TypedefParser::MapContext* TypedefParser::map() {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(172);
+    setState(162);
     match(TypedefParser::LBRACE);
-    setState(184);
+    setState(174);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
-    if (_la == TypedefParser::IDENTIFIER) {
-      setState(173);
+    if (_la == TypedefParser::NON_KEYWORD_IDENTIFIER
+
+    || _la == TypedefParser::RAW_IDENTIFIER) {
+      setState(163);
       keyValue();
-      setState(178);
+      setState(168);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 15, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx);
       while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
         if (alt == 1) {
-          setState(174);
+          setState(164);
           match(TypedefParser::COMMA);
-          setState(175);
+          setState(165);
           keyValue(); 
         }
-        setState(180);
+        setState(170);
         _errHandler->sync(this);
-        alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 15, _ctx);
+        alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx);
       }
-      setState(182);
+      setState(172);
       _errHandler->sync(this);
 
       _la = _input->LA(1);
       if (_la == TypedefParser::COMMA) {
-        setState(181);
+        setState(171);
         match(TypedefParser::COMMA);
       }
     }
-    setState(186);
+    setState(176);
     match(TypedefParser::RBRACE);
    
   }
@@ -1366,165 +1327,19 @@ void TypedefParser::KeyValueContext::exitRule(tree::ParseTreeListener *listener)
 
 TypedefParser::KeyValueContext* TypedefParser::keyValue() {
   KeyValueContext *_localctx = _tracker.createInstance<KeyValueContext>(_ctx, getState());
-  enterRule(_localctx, 30, TypedefParser::RuleKeyValue);
+  enterRule(_localctx, 26, TypedefParser::RuleKeyValue);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(188);
+    setState(178);
     identifier();
-    setState(189);
+    setState(179);
     match(TypedefParser::COLON);
-    setState(190);
+    setState(180);
     value();
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- TypeContext ------------------------------------------------------------------
-
-TypedefParser::TypeContext::TypeContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-TypedefParser::ArrayIdentifierContext* TypedefParser::TypeContext::arrayIdentifier() {
-  return getRuleContext<TypedefParser::ArrayIdentifierContext>(0);
-}
-
-TypedefParser::TypeTypeContext* TypedefParser::TypeContext::typeType() {
-  return getRuleContext<TypedefParser::TypeTypeContext>(0);
-}
-
-
-size_t TypedefParser::TypeContext::getRuleIndex() const {
-  return TypedefParser::RuleType;
-}
-
-void TypedefParser::TypeContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterType(this);
-}
-
-void TypedefParser::TypeContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitType(this);
-}
-
-TypedefParser::TypeContext* TypedefParser::type() {
-  TypeContext *_localctx = _tracker.createInstance<TypeContext>(_ctx, getState());
-  enterRule(_localctx, 32, TypedefParser::RuleType);
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    setState(194);
-    _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 18, _ctx)) {
-    case 1: {
-      enterOuterAlt(_localctx, 1);
-      setState(192);
-      arrayIdentifier();
-      break;
-    }
-
-    case 2: {
-      enterOuterAlt(_localctx, 2);
-      setState(193);
-      typeType();
-      break;
-    }
-
-    }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- ArrayIdentifierContext ------------------------------------------------------------------
-
-TypedefParser::ArrayIdentifierContext::ArrayIdentifierContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-TypedefParser::TypeTypeContext* TypedefParser::ArrayIdentifierContext::typeType() {
-  return getRuleContext<TypedefParser::TypeTypeContext>(0);
-}
-
-tree::TerminalNode* TypedefParser::ArrayIdentifierContext::LBRACK() {
-  return getToken(TypedefParser::LBRACK, 0);
-}
-
-tree::TerminalNode* TypedefParser::ArrayIdentifierContext::RBRACK() {
-  return getToken(TypedefParser::RBRACK, 0);
-}
-
-TypedefParser::IntegerLiteralContext* TypedefParser::ArrayIdentifierContext::integerLiteral() {
-  return getRuleContext<TypedefParser::IntegerLiteralContext>(0);
-}
-
-
-size_t TypedefParser::ArrayIdentifierContext::getRuleIndex() const {
-  return TypedefParser::RuleArrayIdentifier;
-}
-
-void TypedefParser::ArrayIdentifierContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterArrayIdentifier(this);
-}
-
-void TypedefParser::ArrayIdentifierContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitArrayIdentifier(this);
-}
-
-TypedefParser::ArrayIdentifierContext* TypedefParser::arrayIdentifier() {
-  ArrayIdentifierContext *_localctx = _tracker.createInstance<ArrayIdentifierContext>(_ctx, getState());
-  enterRule(_localctx, 34, TypedefParser::RuleArrayIdentifier);
-  size_t _la = 0;
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(196);
-    typeType();
-    setState(197);
-    match(TypedefParser::LBRACK);
-    setState(199);
-    _errHandler->sync(this);
-
-    _la = _input->LA(1);
-    if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << TypedefParser::DECIMAL_LITERAL)
-      | (1ULL << TypedefParser::HEX_LITERAL)
-      | (1ULL << TypedefParser::OCT_LITERAL)
-      | (1ULL << TypedefParser::BINARY_LITERAL))) != 0)) {
-      setState(198);
-      integerLiteral();
-    }
-    setState(201);
-    match(TypedefParser::RBRACK);
    
   }
   catch (RecognitionException &e) {
@@ -1550,12 +1365,12 @@ TypedefParser::IdentifierContext* TypedefParser::SimplePathContext::identifier(s
   return getRuleContext<TypedefParser::IdentifierContext>(i);
 }
 
-std::vector<tree::TerminalNode *> TypedefParser::SimplePathContext::PS() {
-  return getTokens(TypedefParser::PS);
+std::vector<tree::TerminalNode *> TypedefParser::SimplePathContext::PATHSEP() {
+  return getTokens(TypedefParser::PATHSEP);
 }
 
-tree::TerminalNode* TypedefParser::SimplePathContext::PS(size_t i) {
-  return getToken(TypedefParser::PS, i);
+tree::TerminalNode* TypedefParser::SimplePathContext::PATHSEP(size_t i) {
+  return getToken(TypedefParser::PATHSEP, i);
 }
 
 
@@ -1577,35 +1392,38 @@ void TypedefParser::SimplePathContext::exitRule(tree::ParseTreeListener *listene
 
 TypedefParser::SimplePathContext* TypedefParser::simplePath() {
   SimplePathContext *_localctx = _tracker.createInstance<SimplePathContext>(_ctx, getState());
-  enterRule(_localctx, 36, TypedefParser::RuleSimplePath);
+  enterRule(_localctx, 28, TypedefParser::RuleSimplePath);
   size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
+    size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(204);
+    setState(183);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
-    if (_la == TypedefParser::PS) {
-      setState(203);
-      match(TypedefParser::PS);
+    if (_la == TypedefParser::PATHSEP) {
+      setState(182);
+      match(TypedefParser::PATHSEP);
     }
-    setState(206);
+    setState(185);
     identifier();
-    setState(211);
+    setState(190);
     _errHandler->sync(this);
-    _la = _input->LA(1);
-    while (_la == TypedefParser::PS) {
-      setState(207);
-      match(TypedefParser::PS);
-      setState(208);
-      identifier();
-      setState(213);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 25, _ctx);
+    while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
+      if (alt == 1) {
+        setState(186);
+        match(TypedefParser::PATHSEP);
+        setState(187);
+        identifier(); 
+      }
+      setState(192);
       _errHandler->sync(this);
-      _la = _input->LA(1);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 25, _ctx);
     }
    
   }
@@ -1618,50 +1436,98 @@ TypedefParser::SimplePathContext* TypedefParser::simplePath() {
   return _localctx;
 }
 
-//----------------- PositionContext ------------------------------------------------------------------
+//----------------- LiteralExpressionContext ------------------------------------------------------------------
 
-TypedefParser::PositionContext::PositionContext(ParserRuleContext *parent, size_t invokingState)
+TypedefParser::LiteralExpressionContext::LiteralExpressionContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::PositionContext::AT() {
-  return getToken(TypedefParser::AT, 0);
+tree::TerminalNode* TypedefParser::LiteralExpressionContext::CHAR_LITERAL() {
+  return getToken(TypedefParser::CHAR_LITERAL, 0);
 }
 
-TypedefParser::IntegerLiteralContext* TypedefParser::PositionContext::integerLiteral() {
-  return getRuleContext<TypedefParser::IntegerLiteralContext>(0);
+tree::TerminalNode* TypedefParser::LiteralExpressionContext::STRING_LITERAL() {
+  return getToken(TypedefParser::STRING_LITERAL, 0);
+}
+
+tree::TerminalNode* TypedefParser::LiteralExpressionContext::RAW_STRING_LITERAL() {
+  return getToken(TypedefParser::RAW_STRING_LITERAL, 0);
+}
+
+tree::TerminalNode* TypedefParser::LiteralExpressionContext::BYTE_LITERAL() {
+  return getToken(TypedefParser::BYTE_LITERAL, 0);
+}
+
+tree::TerminalNode* TypedefParser::LiteralExpressionContext::BYTE_STRING_LITERAL() {
+  return getToken(TypedefParser::BYTE_STRING_LITERAL, 0);
+}
+
+tree::TerminalNode* TypedefParser::LiteralExpressionContext::RAW_BYTE_STRING_LITERAL() {
+  return getToken(TypedefParser::RAW_BYTE_STRING_LITERAL, 0);
+}
+
+tree::TerminalNode* TypedefParser::LiteralExpressionContext::INTEGER_LITERAL() {
+  return getToken(TypedefParser::INTEGER_LITERAL, 0);
+}
+
+tree::TerminalNode* TypedefParser::LiteralExpressionContext::FLOAT_LITERAL() {
+  return getToken(TypedefParser::FLOAT_LITERAL, 0);
+}
+
+tree::TerminalNode* TypedefParser::LiteralExpressionContext::KW_TRUE() {
+  return getToken(TypedefParser::KW_TRUE, 0);
+}
+
+tree::TerminalNode* TypedefParser::LiteralExpressionContext::KW_FALSE() {
+  return getToken(TypedefParser::KW_FALSE, 0);
 }
 
 
-size_t TypedefParser::PositionContext::getRuleIndex() const {
-  return TypedefParser::RulePosition;
+size_t TypedefParser::LiteralExpressionContext::getRuleIndex() const {
+  return TypedefParser::RuleLiteralExpression;
 }
 
-void TypedefParser::PositionContext::enterRule(tree::ParseTreeListener *listener) {
+void TypedefParser::LiteralExpressionContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterPosition(this);
+    parserListener->enterLiteralExpression(this);
 }
 
-void TypedefParser::PositionContext::exitRule(tree::ParseTreeListener *listener) {
+void TypedefParser::LiteralExpressionContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitPosition(this);
+    parserListener->exitLiteralExpression(this);
 }
 
-TypedefParser::PositionContext* TypedefParser::position() {
-  PositionContext *_localctx = _tracker.createInstance<PositionContext>(_ctx, getState());
-  enterRule(_localctx, 38, TypedefParser::RulePosition);
+TypedefParser::LiteralExpressionContext* TypedefParser::literalExpression() {
+  LiteralExpressionContext *_localctx = _tracker.createInstance<LiteralExpressionContext>(_ctx, getState());
+  enterRule(_localctx, 30, TypedefParser::RuleLiteralExpression);
+  size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(214);
-    match(TypedefParser::AT);
-    setState(215);
-    integerLiteral();
+    setState(193);
+    _la = _input->LA(1);
+    if (!(_la == TypedefParser::KW_FALSE
+
+    || _la == TypedefParser::KW_TRUE || ((((_la - 79) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 79)) & ((1ULL << (TypedefParser::CHAR_LITERAL - 79))
+      | (1ULL << (TypedefParser::STRING_LITERAL - 79))
+      | (1ULL << (TypedefParser::RAW_STRING_LITERAL - 79))
+      | (1ULL << (TypedefParser::BYTE_LITERAL - 79))
+      | (1ULL << (TypedefParser::BYTE_STRING_LITERAL - 79))
+      | (1ULL << (TypedefParser::RAW_BYTE_STRING_LITERAL - 79))
+      | (1ULL << (TypedefParser::INTEGER_LITERAL - 79))
+      | (1ULL << (TypedefParser::FLOAT_LITERAL - 79)))) != 0))) {
+    _errHandler->recoverInline(this);
+    }
+    else {
+      _errHandler->reportMatch(this);
+      consume();
+    }
    
   }
   catch (RecognitionException &e) {
@@ -1679,8 +1545,12 @@ TypedefParser::IdentifierContext::IdentifierContext(ParserRuleContext *parent, s
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::IdentifierContext::IDENTIFIER() {
-  return getToken(TypedefParser::IDENTIFIER, 0);
+tree::TerminalNode* TypedefParser::IdentifierContext::NON_KEYWORD_IDENTIFIER() {
+  return getToken(TypedefParser::NON_KEYWORD_IDENTIFIER, 0);
+}
+
+tree::TerminalNode* TypedefParser::IdentifierContext::RAW_IDENTIFIER() {
+  return getToken(TypedefParser::RAW_IDENTIFIER, 0);
 }
 
 
@@ -1702,179 +1572,7 @@ void TypedefParser::IdentifierContext::exitRule(tree::ParseTreeListener *listene
 
 TypedefParser::IdentifierContext* TypedefParser::identifier() {
   IdentifierContext *_localctx = _tracker.createInstance<IdentifierContext>(_ctx, getState());
-  enterRule(_localctx, 40, TypedefParser::RuleIdentifier);
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(217);
-    match(TypedefParser::IDENTIFIER);
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- LiteralContext ------------------------------------------------------------------
-
-TypedefParser::LiteralContext::LiteralContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-TypedefParser::IntegerLiteralContext* TypedefParser::LiteralContext::integerLiteral() {
-  return getRuleContext<TypedefParser::IntegerLiteralContext>(0);
-}
-
-TypedefParser::FloatLiteralContext* TypedefParser::LiteralContext::floatLiteral() {
-  return getRuleContext<TypedefParser::FloatLiteralContext>(0);
-}
-
-tree::TerminalNode* TypedefParser::LiteralContext::CHAR_LITERAL() {
-  return getToken(TypedefParser::CHAR_LITERAL, 0);
-}
-
-tree::TerminalNode* TypedefParser::LiteralContext::STRING_LITERAL() {
-  return getToken(TypedefParser::STRING_LITERAL, 0);
-}
-
-TypedefParser::BoolLiteralContext* TypedefParser::LiteralContext::boolLiteral() {
-  return getRuleContext<TypedefParser::BoolLiteralContext>(0);
-}
-
-tree::TerminalNode* TypedefParser::LiteralContext::TEXT_BLOCK() {
-  return getToken(TypedefParser::TEXT_BLOCK, 0);
-}
-
-
-size_t TypedefParser::LiteralContext::getRuleIndex() const {
-  return TypedefParser::RuleLiteral;
-}
-
-void TypedefParser::LiteralContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterLiteral(this);
-}
-
-void TypedefParser::LiteralContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitLiteral(this);
-}
-
-TypedefParser::LiteralContext* TypedefParser::literal() {
-  LiteralContext *_localctx = _tracker.createInstance<LiteralContext>(_ctx, getState());
-  enterRule(_localctx, 42, TypedefParser::RuleLiteral);
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    setState(225);
-    _errHandler->sync(this);
-    switch (_input->LA(1)) {
-      case TypedefParser::DECIMAL_LITERAL:
-      case TypedefParser::HEX_LITERAL:
-      case TypedefParser::OCT_LITERAL:
-      case TypedefParser::BINARY_LITERAL: {
-        enterOuterAlt(_localctx, 1);
-        setState(219);
-        integerLiteral();
-        break;
-      }
-
-      case TypedefParser::FLOAT_LITERAL:
-      case TypedefParser::HEX_FLOAT_LITERAL: {
-        enterOuterAlt(_localctx, 2);
-        setState(220);
-        floatLiteral();
-        break;
-      }
-
-      case TypedefParser::CHAR_LITERAL: {
-        enterOuterAlt(_localctx, 3);
-        setState(221);
-        match(TypedefParser::CHAR_LITERAL);
-        break;
-      }
-
-      case TypedefParser::STRING_LITERAL: {
-        enterOuterAlt(_localctx, 4);
-        setState(222);
-        match(TypedefParser::STRING_LITERAL);
-        break;
-      }
-
-      case TypedefParser::TRUE:
-      case TypedefParser::FALSE: {
-        enterOuterAlt(_localctx, 5);
-        setState(223);
-        boolLiteral();
-        break;
-      }
-
-      case TypedefParser::TEXT_BLOCK: {
-        enterOuterAlt(_localctx, 6);
-        setState(224);
-        match(TypedefParser::TEXT_BLOCK);
-        break;
-      }
-
-    default:
-      throw NoViableAltException(this);
-    }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- BoolLiteralContext ------------------------------------------------------------------
-
-TypedefParser::BoolLiteralContext::BoolLiteralContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* TypedefParser::BoolLiteralContext::TRUE() {
-  return getToken(TypedefParser::TRUE, 0);
-}
-
-tree::TerminalNode* TypedefParser::BoolLiteralContext::FALSE() {
-  return getToken(TypedefParser::FALSE, 0);
-}
-
-
-size_t TypedefParser::BoolLiteralContext::getRuleIndex() const {
-  return TypedefParser::RuleBoolLiteral;
-}
-
-void TypedefParser::BoolLiteralContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterBoolLiteral(this);
-}
-
-void TypedefParser::BoolLiteralContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitBoolLiteral(this);
-}
-
-TypedefParser::BoolLiteralContext* TypedefParser::boolLiteral() {
-  BoolLiteralContext *_localctx = _tracker.createInstance<BoolLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 44, TypedefParser::RuleBoolLiteral);
+  enterRule(_localctx, 32, TypedefParser::RuleIdentifier);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -1882,11 +1580,11 @@ TypedefParser::BoolLiteralContext* TypedefParser::boolLiteral() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(227);
+    setState(195);
     _la = _input->LA(1);
-    if (!(_la == TypedefParser::TRUE
+    if (!(_la == TypedefParser::NON_KEYWORD_IDENTIFIER
 
-    || _la == TypedefParser::FALSE)) {
+    || _la == TypedefParser::RAW_IDENTIFIER)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -1904,48 +1602,296 @@ TypedefParser::BoolLiteralContext* TypedefParser::boolLiteral() {
   return _localctx;
 }
 
-//----------------- IntegerLiteralContext ------------------------------------------------------------------
+//----------------- KeywordContext ------------------------------------------------------------------
 
-TypedefParser::IntegerLiteralContext::IntegerLiteralContext(ParserRuleContext *parent, size_t invokingState)
+TypedefParser::KeywordContext::KeywordContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::IntegerLiteralContext::DECIMAL_LITERAL() {
-  return getToken(TypedefParser::DECIMAL_LITERAL, 0);
+tree::TerminalNode* TypedefParser::KeywordContext::KW_AS() {
+  return getToken(TypedefParser::KW_AS, 0);
 }
 
-tree::TerminalNode* TypedefParser::IntegerLiteralContext::HEX_LITERAL() {
-  return getToken(TypedefParser::HEX_LITERAL, 0);
+tree::TerminalNode* TypedefParser::KeywordContext::KW_ENUM() {
+  return getToken(TypedefParser::KW_ENUM, 0);
 }
 
-tree::TerminalNode* TypedefParser::IntegerLiteralContext::OCT_LITERAL() {
-  return getToken(TypedefParser::OCT_LITERAL, 0);
+tree::TerminalNode* TypedefParser::KeywordContext::KW_FALSE() {
+  return getToken(TypedefParser::KW_FALSE, 0);
 }
 
-tree::TerminalNode* TypedefParser::IntegerLiteralContext::BINARY_LITERAL() {
-  return getToken(TypedefParser::BINARY_LITERAL, 0);
+tree::TerminalNode* TypedefParser::KeywordContext::KW_FN() {
+  return getToken(TypedefParser::KW_FN, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_IMPL() {
+  return getToken(TypedefParser::KW_IMPL, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_MODULE() {
+  return getToken(TypedefParser::KW_MODULE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_STRUCT() {
+  return getToken(TypedefParser::KW_STRUCT, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_TRUE() {
+  return getToken(TypedefParser::KW_TRUE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_TYPE() {
+  return getToken(TypedefParser::KW_TYPE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_TYPEDEF() {
+  return getToken(TypedefParser::KW_TYPEDEF, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_USE() {
+  return getToken(TypedefParser::KW_USE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_AND() {
+  return getToken(TypedefParser::KW_AND, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_IN() {
+  return getToken(TypedefParser::KW_IN, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_LET() {
+  return getToken(TypedefParser::KW_LET, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_NOT() {
+  return getToken(TypedefParser::KW_NOT, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_OR() {
+  return getToken(TypedefParser::KW_OR, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_SIZEOF() {
+  return getToken(TypedefParser::KW_SIZEOF, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_THIS() {
+  return getToken(TypedefParser::KW_THIS, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_TRAIT() {
+  return getToken(TypedefParser::KW_TRAIT, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_WHERE() {
+  return getToken(TypedefParser::KW_WHERE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_XOR() {
+  return getToken(TypedefParser::KW_XOR, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_BREAK() {
+  return getToken(TypedefParser::KW_BREAK, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_CONTINUE() {
+  return getToken(TypedefParser::KW_CONTINUE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_DEFAULT() {
+  return getToken(TypedefParser::KW_DEFAULT, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_DO() {
+  return getToken(TypedefParser::KW_DO, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_ELSE() {
+  return getToken(TypedefParser::KW_ELSE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_FOR() {
+  return getToken(TypedefParser::KW_FOR, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_GOTO() {
+  return getToken(TypedefParser::KW_GOTO, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_IF() {
+  return getToken(TypedefParser::KW_IF, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_LOOP() {
+  return getToken(TypedefParser::KW_LOOP, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_MATCH() {
+  return getToken(TypedefParser::KW_MATCH, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_MOVE() {
+  return getToken(TypedefParser::KW_MOVE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_RETURN() {
+  return getToken(TypedefParser::KW_RETURN, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_TRY() {
+  return getToken(TypedefParser::KW_TRY, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_WHILE() {
+  return getToken(TypedefParser::KW_WHILE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_YIELD() {
+  return getToken(TypedefParser::KW_YIELD, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_ABSTRACT() {
+  return getToken(TypedefParser::KW_ABSTRACT, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_AUTO() {
+  return getToken(TypedefParser::KW_AUTO, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_CHAR() {
+  return getToken(TypedefParser::KW_CHAR, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_CONST() {
+  return getToken(TypedefParser::KW_CONST, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_DOUBLE() {
+  return getToken(TypedefParser::KW_DOUBLE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_EXTERN() {
+  return getToken(TypedefParser::KW_EXTERN, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_FINAL() {
+  return getToken(TypedefParser::KW_FINAL, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_FLOAT() {
+  return getToken(TypedefParser::KW_FLOAT, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_INT() {
+  return getToken(TypedefParser::KW_INT, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_LONG() {
+  return getToken(TypedefParser::KW_LONG, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_MACRO() {
+  return getToken(TypedefParser::KW_MACRO, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_MUT() {
+  return getToken(TypedefParser::KW_MUT, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_OVERRIDE() {
+  return getToken(TypedefParser::KW_OVERRIDE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_PRIVATE() {
+  return getToken(TypedefParser::KW_PRIVATE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_PUB() {
+  return getToken(TypedefParser::KW_PUB, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_REF() {
+  return getToken(TypedefParser::KW_REF, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_SELFTYPE() {
+  return getToken(TypedefParser::KW_SELFTYPE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_SELFVALUE() {
+  return getToken(TypedefParser::KW_SELFVALUE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_SIGNED() {
+  return getToken(TypedefParser::KW_SIGNED, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_STATIC() {
+  return getToken(TypedefParser::KW_STATIC, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_SUPER() {
+  return getToken(TypedefParser::KW_SUPER, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_SWITCH() {
+  return getToken(TypedefParser::KW_SWITCH, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_TYPEOF() {
+  return getToken(TypedefParser::KW_TYPEOF, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_UNION() {
+  return getToken(TypedefParser::KW_UNION, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_UNSAFE() {
+  return getToken(TypedefParser::KW_UNSAFE, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_UNSIGNED() {
+  return getToken(TypedefParser::KW_UNSIGNED, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_UNSIZED() {
+  return getToken(TypedefParser::KW_UNSIZED, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_VIRTUAL() {
+  return getToken(TypedefParser::KW_VIRTUAL, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_VOID() {
+  return getToken(TypedefParser::KW_VOID, 0);
+}
+
+tree::TerminalNode* TypedefParser::KeywordContext::KW_VOLATILE() {
+  return getToken(TypedefParser::KW_VOLATILE, 0);
 }
 
 
-size_t TypedefParser::IntegerLiteralContext::getRuleIndex() const {
-  return TypedefParser::RuleIntegerLiteral;
+size_t TypedefParser::KeywordContext::getRuleIndex() const {
+  return TypedefParser::RuleKeyword;
 }
 
-void TypedefParser::IntegerLiteralContext::enterRule(tree::ParseTreeListener *listener) {
+void TypedefParser::KeywordContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterIntegerLiteral(this);
+    parserListener->enterKeyword(this);
 }
 
-void TypedefParser::IntegerLiteralContext::exitRule(tree::ParseTreeListener *listener) {
+void TypedefParser::KeywordContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitIntegerLiteral(this);
+    parserListener->exitKeyword(this);
 }
 
-TypedefParser::IntegerLiteralContext* TypedefParser::integerLiteral() {
-  IntegerLiteralContext *_localctx = _tracker.createInstance<IntegerLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 46, TypedefParser::RuleIntegerLiteral);
+TypedefParser::KeywordContext* TypedefParser::keyword() {
+  KeywordContext *_localctx = _tracker.createInstance<KeywordContext>(_ctx, getState());
+  enterRule(_localctx, 34, TypedefParser::RuleKeyword);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -1953,414 +1899,75 @@ TypedefParser::IntegerLiteralContext* TypedefParser::integerLiteral() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(229);
+    setState(197);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << TypedefParser::DECIMAL_LITERAL)
-      | (1ULL << TypedefParser::HEX_LITERAL)
-      | (1ULL << TypedefParser::OCT_LITERAL)
-      | (1ULL << TypedefParser::BINARY_LITERAL))) != 0))) {
-    _errHandler->recoverInline(this);
-    }
-    else {
-      _errHandler->reportMatch(this);
-      consume();
-    }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- FloatLiteralContext ------------------------------------------------------------------
-
-TypedefParser::FloatLiteralContext::FloatLiteralContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* TypedefParser::FloatLiteralContext::FLOAT_LITERAL() {
-  return getToken(TypedefParser::FLOAT_LITERAL, 0);
-}
-
-tree::TerminalNode* TypedefParser::FloatLiteralContext::HEX_FLOAT_LITERAL() {
-  return getToken(TypedefParser::HEX_FLOAT_LITERAL, 0);
-}
-
-
-size_t TypedefParser::FloatLiteralContext::getRuleIndex() const {
-  return TypedefParser::RuleFloatLiteral;
-}
-
-void TypedefParser::FloatLiteralContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterFloatLiteral(this);
-}
-
-void TypedefParser::FloatLiteralContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitFloatLiteral(this);
-}
-
-TypedefParser::FloatLiteralContext* TypedefParser::floatLiteral() {
-  FloatLiteralContext *_localctx = _tracker.createInstance<FloatLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 48, TypedefParser::RuleFloatLiteral);
-  size_t _la = 0;
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(231);
-    _la = _input->LA(1);
-    if (!(_la == TypedefParser::FLOAT_LITERAL
-
-    || _la == TypedefParser::HEX_FLOAT_LITERAL)) {
-    _errHandler->recoverInline(this);
-    }
-    else {
-      _errHandler->reportMatch(this);
-      consume();
-    }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- TypeTypeContext ------------------------------------------------------------------
-
-TypedefParser::TypeTypeContext::TypeTypeContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-TypedefParser::IdentifierContext* TypedefParser::TypeTypeContext::identifier() {
-  return getRuleContext<TypedefParser::IdentifierContext>(0);
-}
-
-TypedefParser::PrimitiveTypeContext* TypedefParser::TypeTypeContext::primitiveType() {
-  return getRuleContext<TypedefParser::PrimitiveTypeContext>(0);
-}
-
-std::vector<tree::TerminalNode *> TypedefParser::TypeTypeContext::LBRACK() {
-  return getTokens(TypedefParser::LBRACK);
-}
-
-tree::TerminalNode* TypedefParser::TypeTypeContext::LBRACK(size_t i) {
-  return getToken(TypedefParser::LBRACK, i);
-}
-
-std::vector<TypedefParser::IntegerLiteralContext *> TypedefParser::TypeTypeContext::integerLiteral() {
-  return getRuleContexts<TypedefParser::IntegerLiteralContext>();
-}
-
-TypedefParser::IntegerLiteralContext* TypedefParser::TypeTypeContext::integerLiteral(size_t i) {
-  return getRuleContext<TypedefParser::IntegerLiteralContext>(i);
-}
-
-std::vector<tree::TerminalNode *> TypedefParser::TypeTypeContext::RBRACK() {
-  return getTokens(TypedefParser::RBRACK);
-}
-
-tree::TerminalNode* TypedefParser::TypeTypeContext::RBRACK(size_t i) {
-  return getToken(TypedefParser::RBRACK, i);
-}
-
-
-size_t TypedefParser::TypeTypeContext::getRuleIndex() const {
-  return TypedefParser::RuleTypeType;
-}
-
-void TypedefParser::TypeTypeContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterTypeType(this);
-}
-
-void TypedefParser::TypeTypeContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitTypeType(this);
-}
-
-TypedefParser::TypeTypeContext* TypedefParser::typeType() {
-  TypeTypeContext *_localctx = _tracker.createInstance<TypeTypeContext>(_ctx, getState());
-  enterRule(_localctx, 50, TypedefParser::RuleTypeType);
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    size_t alt;
-    enterOuterAlt(_localctx, 1);
-    setState(235);
-    _errHandler->sync(this);
-    switch (_input->LA(1)) {
-      case TypedefParser::IDENTIFIER: {
-        setState(233);
-        identifier();
-        break;
-      }
-
-      case TypedefParser::BOOL:
-      case TypedefParser::BYTE:
-      case TypedefParser::FLOAT32:
-      case TypedefParser::FLOAT64:
-      case TypedefParser::INT8:
-      case TypedefParser::INT16:
-      case TypedefParser::INT32:
-      case TypedefParser::INT64:
-      case TypedefParser::UINT8:
-      case TypedefParser::UINT16:
-      case TypedefParser::UINT32:
-      case TypedefParser::UINT64:
-      case TypedefParser::FLOAT16: {
-        setState(234);
-        primitiveType();
-        break;
-      }
-
-    default:
-      throw NoViableAltException(this);
-    }
-    setState(243);
-    _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 24, _ctx);
-    while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
-      if (alt == 1) {
-        setState(237);
-        match(TypedefParser::LBRACK);
-        setState(238);
-        integerLiteral();
-        setState(239);
-        match(TypedefParser::RBRACK); 
-      }
-      setState(245);
-      _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 24, _ctx);
-    }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- PrimitiveFixedPointTypeContext ------------------------------------------------------------------
-
-TypedefParser::PrimitiveFixedPointTypeContext::PrimitiveFixedPointTypeContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveFixedPointTypeContext::BYTE() {
-  return getToken(TypedefParser::BYTE, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveFixedPointTypeContext::INT8() {
-  return getToken(TypedefParser::INT8, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveFixedPointTypeContext::UINT8() {
-  return getToken(TypedefParser::UINT8, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveFixedPointTypeContext::INT16() {
-  return getToken(TypedefParser::INT16, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveFixedPointTypeContext::UINT16() {
-  return getToken(TypedefParser::UINT16, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveFixedPointTypeContext::INT32() {
-  return getToken(TypedefParser::INT32, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveFixedPointTypeContext::UINT32() {
-  return getToken(TypedefParser::UINT32, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveFixedPointTypeContext::INT64() {
-  return getToken(TypedefParser::INT64, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveFixedPointTypeContext::UINT64() {
-  return getToken(TypedefParser::UINT64, 0);
-}
-
-
-size_t TypedefParser::PrimitiveFixedPointTypeContext::getRuleIndex() const {
-  return TypedefParser::RulePrimitiveFixedPointType;
-}
-
-void TypedefParser::PrimitiveFixedPointTypeContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterPrimitiveFixedPointType(this);
-}
-
-void TypedefParser::PrimitiveFixedPointTypeContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitPrimitiveFixedPointType(this);
-}
-
-TypedefParser::PrimitiveFixedPointTypeContext* TypedefParser::primitiveFixedPointType() {
-  PrimitiveFixedPointTypeContext *_localctx = _tracker.createInstance<PrimitiveFixedPointTypeContext>(_ctx, getState());
-  enterRule(_localctx, 52, TypedefParser::RulePrimitiveFixedPointType);
-  size_t _la = 0;
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(246);
-    _la = _input->LA(1);
-    if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << TypedefParser::BYTE)
-      | (1ULL << TypedefParser::INT8)
-      | (1ULL << TypedefParser::INT16)
-      | (1ULL << TypedefParser::INT32)
-      | (1ULL << TypedefParser::INT64)
-      | (1ULL << TypedefParser::UINT8)
-      | (1ULL << TypedefParser::UINT16)
-      | (1ULL << TypedefParser::UINT32)
-      | (1ULL << TypedefParser::UINT64))) != 0))) {
-    _errHandler->recoverInline(this);
-    }
-    else {
-      _errHandler->reportMatch(this);
-      consume();
-    }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- PrimitiveTypeContext ------------------------------------------------------------------
-
-TypedefParser::PrimitiveTypeContext::PrimitiveTypeContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::BOOL() {
-  return getToken(TypedefParser::BOOL, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::BYTE() {
-  return getToken(TypedefParser::BYTE, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::INT8() {
-  return getToken(TypedefParser::INT8, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::UINT8() {
-  return getToken(TypedefParser::UINT8, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::INT16() {
-  return getToken(TypedefParser::INT16, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::UINT16() {
-  return getToken(TypedefParser::UINT16, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::INT32() {
-  return getToken(TypedefParser::INT32, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::UINT32() {
-  return getToken(TypedefParser::UINT32, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::INT64() {
-  return getToken(TypedefParser::INT64, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::UINT64() {
-  return getToken(TypedefParser::UINT64, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::FLOAT16() {
-  return getToken(TypedefParser::FLOAT16, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::FLOAT32() {
-  return getToken(TypedefParser::FLOAT32, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::FLOAT64() {
-  return getToken(TypedefParser::FLOAT64, 0);
-}
-
-
-size_t TypedefParser::PrimitiveTypeContext::getRuleIndex() const {
-  return TypedefParser::RulePrimitiveType;
-}
-
-void TypedefParser::PrimitiveTypeContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterPrimitiveType(this);
-}
-
-void TypedefParser::PrimitiveTypeContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitPrimitiveType(this);
-}
-
-TypedefParser::PrimitiveTypeContext* TypedefParser::primitiveType() {
-  PrimitiveTypeContext *_localctx = _tracker.createInstance<PrimitiveTypeContext>(_ctx, getState());
-  enterRule(_localctx, 54, TypedefParser::RulePrimitiveType);
-  size_t _la = 0;
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(248);
-    _la = _input->LA(1);
-    if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & ((1ULL << TypedefParser::BOOL)
-      | (1ULL << TypedefParser::BYTE)
-      | (1ULL << TypedefParser::FLOAT32)
-      | (1ULL << TypedefParser::FLOAT64)
-      | (1ULL << TypedefParser::INT8)
-      | (1ULL << TypedefParser::INT16)
-      | (1ULL << TypedefParser::INT32)
-      | (1ULL << TypedefParser::INT64)
-      | (1ULL << TypedefParser::UINT8)
-      | (1ULL << TypedefParser::UINT16)
-      | (1ULL << TypedefParser::UINT32)
-      | (1ULL << TypedefParser::UINT64)
-      | (1ULL << TypedefParser::FLOAT16))) != 0))) {
+      ((1ULL << _la) & ((1ULL << TypedefParser::KW_AS)
+      | (1ULL << TypedefParser::KW_ENUM)
+      | (1ULL << TypedefParser::KW_FALSE)
+      | (1ULL << TypedefParser::KW_FN)
+      | (1ULL << TypedefParser::KW_IMPL)
+      | (1ULL << TypedefParser::KW_MODULE)
+      | (1ULL << TypedefParser::KW_STRUCT)
+      | (1ULL << TypedefParser::KW_TRUE)
+      | (1ULL << TypedefParser::KW_TYPE)
+      | (1ULL << TypedefParser::KW_TYPEDEF)
+      | (1ULL << TypedefParser::KW_USE)
+      | (1ULL << TypedefParser::KW_AND)
+      | (1ULL << TypedefParser::KW_IN)
+      | (1ULL << TypedefParser::KW_LET)
+      | (1ULL << TypedefParser::KW_NOT)
+      | (1ULL << TypedefParser::KW_OR)
+      | (1ULL << TypedefParser::KW_SIZEOF)
+      | (1ULL << TypedefParser::KW_THIS)
+      | (1ULL << TypedefParser::KW_TRAIT)
+      | (1ULL << TypedefParser::KW_WHERE)
+      | (1ULL << TypedefParser::KW_XOR)
+      | (1ULL << TypedefParser::KW_BREAK)
+      | (1ULL << TypedefParser::KW_CONTINUE)
+      | (1ULL << TypedefParser::KW_DEFAULT)
+      | (1ULL << TypedefParser::KW_DO)
+      | (1ULL << TypedefParser::KW_ELSE)
+      | (1ULL << TypedefParser::KW_FOR)
+      | (1ULL << TypedefParser::KW_GOTO)
+      | (1ULL << TypedefParser::KW_IF)
+      | (1ULL << TypedefParser::KW_LOOP)
+      | (1ULL << TypedefParser::KW_MATCH)
+      | (1ULL << TypedefParser::KW_MOVE)
+      | (1ULL << TypedefParser::KW_RETURN)
+      | (1ULL << TypedefParser::KW_TRY)
+      | (1ULL << TypedefParser::KW_WHILE)
+      | (1ULL << TypedefParser::KW_YIELD)
+      | (1ULL << TypedefParser::KW_ABSTRACT)
+      | (1ULL << TypedefParser::KW_AUTO)
+      | (1ULL << TypedefParser::KW_CHAR)
+      | (1ULL << TypedefParser::KW_CONST)
+      | (1ULL << TypedefParser::KW_DOUBLE)
+      | (1ULL << TypedefParser::KW_EXTERN)
+      | (1ULL << TypedefParser::KW_FINAL)
+      | (1ULL << TypedefParser::KW_FLOAT)
+      | (1ULL << TypedefParser::KW_INT)
+      | (1ULL << TypedefParser::KW_LONG)
+      | (1ULL << TypedefParser::KW_MACRO)
+      | (1ULL << TypedefParser::KW_MUT)
+      | (1ULL << TypedefParser::KW_OVERRIDE)
+      | (1ULL << TypedefParser::KW_PRIVATE)
+      | (1ULL << TypedefParser::KW_PUB)
+      | (1ULL << TypedefParser::KW_REF)
+      | (1ULL << TypedefParser::KW_SELFTYPE)
+      | (1ULL << TypedefParser::KW_SELFVALUE)
+      | (1ULL << TypedefParser::KW_SIGNED)
+      | (1ULL << TypedefParser::KW_STATIC)
+      | (1ULL << TypedefParser::KW_SUPER)
+      | (1ULL << TypedefParser::KW_SWITCH)
+      | (1ULL << TypedefParser::KW_TYPEOF)
+      | (1ULL << TypedefParser::KW_UNION)
+      | (1ULL << TypedefParser::KW_UNSAFE)
+      | (1ULL << TypedefParser::KW_UNSIGNED)
+      | (1ULL << TypedefParser::KW_UNSIZED))) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 64)) & ((1ULL << (TypedefParser::KW_VIRTUAL - 64))
+      | (1ULL << (TypedefParser::KW_VOID - 64))
+      | (1ULL << (TypedefParser::KW_VOLATILE - 64)))) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -2388,33 +1995,53 @@ std::vector<uint16_t> TypedefParser::_serializedATN;
 
 std::vector<std::string> TypedefParser::_ruleNames = {
   "compilationUnit", "typedefVersionDeclaration", "moduleDeclaration", "useDeclaration", 
-  "singleUseDeclaration", "wildcardUseDeclaration", "enumDeclaration", "enumBody", 
-  "enumField", "messageDeclaration", "messageBody", "fieldDeclaration", 
-  "value", "array", "map", "keyValue", "type", "arrayIdentifier", "simplePath", 
-  "position", "identifier", "literal", "boolLiteral", "integerLiteral", 
-  "floatLiteral", "typeType", "primitiveFixedPointType", "primitiveType"
+  "useTree", "enumDeclaration", "enumBody", "structDeclaration", "messageBody", 
+  "fieldDeclaration", "value", "array", "map", "keyValue", "simplePath", 
+  "literalExpression", "identifier", "keyword"
 };
 
 std::vector<std::string> TypedefParser::_literalNames = {
-  "", "'bool'", "'byte'", "'float32'", "'float64'", "'int8'", "'int16'", 
-  "'int32'", "'int64'", "'uint8'", "'uint16'", "'uint32'", "'uint64'", "'float16'", 
-  "'bfloat16'", "'default'", "'enum'", "'exports'", "'extends'", "'import'", 
-  "'implements'", "'interface'", "'message'", "'module'", "'package'", "'true'", 
-  "'false'", "'typedef'", "'as'", "", "", "", "", "", "", "", "", "", "", 
-  "", "", "", "'('", "')'", "'{'", "'}'", "'['", "']'", "';'", "':'", "','", 
-  "'.'", "'.*'", "'='", "'@'", "'::'"
+  "", "'as'", "'enum'", "'false'", "'fn'", "'impl'", "'module'", "'struct'", 
+  "'true'", "'type'", "'typedef'", "'use'", "'and'", "'in'", "'let'", "'not'", 
+  "'or'", "'sizeof'", "'this'", "'trait'", "'where'", "'xor'", "'break'", 
+  "'continue'", "'default'", "'do'", "'else'", "'for'", "'goto'", "'if'", 
+  "'loop'", "'match'", "'move'", "'return'", "'try'", "'while'", "'yield'", 
+  "'abstract'", "'auto'", "'char'", "'const'", "'double'", "'extern'", "'final'", 
+  "'float'", "'int'", "'long'", "'macro'", "'mut'", "'override'", "'private'", 
+  "'pub'", "'ref'", "'Self'", "'self'", "'signed'", "'static'", "'super'", 
+  "'switch'", "'typeof'", "'union'", "'unsafe'", "'unsigned'", "'unsized'", 
+  "'virtual'", "'void'", "'volatile'", "", "", "", "", "", "", "", "", "", 
+  "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "'+'", 
+  "'-'", "'*'", "'/'", "'%'", "'^'", "'!'", "'&'", "'|'", "'&&'", "'||'", 
+  "'+='", "'-='", "'*='", "'/='", "'%='", "'^='", "'&='", "'|='", "'<<='", 
+  "'>>='", "'='", "'=='", "'!='", "'>'", "'<'", "'>='", "'<='", "'@'", "'_'", 
+  "'.'", "'..'", "'...'", "','", "';'", "':'", "'::'", "'->'", "'=>'", "'#'", 
+  "'$'", "'?'", "'{'", "'}'", "'['", "']'", "'('", "')'"
 };
 
 std::vector<std::string> TypedefParser::_symbolicNames = {
-  "", "BOOL", "BYTE", "FLOAT32", "FLOAT64", "INT8", "INT16", "INT32", "INT64", 
-  "UINT8", "UINT16", "UINT32", "UINT64", "FLOAT16", "BFLAOT16", "DEFAULT", 
-  "ENUM", "EXPORTS", "EXTENDS", "IMPORT", "IMPLEMENTS", "INTERFACE", "MESSAGE", 
-  "MODULE", "PACKAGE", "TRUE", "FALSE", "TYPEDEF", "AS", "SEMVER", "DECIMAL_LITERAL", 
-  "QUALIFIED_DECIMAL_LITERAL", "UNQUALIFIED_DECIMAL_LITERAL", "HEX_LITERAL", 
-  "OCT_LITERAL", "BINARY_LITERAL", "FLOAT_LITERAL", "HEX_FLOAT_LITERAL", 
-  "BOOL_LITERAL", "CHAR_LITERAL", "STRING_LITERAL", "TEXT_BLOCK", "LPAREN", 
-  "RPAREN", "LBRACE", "RBRACE", "LBRACK", "RBRACK", "SEMI", "COLON", "COMMA", 
-  "DOT", "DOTSTAR", "EQ", "AT", "PS", "WS", "COMMENT", "LINE_COMMENT", "IDENTIFIER"
+  "", "KW_AS", "KW_ENUM", "KW_FALSE", "KW_FN", "KW_IMPL", "KW_MODULE", "KW_STRUCT", 
+  "KW_TRUE", "KW_TYPE", "KW_TYPEDEF", "KW_USE", "KW_AND", "KW_IN", "KW_LET", 
+  "KW_NOT", "KW_OR", "KW_SIZEOF", "KW_THIS", "KW_TRAIT", "KW_WHERE", "KW_XOR", 
+  "KW_BREAK", "KW_CONTINUE", "KW_DEFAULT", "KW_DO", "KW_ELSE", "KW_FOR", 
+  "KW_GOTO", "KW_IF", "KW_LOOP", "KW_MATCH", "KW_MOVE", "KW_RETURN", "KW_TRY", 
+  "KW_WHILE", "KW_YIELD", "KW_ABSTRACT", "KW_AUTO", "KW_CHAR", "KW_CONST", 
+  "KW_DOUBLE", "KW_EXTERN", "KW_FINAL", "KW_FLOAT", "KW_INT", "KW_LONG", 
+  "KW_MACRO", "KW_MUT", "KW_OVERRIDE", "KW_PRIVATE", "KW_PUB", "KW_REF", 
+  "KW_SELFTYPE", "KW_SELFVALUE", "KW_SIGNED", "KW_STATIC", "KW_SUPER", "KW_SWITCH", 
+  "KW_TYPEOF", "KW_UNION", "KW_UNSAFE", "KW_UNSIGNED", "KW_UNSIZED", "KW_VIRTUAL", 
+  "KW_VOID", "KW_VOLATILE", "NON_KEYWORD_IDENTIFIER", "RAW_IDENTIFIER", 
+  "LINE_COMMENT", "BLOCK_COMMENT", "INNER_LINE_DOC", "INNER_BLOCK_DOC", 
+  "OUTER_LINE_DOC", "OUTER_BLOCK_DOC", "BLOCK_COMMENT_OR_DOC", "SHEBANG", 
+  "WHITESPACE", "NEWLINE", "CHAR_LITERAL", "STRING_LITERAL", "RAW_STRING_LITERAL", 
+  "BYTE_LITERAL", "BYTE_STRING_LITERAL", "RAW_BYTE_STRING_LITERAL", "INTEGER_LITERAL", 
+  "DEC_LITERAL", "HEX_LITERAL", "OCT_LITERAL", "BIN_LITERAL", "FLOAT_LITERAL", 
+  "LIFETIME_OR_LABEL", "PLUS", "MINUS", "STAR", "SLASH", "PERCENT", "CARET", 
+  "NOT", "AND", "OR", "ANDAND", "OROR", "PLUSEQ", "MINUSEQ", "STAREQ", "SLASHEQ", 
+  "PERCENTEQ", "CARETEQ", "ANDEQ", "OREQ", "SHLEQ", "SHREQ", "EQ", "EQEQ", 
+  "NE", "GT", "LT", "GE", "LE", "AT", "UNDERSCORE", "DOT", "DOTDOT", "DOTDOTDOT", 
+  "COMMA", "SEMI", "COLON", "PATHSEP", "RARROW", "FATARROW", "POUND", "DOLLAR", 
+  "QUESTION", "LBRACE", "RBRACE", "LBRACK", "RBRACK", "LPAREN", "RPAREN"
 };
 
 dfa::Vocabulary TypedefParser::_vocabulary(_literalNames, _symbolicNames);
@@ -2437,170 +2064,140 @@ TypedefParser::Initializer::Initializer() {
 
   _serializedATN = {
     0x3, 0x608b, 0xa72a, 0x8133, 0xb9ed, 0x417c, 0x3be7, 0x7786, 0x5964, 
-    0x3, 0x3d, 0xfd, 0x4, 0x2, 0x9, 0x2, 0x4, 0x3, 0x9, 0x3, 0x4, 0x4, 0x9, 
+    0x3, 0x8d, 0xca, 0x4, 0x2, 0x9, 0x2, 0x4, 0x3, 0x9, 0x3, 0x4, 0x4, 0x9, 
     0x4, 0x4, 0x5, 0x9, 0x5, 0x4, 0x6, 0x9, 0x6, 0x4, 0x7, 0x9, 0x7, 0x4, 
     0x8, 0x9, 0x8, 0x4, 0x9, 0x9, 0x9, 0x4, 0xa, 0x9, 0xa, 0x4, 0xb, 0x9, 
     0xb, 0x4, 0xc, 0x9, 0xc, 0x4, 0xd, 0x9, 0xd, 0x4, 0xe, 0x9, 0xe, 0x4, 
     0xf, 0x9, 0xf, 0x4, 0x10, 0x9, 0x10, 0x4, 0x11, 0x9, 0x11, 0x4, 0x12, 
-    0x9, 0x12, 0x4, 0x13, 0x9, 0x13, 0x4, 0x14, 0x9, 0x14, 0x4, 0x15, 0x9, 
-    0x15, 0x4, 0x16, 0x9, 0x16, 0x4, 0x17, 0x9, 0x17, 0x4, 0x18, 0x9, 0x18, 
-    0x4, 0x19, 0x9, 0x19, 0x4, 0x1a, 0x9, 0x1a, 0x4, 0x1b, 0x9, 0x1b, 0x4, 
-    0x1c, 0x9, 0x1c, 0x4, 0x1d, 0x9, 0x1d, 0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 
-    0x7, 0x2, 0x3e, 0xa, 0x2, 0xc, 0x2, 0xe, 0x2, 0x41, 0xb, 0x2, 0x3, 0x2, 
-    0x3, 0x2, 0x7, 0x2, 0x45, 0xa, 0x2, 0xc, 0x2, 0xe, 0x2, 0x48, 0xb, 0x2, 
-    0x3, 0x2, 0x3, 0x2, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 
-    0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x5, 0x3, 0x5, 0x5, 0x5, 
-    0x57, 0xa, 0x5, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x5, 0x6, 0x5d, 
-    0xa, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 
-    0x3, 0x7, 0x3, 0x8, 0x3, 0x8, 0x3, 0x8, 0x3, 0x8, 0x3, 0x8, 0x3, 0x8, 
-    0x3, 0x8, 0x3, 0x8, 0x3, 0x8, 0x3, 0x8, 0x3, 0x9, 0x3, 0x9, 0x3, 0x9, 
-    0x6, 0x9, 0x73, 0xa, 0x9, 0xd, 0x9, 0xe, 0x9, 0x74, 0x3, 0x9, 0x3, 0x9, 
-    0x5, 0x9, 0x79, 0xa, 0x9, 0x5, 0x9, 0x7b, 0xa, 0x9, 0x3, 0xa, 0x3, 0xa, 
-    0x3, 0xa, 0x3, 0xa, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 
-    0x3, 0xb, 0x3, 0xb, 0x3, 0xc, 0x3, 0xc, 0x7, 0xc, 0x8a, 0xa, 0xc, 0xc, 
-    0xc, 0xe, 0xc, 0x8d, 0xb, 0xc, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 
-    0x3, 0xd, 0x3, 0xd, 0x5, 0xd, 0x95, 0xa, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 
-    0xe, 0x3, 0xe, 0x3, 0xe, 0x3, 0xe, 0x5, 0xe, 0x9d, 0xa, 0xe, 0x3, 0xf, 
-    0x3, 0xf, 0x3, 0xf, 0x3, 0xf, 0x7, 0xf, 0xa3, 0xa, 0xf, 0xc, 0xf, 0xe, 
-    0xf, 0xa6, 0xb, 0xf, 0x5, 0xf, 0xa8, 0xa, 0xf, 0x3, 0xf, 0x5, 0xf, 0xab, 
-    0xa, 0xf, 0x3, 0xf, 0x3, 0xf, 0x3, 0x10, 0x3, 0x10, 0x3, 0x10, 0x3, 
-    0x10, 0x7, 0x10, 0xb3, 0xa, 0x10, 0xc, 0x10, 0xe, 0x10, 0xb6, 0xb, 0x10, 
-    0x3, 0x10, 0x5, 0x10, 0xb9, 0xa, 0x10, 0x5, 0x10, 0xbb, 0xa, 0x10, 0x3, 
-    0x10, 0x3, 0x10, 0x3, 0x11, 0x3, 0x11, 0x3, 0x11, 0x3, 0x11, 0x3, 0x12, 
-    0x3, 0x12, 0x5, 0x12, 0xc5, 0xa, 0x12, 0x3, 0x13, 0x3, 0x13, 0x3, 0x13, 
-    0x5, 0x13, 0xca, 0xa, 0x13, 0x3, 0x13, 0x3, 0x13, 0x3, 0x14, 0x5, 0x14, 
-    0xcf, 0xa, 0x14, 0x3, 0x14, 0x3, 0x14, 0x3, 0x14, 0x7, 0x14, 0xd4, 0xa, 
-    0x14, 0xc, 0x14, 0xe, 0x14, 0xd7, 0xb, 0x14, 0x3, 0x15, 0x3, 0x15, 0x3, 
-    0x15, 0x3, 0x16, 0x3, 0x16, 0x3, 0x17, 0x3, 0x17, 0x3, 0x17, 0x3, 0x17, 
-    0x3, 0x17, 0x3, 0x17, 0x5, 0x17, 0xe4, 0xa, 0x17, 0x3, 0x18, 0x3, 0x18, 
-    0x3, 0x19, 0x3, 0x19, 0x3, 0x1a, 0x3, 0x1a, 0x3, 0x1b, 0x3, 0x1b, 0x5, 
-    0x1b, 0xee, 0xa, 0x1b, 0x3, 0x1b, 0x3, 0x1b, 0x3, 0x1b, 0x3, 0x1b, 0x7, 
-    0x1b, 0xf4, 0xa, 0x1b, 0xc, 0x1b, 0xe, 0x1b, 0xf7, 0xb, 0x1b, 0x3, 0x1c, 
-    0x3, 0x1c, 0x3, 0x1d, 0x3, 0x1d, 0x3, 0x1d, 0x2, 0x2, 0x1e, 0x2, 0x4, 
-    0x6, 0x8, 0xa, 0xc, 0xe, 0x10, 0x12, 0x14, 0x16, 0x18, 0x1a, 0x1c, 0x1e, 
-    0x20, 0x22, 0x24, 0x26, 0x28, 0x2a, 0x2c, 0x2e, 0x30, 0x32, 0x34, 0x36, 
-    0x38, 0x2, 0x7, 0x3, 0x2, 0x1b, 0x1c, 0x4, 0x2, 0x20, 0x20, 0x23, 0x25, 
-    0x3, 0x2, 0x26, 0x27, 0x4, 0x2, 0x4, 0x4, 0x7, 0xe, 0x3, 0x2, 0x3, 0xf, 
-    0x2, 0xff, 0x2, 0x3a, 0x3, 0x2, 0x2, 0x2, 0x4, 0x4b, 0x3, 0x2, 0x2, 
-    0x2, 0x6, 0x50, 0x3, 0x2, 0x2, 0x2, 0x8, 0x56, 0x3, 0x2, 0x2, 0x2, 0xa, 
-    0x58, 0x3, 0x2, 0x2, 0x2, 0xc, 0x60, 0x3, 0x2, 0x2, 0x2, 0xe, 0x65, 
-    0x3, 0x2, 0x2, 0x2, 0x10, 0x72, 0x3, 0x2, 0x2, 0x2, 0x12, 0x7c, 0x3, 
-    0x2, 0x2, 0x2, 0x14, 0x80, 0x3, 0x2, 0x2, 0x2, 0x16, 0x8b, 0x3, 0x2, 
-    0x2, 0x2, 0x18, 0x8e, 0x3, 0x2, 0x2, 0x2, 0x1a, 0x9c, 0x3, 0x2, 0x2, 
-    0x2, 0x1c, 0x9e, 0x3, 0x2, 0x2, 0x2, 0x1e, 0xae, 0x3, 0x2, 0x2, 0x2, 
-    0x20, 0xbe, 0x3, 0x2, 0x2, 0x2, 0x22, 0xc4, 0x3, 0x2, 0x2, 0x2, 0x24, 
-    0xc6, 0x3, 0x2, 0x2, 0x2, 0x26, 0xce, 0x3, 0x2, 0x2, 0x2, 0x28, 0xd8, 
-    0x3, 0x2, 0x2, 0x2, 0x2a, 0xdb, 0x3, 0x2, 0x2, 0x2, 0x2c, 0xe3, 0x3, 
-    0x2, 0x2, 0x2, 0x2e, 0xe5, 0x3, 0x2, 0x2, 0x2, 0x30, 0xe7, 0x3, 0x2, 
-    0x2, 0x2, 0x32, 0xe9, 0x3, 0x2, 0x2, 0x2, 0x34, 0xed, 0x3, 0x2, 0x2, 
-    0x2, 0x36, 0xf8, 0x3, 0x2, 0x2, 0x2, 0x38, 0xfa, 0x3, 0x2, 0x2, 0x2, 
-    0x3a, 0x3b, 0x5, 0x4, 0x3, 0x2, 0x3b, 0x3f, 0x5, 0x6, 0x4, 0x2, 0x3c, 
-    0x3e, 0x5, 0x8, 0x5, 0x2, 0x3d, 0x3c, 0x3, 0x2, 0x2, 0x2, 0x3e, 0x41, 
-    0x3, 0x2, 0x2, 0x2, 0x3f, 0x3d, 0x3, 0x2, 0x2, 0x2, 0x3f, 0x40, 0x3, 
-    0x2, 0x2, 0x2, 0x40, 0x46, 0x3, 0x2, 0x2, 0x2, 0x41, 0x3f, 0x3, 0x2, 
-    0x2, 0x2, 0x42, 0x45, 0x5, 0xe, 0x8, 0x2, 0x43, 0x45, 0x5, 0x14, 0xb, 
-    0x2, 0x44, 0x42, 0x3, 0x2, 0x2, 0x2, 0x44, 0x43, 0x3, 0x2, 0x2, 0x2, 
-    0x45, 0x48, 0x3, 0x2, 0x2, 0x2, 0x46, 0x44, 0x3, 0x2, 0x2, 0x2, 0x46, 
-    0x47, 0x3, 0x2, 0x2, 0x2, 0x47, 0x49, 0x3, 0x2, 0x2, 0x2, 0x48, 0x46, 
-    0x3, 0x2, 0x2, 0x2, 0x49, 0x4a, 0x7, 0x2, 0x2, 0x3, 0x4a, 0x3, 0x3, 
-    0x2, 0x2, 0x2, 0x4b, 0x4c, 0x7, 0x1d, 0x2, 0x2, 0x4c, 0x4d, 0x7, 0x37, 
-    0x2, 0x2, 0x4d, 0x4e, 0x7, 0x3d, 0x2, 0x2, 0x4e, 0x4f, 0x7, 0x32, 0x2, 
-    0x2, 0x4f, 0x5, 0x3, 0x2, 0x2, 0x2, 0x50, 0x51, 0x7, 0x19, 0x2, 0x2, 
-    0x51, 0x52, 0x5, 0x26, 0x14, 0x2, 0x52, 0x53, 0x7, 0x32, 0x2, 0x2, 0x53, 
-    0x7, 0x3, 0x2, 0x2, 0x2, 0x54, 0x57, 0x5, 0xa, 0x6, 0x2, 0x55, 0x57, 
-    0x5, 0xc, 0x7, 0x2, 0x56, 0x54, 0x3, 0x2, 0x2, 0x2, 0x56, 0x55, 0x3, 
-    0x2, 0x2, 0x2, 0x57, 0x9, 0x3, 0x2, 0x2, 0x2, 0x58, 0x59, 0x7, 0x15, 
-    0x2, 0x2, 0x59, 0x5c, 0x5, 0x26, 0x14, 0x2, 0x5a, 0x5b, 0x7, 0x1e, 0x2, 
-    0x2, 0x5b, 0x5d, 0x5, 0x2a, 0x16, 0x2, 0x5c, 0x5a, 0x3, 0x2, 0x2, 0x2, 
-    0x5c, 0x5d, 0x3, 0x2, 0x2, 0x2, 0x5d, 0x5e, 0x3, 0x2, 0x2, 0x2, 0x5e, 
-    0x5f, 0x7, 0x32, 0x2, 0x2, 0x5f, 0xb, 0x3, 0x2, 0x2, 0x2, 0x60, 0x61, 
-    0x7, 0x15, 0x2, 0x2, 0x61, 0x62, 0x5, 0x26, 0x14, 0x2, 0x62, 0x63, 0x7, 
-    0x36, 0x2, 0x2, 0x63, 0x64, 0x7, 0x32, 0x2, 0x2, 0x64, 0xd, 0x3, 0x2, 
-    0x2, 0x2, 0x65, 0x66, 0x7, 0x12, 0x2, 0x2, 0x66, 0x67, 0x5, 0x2a, 0x16, 
-    0x2, 0x67, 0x68, 0x7, 0x33, 0x2, 0x2, 0x68, 0x69, 0x5, 0x36, 0x1c, 0x2, 
-    0x69, 0x6a, 0x3, 0x2, 0x2, 0x2, 0x6a, 0x6b, 0x7, 0x2e, 0x2, 0x2, 0x6b, 
-    0x6c, 0x5, 0x10, 0x9, 0x2, 0x6c, 0x6d, 0x7, 0x2f, 0x2, 0x2, 0x6d, 0x6e, 
-    0x7, 0x32, 0x2, 0x2, 0x6e, 0xf, 0x3, 0x2, 0x2, 0x2, 0x6f, 0x70, 0x5, 
-    0x12, 0xa, 0x2, 0x70, 0x71, 0x7, 0x34, 0x2, 0x2, 0x71, 0x73, 0x3, 0x2, 
-    0x2, 0x2, 0x72, 0x6f, 0x3, 0x2, 0x2, 0x2, 0x73, 0x74, 0x3, 0x2, 0x2, 
-    0x2, 0x74, 0x72, 0x3, 0x2, 0x2, 0x2, 0x74, 0x75, 0x3, 0x2, 0x2, 0x2, 
-    0x75, 0x7a, 0x3, 0x2, 0x2, 0x2, 0x76, 0x78, 0x5, 0x12, 0xa, 0x2, 0x77, 
-    0x79, 0x7, 0x34, 0x2, 0x2, 0x78, 0x77, 0x3, 0x2, 0x2, 0x2, 0x78, 0x79, 
-    0x3, 0x2, 0x2, 0x2, 0x79, 0x7b, 0x3, 0x2, 0x2, 0x2, 0x7a, 0x76, 0x3, 
-    0x2, 0x2, 0x2, 0x7a, 0x7b, 0x3, 0x2, 0x2, 0x2, 0x7b, 0x11, 0x3, 0x2, 
-    0x2, 0x2, 0x7c, 0x7d, 0x5, 0x2a, 0x16, 0x2, 0x7d, 0x7e, 0x7, 0x37, 0x2, 
-    0x2, 0x7e, 0x7f, 0x5, 0x30, 0x19, 0x2, 0x7f, 0x13, 0x3, 0x2, 0x2, 0x2, 
-    0x80, 0x81, 0x7, 0x18, 0x2, 0x2, 0x81, 0x82, 0x5, 0x2a, 0x16, 0x2, 0x82, 
-    0x83, 0x7, 0x2e, 0x2, 0x2, 0x83, 0x84, 0x5, 0x16, 0xc, 0x2, 0x84, 0x85, 
-    0x7, 0x2f, 0x2, 0x2, 0x85, 0x86, 0x7, 0x32, 0x2, 0x2, 0x86, 0x15, 0x3, 
-    0x2, 0x2, 0x2, 0x87, 0x8a, 0x5, 0x18, 0xd, 0x2, 0x88, 0x8a, 0x5, 0xe, 
-    0x8, 0x2, 0x89, 0x87, 0x3, 0x2, 0x2, 0x2, 0x89, 0x88, 0x3, 0x2, 0x2, 
-    0x2, 0x8a, 0x8d, 0x3, 0x2, 0x2, 0x2, 0x8b, 0x89, 0x3, 0x2, 0x2, 0x2, 
-    0x8b, 0x8c, 0x3, 0x2, 0x2, 0x2, 0x8c, 0x17, 0x3, 0x2, 0x2, 0x2, 0x8d, 
-    0x8b, 0x3, 0x2, 0x2, 0x2, 0x8e, 0x8f, 0x5, 0x2a, 0x16, 0x2, 0x8f, 0x90, 
-    0x7, 0x33, 0x2, 0x2, 0x90, 0x91, 0x5, 0x22, 0x12, 0x2, 0x91, 0x94, 0x5, 
-    0x28, 0x15, 0x2, 0x92, 0x93, 0x7, 0x37, 0x2, 0x2, 0x93, 0x95, 0x5, 0x1a, 
-    0xe, 0x2, 0x94, 0x92, 0x3, 0x2, 0x2, 0x2, 0x94, 0x95, 0x3, 0x2, 0x2, 
-    0x2, 0x95, 0x96, 0x3, 0x2, 0x2, 0x2, 0x96, 0x97, 0x7, 0x32, 0x2, 0x2, 
-    0x97, 0x19, 0x3, 0x2, 0x2, 0x2, 0x98, 0x9d, 0x5, 0x2c, 0x17, 0x2, 0x99, 
-    0x9d, 0x5, 0x1c, 0xf, 0x2, 0x9a, 0x9d, 0x5, 0x1e, 0x10, 0x2, 0x9b, 0x9d, 
-    0x5, 0x2a, 0x16, 0x2, 0x9c, 0x98, 0x3, 0x2, 0x2, 0x2, 0x9c, 0x99, 0x3, 
-    0x2, 0x2, 0x2, 0x9c, 0x9a, 0x3, 0x2, 0x2, 0x2, 0x9c, 0x9b, 0x3, 0x2, 
-    0x2, 0x2, 0x9d, 0x1b, 0x3, 0x2, 0x2, 0x2, 0x9e, 0xa7, 0x7, 0x30, 0x2, 
-    0x2, 0x9f, 0xa4, 0x5, 0x1a, 0xe, 0x2, 0xa0, 0xa1, 0x7, 0x34, 0x2, 0x2, 
-    0xa1, 0xa3, 0x5, 0x1a, 0xe, 0x2, 0xa2, 0xa0, 0x3, 0x2, 0x2, 0x2, 0xa3, 
-    0xa6, 0x3, 0x2, 0x2, 0x2, 0xa4, 0xa2, 0x3, 0x2, 0x2, 0x2, 0xa4, 0xa5, 
-    0x3, 0x2, 0x2, 0x2, 0xa5, 0xa8, 0x3, 0x2, 0x2, 0x2, 0xa6, 0xa4, 0x3, 
-    0x2, 0x2, 0x2, 0xa7, 0x9f, 0x3, 0x2, 0x2, 0x2, 0xa7, 0xa8, 0x3, 0x2, 
-    0x2, 0x2, 0xa8, 0xaa, 0x3, 0x2, 0x2, 0x2, 0xa9, 0xab, 0x7, 0x34, 0x2, 
-    0x2, 0xaa, 0xa9, 0x3, 0x2, 0x2, 0x2, 0xaa, 0xab, 0x3, 0x2, 0x2, 0x2, 
-    0xab, 0xac, 0x3, 0x2, 0x2, 0x2, 0xac, 0xad, 0x7, 0x31, 0x2, 0x2, 0xad, 
-    0x1d, 0x3, 0x2, 0x2, 0x2, 0xae, 0xba, 0x7, 0x2e, 0x2, 0x2, 0xaf, 0xb4, 
-    0x5, 0x20, 0x11, 0x2, 0xb0, 0xb1, 0x7, 0x34, 0x2, 0x2, 0xb1, 0xb3, 0x5, 
-    0x20, 0x11, 0x2, 0xb2, 0xb0, 0x3, 0x2, 0x2, 0x2, 0xb3, 0xb6, 0x3, 0x2, 
-    0x2, 0x2, 0xb4, 0xb2, 0x3, 0x2, 0x2, 0x2, 0xb4, 0xb5, 0x3, 0x2, 0x2, 
-    0x2, 0xb5, 0xb8, 0x3, 0x2, 0x2, 0x2, 0xb6, 0xb4, 0x3, 0x2, 0x2, 0x2, 
-    0xb7, 0xb9, 0x7, 0x34, 0x2, 0x2, 0xb8, 0xb7, 0x3, 0x2, 0x2, 0x2, 0xb8, 
-    0xb9, 0x3, 0x2, 0x2, 0x2, 0xb9, 0xbb, 0x3, 0x2, 0x2, 0x2, 0xba, 0xaf, 
-    0x3, 0x2, 0x2, 0x2, 0xba, 0xbb, 0x3, 0x2, 0x2, 0x2, 0xbb, 0xbc, 0x3, 
-    0x2, 0x2, 0x2, 0xbc, 0xbd, 0x7, 0x2f, 0x2, 0x2, 0xbd, 0x1f, 0x3, 0x2, 
-    0x2, 0x2, 0xbe, 0xbf, 0x5, 0x2a, 0x16, 0x2, 0xbf, 0xc0, 0x7, 0x33, 0x2, 
-    0x2, 0xc0, 0xc1, 0x5, 0x1a, 0xe, 0x2, 0xc1, 0x21, 0x3, 0x2, 0x2, 0x2, 
-    0xc2, 0xc5, 0x5, 0x24, 0x13, 0x2, 0xc3, 0xc5, 0x5, 0x34, 0x1b, 0x2, 
-    0xc4, 0xc2, 0x3, 0x2, 0x2, 0x2, 0xc4, 0xc3, 0x3, 0x2, 0x2, 0x2, 0xc5, 
-    0x23, 0x3, 0x2, 0x2, 0x2, 0xc6, 0xc7, 0x5, 0x34, 0x1b, 0x2, 0xc7, 0xc9, 
-    0x7, 0x30, 0x2, 0x2, 0xc8, 0xca, 0x5, 0x30, 0x19, 0x2, 0xc9, 0xc8, 0x3, 
-    0x2, 0x2, 0x2, 0xc9, 0xca, 0x3, 0x2, 0x2, 0x2, 0xca, 0xcb, 0x3, 0x2, 
-    0x2, 0x2, 0xcb, 0xcc, 0x7, 0x31, 0x2, 0x2, 0xcc, 0x25, 0x3, 0x2, 0x2, 
-    0x2, 0xcd, 0xcf, 0x7, 0x39, 0x2, 0x2, 0xce, 0xcd, 0x3, 0x2, 0x2, 0x2, 
-    0xce, 0xcf, 0x3, 0x2, 0x2, 0x2, 0xcf, 0xd0, 0x3, 0x2, 0x2, 0x2, 0xd0, 
-    0xd5, 0x5, 0x2a, 0x16, 0x2, 0xd1, 0xd2, 0x7, 0x39, 0x2, 0x2, 0xd2, 0xd4, 
-    0x5, 0x2a, 0x16, 0x2, 0xd3, 0xd1, 0x3, 0x2, 0x2, 0x2, 0xd4, 0xd7, 0x3, 
-    0x2, 0x2, 0x2, 0xd5, 0xd3, 0x3, 0x2, 0x2, 0x2, 0xd5, 0xd6, 0x3, 0x2, 
-    0x2, 0x2, 0xd6, 0x27, 0x3, 0x2, 0x2, 0x2, 0xd7, 0xd5, 0x3, 0x2, 0x2, 
-    0x2, 0xd8, 0xd9, 0x7, 0x38, 0x2, 0x2, 0xd9, 0xda, 0x5, 0x30, 0x19, 0x2, 
-    0xda, 0x29, 0x3, 0x2, 0x2, 0x2, 0xdb, 0xdc, 0x7, 0x3d, 0x2, 0x2, 0xdc, 
-    0x2b, 0x3, 0x2, 0x2, 0x2, 0xdd, 0xe4, 0x5, 0x30, 0x19, 0x2, 0xde, 0xe4, 
-    0x5, 0x32, 0x1a, 0x2, 0xdf, 0xe4, 0x7, 0x29, 0x2, 0x2, 0xe0, 0xe4, 0x7, 
-    0x2a, 0x2, 0x2, 0xe1, 0xe4, 0x5, 0x2e, 0x18, 0x2, 0xe2, 0xe4, 0x7, 0x2b, 
-    0x2, 0x2, 0xe3, 0xdd, 0x3, 0x2, 0x2, 0x2, 0xe3, 0xde, 0x3, 0x2, 0x2, 
-    0x2, 0xe3, 0xdf, 0x3, 0x2, 0x2, 0x2, 0xe3, 0xe0, 0x3, 0x2, 0x2, 0x2, 
-    0xe3, 0xe1, 0x3, 0x2, 0x2, 0x2, 0xe3, 0xe2, 0x3, 0x2, 0x2, 0x2, 0xe4, 
-    0x2d, 0x3, 0x2, 0x2, 0x2, 0xe5, 0xe6, 0x9, 0x2, 0x2, 0x2, 0xe6, 0x2f, 
-    0x3, 0x2, 0x2, 0x2, 0xe7, 0xe8, 0x9, 0x3, 0x2, 0x2, 0xe8, 0x31, 0x3, 
-    0x2, 0x2, 0x2, 0xe9, 0xea, 0x9, 0x4, 0x2, 0x2, 0xea, 0x33, 0x3, 0x2, 
-    0x2, 0x2, 0xeb, 0xee, 0x5, 0x2a, 0x16, 0x2, 0xec, 0xee, 0x5, 0x38, 0x1d, 
-    0x2, 0xed, 0xeb, 0x3, 0x2, 0x2, 0x2, 0xed, 0xec, 0x3, 0x2, 0x2, 0x2, 
-    0xee, 0xf5, 0x3, 0x2, 0x2, 0x2, 0xef, 0xf0, 0x7, 0x30, 0x2, 0x2, 0xf0, 
-    0xf1, 0x5, 0x30, 0x19, 0x2, 0xf1, 0xf2, 0x7, 0x31, 0x2, 0x2, 0xf2, 0xf4, 
-    0x3, 0x2, 0x2, 0x2, 0xf3, 0xef, 0x3, 0x2, 0x2, 0x2, 0xf4, 0xf7, 0x3, 
-    0x2, 0x2, 0x2, 0xf5, 0xf3, 0x3, 0x2, 0x2, 0x2, 0xf5, 0xf6, 0x3, 0x2, 
-    0x2, 0x2, 0xf6, 0x35, 0x3, 0x2, 0x2, 0x2, 0xf7, 0xf5, 0x3, 0x2, 0x2, 
-    0x2, 0xf8, 0xf9, 0x9, 0x5, 0x2, 0x2, 0xf9, 0x37, 0x3, 0x2, 0x2, 0x2, 
-    0xfa, 0xfb, 0x9, 0x6, 0x2, 0x2, 0xfb, 0x39, 0x3, 0x2, 0x2, 0x2, 0x1b, 
-    0x3f, 0x44, 0x46, 0x56, 0x5c, 0x74, 0x78, 0x7a, 0x89, 0x8b, 0x94, 0x9c, 
-    0xa4, 0xa7, 0xaa, 0xb4, 0xb8, 0xba, 0xc4, 0xc9, 0xce, 0xd5, 0xe3, 0xed, 
-    0xf5, 
+    0x9, 0x12, 0x4, 0x13, 0x9, 0x13, 0x3, 0x2, 0x3, 0x2, 0x3, 0x2, 0x7, 
+    0x2, 0x2a, 0xa, 0x2, 0xc, 0x2, 0xe, 0x2, 0x2d, 0xb, 0x2, 0x3, 0x2, 0x3, 
+    0x2, 0x7, 0x2, 0x31, 0xa, 0x2, 0xc, 0x2, 0xe, 0x2, 0x34, 0xb, 0x2, 0x3, 
+    0x2, 0x3, 0x2, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 
+    0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 
+    0x5, 0x3, 0x6, 0x5, 0x6, 0x46, 0xa, 0x6, 0x3, 0x6, 0x5, 0x6, 0x49, 0xa, 
+    0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x7, 0x6, 0x50, 
+    0xa, 0x6, 0xc, 0x6, 0xe, 0x6, 0x53, 0xb, 0x6, 0x3, 0x6, 0x5, 0x6, 0x56, 
+    0xa, 0x6, 0x5, 0x6, 0x58, 0xa, 0x6, 0x3, 0x6, 0x5, 0x6, 0x5b, 0xa, 0x6, 
+    0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x5, 0x6, 0x60, 0xa, 0x6, 0x5, 0x6, 0x62, 
+    0xa, 0x6, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 
+    0x3, 0x7, 0x3, 0x8, 0x3, 0x8, 0x3, 0x8, 0x6, 0x8, 0x6e, 0xa, 0x8, 0xd, 
+    0x8, 0xe, 0x8, 0x6f, 0x3, 0x8, 0x3, 0x8, 0x5, 0x8, 0x74, 0xa, 0x8, 0x5, 
+    0x8, 0x76, 0xa, 0x8, 0x3, 0x9, 0x3, 0x9, 0x3, 0x9, 0x3, 0x9, 0x3, 0x9, 
+    0x3, 0x9, 0x3, 0x9, 0x3, 0xa, 0x3, 0xa, 0x7, 0xa, 0x81, 0xa, 0xa, 0xc, 
+    0xa, 0xe, 0xa, 0x84, 0xb, 0xa, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 
+    0x3, 0xb, 0x5, 0xb, 0x8b, 0xa, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xc, 0x3, 
+    0xc, 0x3, 0xc, 0x3, 0xc, 0x5, 0xc, 0x93, 0xa, 0xc, 0x3, 0xd, 0x3, 0xd, 
+    0x3, 0xd, 0x3, 0xd, 0x7, 0xd, 0x99, 0xa, 0xd, 0xc, 0xd, 0xe, 0xd, 0x9c, 
+    0xb, 0xd, 0x5, 0xd, 0x9e, 0xa, 0xd, 0x3, 0xd, 0x5, 0xd, 0xa1, 0xa, 0xd, 
+    0x3, 0xd, 0x3, 0xd, 0x3, 0xe, 0x3, 0xe, 0x3, 0xe, 0x3, 0xe, 0x7, 0xe, 
+    0xa9, 0xa, 0xe, 0xc, 0xe, 0xe, 0xe, 0xac, 0xb, 0xe, 0x3, 0xe, 0x5, 0xe, 
+    0xaf, 0xa, 0xe, 0x5, 0xe, 0xb1, 0xa, 0xe, 0x3, 0xe, 0x3, 0xe, 0x3, 0xf, 
+    0x3, 0xf, 0x3, 0xf, 0x3, 0xf, 0x3, 0x10, 0x5, 0x10, 0xba, 0xa, 0x10, 
+    0x3, 0x10, 0x3, 0x10, 0x3, 0x10, 0x7, 0x10, 0xbf, 0xa, 0x10, 0xc, 0x10, 
+    0xe, 0x10, 0xc2, 0xb, 0x10, 0x3, 0x11, 0x3, 0x11, 0x3, 0x12, 0x3, 0x12, 
+    0x3, 0x13, 0x3, 0x13, 0x3, 0x13, 0x2, 0x2, 0x14, 0x2, 0x4, 0x6, 0x8, 
+    0xa, 0xc, 0xe, 0x10, 0x12, 0x14, 0x16, 0x18, 0x1a, 0x1c, 0x1e, 0x20, 
+    0x22, 0x24, 0x2, 0x5, 0x6, 0x2, 0x5, 0x5, 0xa, 0xa, 0x51, 0x57, 0x5c, 
+    0x5c, 0x3, 0x2, 0x45, 0x46, 0x3, 0x2, 0x3, 0x44, 0x2, 0xd3, 0x2, 0x26, 
+    0x3, 0x2, 0x2, 0x2, 0x4, 0x37, 0x3, 0x2, 0x2, 0x2, 0x6, 0x3c, 0x3, 0x2, 
+    0x2, 0x2, 0x8, 0x40, 0x3, 0x2, 0x2, 0x2, 0xa, 0x61, 0x3, 0x2, 0x2, 0x2, 
+    0xc, 0x63, 0x3, 0x2, 0x2, 0x2, 0xe, 0x6d, 0x3, 0x2, 0x2, 0x2, 0x10, 
+    0x77, 0x3, 0x2, 0x2, 0x2, 0x12, 0x82, 0x3, 0x2, 0x2, 0x2, 0x14, 0x85, 
+    0x3, 0x2, 0x2, 0x2, 0x16, 0x92, 0x3, 0x2, 0x2, 0x2, 0x18, 0x94, 0x3, 
+    0x2, 0x2, 0x2, 0x1a, 0xa4, 0x3, 0x2, 0x2, 0x2, 0x1c, 0xb4, 0x3, 0x2, 
+    0x2, 0x2, 0x1e, 0xb9, 0x3, 0x2, 0x2, 0x2, 0x20, 0xc3, 0x3, 0x2, 0x2, 
+    0x2, 0x22, 0xc5, 0x3, 0x2, 0x2, 0x2, 0x24, 0xc7, 0x3, 0x2, 0x2, 0x2, 
+    0x26, 0x27, 0x5, 0x4, 0x3, 0x2, 0x27, 0x2b, 0x5, 0x6, 0x4, 0x2, 0x28, 
+    0x2a, 0x5, 0x8, 0x5, 0x2, 0x29, 0x28, 0x3, 0x2, 0x2, 0x2, 0x2a, 0x2d, 
+    0x3, 0x2, 0x2, 0x2, 0x2b, 0x29, 0x3, 0x2, 0x2, 0x2, 0x2b, 0x2c, 0x3, 
+    0x2, 0x2, 0x2, 0x2c, 0x32, 0x3, 0x2, 0x2, 0x2, 0x2d, 0x2b, 0x3, 0x2, 
+    0x2, 0x2, 0x2e, 0x31, 0x5, 0xc, 0x7, 0x2, 0x2f, 0x31, 0x5, 0x10, 0x9, 
+    0x2, 0x30, 0x2e, 0x3, 0x2, 0x2, 0x2, 0x30, 0x2f, 0x3, 0x2, 0x2, 0x2, 
+    0x31, 0x34, 0x3, 0x2, 0x2, 0x2, 0x32, 0x30, 0x3, 0x2, 0x2, 0x2, 0x32, 
+    0x33, 0x3, 0x2, 0x2, 0x2, 0x33, 0x35, 0x3, 0x2, 0x2, 0x2, 0x34, 0x32, 
+    0x3, 0x2, 0x2, 0x2, 0x35, 0x36, 0x7, 0x2, 0x2, 0x3, 0x36, 0x3, 0x3, 
+    0x2, 0x2, 0x2, 0x37, 0x38, 0x7, 0xc, 0x2, 0x2, 0x38, 0x39, 0x7, 0x73, 
+    0x2, 0x2, 0x39, 0x3a, 0x5, 0x22, 0x12, 0x2, 0x3a, 0x3b, 0x7, 0x80, 0x2, 
+    0x2, 0x3b, 0x5, 0x3, 0x2, 0x2, 0x2, 0x3c, 0x3d, 0x7, 0x8, 0x2, 0x2, 
+    0x3d, 0x3e, 0x5, 0x1e, 0x10, 0x2, 0x3e, 0x3f, 0x7, 0x80, 0x2, 0x2, 0x3f, 
+    0x7, 0x3, 0x2, 0x2, 0x2, 0x40, 0x41, 0x7, 0xd, 0x2, 0x2, 0x41, 0x42, 
+    0x5, 0xa, 0x6, 0x2, 0x42, 0x43, 0x7, 0x80, 0x2, 0x2, 0x43, 0x9, 0x3, 
+    0x2, 0x2, 0x2, 0x44, 0x46, 0x5, 0x1e, 0x10, 0x2, 0x45, 0x44, 0x3, 0x2, 
+    0x2, 0x2, 0x45, 0x46, 0x3, 0x2, 0x2, 0x2, 0x46, 0x47, 0x3, 0x2, 0x2, 
+    0x2, 0x47, 0x49, 0x7, 0x82, 0x2, 0x2, 0x48, 0x45, 0x3, 0x2, 0x2, 0x2, 
+    0x48, 0x49, 0x3, 0x2, 0x2, 0x2, 0x49, 0x5a, 0x3, 0x2, 0x2, 0x2, 0x4a, 
+    0x5b, 0x7, 0x60, 0x2, 0x2, 0x4b, 0x57, 0x7, 0x88, 0x2, 0x2, 0x4c, 0x51, 
+    0x5, 0xa, 0x6, 0x2, 0x4d, 0x4e, 0x7, 0x7f, 0x2, 0x2, 0x4e, 0x50, 0x5, 
+    0xa, 0x6, 0x2, 0x4f, 0x4d, 0x3, 0x2, 0x2, 0x2, 0x50, 0x53, 0x3, 0x2, 
+    0x2, 0x2, 0x51, 0x4f, 0x3, 0x2, 0x2, 0x2, 0x51, 0x52, 0x3, 0x2, 0x2, 
+    0x2, 0x52, 0x55, 0x3, 0x2, 0x2, 0x2, 0x53, 0x51, 0x3, 0x2, 0x2, 0x2, 
+    0x54, 0x56, 0x7, 0x7f, 0x2, 0x2, 0x55, 0x54, 0x3, 0x2, 0x2, 0x2, 0x55, 
+    0x56, 0x3, 0x2, 0x2, 0x2, 0x56, 0x58, 0x3, 0x2, 0x2, 0x2, 0x57, 0x4c, 
+    0x3, 0x2, 0x2, 0x2, 0x57, 0x58, 0x3, 0x2, 0x2, 0x2, 0x58, 0x59, 0x3, 
+    0x2, 0x2, 0x2, 0x59, 0x5b, 0x7, 0x89, 0x2, 0x2, 0x5a, 0x4a, 0x3, 0x2, 
+    0x2, 0x2, 0x5a, 0x4b, 0x3, 0x2, 0x2, 0x2, 0x5b, 0x62, 0x3, 0x2, 0x2, 
+    0x2, 0x5c, 0x5f, 0x5, 0x1e, 0x10, 0x2, 0x5d, 0x5e, 0x7, 0x3, 0x2, 0x2, 
+    0x5e, 0x60, 0x5, 0x22, 0x12, 0x2, 0x5f, 0x5d, 0x3, 0x2, 0x2, 0x2, 0x5f, 
+    0x60, 0x3, 0x2, 0x2, 0x2, 0x60, 0x62, 0x3, 0x2, 0x2, 0x2, 0x61, 0x48, 
+    0x3, 0x2, 0x2, 0x2, 0x61, 0x5c, 0x3, 0x2, 0x2, 0x2, 0x62, 0xb, 0x3, 
+    0x2, 0x2, 0x2, 0x63, 0x64, 0x7, 0x4, 0x2, 0x2, 0x64, 0x65, 0x5, 0x22, 
+    0x12, 0x2, 0x65, 0x66, 0x7, 0x88, 0x2, 0x2, 0x66, 0x67, 0x5, 0xe, 0x8, 
+    0x2, 0x67, 0x68, 0x7, 0x89, 0x2, 0x2, 0x68, 0x69, 0x7, 0x80, 0x2, 0x2, 
+    0x69, 0xd, 0x3, 0x2, 0x2, 0x2, 0x6a, 0x6b, 0x5, 0x22, 0x12, 0x2, 0x6b, 
+    0x6c, 0x7, 0x7f, 0x2, 0x2, 0x6c, 0x6e, 0x3, 0x2, 0x2, 0x2, 0x6d, 0x6a, 
+    0x3, 0x2, 0x2, 0x2, 0x6e, 0x6f, 0x3, 0x2, 0x2, 0x2, 0x6f, 0x6d, 0x3, 
+    0x2, 0x2, 0x2, 0x6f, 0x70, 0x3, 0x2, 0x2, 0x2, 0x70, 0x75, 0x3, 0x2, 
+    0x2, 0x2, 0x71, 0x73, 0x5, 0x22, 0x12, 0x2, 0x72, 0x74, 0x7, 0x7f, 0x2, 
+    0x2, 0x73, 0x72, 0x3, 0x2, 0x2, 0x2, 0x73, 0x74, 0x3, 0x2, 0x2, 0x2, 
+    0x74, 0x76, 0x3, 0x2, 0x2, 0x2, 0x75, 0x71, 0x3, 0x2, 0x2, 0x2, 0x75, 
+    0x76, 0x3, 0x2, 0x2, 0x2, 0x76, 0xf, 0x3, 0x2, 0x2, 0x2, 0x77, 0x78, 
+    0x7, 0x9, 0x2, 0x2, 0x78, 0x79, 0x5, 0x22, 0x12, 0x2, 0x79, 0x7a, 0x7, 
+    0x88, 0x2, 0x2, 0x7a, 0x7b, 0x5, 0x12, 0xa, 0x2, 0x7b, 0x7c, 0x7, 0x89, 
+    0x2, 0x2, 0x7c, 0x7d, 0x7, 0x80, 0x2, 0x2, 0x7d, 0x11, 0x3, 0x2, 0x2, 
+    0x2, 0x7e, 0x81, 0x5, 0x14, 0xb, 0x2, 0x7f, 0x81, 0x5, 0xc, 0x7, 0x2, 
+    0x80, 0x7e, 0x3, 0x2, 0x2, 0x2, 0x80, 0x7f, 0x3, 0x2, 0x2, 0x2, 0x81, 
+    0x84, 0x3, 0x2, 0x2, 0x2, 0x82, 0x80, 0x3, 0x2, 0x2, 0x2, 0x82, 0x83, 
+    0x3, 0x2, 0x2, 0x2, 0x83, 0x13, 0x3, 0x2, 0x2, 0x2, 0x84, 0x82, 0x3, 
+    0x2, 0x2, 0x2, 0x85, 0x86, 0x5, 0x22, 0x12, 0x2, 0x86, 0x87, 0x7, 0x81, 
+    0x2, 0x2, 0x87, 0x8a, 0x5, 0x22, 0x12, 0x2, 0x88, 0x89, 0x7, 0x73, 0x2, 
+    0x2, 0x89, 0x8b, 0x5, 0x16, 0xc, 0x2, 0x8a, 0x88, 0x3, 0x2, 0x2, 0x2, 
+    0x8a, 0x8b, 0x3, 0x2, 0x2, 0x2, 0x8b, 0x8c, 0x3, 0x2, 0x2, 0x2, 0x8c, 
+    0x8d, 0x7, 0x80, 0x2, 0x2, 0x8d, 0x15, 0x3, 0x2, 0x2, 0x2, 0x8e, 0x93, 
+    0x5, 0x20, 0x11, 0x2, 0x8f, 0x93, 0x5, 0x18, 0xd, 0x2, 0x90, 0x93, 0x5, 
+    0x1a, 0xe, 0x2, 0x91, 0x93, 0x5, 0x22, 0x12, 0x2, 0x92, 0x8e, 0x3, 0x2, 
+    0x2, 0x2, 0x92, 0x8f, 0x3, 0x2, 0x2, 0x2, 0x92, 0x90, 0x3, 0x2, 0x2, 
+    0x2, 0x92, 0x91, 0x3, 0x2, 0x2, 0x2, 0x93, 0x17, 0x3, 0x2, 0x2, 0x2, 
+    0x94, 0x9d, 0x7, 0x8a, 0x2, 0x2, 0x95, 0x9a, 0x5, 0x16, 0xc, 0x2, 0x96, 
+    0x97, 0x7, 0x7f, 0x2, 0x2, 0x97, 0x99, 0x5, 0x16, 0xc, 0x2, 0x98, 0x96, 
+    0x3, 0x2, 0x2, 0x2, 0x99, 0x9c, 0x3, 0x2, 0x2, 0x2, 0x9a, 0x98, 0x3, 
+    0x2, 0x2, 0x2, 0x9a, 0x9b, 0x3, 0x2, 0x2, 0x2, 0x9b, 0x9e, 0x3, 0x2, 
+    0x2, 0x2, 0x9c, 0x9a, 0x3, 0x2, 0x2, 0x2, 0x9d, 0x95, 0x3, 0x2, 0x2, 
+    0x2, 0x9d, 0x9e, 0x3, 0x2, 0x2, 0x2, 0x9e, 0xa0, 0x3, 0x2, 0x2, 0x2, 
+    0x9f, 0xa1, 0x7, 0x7f, 0x2, 0x2, 0xa0, 0x9f, 0x3, 0x2, 0x2, 0x2, 0xa0, 
+    0xa1, 0x3, 0x2, 0x2, 0x2, 0xa1, 0xa2, 0x3, 0x2, 0x2, 0x2, 0xa2, 0xa3, 
+    0x7, 0x8b, 0x2, 0x2, 0xa3, 0x19, 0x3, 0x2, 0x2, 0x2, 0xa4, 0xb0, 0x7, 
+    0x88, 0x2, 0x2, 0xa5, 0xaa, 0x5, 0x1c, 0xf, 0x2, 0xa6, 0xa7, 0x7, 0x7f, 
+    0x2, 0x2, 0xa7, 0xa9, 0x5, 0x1c, 0xf, 0x2, 0xa8, 0xa6, 0x3, 0x2, 0x2, 
+    0x2, 0xa9, 0xac, 0x3, 0x2, 0x2, 0x2, 0xaa, 0xa8, 0x3, 0x2, 0x2, 0x2, 
+    0xaa, 0xab, 0x3, 0x2, 0x2, 0x2, 0xab, 0xae, 0x3, 0x2, 0x2, 0x2, 0xac, 
+    0xaa, 0x3, 0x2, 0x2, 0x2, 0xad, 0xaf, 0x7, 0x7f, 0x2, 0x2, 0xae, 0xad, 
+    0x3, 0x2, 0x2, 0x2, 0xae, 0xaf, 0x3, 0x2, 0x2, 0x2, 0xaf, 0xb1, 0x3, 
+    0x2, 0x2, 0x2, 0xb0, 0xa5, 0x3, 0x2, 0x2, 0x2, 0xb0, 0xb1, 0x3, 0x2, 
+    0x2, 0x2, 0xb1, 0xb2, 0x3, 0x2, 0x2, 0x2, 0xb2, 0xb3, 0x7, 0x89, 0x2, 
+    0x2, 0xb3, 0x1b, 0x3, 0x2, 0x2, 0x2, 0xb4, 0xb5, 0x5, 0x22, 0x12, 0x2, 
+    0xb5, 0xb6, 0x7, 0x81, 0x2, 0x2, 0xb6, 0xb7, 0x5, 0x16, 0xc, 0x2, 0xb7, 
+    0x1d, 0x3, 0x2, 0x2, 0x2, 0xb8, 0xba, 0x7, 0x82, 0x2, 0x2, 0xb9, 0xb8, 
+    0x3, 0x2, 0x2, 0x2, 0xb9, 0xba, 0x3, 0x2, 0x2, 0x2, 0xba, 0xbb, 0x3, 
+    0x2, 0x2, 0x2, 0xbb, 0xc0, 0x5, 0x22, 0x12, 0x2, 0xbc, 0xbd, 0x7, 0x82, 
+    0x2, 0x2, 0xbd, 0xbf, 0x5, 0x22, 0x12, 0x2, 0xbe, 0xbc, 0x3, 0x2, 0x2, 
+    0x2, 0xbf, 0xc2, 0x3, 0x2, 0x2, 0x2, 0xc0, 0xbe, 0x3, 0x2, 0x2, 0x2, 
+    0xc0, 0xc1, 0x3, 0x2, 0x2, 0x2, 0xc1, 0x1f, 0x3, 0x2, 0x2, 0x2, 0xc2, 
+    0xc0, 0x3, 0x2, 0x2, 0x2, 0xc3, 0xc4, 0x9, 0x2, 0x2, 0x2, 0xc4, 0x21, 
+    0x3, 0x2, 0x2, 0x2, 0xc5, 0xc6, 0x9, 0x3, 0x2, 0x2, 0xc6, 0x23, 0x3, 
+    0x2, 0x2, 0x2, 0xc7, 0xc8, 0x9, 0x4, 0x2, 0x2, 0xc8, 0x25, 0x3, 0x2, 
+    0x2, 0x2, 0x1c, 0x2b, 0x30, 0x32, 0x45, 0x48, 0x51, 0x55, 0x57, 0x5a, 
+    0x5f, 0x61, 0x6f, 0x73, 0x75, 0x80, 0x82, 0x8a, 0x92, 0x9a, 0x9d, 0xa0, 
+    0xaa, 0xae, 0xb0, 0xb9, 0xc0, 
   };
 
   atn::ATNDeserializer deserializer;
