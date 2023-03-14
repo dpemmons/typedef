@@ -1,5 +1,6 @@
 #include "typedef_parser_context.h"
 
+#include <set>
 #include <vector>
 
 #include "antlr4/antlr4-runtime.h"
@@ -7,6 +8,55 @@
 #include "grammar/TypedefParser.h"
 #include "grammar/TypedefParserBaseListener.h"
 #include "typedef_parser_interface.h"
+
+namespace {
+
+// Pull an idientifier string from something that has one.
+template <class CTX>
+std::string GetIdentifierString(CTX *ctx) {
+  static_assert(std::is_base_of<antlr4::ParserRuleContext, CTX>::value,
+                "CTX not derived from ParserRuleContext");
+  if (!ctx || !ctx->identifier()) {
+    return "";
+  }
+  if (ctx->identifier()->RAW_IDENTIFIER()) {
+    return ctx->identifier()->RAW_IDENTIFIER()->toString();
+  } else if (ctx->identifier()->NON_KEYWORD_IDENTIFIER()) {
+    return ctx->identifier()->NON_KEYWORD_IDENTIFIER()->toString();
+  }
+  return "";
+}
+
+// TODO: use std::set<>.contains() when upgrading to c++20.
+template <typename T>
+bool SetContains(std::set<T> set, T &x) {
+  return set.find(x) != set.end();
+}
+
+class ErrorBuilder {
+ public:
+  td::ParserErrorInfo build() { return info_; }
+  ErrorBuilder &SetType(td::ParserErrorInfo::Type type) {
+    info_.error_type = type;
+  }
+  ErrorBuilder &SetMessage(const std::string &msg) { info_.message = msg; }
+  ErrorBuilder &SetTokenType(size_t token_type) {
+    info_.token_type = token_type;
+  }
+  ErrorBuilder &SetCharOffset(size_t char_offset) {
+    info_.char_offset = char_offset;
+  }
+  ErrorBuilder &SetLine(size_t line) { info_.line = line; }
+  ErrorBuilder &SetLineOffset(size_t line_offset) {
+    info_.line_offset = line_offset;
+  }
+  ErrorBuilder &SetLength(size_t length) { info_.length = length; }
+
+ private:
+  td::ParserErrorInfo info_;
+};
+
+}  // namespace
 
 //   template <typename T>
 //   bool nodeToInteger(antlr4::tree::TerminalNode* node, T& numVal) {
@@ -81,22 +131,28 @@ void td::TypedefParserContext::Parse(std::istream &text) {
   }
 }
 
-std::string td::TypedefParserContext::GetLanguageVersion() const {
+std::string td::TypedefParserContext::GetLanguageVersion() {
   if (compilation_unit_ == nullptr) {
+    errors_.push_back(ErrorBuilder().build());
     return "";
   }
-  auto decl = compilation_unit_->typedefVersionDeclaration();
-  if (decl == nullptr) {
+  std::string versionIdentifier =
+      GetIdentifierString(compilation_unit_->typedefVersionDeclaration());
+  if (kVersions.IsValid(versionIdentifier)) {
+    return kVersions.
+  }
+  if (SetContains(kValidTypedefVersions, versionIdentifier)) {
+    return versionIdentifier;
+  } else {
     return "";
   }
-  return decl->IDENTIFIER()->toString();
 }
 
-td::QualifiedIdentifier td::TypedefParserContext::GetModule() const {
+td::QualifiedIdentifier td::TypedefParserContext::GetModule() {
   return QualifiedIdentifier();
 }
 
-std::vector<td::Import> td::TypedefParserContext::GetImports() const {
+std::vector<td::Import> td::TypedefParserContext::GetImports() {
   std::vector<td::Import> imports;
   if (compilation_unit_ == nullptr) {
     return imports;

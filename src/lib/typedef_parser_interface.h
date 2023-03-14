@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 namespace td {
 
@@ -27,6 +28,45 @@ struct ParserErrorInfo {
 
 typedef std::vector<std::string> QualifiedIdentifier;
 
+class LanguageVersion {
+ public:
+  enum Version {
+    UNKNOWN = 0,
+    ALPHA = 1,
+  };
+
+  static LanguageVersion FromString(std::string& str) {
+    for (auto pair : kVersionMap) {
+      if (pair.second.compare(str)) {
+        return pair.first;
+      }
+    }
+    return LanguageVersion(UNKNOWN);
+  }
+
+  bool IsValid(std::string& str) const {
+    for (auto pair : kVersionMap) {
+      if (pair.second.compare(str)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  std::string ToString(Version v) const {
+    for (auto pair : kVersionMap) {
+      if (pair.first == v) {
+        return pair.second;
+      }
+    }
+    return "unknown";
+  }
+
+ private:
+  LanguageVersion(Version v) : version_(v) {}
+  Version version_;
+  static std::map<Version, std::string> kVersionMap;
+};
+
 struct Import {
   QualifiedIdentifier qualified_identifier;
   std::string alias;
@@ -43,9 +83,9 @@ class TypedefParserInterface {
   bool HasErrors() const { return GetErrors().size(); }
   virtual const std::vector<ParserErrorInfo>& GetErrors() const = 0;
 
-  virtual std::string GetLanguageVersion() const = 0;
-  virtual QualifiedIdentifier GetModule() const = 0;
-  virtual std::vector<td::Import> GetImports() const = 0;
+  virtual std::string GetLanguageVersion() = 0;
+  virtual QualifiedIdentifier GetModule() = 0;
+  virtual std::vector<td::Import> GetImports() = 0;
 
  protected:
   TypedefParserInterface() {}

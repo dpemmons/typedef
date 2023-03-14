@@ -24,9 +24,9 @@ class TypedefParserContext : public TypedefParserInterface {
     return errors_;
   }
 
-  virtual std::string GetLanguageVersion() const;
-  virtual QualifiedIdentifier GetModule() const;
-  virtual std::vector<td::Import> GetImports() const;
+  virtual LanguageVersion GetLanguageVersion();
+  virtual QualifiedIdentifier GetModule();
+  virtual std::vector<td::Import> GetImports();
 
  private:
   class LexerErrorListener : public antlr4::BaseErrorListener {
