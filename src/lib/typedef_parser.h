@@ -3,12 +3,12 @@
 
 #include <memory>
 
-#include "typedef_parser_interface.h"
+#include "parsed_file.h"
 
 namespace td {
 
-std::shared_ptr<TypedefParserInterface> Parse(const std::string& s);
-std::shared_ptr<TypedefParserInterface> Parse(std::istream& input);
+std::shared_ptr<ParsedFile> Parse(const std::string& s);
+std::shared_ptr<ParsedFile> Parse(std::istream& input);
 
 }  // namespace td
 

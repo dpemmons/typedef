@@ -15,7 +15,7 @@ typedef=alpha;
 module someModule;
     )");
     REQUIRE(!parser->HasErrors());
-    auto moduleDecl = parser->GetImports();
+    // auto moduleDecl = parser->GetImports();
     // CHECK_THAT(1);
   }
 }

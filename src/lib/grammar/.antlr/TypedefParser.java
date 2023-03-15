@@ -37,9 +37,9 @@ public class TypedefParser extends Parser {
 		MINUSEQ=104, STAREQ=105, SLASHEQ=106, PERCENTEQ=107, CARETEQ=108, ANDEQ=109, 
 		OREQ=110, SHLEQ=111, SHREQ=112, EQ=113, EQEQ=114, NE=115, GT=116, LT=117, 
 		GE=118, LE=119, AT=120, UNDERSCORE=121, DOT=122, DOTDOT=123, DOTDOTDOT=124, 
-		COMMA=125, SEMI=126, COLON=127, PS=128, RARROW=129, FATARROW=130, POUND=131, 
-		DOLLAR=132, QUESTION=133, LBRACE=134, RBRACE=135, LBRACK=136, RBRACK=137, 
-		LPAREN=138, RPAREN=139;
+		COMMA=125, SEMI=126, COLON=127, PATHSEP=128, RARROW=129, FATARROW=130, 
+		POUND=131, DOLLAR=132, QUESTION=133, LBRACE=134, RBRACE=135, LBRACK=136, 
+		RBRACK=137, LPAREN=138, RPAREN=139;
 	public static final int
 		RULE_compilationUnit = 0, RULE_typedefVersionDeclaration = 1, RULE_moduleDeclaration = 2, 
 		RULE_useDeclaration = 3, RULE_useTree = 4, RULE_enumDeclaration = 5, RULE_enumBody = 6, 
@@ -100,7 +100,7 @@ public class TypedefParser extends Parser {
 			"PERCENT", "CARET", "NOT", "AND", "OR", "ANDAND", "OROR", "PLUSEQ", "MINUSEQ", 
 			"STAREQ", "SLASHEQ", "PERCENTEQ", "CARETEQ", "ANDEQ", "OREQ", "SHLEQ", 
 			"SHREQ", "EQ", "EQEQ", "NE", "GT", "LT", "GE", "LE", "AT", "UNDERSCORE", 
-			"DOT", "DOTDOT", "DOTDOTDOT", "COMMA", "SEMI", "COLON", "PS", "RARROW", 
+			"DOT", "DOTDOT", "DOTDOTDOT", "COMMA", "SEMI", "COLON", "PATHSEP", "RARROW", 
 			"FATARROW", "POUND", "DOLLAR", "QUESTION", "LBRACE", "RBRACE", "LBRACK", 
 			"RBRACK", "LPAREN", "RPAREN"
 		};
@@ -374,7 +374,7 @@ public class TypedefParser extends Parser {
 		public TerminalNode STAR() { return getToken(TypedefParser.STAR, 0); }
 		public TerminalNode LBRACE() { return getToken(TypedefParser.LBRACE, 0); }
 		public TerminalNode RBRACE() { return getToken(TypedefParser.RBRACE, 0); }
-		public TerminalNode PS() { return getToken(TypedefParser.PS, 0); }
+		public TerminalNode PATHSEP() { return getToken(TypedefParser.PATHSEP, 0); }
 		public List<UseTreeContext> useTree() {
 			return getRuleContexts(UseTreeContext.class);
 		}
@@ -413,7 +413,7 @@ public class TypedefParser extends Parser {
 				setState(70);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (NON_KEYWORD_IDENTIFIER - 67)) | (1L << (RAW_IDENTIFIER - 67)) | (1L << (PS - 67)))) != 0)) {
+				if (((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (NON_KEYWORD_IDENTIFIER - 67)) | (1L << (RAW_IDENTIFIER - 67)) | (1L << (PATHSEP - 67)))) != 0)) {
 					{
 					setState(67);
 					_errHandler.sync(this);
@@ -426,7 +426,7 @@ public class TypedefParser extends Parser {
 						break;
 					}
 					setState(69);
-					match(PS);
+					match(PATHSEP);
 					}
 				}
 
@@ -446,7 +446,7 @@ public class TypedefParser extends Parser {
 					setState(85);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-					if (((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (NON_KEYWORD_IDENTIFIER - 67)) | (1L << (RAW_IDENTIFIER - 67)) | (1L << (STAR - 67)) | (1L << (PS - 67)))) != 0) || _la==LBRACE) {
+					if (((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (NON_KEYWORD_IDENTIFIER - 67)) | (1L << (RAW_IDENTIFIER - 67)) | (1L << (STAR - 67)) | (1L << (PATHSEP - 67)))) != 0) || _la==LBRACE) {
 						{
 						setState(74);
 						useTree();
@@ -1114,9 +1114,9 @@ public class TypedefParser extends Parser {
 		public IdentifierContext identifier(int i) {
 			return getRuleContext(IdentifierContext.class,i);
 		}
-		public List<TerminalNode> PS() { return getTokens(TypedefParser.PS); }
-		public TerminalNode PS(int i) {
-			return getToken(TypedefParser.PS, i);
+		public List<TerminalNode> PATHSEP() { return getTokens(TypedefParser.PATHSEP); }
+		public TerminalNode PATHSEP(int i) {
+			return getToken(TypedefParser.PATHSEP, i);
 		}
 		public SimplePathContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1135,10 +1135,10 @@ public class TypedefParser extends Parser {
 			setState(183);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==PS) {
+			if (_la==PATHSEP) {
 				{
 				setState(182);
-				match(PS);
+				match(PATHSEP);
 				}
 			}
 
@@ -1152,7 +1152,7 @@ public class TypedefParser extends Parser {
 					{
 					{
 					setState(186);
-					match(PS);
+					match(PATHSEP);
 					setState(187);
 					identifier();
 					}
