@@ -9,6 +9,7 @@ struct ParserErrorInfo {
     UNKNOWN = 0,
     LEXER_ERROR = 1,
     PARSE_ERROR = 2,
+    MISSING_IDENTIFIER = 3
   };
   Type error_type;
 

@@ -9,21 +9,21 @@ using Catch::Matchers::Equals;
 
 TEST_CASE("Valid version declaration detected.") {
   SECTION("Simple valid 'alpha' version string.") {
-    auto parser = td::Parse(R"(
+    auto parsed_file = td::Parse(R"(
 typedef=alpha;
 module someModule;
     )");
-    REQUIRE(!parser->HasErrors());
-    CHECK_THAT(parser->GetLanguageVersion(), Equals("alpha"));
+    REQUIRE(!parsed_file->HasErrors());
+    REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::ALPHA);
   }
 
   SECTION("Leading whitespace is ok.") {
-    auto parser = td::Parse(R"(
+    auto parsed_file = td::Parse(R"(
         typedef=alpha;
         module someModule;
     )");
-    REQUIRE(!parser->HasErrors());
-    CHECK_THAT(parser->GetLanguageVersion(), Equals("alpha"));
+    REQUIRE(!parsed_file->HasErrors());
+    REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::ALPHA);
   }
 
   SECTION("Missing version fails.") {
@@ -32,8 +32,5 @@ module someModule;
         module someModule;
     )");
     REQUIRE(parser->HasErrors());
-    for (auto err : parser->GetErrors()) {
-      
-    }
   }
 }

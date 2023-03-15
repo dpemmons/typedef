@@ -73,10 +73,21 @@ class ParserErrorListener : public antlr4::BaseErrorListener {
 
 // Pull an idientifier string from something that has one.
 template <class CTX>
-std::string GetIdentifierString(CTX *ctx) {
+std::string GetIdentifierString(CTX *ctx,
+                                std::vector<ParserErrorInfo> *errors_list) {
   static_assert(std::is_base_of<antlr4::ParserRuleContext, CTX>::value,
                 "CTX not derived from ParserRuleContext");
   if (!ctx || !ctx->identifier()) {
+    errors_list->push_back(
+        PEIBuilder()
+            .SetType(ParserErrorInfo::MISSING_IDENTIFIER)
+            .SetTokenType(ctx->getStart()->getType())
+            .SetCharOffset(ctx->getStart()->getStartIndex())
+            .SetLine(ctx->getStart()->getLine())
+            .SetLineOffset(ctx->getStart()->getCharPositionInLine())
+            .SetLength(ctx->getStop()->getStopIndex() -
+                       ctx->getStart()->getStartIndex() + 1)
+            .build());
     return "";
   }
   if (ctx->identifier()->RAW_IDENTIFIER()) {
@@ -95,19 +106,16 @@ bool SetContains(std::set<T> set, T &x) {
 
 }  // namespace
 
-std::string GetLanguageVersion(
-    TypedefParser::CompilationUnitContext *compilation_unit) {
+LanguageVersion GetLanguageVersion(
+    TypedefParser::CompilationUnitContext *compilation_unit,
+    std::vector<ParserErrorInfo> *errors_list) {
   std::string versionIdentifier =
-      GetIdentifierString(compilation_unit->typedefVersionDeclaration());
-  // if (kVersions.IsValid(versionIdentifier)) {
-  //   return kVersions.
-  // }
-  // if (SetContains(kValidTypedefVersions, versionIdentifier)) {
-  //   return versionIdentifier;
-  // } else {
-  //   return "";
-  // }
-  return versionIdentifier;
+      GetIdentifierString(compilation_unit->typedefVersionDeclaration(), errors_list);
+  if (!IsValidLanguageVersion(versionIdentifier)) {
+    errors_list->push_back(PEIBuilder().build());
+    return LanguageVersion::UNKNOWN;
+  }
+  return LangaugeVersionFromString(versionIdentifier);
 }
 
 td::QualifiedIdentifier GetModule(
@@ -143,7 +151,6 @@ std::vector<UseDeclaration> GetImports(
   // }
   return use_decls;
 }
-
 
 std::shared_ptr<ParsedFile> Parse(const std::string &s) {
   std::istringstream ss(s);
@@ -196,6 +203,9 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
       compilation_unit = parser.compilationUnit();
     }
   }
+
+  ParsedFileBuilder builder;
+  builder.SetLanguageVersion(GetLanguageVersion(compilation_unit, &errors));
 
   return std::make_shared<ParsedFile>();
 }
