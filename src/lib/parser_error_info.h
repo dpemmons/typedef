@@ -8,11 +8,12 @@ struct ParserErrorInfo {
   enum Type {
     UNKNOWN = 0,
     OTHER = 1,
-    LEXER_ERROR = 2,
-    PARSE_ERROR = 3,
-    MISSING_STATEMENT = 4,
-    MISSING_IDENTIFIER = 5,
-    INVALID_LANGUAGE_VERSION = 6
+    UNIMPLEMENTED = 2,
+    LEXER_ERROR = 3,
+    PARSE_ERROR = 4,
+    MISSING_STATEMENT = 5,
+    MISSING_IDENTIFIER = 6,
+    INVALID_LANGUAGE_VERSION = 7
   };
   Type error_type;
 

@@ -49,9 +49,7 @@ class ParsedFileBuilder {
     file_.use_declarations_ = use_declarations;
     return *this;
   }
-
-  ParsedFileBuilder& SetErrors(
-      std::vector<ParserErrorInfo> errors) {
+  ParsedFileBuilder& SetErrors(std::vector<ParserErrorInfo> errors) {
     file_.errors_ = errors;
     return *this;
   }

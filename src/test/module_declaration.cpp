@@ -8,12 +8,13 @@
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 
-TEST_CASE("Simple module declaration.", "[module_declaration]") {
-  auto parser = td::Parse(R"(
+TEST_CASE("Module declaration throws an UNIMPLEMENTED error.", "[module_declaration]") {
+  auto parsed_file = td::Parse(R"(
 typedef=alpha;
 module someModule;
     )");
-  REQUIRE(!parser->HasErrors());
-  auto moduleDecl = parser->GetModule();
-  // CHECK_THAT(1);
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->GetErrors().size() == 1);
+  REQUIRE(parsed_file->GetErrors()[0].error_type ==
+          td::ParserErrorInfo::UNIMPLEMENTED);
 }

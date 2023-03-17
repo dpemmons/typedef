@@ -8,12 +8,13 @@
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 
-TEST_CASE("Single use declaration.", "[use_declarations]") {
-  auto parser = td::Parse(R"(
+TEST_CASE("Use declarations throw UNIMPLEMENTED error.", "[use_declarations]") {
+  auto parsed_file = td::Parse(R"(
 typedef=alpha;
 use someModule;
     )");
-  REQUIRE(!parser->HasErrors());
-  // auto moduleDecl = parser->GetImports();
-  // CHECK_THAT(1);
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->GetErrors().size() == 1);
+  REQUIRE(parsed_file->GetErrors()[0].error_type ==
+          td::ParserErrorInfo::UNIMPLEMENTED);
 }

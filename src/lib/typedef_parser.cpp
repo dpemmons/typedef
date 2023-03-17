@@ -134,13 +134,24 @@ LanguageVersion GetLanguageVersion(
 td::QualifiedIdentifier GetModuleDeclaration(
     TypedefParser::CompilationUnitContext *compilation_unit,
     std::vector<ParserErrorInfo> *errors_list) {
+  if (compilation_unit->moduleDeclaration()) {
+    errors_list->push_back(
+        ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
+                         ParserErrorInfo::UNIMPLEMENTED));
+  }
   return QualifiedIdentifier();
 }
 
-std::vector<UseDeclaration> GetImports(
-    TypedefParser::CompilationUnitContext *compilation_unit) {
+std::vector<UseDeclaration> GetUseDeclarations(
+    TypedefParser::CompilationUnitContext *compilation_unit,
+    std::vector<ParserErrorInfo> *errors_list) {
   std::vector<UseDeclaration> use_decls;
 
+  if (!compilation_unit->useDeclaration().empty()) {
+    errors_list->push_back(
+        ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
+                         ParserErrorInfo::UNIMPLEMENTED));
+  }
   // auto useDeclaration = compilation_unit_->useDeclaration();
   // for (auto useDeclaration : importStatements) {
   //   td::Import import;
@@ -221,6 +232,7 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
   ParsedFileBuilder builder;
   builder.SetLanguageVersion(GetLanguageVersion(compilation_unit, &errors));
   builder.SetModule(GetModuleDeclaration(compilation_unit, &errors));
+  builder.SetUseDeclarations(GetUseDeclarations(compilation_unit, &errors));
 
   builder.SetErrors(errors);
 
