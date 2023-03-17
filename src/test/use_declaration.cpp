@@ -8,14 +8,12 @@
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 
-TEST_CASE("Imports.") {
-  SECTION("Single import.") {
-    auto parser = td::Parse(R"(
+TEST_CASE("Single use declaration.", "[use_declarations]") {
+  auto parser = td::Parse(R"(
 typedef=alpha;
-module someModule;
+use someModule;
     )");
-    REQUIRE(!parser->HasErrors());
-    // auto moduleDecl = parser->GetImports();
-    // CHECK_THAT(1);
-  }
+  REQUIRE(!parser->HasErrors());
+  // auto moduleDecl = parser->GetImports();
+  // CHECK_THAT(1);
 }

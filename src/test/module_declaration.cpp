@@ -8,14 +8,12 @@
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 
-TEST_CASE("Module declaration.") {
-  SECTION("test.") {
-    auto parser = td::Parse(R"(
+TEST_CASE("Simple module declaration.", "[module_declaration]") {
+  auto parser = td::Parse(R"(
 typedef=alpha;
 module someModule;
     )");
-    REQUIRE(!parser->HasErrors());
-    auto moduleDecl = parser->GetModule();
-    // CHECK_THAT(1);
-  }
+  REQUIRE(!parser->HasErrors());
+  auto moduleDecl = parser->GetModule();
+  // CHECK_THAT(1);
 }

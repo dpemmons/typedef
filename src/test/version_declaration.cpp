@@ -7,49 +7,70 @@
 
 using Catch::Matchers::Equals;
 
-TEST_CASE("Version declarations.") {
-  SECTION("Simple valid 'alpha' version string.") {
-    auto parsed_file = td::Parse(R"(
+TEST_CASE("Simple valid 'alpha' version string.", "[version_declarations]") {
+  auto parsed_file = td::Parse(R"(
 typedef=alpha;
     )");
-    REQUIRE(!parsed_file->HasErrors());
-    REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::ALPHA);
-  }
+  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::ALPHA);
+}
 
-  SECTION("Leading whitespace is ok.") {
-    auto parsed_file = td::Parse(R"(
+TEST_CASE("Leading whitespace is ok.", "[version_declarations]") {
+  auto parsed_file = td::Parse(R"(
         typedef=alpha;
     )");
-    REQUIRE(!parsed_file->HasErrors());
-    REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::ALPHA);
-  }
+  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::ALPHA);
+}
 
-  SECTION("Other whitespace is ok.") {
-    auto parsed_file = td::Parse(R"(
+TEST_CASE("Other whitespace is ok.", "[version_declarations]") {
+  auto parsed_file = td::Parse(R"(
         typedef = alpha ;
     )");
-    REQUIRE(!parsed_file->HasErrors());
-    REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::ALPHA);
-  }
+  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::ALPHA);
+}
 
-  SECTION("Invalid version string fails.") {
-    auto parsed_file = td::Parse(R"(
-        typedef=qwer;
+TEST_CASE("Semicolon required.", "[version_declarations]") {
+  auto parsed_file = td::Parse(R"(
+        typedef = alpha
     )");
-    REQUIRE(parsed_file->HasErrors());
-    REQUIRE(parsed_file->GetErrors().size() == 1);
-    REQUIRE(parsed_file->GetErrors()[0].error_type == td::ParserErrorInfo::INVALID_LANGUAGE_VERSION);
-    REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::UNKNOWN);
-  }
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->GetErrors().size() == 1);
+  REQUIRE(parsed_file->GetErrors()[0].error_type ==
+          td::ParserErrorInfo::PARSE_ERROR);
+  REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::ALPHA);
+}
 
-  SECTION("Missing version fails.") {
-    auto parsed_file = td::Parse(R"(
+TEST_CASE("Must be an identifier.", "[version_declarations]") {
+  auto parsed_file = td::Parse(R"(
+        typedef = 123;
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->GetErrors().size() == 1);
+  REQUIRE(parsed_file->GetErrors()[0].error_type ==
+          td::ParserErrorInfo::PARSE_ERROR);
+  REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::UNKNOWN);
+}
+
+TEST_CASE("Identifier must exist..", "[version_declarations]") {
+  auto parsed_file = td::Parse(R"(
         typedef=;
     )");
-    REQUIRE(parsed_file->HasErrors());
-    REQUIRE(parsed_file->GetErrors().size() == 1);
-    REQUIRE(parsed_file->GetErrors()[0].error_type == td::ParserErrorInfo::PARSE_ERROR);
-    REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::UNKNOWN);
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->GetErrors().size() == 1);
+  REQUIRE(parsed_file->GetErrors()[0].error_type ==
+          td::ParserErrorInfo::PARSE_ERROR);
+  REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::UNKNOWN);
+}
 
-  }
+TEST_CASE("Must be a known version identifier.", "[version_declarations]") {
+  auto parsed_file = td::Parse(R"(
+        typedef=qwer;
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->GetErrors().size() == 1);
+  REQUIRE(parsed_file->GetErrors()[0].error_type ==
+          td::ParserErrorInfo::INVALID_LANGUAGE_VERSION);
+  REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::UNKNOWN);
 }
