@@ -5,10 +5,9 @@ options {
 }
 
 compilationUnit:
-	typedefVersionDeclaration moduleDeclaration useDeclaration* (
-		enumDeclaration
-		| structDeclaration
-	)* EOF;
+	typedefVersionDeclaration moduleDeclaration? useDeclaration* item* EOF;
+
+item: structDeclaration;
 
 typedefVersionDeclaration: KW_TYPEDEF EQ identifier SEMI;
 moduleDeclaration: KW_MODULE simplePath SEMI;
@@ -20,23 +19,23 @@ useTree: (simplePath? '::')? (
 	)
 	| simplePath ('as' identifier)?;
 
-// Enums
-enumDeclaration: KW_ENUM identifier LBRACE enumBody RBRACE SEMI;
-enumBody: ( identifier COMMA)+ (identifier COMMA?)?;
+// // Enums
+// enumDeclaration: KW_ENUM identifier LBRACE enumBody RBRACE SEMI;
+// enumBody: ( identifier COMMA)+ (identifier COMMA?)?;
 
 // Strucvt
 structDeclaration:
-	KW_STRUCT identifier LBRACE messageBody RBRACE SEMI;
-messageBody: (fieldDeclaration | enumDeclaration)*;
-
-fieldDeclaration: identifier COLON identifier (EQ value)? SEMI;
+	KW_STRUCT identifier LBRACE structBody RBRACE SEMI;
+structBody: structFieldDeclaration*;
+structFieldDeclaration: identifier COLON identifier (EQ value)? SEMI;
 
 // Value definitions ----------------------------------------------------------
-value: literalExpression | array | map | identifier;
+// value: literalExpression | array | map | identifier;
+value: literalExpression;
 
-array: LBRACK (value (COMMA value)*)? COMMA? RBRACK;
-map: LBRACE (keyValue (COMMA keyValue)* COMMA?)? RBRACE;
-keyValue: identifier COLON value;
+// array: LBRACK (value (COMMA value)*)? COMMA? RBRACK;
+// map: LBRACE (keyValue (COMMA keyValue)* COMMA?)? RBRACE;
+// keyValue: identifier COLON value;
 
 simplePath: '::'? identifier ('::' identifier)*;
 

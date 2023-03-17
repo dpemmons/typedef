@@ -14,6 +14,19 @@ namespace td {
 
 namespace {
 
+ParserErrorInfo ErrorFromContext(antlr4::ParserRuleContext *ctx,
+                                 ParserErrorInfo::Type type) {
+  return PEIBuilder()
+      .SetType(type)
+      .SetTokenType(ctx->getStart()->getType())
+      .SetCharOffset(ctx->getStart()->getStartIndex())
+      .SetLine(ctx->getStart()->getLine())
+      .SetLineOffset(ctx->getStart()->getCharPositionInLine())
+      .SetLength(ctx->getStop()->getStopIndex() -
+                 ctx->getStart()->getStartIndex() + 1)
+      .build();
+}
+
 class LexerErrorListener : public antlr4::BaseErrorListener {
  public:
   LexerErrorListener(std::vector<ParserErrorInfo> *errors_list)
@@ -79,23 +92,17 @@ std::string GetIdentifierString(CTX *ctx,
                 "CTX not derived from ParserRuleContext");
   if (!ctx || !ctx->identifier()) {
     errors_list->push_back(
-        PEIBuilder()
-            .SetType(ParserErrorInfo::MISSING_IDENTIFIER)
-            .SetTokenType(ctx->getStart()->getType())
-            .SetCharOffset(ctx->getStart()->getStartIndex())
-            .SetLine(ctx->getStart()->getLine())
-            .SetLineOffset(ctx->getStart()->getCharPositionInLine())
-            .SetLength(ctx->getStop()->getStopIndex() -
-                       ctx->getStart()->getStartIndex() + 1)
-            .build());
+        ErrorFromContext(ctx, ParserErrorInfo::MISSING_IDENTIFIER));
     return "";
   }
   if (ctx->identifier()->RAW_IDENTIFIER()) {
     return ctx->identifier()->RAW_IDENTIFIER()->toString();
   } else if (ctx->identifier()->NON_KEYWORD_IDENTIFIER()) {
     return ctx->identifier()->NON_KEYWORD_IDENTIFIER()->toString();
+  } else {
+    // Parse error.
+    return "";
   }
-  return "";
 }
 
 // TODO: use std::set<>.contains() when upgrading to c++20.
@@ -109,17 +116,24 @@ bool SetContains(std::set<T> set, T &x) {
 LanguageVersion GetLanguageVersion(
     TypedefParser::CompilationUnitContext *compilation_unit,
     std::vector<ParserErrorInfo> *errors_list) {
-  std::string versionIdentifier =
-      GetIdentifierString(compilation_unit->typedefVersionDeclaration(), errors_list);
+  std::string versionIdentifier = GetIdentifierString(
+      compilation_unit->typedefVersionDeclaration(), errors_list);
+  if (versionIdentifier.empty()) {
+    // Missing identifer error already generated.
+    return LanguageVersion::UNKNOWN;
+  }
   if (!IsValidLanguageVersion(versionIdentifier)) {
-    errors_list->push_back(PEIBuilder().build());
+    errors_list->push_back(
+        ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
+                         ParserErrorInfo::INVALID_LANGUAGE_VERSION));
     return LanguageVersion::UNKNOWN;
   }
   return LangaugeVersionFromString(versionIdentifier);
 }
 
-td::QualifiedIdentifier GetModule(
-    TypedefParser::CompilationUnitContext *compilation_unit) {
+td::QualifiedIdentifier GetModuleDeclaration(
+    TypedefParser::CompilationUnitContext *compilation_unit,
+    std::vector<ParserErrorInfo> *errors_list) {
   return QualifiedIdentifier();
 }
 
@@ -206,8 +220,11 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
 
   ParsedFileBuilder builder;
   builder.SetLanguageVersion(GetLanguageVersion(compilation_unit, &errors));
+  builder.SetModule(GetModuleDeclaration(compilation_unit, &errors));
 
-  return std::make_shared<ParsedFile>();
+  builder.SetErrors(errors);
+
+  return std::make_shared<ParsedFile>(builder.build());
 }
 
 }  // namespace td

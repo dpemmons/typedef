@@ -17,6 +17,9 @@ public:
   virtual void enterCompilationUnit(TypedefParser::CompilationUnitContext *ctx) = 0;
   virtual void exitCompilationUnit(TypedefParser::CompilationUnitContext *ctx) = 0;
 
+  virtual void enterItem(TypedefParser::ItemContext *ctx) = 0;
+  virtual void exitItem(TypedefParser::ItemContext *ctx) = 0;
+
   virtual void enterTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;
   virtual void exitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;
 
@@ -29,32 +32,17 @@ public:
   virtual void enterUseTree(TypedefParser::UseTreeContext *ctx) = 0;
   virtual void exitUseTree(TypedefParser::UseTreeContext *ctx) = 0;
 
-  virtual void enterEnumDeclaration(TypedefParser::EnumDeclarationContext *ctx) = 0;
-  virtual void exitEnumDeclaration(TypedefParser::EnumDeclarationContext *ctx) = 0;
-
-  virtual void enterEnumBody(TypedefParser::EnumBodyContext *ctx) = 0;
-  virtual void exitEnumBody(TypedefParser::EnumBodyContext *ctx) = 0;
-
   virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
   virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
 
-  virtual void enterMessageBody(TypedefParser::MessageBodyContext *ctx) = 0;
-  virtual void exitMessageBody(TypedefParser::MessageBodyContext *ctx) = 0;
+  virtual void enterStructBody(TypedefParser::StructBodyContext *ctx) = 0;
+  virtual void exitStructBody(TypedefParser::StructBodyContext *ctx) = 0;
 
-  virtual void enterFieldDeclaration(TypedefParser::FieldDeclarationContext *ctx) = 0;
-  virtual void exitFieldDeclaration(TypedefParser::FieldDeclarationContext *ctx) = 0;
+  virtual void enterStructFieldDeclaration(TypedefParser::StructFieldDeclarationContext *ctx) = 0;
+  virtual void exitStructFieldDeclaration(TypedefParser::StructFieldDeclarationContext *ctx) = 0;
 
   virtual void enterValue(TypedefParser::ValueContext *ctx) = 0;
   virtual void exitValue(TypedefParser::ValueContext *ctx) = 0;
-
-  virtual void enterArray(TypedefParser::ArrayContext *ctx) = 0;
-  virtual void exitArray(TypedefParser::ArrayContext *ctx) = 0;
-
-  virtual void enterMap(TypedefParser::MapContext *ctx) = 0;
-  virtual void exitMap(TypedefParser::MapContext *ctx) = 0;
-
-  virtual void enterKeyValue(TypedefParser::KeyValueContext *ctx) = 0;
-  virtual void exitKeyValue(TypedefParser::KeyValueContext *ctx) = 0;
 
   virtual void enterSimplePath(TypedefParser::SimplePathContext *ctx) = 0;
   virtual void exitSimplePath(TypedefParser::SimplePathContext *ctx) = 0;

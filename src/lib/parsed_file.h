@@ -50,6 +50,12 @@ class ParsedFileBuilder {
     return *this;
   }
 
+  ParsedFileBuilder& SetErrors(
+      std::vector<ParserErrorInfo> errors) {
+    file_.errors_ = errors;
+    return *this;
+  }
+
   ParsedFile build() { return file_; }
 
  private:

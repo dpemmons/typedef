@@ -41,17 +41,16 @@ public class TypedefParser extends Parser {
 		POUND=131, DOLLAR=132, QUESTION=133, LBRACE=134, RBRACE=135, LBRACK=136, 
 		RBRACK=137, LPAREN=138, RPAREN=139;
 	public static final int
-		RULE_compilationUnit = 0, RULE_typedefVersionDeclaration = 1, RULE_moduleDeclaration = 2, 
-		RULE_useDeclaration = 3, RULE_useTree = 4, RULE_enumDeclaration = 5, RULE_enumBody = 6, 
-		RULE_structDeclaration = 7, RULE_messageBody = 8, RULE_fieldDeclaration = 9, 
-		RULE_value = 10, RULE_array = 11, RULE_map = 12, RULE_keyValue = 13, RULE_simplePath = 14, 
-		RULE_literalExpression = 15, RULE_identifier = 16, RULE_keyword = 17;
+		RULE_compilationUnit = 0, RULE_item = 1, RULE_typedefVersionDeclaration = 2, 
+		RULE_moduleDeclaration = 3, RULE_useDeclaration = 4, RULE_useTree = 5, 
+		RULE_structDeclaration = 6, RULE_structBody = 7, RULE_structFieldDeclaration = 8, 
+		RULE_value = 9, RULE_simplePath = 10, RULE_literalExpression = 11, RULE_identifier = 12, 
+		RULE_keyword = 13;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"compilationUnit", "typedefVersionDeclaration", "moduleDeclaration", 
-			"useDeclaration", "useTree", "enumDeclaration", "enumBody", "structDeclaration", 
-			"messageBody", "fieldDeclaration", "value", "array", "map", "keyValue", 
-			"simplePath", "literalExpression", "identifier", "keyword"
+			"compilationUnit", "item", "typedefVersionDeclaration", "moduleDeclaration", 
+			"useDeclaration", "useTree", "structDeclaration", "structBody", "structFieldDeclaration", 
+			"value", "simplePath", "literalExpression", "identifier", "keyword"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -160,27 +159,21 @@ public class TypedefParser extends Parser {
 		public TypedefVersionDeclarationContext typedefVersionDeclaration() {
 			return getRuleContext(TypedefVersionDeclarationContext.class,0);
 		}
+		public TerminalNode EOF() { return getToken(TypedefParser.EOF, 0); }
 		public ModuleDeclarationContext moduleDeclaration() {
 			return getRuleContext(ModuleDeclarationContext.class,0);
 		}
-		public TerminalNode EOF() { return getToken(TypedefParser.EOF, 0); }
 		public List<UseDeclarationContext> useDeclaration() {
 			return getRuleContexts(UseDeclarationContext.class);
 		}
 		public UseDeclarationContext useDeclaration(int i) {
 			return getRuleContext(UseDeclarationContext.class,i);
 		}
-		public List<EnumDeclarationContext> enumDeclaration() {
-			return getRuleContexts(EnumDeclarationContext.class);
+		public List<ItemContext> item() {
+			return getRuleContexts(ItemContext.class);
 		}
-		public EnumDeclarationContext enumDeclaration(int i) {
-			return getRuleContext(EnumDeclarationContext.class,i);
-		}
-		public List<StructDeclarationContext> structDeclaration() {
-			return getRuleContexts(StructDeclarationContext.class);
-		}
-		public StructDeclarationContext structDeclaration(int i) {
-			return getRuleContext(StructDeclarationContext.class,i);
+		public ItemContext item(int i) {
+			return getRuleContext(ItemContext.class,i);
 		}
 		public CompilationUnitContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -195,54 +188,79 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(36);
+			setState(28);
 			typedefVersionDeclaration();
-			setState(37);
-			moduleDeclaration();
-			setState(41);
+			setState(30);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==KW_MODULE) {
+				{
+				setState(29);
+				moduleDeclaration();
+				}
+			}
+
+			setState(35);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==KW_USE) {
 				{
 				{
-				setState(38);
+				setState(32);
 				useDeclaration();
+				}
+				}
+				setState(37);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			setState(41);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while (_la==KW_STRUCT) {
+				{
+				{
+				setState(38);
+				item();
 				}
 				}
 				setState(43);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(48);
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			while (_la==KW_ENUM || _la==KW_STRUCT) {
-				{
-				setState(46);
-				_errHandler.sync(this);
-				switch (_input.LA(1)) {
-				case KW_ENUM:
-					{
-					setState(44);
-					enumDeclaration();
-					}
-					break;
-				case KW_STRUCT:
-					{
-					setState(45);
-					structDeclaration();
-					}
-					break;
-				default:
-					throw new NoViableAltException(this);
-				}
-				}
-				setState(50);
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-			}
-			setState(51);
+			setState(44);
 			match(EOF);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class ItemContext extends ParserRuleContext {
+		public StructDeclarationContext structDeclaration() {
+			return getRuleContext(StructDeclarationContext.class,0);
+		}
+		public ItemContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_item; }
+	}
+
+	public final ItemContext item() throws RecognitionException {
+		ItemContext _localctx = new ItemContext(_ctx, getState());
+		enterRule(_localctx, 2, RULE_item);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(46);
+			structDeclaration();
 			}
 		}
 		catch (RecognitionException re) {
@@ -271,17 +289,17 @@ public class TypedefParser extends Parser {
 
 	public final TypedefVersionDeclarationContext typedefVersionDeclaration() throws RecognitionException {
 		TypedefVersionDeclarationContext _localctx = new TypedefVersionDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 2, RULE_typedefVersionDeclaration);
+		enterRule(_localctx, 4, RULE_typedefVersionDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(53);
+			setState(48);
 			match(KW_TYPEDEF);
-			setState(54);
+			setState(49);
 			match(EQ);
-			setState(55);
+			setState(50);
 			identifier();
-			setState(56);
+			setState(51);
 			match(SEMI);
 			}
 		}
@@ -310,15 +328,15 @@ public class TypedefParser extends Parser {
 
 	public final ModuleDeclarationContext moduleDeclaration() throws RecognitionException {
 		ModuleDeclarationContext _localctx = new ModuleDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_moduleDeclaration);
+		enterRule(_localctx, 6, RULE_moduleDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(58);
+			setState(53);
 			match(KW_MODULE);
-			setState(59);
+			setState(54);
 			simplePath();
-			setState(60);
+			setState(55);
 			match(SEMI);
 			}
 		}
@@ -347,15 +365,15 @@ public class TypedefParser extends Parser {
 
 	public final UseDeclarationContext useDeclaration() throws RecognitionException {
 		UseDeclarationContext _localctx = new UseDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_useDeclaration);
+		enterRule(_localctx, 8, RULE_useDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(62);
+			setState(57);
 			match(KW_USE);
-			setState(63);
+			setState(58);
 			useTree();
-			setState(64);
+			setState(59);
 			match(SEMI);
 			}
 		}
@@ -400,80 +418,80 @@ public class TypedefParser extends Parser {
 
 	public final UseTreeContext useTree() throws RecognitionException {
 		UseTreeContext _localctx = new UseTreeContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_useTree);
+		enterRule(_localctx, 10, RULE_useTree);
 		int _la;
 		try {
 			int _alt;
-			setState(95);
+			setState(90);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,10,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(70);
+				setState(65);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (NON_KEYWORD_IDENTIFIER - 67)) | (1L << (RAW_IDENTIFIER - 67)) | (1L << (PATHSEP - 67)))) != 0)) {
 					{
-					setState(67);
+					setState(62);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
 					case 1:
 						{
-						setState(66);
+						setState(61);
 						simplePath();
 						}
 						break;
 					}
-					setState(69);
+					setState(64);
 					match(PATHSEP);
 					}
 				}
 
-				setState(88);
+				setState(83);
 				_errHandler.sync(this);
 				switch (_input.LA(1)) {
 				case STAR:
 					{
-					setState(72);
+					setState(67);
 					match(STAR);
 					}
 					break;
 				case LBRACE:
 					{
-					setState(73);
+					setState(68);
 					match(LBRACE);
-					setState(85);
+					setState(80);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 					if (((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (NON_KEYWORD_IDENTIFIER - 67)) | (1L << (RAW_IDENTIFIER - 67)) | (1L << (STAR - 67)) | (1L << (PATHSEP - 67)))) != 0) || _la==LBRACE) {
 						{
-						setState(74);
+						setState(69);
 						useTree();
-						setState(79);
+						setState(74);
 						_errHandler.sync(this);
 						_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 						while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 							if ( _alt==1 ) {
 								{
 								{
-								setState(75);
+								setState(70);
 								match(COMMA);
-								setState(76);
+								setState(71);
 								useTree();
 								}
 								} 
 							}
-							setState(81);
+							setState(76);
 							_errHandler.sync(this);
 							_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 						}
-						setState(83);
+						setState(78);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 						if (_la==COMMA) {
 							{
-							setState(82);
+							setState(77);
 							match(COMMA);
 							}
 						}
@@ -481,7 +499,7 @@ public class TypedefParser extends Parser {
 						}
 					}
 
-					setState(87);
+					setState(82);
 					match(RBRACE);
 					}
 					break;
@@ -493,150 +511,22 @@ public class TypedefParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(90);
+				setState(85);
 				simplePath();
-				setState(93);
+				setState(88);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==KW_AS) {
 					{
-					setState(91);
+					setState(86);
 					match(KW_AS);
-					setState(92);
+					setState(87);
 					identifier();
 					}
 				}
 
 				}
 				break;
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class EnumDeclarationContext extends ParserRuleContext {
-		public TerminalNode KW_ENUM() { return getToken(TypedefParser.KW_ENUM, 0); }
-		public IdentifierContext identifier() {
-			return getRuleContext(IdentifierContext.class,0);
-		}
-		public TerminalNode LBRACE() { return getToken(TypedefParser.LBRACE, 0); }
-		public EnumBodyContext enumBody() {
-			return getRuleContext(EnumBodyContext.class,0);
-		}
-		public TerminalNode RBRACE() { return getToken(TypedefParser.RBRACE, 0); }
-		public TerminalNode SEMI() { return getToken(TypedefParser.SEMI, 0); }
-		public EnumDeclarationContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_enumDeclaration; }
-	}
-
-	public final EnumDeclarationContext enumDeclaration() throws RecognitionException {
-		EnumDeclarationContext _localctx = new EnumDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_enumDeclaration);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(97);
-			match(KW_ENUM);
-			setState(98);
-			identifier();
-			setState(99);
-			match(LBRACE);
-			setState(100);
-			enumBody();
-			setState(101);
-			match(RBRACE);
-			setState(102);
-			match(SEMI);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class EnumBodyContext extends ParserRuleContext {
-		public List<IdentifierContext> identifier() {
-			return getRuleContexts(IdentifierContext.class);
-		}
-		public IdentifierContext identifier(int i) {
-			return getRuleContext(IdentifierContext.class,i);
-		}
-		public List<TerminalNode> COMMA() { return getTokens(TypedefParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(TypedefParser.COMMA, i);
-		}
-		public EnumBodyContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_enumBody; }
-	}
-
-	public final EnumBodyContext enumBody() throws RecognitionException {
-		EnumBodyContext _localctx = new EnumBodyContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_enumBody);
-		int _la;
-		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(107); 
-			_errHandler.sync(this);
-			_alt = 1;
-			do {
-				switch (_alt) {
-				case 1:
-					{
-					{
-					setState(104);
-					identifier();
-					setState(105);
-					match(COMMA);
-					}
-					}
-					break;
-				default:
-					throw new NoViableAltException(this);
-				}
-				setState(109); 
-				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,11,_ctx);
-			} while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
-			setState(115);
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			if (_la==NON_KEYWORD_IDENTIFIER || _la==RAW_IDENTIFIER) {
-				{
-				setState(111);
-				identifier();
-				setState(113);
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-				if (_la==COMMA) {
-					{
-					setState(112);
-					match(COMMA);
-					}
-				}
-
-				}
-			}
-
 			}
 		}
 		catch (RecognitionException re) {
@@ -656,8 +546,8 @@ public class TypedefParser extends Parser {
 			return getRuleContext(IdentifierContext.class,0);
 		}
 		public TerminalNode LBRACE() { return getToken(TypedefParser.LBRACE, 0); }
-		public MessageBodyContext messageBody() {
-			return getRuleContext(MessageBodyContext.class,0);
+		public StructBodyContext structBody() {
+			return getRuleContext(StructBodyContext.class,0);
 		}
 		public TerminalNode RBRACE() { return getToken(TypedefParser.RBRACE, 0); }
 		public TerminalNode SEMI() { return getToken(TypedefParser.SEMI, 0); }
@@ -669,21 +559,21 @@ public class TypedefParser extends Parser {
 
 	public final StructDeclarationContext structDeclaration() throws RecognitionException {
 		StructDeclarationContext _localctx = new StructDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_structDeclaration);
+		enterRule(_localctx, 12, RULE_structDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(117);
+			setState(92);
 			match(KW_STRUCT);
-			setState(118);
+			setState(93);
 			identifier();
-			setState(119);
+			setState(94);
 			match(LBRACE);
-			setState(120);
-			messageBody();
-			setState(121);
+			setState(95);
+			structBody();
+			setState(96);
 			match(RBRACE);
-			setState(122);
+			setState(97);
 			match(SEMI);
 			}
 		}
@@ -698,58 +588,37 @@ public class TypedefParser extends Parser {
 		return _localctx;
 	}
 
-	public static class MessageBodyContext extends ParserRuleContext {
-		public List<FieldDeclarationContext> fieldDeclaration() {
-			return getRuleContexts(FieldDeclarationContext.class);
+	public static class StructBodyContext extends ParserRuleContext {
+		public List<StructFieldDeclarationContext> structFieldDeclaration() {
+			return getRuleContexts(StructFieldDeclarationContext.class);
 		}
-		public FieldDeclarationContext fieldDeclaration(int i) {
-			return getRuleContext(FieldDeclarationContext.class,i);
+		public StructFieldDeclarationContext structFieldDeclaration(int i) {
+			return getRuleContext(StructFieldDeclarationContext.class,i);
 		}
-		public List<EnumDeclarationContext> enumDeclaration() {
-			return getRuleContexts(EnumDeclarationContext.class);
-		}
-		public EnumDeclarationContext enumDeclaration(int i) {
-			return getRuleContext(EnumDeclarationContext.class,i);
-		}
-		public MessageBodyContext(ParserRuleContext parent, int invokingState) {
+		public StructBodyContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_messageBody; }
+		@Override public int getRuleIndex() { return RULE_structBody; }
 	}
 
-	public final MessageBodyContext messageBody() throws RecognitionException {
-		MessageBodyContext _localctx = new MessageBodyContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_messageBody);
+	public final StructBodyContext structBody() throws RecognitionException {
+		StructBodyContext _localctx = new StructBodyContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_structBody);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(128);
+			setState(102);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==KW_ENUM || _la==NON_KEYWORD_IDENTIFIER || _la==RAW_IDENTIFIER) {
+			while (_la==NON_KEYWORD_IDENTIFIER || _la==RAW_IDENTIFIER) {
 				{
-				setState(126);
-				_errHandler.sync(this);
-				switch (_input.LA(1)) {
-				case NON_KEYWORD_IDENTIFIER:
-				case RAW_IDENTIFIER:
-					{
-					setState(124);
-					fieldDeclaration();
-					}
-					break;
-				case KW_ENUM:
-					{
-					setState(125);
-					enumDeclaration();
-					}
-					break;
-				default:
-					throw new NoViableAltException(this);
+				{
+				setState(99);
+				structFieldDeclaration();
 				}
 				}
-				setState(130);
+				setState(104);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -766,7 +635,7 @@ public class TypedefParser extends Parser {
 		return _localctx;
 	}
 
-	public static class FieldDeclarationContext extends ParserRuleContext {
+	public static class StructFieldDeclarationContext extends ParserRuleContext {
 		public List<IdentifierContext> identifier() {
 			return getRuleContexts(IdentifierContext.class);
 		}
@@ -779,38 +648,38 @@ public class TypedefParser extends Parser {
 		public ValueContext value() {
 			return getRuleContext(ValueContext.class,0);
 		}
-		public FieldDeclarationContext(ParserRuleContext parent, int invokingState) {
+		public StructFieldDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_fieldDeclaration; }
+		@Override public int getRuleIndex() { return RULE_structFieldDeclaration; }
 	}
 
-	public final FieldDeclarationContext fieldDeclaration() throws RecognitionException {
-		FieldDeclarationContext _localctx = new FieldDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_fieldDeclaration);
+	public final StructFieldDeclarationContext structFieldDeclaration() throws RecognitionException {
+		StructFieldDeclarationContext _localctx = new StructFieldDeclarationContext(_ctx, getState());
+		enterRule(_localctx, 16, RULE_structFieldDeclaration);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(131);
+			setState(105);
 			identifier();
-			setState(132);
+			setState(106);
 			match(COLON);
-			setState(133);
+			setState(107);
 			identifier();
-			setState(136);
+			setState(110);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==EQ) {
 				{
-				setState(134);
+				setState(108);
 				match(EQ);
-				setState(135);
+				setState(109);
 				value();
 				}
 			}
 
-			setState(138);
+			setState(112);
 			match(SEMI);
 			}
 		}
@@ -829,15 +698,6 @@ public class TypedefParser extends Parser {
 		public LiteralExpressionContext literalExpression() {
 			return getRuleContext(LiteralExpressionContext.class,0);
 		}
-		public ArrayContext array() {
-			return getRuleContext(ArrayContext.class,0);
-		}
-		public MapContext map() {
-			return getRuleContext(MapContext.class,0);
-		}
-		public IdentifierContext identifier() {
-			return getRuleContext(IdentifierContext.class,0);
-		}
 		public ValueContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -846,254 +706,12 @@ public class TypedefParser extends Parser {
 
 	public final ValueContext value() throws RecognitionException {
 		ValueContext _localctx = new ValueContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_value);
-		try {
-			setState(144);
-			_errHandler.sync(this);
-			switch (_input.LA(1)) {
-			case KW_FALSE:
-			case KW_TRUE:
-			case CHAR_LITERAL:
-			case STRING_LITERAL:
-			case RAW_STRING_LITERAL:
-			case BYTE_LITERAL:
-			case BYTE_STRING_LITERAL:
-			case RAW_BYTE_STRING_LITERAL:
-			case INTEGER_LITERAL:
-			case FLOAT_LITERAL:
-				enterOuterAlt(_localctx, 1);
-				{
-				setState(140);
-				literalExpression();
-				}
-				break;
-			case LBRACK:
-				enterOuterAlt(_localctx, 2);
-				{
-				setState(141);
-				array();
-				}
-				break;
-			case LBRACE:
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(142);
-				map();
-				}
-				break;
-			case NON_KEYWORD_IDENTIFIER:
-			case RAW_IDENTIFIER:
-				enterOuterAlt(_localctx, 4);
-				{
-				setState(143);
-				identifier();
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class ArrayContext extends ParserRuleContext {
-		public TerminalNode LBRACK() { return getToken(TypedefParser.LBRACK, 0); }
-		public TerminalNode RBRACK() { return getToken(TypedefParser.RBRACK, 0); }
-		public List<ValueContext> value() {
-			return getRuleContexts(ValueContext.class);
-		}
-		public ValueContext value(int i) {
-			return getRuleContext(ValueContext.class,i);
-		}
-		public List<TerminalNode> COMMA() { return getTokens(TypedefParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(TypedefParser.COMMA, i);
-		}
-		public ArrayContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_array; }
-	}
-
-	public final ArrayContext array() throws RecognitionException {
-		ArrayContext _localctx = new ArrayContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_array);
-		int _la;
-		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(146);
-			match(LBRACK);
-			setState(155);
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			if (_la==KW_FALSE || _la==KW_TRUE || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (NON_KEYWORD_IDENTIFIER - 67)) | (1L << (RAW_IDENTIFIER - 67)) | (1L << (CHAR_LITERAL - 67)) | (1L << (STRING_LITERAL - 67)) | (1L << (RAW_STRING_LITERAL - 67)) | (1L << (BYTE_LITERAL - 67)) | (1L << (BYTE_STRING_LITERAL - 67)) | (1L << (RAW_BYTE_STRING_LITERAL - 67)) | (1L << (INTEGER_LITERAL - 67)) | (1L << (FLOAT_LITERAL - 67)))) != 0) || _la==LBRACE || _la==LBRACK) {
-				{
-				setState(147);
-				value();
-				setState(152);
-				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
-				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
-					if ( _alt==1 ) {
-						{
-						{
-						setState(148);
-						match(COMMA);
-						setState(149);
-						value();
-						}
-						} 
-					}
-					setState(154);
-					_errHandler.sync(this);
-					_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
-				}
-				}
-			}
-
-			setState(158);
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			if (_la==COMMA) {
-				{
-				setState(157);
-				match(COMMA);
-				}
-			}
-
-			setState(160);
-			match(RBRACK);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class MapContext extends ParserRuleContext {
-		public TerminalNode LBRACE() { return getToken(TypedefParser.LBRACE, 0); }
-		public TerminalNode RBRACE() { return getToken(TypedefParser.RBRACE, 0); }
-		public List<KeyValueContext> keyValue() {
-			return getRuleContexts(KeyValueContext.class);
-		}
-		public KeyValueContext keyValue(int i) {
-			return getRuleContext(KeyValueContext.class,i);
-		}
-		public List<TerminalNode> COMMA() { return getTokens(TypedefParser.COMMA); }
-		public TerminalNode COMMA(int i) {
-			return getToken(TypedefParser.COMMA, i);
-		}
-		public MapContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_map; }
-	}
-
-	public final MapContext map() throws RecognitionException {
-		MapContext _localctx = new MapContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_map);
-		int _la;
-		try {
-			int _alt;
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(162);
-			match(LBRACE);
-			setState(174);
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			if (_la==NON_KEYWORD_IDENTIFIER || _la==RAW_IDENTIFIER) {
-				{
-				setState(163);
-				keyValue();
-				setState(168);
-				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,21,_ctx);
-				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
-					if ( _alt==1 ) {
-						{
-						{
-						setState(164);
-						match(COMMA);
-						setState(165);
-						keyValue();
-						}
-						} 
-					}
-					setState(170);
-					_errHandler.sync(this);
-					_alt = getInterpreter().adaptivePredict(_input,21,_ctx);
-				}
-				setState(172);
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-				if (_la==COMMA) {
-					{
-					setState(171);
-					match(COMMA);
-					}
-				}
-
-				}
-			}
-
-			setState(176);
-			match(RBRACE);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class KeyValueContext extends ParserRuleContext {
-		public IdentifierContext identifier() {
-			return getRuleContext(IdentifierContext.class,0);
-		}
-		public TerminalNode COLON() { return getToken(TypedefParser.COLON, 0); }
-		public ValueContext value() {
-			return getRuleContext(ValueContext.class,0);
-		}
-		public KeyValueContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_keyValue; }
-	}
-
-	public final KeyValueContext keyValue() throws RecognitionException {
-		KeyValueContext _localctx = new KeyValueContext(_ctx, getState());
-		enterRule(_localctx, 26, RULE_keyValue);
+		enterRule(_localctx, 18, RULE_value);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(178);
-			identifier();
-			setState(179);
-			match(COLON);
-			setState(180);
-			value();
+			setState(114);
+			literalExpression();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1126,41 +744,41 @@ public class TypedefParser extends Parser {
 
 	public final SimplePathContext simplePath() throws RecognitionException {
 		SimplePathContext _localctx = new SimplePathContext(_ctx, getState());
-		enterRule(_localctx, 28, RULE_simplePath);
+		enterRule(_localctx, 20, RULE_simplePath);
 		int _la;
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(183);
+			setState(117);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==PATHSEP) {
 				{
-				setState(182);
+				setState(116);
 				match(PATHSEP);
 				}
 			}
 
-			setState(185);
+			setState(119);
 			identifier();
-			setState(190);
+			setState(124);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,25,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,14,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					setState(186);
+					setState(120);
 					match(PATHSEP);
-					setState(187);
+					setState(121);
 					identifier();
 					}
 					} 
 				}
-				setState(192);
+				setState(126);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,25,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,14,_ctx);
 			}
 			}
 		}
@@ -1194,12 +812,12 @@ public class TypedefParser extends Parser {
 
 	public final LiteralExpressionContext literalExpression() throws RecognitionException {
 		LiteralExpressionContext _localctx = new LiteralExpressionContext(_ctx, getState());
-		enterRule(_localctx, 30, RULE_literalExpression);
+		enterRule(_localctx, 22, RULE_literalExpression);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(193);
+			setState(127);
 			_la = _input.LA(1);
 			if ( !(_la==KW_FALSE || _la==KW_TRUE || ((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & ((1L << (CHAR_LITERAL - 79)) | (1L << (STRING_LITERAL - 79)) | (1L << (RAW_STRING_LITERAL - 79)) | (1L << (BYTE_LITERAL - 79)) | (1L << (BYTE_STRING_LITERAL - 79)) | (1L << (RAW_BYTE_STRING_LITERAL - 79)) | (1L << (INTEGER_LITERAL - 79)) | (1L << (FLOAT_LITERAL - 79)))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -1233,12 +851,12 @@ public class TypedefParser extends Parser {
 
 	public final IdentifierContext identifier() throws RecognitionException {
 		IdentifierContext _localctx = new IdentifierContext(_ctx, getState());
-		enterRule(_localctx, 32, RULE_identifier);
+		enterRule(_localctx, 24, RULE_identifier);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(195);
+			setState(129);
 			_la = _input.LA(1);
 			if ( !(_la==NON_KEYWORD_IDENTIFIER || _la==RAW_IDENTIFIER) ) {
 			_errHandler.recoverInline(this);
@@ -1336,12 +954,12 @@ public class TypedefParser extends Parser {
 
 	public final KeywordContext keyword() throws RecognitionException {
 		KeywordContext _localctx = new KeywordContext(_ctx, getState());
-		enterRule(_localctx, 34, RULE_keyword);
+		enterRule(_localctx, 26, RULE_keyword);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(197);
+			setState(131);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << KW_AS) | (1L << KW_ENUM) | (1L << KW_FALSE) | (1L << KW_FN) | (1L << KW_IMPL) | (1L << KW_MODULE) | (1L << KW_STRUCT) | (1L << KW_TRUE) | (1L << KW_TYPE) | (1L << KW_TYPEDEF) | (1L << KW_USE) | (1L << KW_AND) | (1L << KW_IN) | (1L << KW_LET) | (1L << KW_NOT) | (1L << KW_OR) | (1L << KW_SIZEOF) | (1L << KW_THIS) | (1L << KW_TRAIT) | (1L << KW_WHERE) | (1L << KW_XOR) | (1L << KW_BREAK) | (1L << KW_CONTINUE) | (1L << KW_DEFAULT) | (1L << KW_DO) | (1L << KW_ELSE) | (1L << KW_FOR) | (1L << KW_GOTO) | (1L << KW_IF) | (1L << KW_LOOP) | (1L << KW_MATCH) | (1L << KW_MOVE) | (1L << KW_RETURN) | (1L << KW_TRY) | (1L << KW_WHILE) | (1L << KW_YIELD) | (1L << KW_ABSTRACT) | (1L << KW_AUTO) | (1L << KW_CHAR) | (1L << KW_CONST) | (1L << KW_DOUBLE) | (1L << KW_EXTERN) | (1L << KW_FINAL) | (1L << KW_FLOAT) | (1L << KW_INT) | (1L << KW_LONG) | (1L << KW_MACRO) | (1L << KW_MUT) | (1L << KW_OVERRIDE) | (1L << KW_PRIVATE) | (1L << KW_PUB) | (1L << KW_REF) | (1L << KW_SELFTYPE) | (1L << KW_SELFVALUE) | (1L << KW_SIGNED) | (1L << KW_STATIC) | (1L << KW_SUPER) | (1L << KW_SWITCH) | (1L << KW_TYPEOF) | (1L << KW_UNION) | (1L << KW_UNSAFE) | (1L << KW_UNSIGNED) | (1L << KW_UNSIZED))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (KW_VIRTUAL - 64)) | (1L << (KW_VOID - 64)) | (1L << (KW_VOLATILE - 64)))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -1365,69 +983,40 @@ public class TypedefParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u008d\u00ca\4\2\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u008d\u0088\4\2\t"+
 		"\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
-		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
-		"\4\23\t\23\3\2\3\2\3\2\7\2*\n\2\f\2\16\2-\13\2\3\2\3\2\7\2\61\n\2\f\2"+
-		"\16\2\64\13\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\4\3\4\3\4\3\4\3\5\3\5\3\5"+
-		"\3\5\3\6\5\6F\n\6\3\6\5\6I\n\6\3\6\3\6\3\6\3\6\3\6\7\6P\n\6\f\6\16\6S"+
-		"\13\6\3\6\5\6V\n\6\5\6X\n\6\3\6\5\6[\n\6\3\6\3\6\3\6\5\6`\n\6\5\6b\n\6"+
-		"\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\b\3\b\3\b\6\bn\n\b\r\b\16\bo\3\b\3\b\5"+
-		"\bt\n\b\5\bv\n\b\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\n\3\n\7\n\u0081\n\n\f\n"+
-		"\16\n\u0084\13\n\3\13\3\13\3\13\3\13\3\13\5\13\u008b\n\13\3\13\3\13\3"+
-		"\f\3\f\3\f\3\f\5\f\u0093\n\f\3\r\3\r\3\r\3\r\7\r\u0099\n\r\f\r\16\r\u009c"+
-		"\13\r\5\r\u009e\n\r\3\r\5\r\u00a1\n\r\3\r\3\r\3\16\3\16\3\16\3\16\7\16"+
-		"\u00a9\n\16\f\16\16\16\u00ac\13\16\3\16\5\16\u00af\n\16\5\16\u00b1\n\16"+
-		"\3\16\3\16\3\17\3\17\3\17\3\17\3\20\5\20\u00ba\n\20\3\20\3\20\3\20\7\20"+
-		"\u00bf\n\20\f\20\16\20\u00c2\13\20\3\21\3\21\3\22\3\22\3\23\3\23\3\23"+
-		"\2\2\24\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$\2\5\6\2\5\5\n\nQW\\"+
-		"\\\3\2EF\3\2\3D\2\u00d3\2&\3\2\2\2\4\67\3\2\2\2\6<\3\2\2\2\b@\3\2\2\2"+
-		"\na\3\2\2\2\fc\3\2\2\2\16m\3\2\2\2\20w\3\2\2\2\22\u0082\3\2\2\2\24\u0085"+
-		"\3\2\2\2\26\u0092\3\2\2\2\30\u0094\3\2\2\2\32\u00a4\3\2\2\2\34\u00b4\3"+
-		"\2\2\2\36\u00b9\3\2\2\2 \u00c3\3\2\2\2\"\u00c5\3\2\2\2$\u00c7\3\2\2\2"+
-		"&\'\5\4\3\2\'+\5\6\4\2(*\5\b\5\2)(\3\2\2\2*-\3\2\2\2+)\3\2\2\2+,\3\2\2"+
-		"\2,\62\3\2\2\2-+\3\2\2\2.\61\5\f\7\2/\61\5\20\t\2\60.\3\2\2\2\60/\3\2"+
-		"\2\2\61\64\3\2\2\2\62\60\3\2\2\2\62\63\3\2\2\2\63\65\3\2\2\2\64\62\3\2"+
-		"\2\2\65\66\7\2\2\3\66\3\3\2\2\2\678\7\f\2\289\7s\2\29:\5\"\22\2:;\7\u0080"+
-		"\2\2;\5\3\2\2\2<=\7\b\2\2=>\5\36\20\2>?\7\u0080\2\2?\7\3\2\2\2@A\7\r\2"+
-		"\2AB\5\n\6\2BC\7\u0080\2\2C\t\3\2\2\2DF\5\36\20\2ED\3\2\2\2EF\3\2\2\2"+
-		"FG\3\2\2\2GI\7\u0082\2\2HE\3\2\2\2HI\3\2\2\2IZ\3\2\2\2J[\7`\2\2KW\7\u0088"+
-		"\2\2LQ\5\n\6\2MN\7\177\2\2NP\5\n\6\2OM\3\2\2\2PS\3\2\2\2QO\3\2\2\2QR\3"+
-		"\2\2\2RU\3\2\2\2SQ\3\2\2\2TV\7\177\2\2UT\3\2\2\2UV\3\2\2\2VX\3\2\2\2W"+
-		"L\3\2\2\2WX\3\2\2\2XY\3\2\2\2Y[\7\u0089\2\2ZJ\3\2\2\2ZK\3\2\2\2[b\3\2"+
-		"\2\2\\_\5\36\20\2]^\7\3\2\2^`\5\"\22\2_]\3\2\2\2_`\3\2\2\2`b\3\2\2\2a"+
-		"H\3\2\2\2a\\\3\2\2\2b\13\3\2\2\2cd\7\4\2\2de\5\"\22\2ef\7\u0088\2\2fg"+
-		"\5\16\b\2gh\7\u0089\2\2hi\7\u0080\2\2i\r\3\2\2\2jk\5\"\22\2kl\7\177\2"+
-		"\2ln\3\2\2\2mj\3\2\2\2no\3\2\2\2om\3\2\2\2op\3\2\2\2pu\3\2\2\2qs\5\"\22"+
-		"\2rt\7\177\2\2sr\3\2\2\2st\3\2\2\2tv\3\2\2\2uq\3\2\2\2uv\3\2\2\2v\17\3"+
-		"\2\2\2wx\7\t\2\2xy\5\"\22\2yz\7\u0088\2\2z{\5\22\n\2{|\7\u0089\2\2|}\7"+
-		"\u0080\2\2}\21\3\2\2\2~\u0081\5\24\13\2\177\u0081\5\f\7\2\u0080~\3\2\2"+
-		"\2\u0080\177\3\2\2\2\u0081\u0084\3\2\2\2\u0082\u0080\3\2\2\2\u0082\u0083"+
-		"\3\2\2\2\u0083\23\3\2\2\2\u0084\u0082\3\2\2\2\u0085\u0086\5\"\22\2\u0086"+
-		"\u0087\7\u0081\2\2\u0087\u008a\5\"\22\2\u0088\u0089\7s\2\2\u0089\u008b"+
-		"\5\26\f\2\u008a\u0088\3\2\2\2\u008a\u008b\3\2\2\2\u008b\u008c\3\2\2\2"+
-		"\u008c\u008d\7\u0080\2\2\u008d\25\3\2\2\2\u008e\u0093\5 \21\2\u008f\u0093"+
-		"\5\30\r\2\u0090\u0093\5\32\16\2\u0091\u0093\5\"\22\2\u0092\u008e\3\2\2"+
-		"\2\u0092\u008f\3\2\2\2\u0092\u0090\3\2\2\2\u0092\u0091\3\2\2\2\u0093\27"+
-		"\3\2\2\2\u0094\u009d\7\u008a\2\2\u0095\u009a\5\26\f\2\u0096\u0097\7\177"+
-		"\2\2\u0097\u0099\5\26\f\2\u0098\u0096\3\2\2\2\u0099\u009c\3\2\2\2\u009a"+
-		"\u0098\3\2\2\2\u009a\u009b\3\2\2\2\u009b\u009e\3\2\2\2\u009c\u009a\3\2"+
-		"\2\2\u009d\u0095\3\2\2\2\u009d\u009e\3\2\2\2\u009e\u00a0\3\2\2\2\u009f"+
-		"\u00a1\7\177\2\2\u00a0\u009f\3\2\2\2\u00a0\u00a1\3\2\2\2\u00a1\u00a2\3"+
-		"\2\2\2\u00a2\u00a3\7\u008b\2\2\u00a3\31\3\2\2\2\u00a4\u00b0\7\u0088\2"+
-		"\2\u00a5\u00aa\5\34\17\2\u00a6\u00a7\7\177\2\2\u00a7\u00a9\5\34\17\2\u00a8"+
-		"\u00a6\3\2\2\2\u00a9\u00ac\3\2\2\2\u00aa\u00a8\3\2\2\2\u00aa\u00ab\3\2"+
-		"\2\2\u00ab\u00ae\3\2\2\2\u00ac\u00aa\3\2\2\2\u00ad\u00af\7\177\2\2\u00ae"+
-		"\u00ad\3\2\2\2\u00ae\u00af\3\2\2\2\u00af\u00b1\3\2\2\2\u00b0\u00a5\3\2"+
-		"\2\2\u00b0\u00b1\3\2\2\2\u00b1\u00b2\3\2\2\2\u00b2\u00b3\7\u0089\2\2\u00b3"+
-		"\33\3\2\2\2\u00b4\u00b5\5\"\22\2\u00b5\u00b6\7\u0081\2\2\u00b6\u00b7\5"+
-		"\26\f\2\u00b7\35\3\2\2\2\u00b8\u00ba\7\u0082\2\2\u00b9\u00b8\3\2\2\2\u00b9"+
-		"\u00ba\3\2\2\2\u00ba\u00bb\3\2\2\2\u00bb\u00c0\5\"\22\2\u00bc\u00bd\7"+
-		"\u0082\2\2\u00bd\u00bf\5\"\22\2\u00be\u00bc\3\2\2\2\u00bf\u00c2\3\2\2"+
-		"\2\u00c0\u00be\3\2\2\2\u00c0\u00c1\3\2\2\2\u00c1\37\3\2\2\2\u00c2\u00c0"+
-		"\3\2\2\2\u00c3\u00c4\t\2\2\2\u00c4!\3\2\2\2\u00c5\u00c6\t\3\2\2\u00c6"+
-		"#\3\2\2\2\u00c7\u00c8\t\4\2\2\u00c8%\3\2\2\2\34+\60\62EHQUWZ_aosu\u0080"+
-		"\u0082\u008a\u0092\u009a\u009d\u00a0\u00aa\u00ae\u00b0\u00b9\u00c0";
+		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\3\2\3\2\5\2!\n\2\3\2\7\2$\n"+
+		"\2\f\2\16\2\'\13\2\3\2\7\2*\n\2\f\2\16\2-\13\2\3\2\3\2\3\3\3\3\3\4\3\4"+
+		"\3\4\3\4\3\4\3\5\3\5\3\5\3\5\3\6\3\6\3\6\3\6\3\7\5\7A\n\7\3\7\5\7D\n\7"+
+		"\3\7\3\7\3\7\3\7\3\7\7\7K\n\7\f\7\16\7N\13\7\3\7\5\7Q\n\7\5\7S\n\7\3\7"+
+		"\5\7V\n\7\3\7\3\7\3\7\5\7[\n\7\5\7]\n\7\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3"+
+		"\t\7\tg\n\t\f\t\16\tj\13\t\3\n\3\n\3\n\3\n\3\n\5\nq\n\n\3\n\3\n\3\13\3"+
+		"\13\3\f\5\fx\n\f\3\f\3\f\3\f\7\f}\n\f\f\f\16\f\u0080\13\f\3\r\3\r\3\16"+
+		"\3\16\3\17\3\17\3\17\2\2\20\2\4\6\b\n\f\16\20\22\24\26\30\32\34\2\5\6"+
+		"\2\5\5\n\nQW\\\\\3\2EF\3\2\3D\2\u0088\2\36\3\2\2\2\4\60\3\2\2\2\6\62\3"+
+		"\2\2\2\b\67\3\2\2\2\n;\3\2\2\2\f\\\3\2\2\2\16^\3\2\2\2\20h\3\2\2\2\22"+
+		"k\3\2\2\2\24t\3\2\2\2\26w\3\2\2\2\30\u0081\3\2\2\2\32\u0083\3\2\2\2\34"+
+		"\u0085\3\2\2\2\36 \5\6\4\2\37!\5\b\5\2 \37\3\2\2\2 !\3\2\2\2!%\3\2\2\2"+
+		"\"$\5\n\6\2#\"\3\2\2\2$\'\3\2\2\2%#\3\2\2\2%&\3\2\2\2&+\3\2\2\2\'%\3\2"+
+		"\2\2(*\5\4\3\2)(\3\2\2\2*-\3\2\2\2+)\3\2\2\2+,\3\2\2\2,.\3\2\2\2-+\3\2"+
+		"\2\2./\7\2\2\3/\3\3\2\2\2\60\61\5\16\b\2\61\5\3\2\2\2\62\63\7\f\2\2\63"+
+		"\64\7s\2\2\64\65\5\32\16\2\65\66\7\u0080\2\2\66\7\3\2\2\2\678\7\b\2\2"+
+		"89\5\26\f\29:\7\u0080\2\2:\t\3\2\2\2;<\7\r\2\2<=\5\f\7\2=>\7\u0080\2\2"+
+		">\13\3\2\2\2?A\5\26\f\2@?\3\2\2\2@A\3\2\2\2AB\3\2\2\2BD\7\u0082\2\2C@"+
+		"\3\2\2\2CD\3\2\2\2DU\3\2\2\2EV\7`\2\2FR\7\u0088\2\2GL\5\f\7\2HI\7\177"+
+		"\2\2IK\5\f\7\2JH\3\2\2\2KN\3\2\2\2LJ\3\2\2\2LM\3\2\2\2MP\3\2\2\2NL\3\2"+
+		"\2\2OQ\7\177\2\2PO\3\2\2\2PQ\3\2\2\2QS\3\2\2\2RG\3\2\2\2RS\3\2\2\2ST\3"+
+		"\2\2\2TV\7\u0089\2\2UE\3\2\2\2UF\3\2\2\2V]\3\2\2\2WZ\5\26\f\2XY\7\3\2"+
+		"\2Y[\5\32\16\2ZX\3\2\2\2Z[\3\2\2\2[]\3\2\2\2\\C\3\2\2\2\\W\3\2\2\2]\r"+
+		"\3\2\2\2^_\7\t\2\2_`\5\32\16\2`a\7\u0088\2\2ab\5\20\t\2bc\7\u0089\2\2"+
+		"cd\7\u0080\2\2d\17\3\2\2\2eg\5\22\n\2fe\3\2\2\2gj\3\2\2\2hf\3\2\2\2hi"+
+		"\3\2\2\2i\21\3\2\2\2jh\3\2\2\2kl\5\32\16\2lm\7\u0081\2\2mp\5\32\16\2n"+
+		"o\7s\2\2oq\5\24\13\2pn\3\2\2\2pq\3\2\2\2qr\3\2\2\2rs\7\u0080\2\2s\23\3"+
+		"\2\2\2tu\5\30\r\2u\25\3\2\2\2vx\7\u0082\2\2wv\3\2\2\2wx\3\2\2\2xy\3\2"+
+		"\2\2y~\5\32\16\2z{\7\u0082\2\2{}\5\32\16\2|z\3\2\2\2}\u0080\3\2\2\2~|"+
+		"\3\2\2\2~\177\3\2\2\2\177\27\3\2\2\2\u0080~\3\2\2\2\u0081\u0082\t\2\2"+
+		"\2\u0082\31\3\2\2\2\u0083\u0084\t\3\2\2\u0084\33\3\2\2\2\u0085\u0086\t"+
+		"\4\2\2\u0086\35\3\2\2\2\21 %+@CLPRUZ\\hpw~";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

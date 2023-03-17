@@ -44,11 +44,11 @@ public:
   };
 
   enum {
-    RuleCompilationUnit = 0, RuleTypedefVersionDeclaration = 1, RuleModuleDeclaration = 2, 
-    RuleUseDeclaration = 3, RuleUseTree = 4, RuleEnumDeclaration = 5, RuleEnumBody = 6, 
-    RuleStructDeclaration = 7, RuleMessageBody = 8, RuleFieldDeclaration = 9, 
-    RuleValue = 10, RuleArray = 11, RuleMap = 12, RuleKeyValue = 13, RuleSimplePath = 14, 
-    RuleLiteralExpression = 15, RuleIdentifier = 16, RuleKeyword = 17
+    RuleCompilationUnit = 0, RuleItem = 1, RuleTypedefVersionDeclaration = 2, 
+    RuleModuleDeclaration = 3, RuleUseDeclaration = 4, RuleUseTree = 5, 
+    RuleStructDeclaration = 6, RuleStructBody = 7, RuleStructFieldDeclaration = 8, 
+    RuleValue = 9, RuleSimplePath = 10, RuleLiteralExpression = 11, RuleIdentifier = 12, 
+    RuleKeyword = 13
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -62,19 +62,15 @@ public:
 
 
   class CompilationUnitContext;
+  class ItemContext;
   class TypedefVersionDeclarationContext;
   class ModuleDeclarationContext;
   class UseDeclarationContext;
   class UseTreeContext;
-  class EnumDeclarationContext;
-  class EnumBodyContext;
   class StructDeclarationContext;
-  class MessageBodyContext;
-  class FieldDeclarationContext;
+  class StructBodyContext;
+  class StructFieldDeclarationContext;
   class ValueContext;
-  class ArrayContext;
-  class MapContext;
-  class KeyValueContext;
   class SimplePathContext;
   class LiteralExpressionContext;
   class IdentifierContext;
@@ -85,14 +81,12 @@ public:
     CompilationUnitContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     TypedefVersionDeclarationContext *typedefVersionDeclaration();
-    ModuleDeclarationContext *moduleDeclaration();
     antlr4::tree::TerminalNode *EOF();
+    ModuleDeclarationContext *moduleDeclaration();
     std::vector<UseDeclarationContext *> useDeclaration();
     UseDeclarationContext* useDeclaration(size_t i);
-    std::vector<EnumDeclarationContext *> enumDeclaration();
-    EnumDeclarationContext* enumDeclaration(size_t i);
-    std::vector<StructDeclarationContext *> structDeclaration();
-    StructDeclarationContext* structDeclaration(size_t i);
+    std::vector<ItemContext *> item();
+    ItemContext* item(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -100,6 +94,19 @@ public:
   };
 
   CompilationUnitContext* compilationUnit();
+
+  class  ItemContext : public antlr4::ParserRuleContext {
+  public:
+    ItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    StructDeclarationContext *structDeclaration();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  ItemContext* item();
 
   class  TypedefVersionDeclarationContext : public antlr4::ParserRuleContext {
   public:
@@ -170,40 +177,6 @@ public:
 
   UseTreeContext* useTree();
 
-  class  EnumDeclarationContext : public antlr4::ParserRuleContext {
-  public:
-    EnumDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *KW_ENUM();
-    IdentifierContext *identifier();
-    antlr4::tree::TerminalNode *LBRACE();
-    EnumBodyContext *enumBody();
-    antlr4::tree::TerminalNode *RBRACE();
-    antlr4::tree::TerminalNode *SEMI();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  EnumDeclarationContext* enumDeclaration();
-
-  class  EnumBodyContext : public antlr4::ParserRuleContext {
-  public:
-    EnumBodyContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    std::vector<IdentifierContext *> identifier();
-    IdentifierContext* identifier(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> COMMA();
-    antlr4::tree::TerminalNode* COMMA(size_t i);
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  EnumBodyContext* enumBody();
-
   class  StructDeclarationContext : public antlr4::ParserRuleContext {
   public:
     StructDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -211,7 +184,7 @@ public:
     antlr4::tree::TerminalNode *KW_STRUCT();
     IdentifierContext *identifier();
     antlr4::tree::TerminalNode *LBRACE();
-    MessageBodyContext *messageBody();
+    StructBodyContext *structBody();
     antlr4::tree::TerminalNode *RBRACE();
     antlr4::tree::TerminalNode *SEMI();
 
@@ -222,25 +195,23 @@ public:
 
   StructDeclarationContext* structDeclaration();
 
-  class  MessageBodyContext : public antlr4::ParserRuleContext {
+  class  StructBodyContext : public antlr4::ParserRuleContext {
   public:
-    MessageBodyContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    StructBodyContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    std::vector<FieldDeclarationContext *> fieldDeclaration();
-    FieldDeclarationContext* fieldDeclaration(size_t i);
-    std::vector<EnumDeclarationContext *> enumDeclaration();
-    EnumDeclarationContext* enumDeclaration(size_t i);
+    std::vector<StructFieldDeclarationContext *> structFieldDeclaration();
+    StructFieldDeclarationContext* structFieldDeclaration(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
    
   };
 
-  MessageBodyContext* messageBody();
+  StructBodyContext* structBody();
 
-  class  FieldDeclarationContext : public antlr4::ParserRuleContext {
+  class  StructFieldDeclarationContext : public antlr4::ParserRuleContext {
   public:
-    FieldDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    StructFieldDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<IdentifierContext *> identifier();
     IdentifierContext* identifier(size_t i);
@@ -254,16 +225,13 @@ public:
    
   };
 
-  FieldDeclarationContext* fieldDeclaration();
+  StructFieldDeclarationContext* structFieldDeclaration();
 
   class  ValueContext : public antlr4::ParserRuleContext {
   public:
     ValueContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     LiteralExpressionContext *literalExpression();
-    ArrayContext *array();
-    MapContext *map();
-    IdentifierContext *identifier();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -271,57 +239,6 @@ public:
   };
 
   ValueContext* value();
-
-  class  ArrayContext : public antlr4::ParserRuleContext {
-  public:
-    ArrayContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *LBRACK();
-    antlr4::tree::TerminalNode *RBRACK();
-    std::vector<ValueContext *> value();
-    ValueContext* value(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> COMMA();
-    antlr4::tree::TerminalNode* COMMA(size_t i);
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  ArrayContext* array();
-
-  class  MapContext : public antlr4::ParserRuleContext {
-  public:
-    MapContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *LBRACE();
-    antlr4::tree::TerminalNode *RBRACE();
-    std::vector<KeyValueContext *> keyValue();
-    KeyValueContext* keyValue(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> COMMA();
-    antlr4::tree::TerminalNode* COMMA(size_t i);
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  MapContext* map();
-
-  class  KeyValueContext : public antlr4::ParserRuleContext {
-  public:
-    KeyValueContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    IdentifierContext *identifier();
-    antlr4::tree::TerminalNode *COLON();
-    ValueContext *value();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  KeyValueContext* keyValue();
 
   class  SimplePathContext : public antlr4::ParserRuleContext {
   public:

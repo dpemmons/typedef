@@ -10,7 +10,7 @@ const std::map<LanguageVersion, std::string> kLanguageVersionMap = {
 
 LanguageVersion LangaugeVersionFromString(std::string& str) {
   for (auto pair : kLanguageVersionMap) {
-    if (pair.second.compare(str)) {
+    if (pair.second.compare(str) == 0) {
       return pair.first;
     }
   }
@@ -19,7 +19,7 @@ LanguageVersion LangaugeVersionFromString(std::string& str) {
 
 bool IsValidLanguageVersion(std::string& str) {
   for (auto pair : kLanguageVersionMap) {
-    if (pair.second.compare(str)) {
+    if (pair.second.compare(str) == 0) {
       return true;
     }
   }

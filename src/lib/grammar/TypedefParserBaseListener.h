@@ -19,6 +19,9 @@ public:
   virtual void enterCompilationUnit(TypedefParser::CompilationUnitContext * /*ctx*/) override { }
   virtual void exitCompilationUnit(TypedefParser::CompilationUnitContext * /*ctx*/) override { }
 
+  virtual void enterItem(TypedefParser::ItemContext * /*ctx*/) override { }
+  virtual void exitItem(TypedefParser::ItemContext * /*ctx*/) override { }
+
   virtual void enterTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext * /*ctx*/) override { }
   virtual void exitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext * /*ctx*/) override { }
 
@@ -31,32 +34,17 @@ public:
   virtual void enterUseTree(TypedefParser::UseTreeContext * /*ctx*/) override { }
   virtual void exitUseTree(TypedefParser::UseTreeContext * /*ctx*/) override { }
 
-  virtual void enterEnumDeclaration(TypedefParser::EnumDeclarationContext * /*ctx*/) override { }
-  virtual void exitEnumDeclaration(TypedefParser::EnumDeclarationContext * /*ctx*/) override { }
-
-  virtual void enterEnumBody(TypedefParser::EnumBodyContext * /*ctx*/) override { }
-  virtual void exitEnumBody(TypedefParser::EnumBodyContext * /*ctx*/) override { }
-
   virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
   virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
 
-  virtual void enterMessageBody(TypedefParser::MessageBodyContext * /*ctx*/) override { }
-  virtual void exitMessageBody(TypedefParser::MessageBodyContext * /*ctx*/) override { }
+  virtual void enterStructBody(TypedefParser::StructBodyContext * /*ctx*/) override { }
+  virtual void exitStructBody(TypedefParser::StructBodyContext * /*ctx*/) override { }
 
-  virtual void enterFieldDeclaration(TypedefParser::FieldDeclarationContext * /*ctx*/) override { }
-  virtual void exitFieldDeclaration(TypedefParser::FieldDeclarationContext * /*ctx*/) override { }
+  virtual void enterStructFieldDeclaration(TypedefParser::StructFieldDeclarationContext * /*ctx*/) override { }
+  virtual void exitStructFieldDeclaration(TypedefParser::StructFieldDeclarationContext * /*ctx*/) override { }
 
   virtual void enterValue(TypedefParser::ValueContext * /*ctx*/) override { }
   virtual void exitValue(TypedefParser::ValueContext * /*ctx*/) override { }
-
-  virtual void enterArray(TypedefParser::ArrayContext * /*ctx*/) override { }
-  virtual void exitArray(TypedefParser::ArrayContext * /*ctx*/) override { }
-
-  virtual void enterMap(TypedefParser::MapContext * /*ctx*/) override { }
-  virtual void exitMap(TypedefParser::MapContext * /*ctx*/) override { }
-
-  virtual void enterKeyValue(TypedefParser::KeyValueContext * /*ctx*/) override { }
-  virtual void exitKeyValue(TypedefParser::KeyValueContext * /*ctx*/) override { }
 
   virtual void enterSimplePath(TypedefParser::SimplePathContext * /*ctx*/) override { }
   virtual void exitSimplePath(TypedefParser::SimplePathContext * /*ctx*/) override { }
