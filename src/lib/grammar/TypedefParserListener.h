@@ -20,6 +20,9 @@ public:
   virtual void enterItem(TypedefParser::ItemContext *ctx) = 0;
   virtual void exitItem(TypedefParser::ItemContext *ctx) = 0;
 
+  virtual void enterValueDeclaration(TypedefParser::ValueDeclarationContext *ctx) = 0;
+  virtual void exitValueDeclaration(TypedefParser::ValueDeclarationContext *ctx) = 0;
+
   virtual void enterTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;
   virtual void exitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;
 
@@ -31,15 +34,6 @@ public:
 
   virtual void enterUseTree(TypedefParser::UseTreeContext *ctx) = 0;
   virtual void exitUseTree(TypedefParser::UseTreeContext *ctx) = 0;
-
-  virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
-  virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
-
-  virtual void enterStructBody(TypedefParser::StructBodyContext *ctx) = 0;
-  virtual void exitStructBody(TypedefParser::StructBodyContext *ctx) = 0;
-
-  virtual void enterStructFieldDeclaration(TypedefParser::StructFieldDeclarationContext *ctx) = 0;
-  virtual void exitStructFieldDeclaration(TypedefParser::StructFieldDeclarationContext *ctx) = 0;
 
   virtual void enterValue(TypedefParser::ValueContext *ctx) = 0;
   virtual void exitValue(TypedefParser::ValueContext *ctx) = 0;

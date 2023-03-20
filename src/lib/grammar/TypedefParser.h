@@ -44,11 +44,10 @@ public:
   };
 
   enum {
-    RuleCompilationUnit = 0, RuleItem = 1, RuleTypedefVersionDeclaration = 2, 
-    RuleModuleDeclaration = 3, RuleUseDeclaration = 4, RuleUseTree = 5, 
-    RuleStructDeclaration = 6, RuleStructBody = 7, RuleStructFieldDeclaration = 8, 
-    RuleValue = 9, RuleSimplePath = 10, RuleLiteralExpression = 11, RuleIdentifier = 12, 
-    RuleKeyword = 13
+    RuleCompilationUnit = 0, RuleItem = 1, RuleValueDeclaration = 2, RuleTypedefVersionDeclaration = 3, 
+    RuleModuleDeclaration = 4, RuleUseDeclaration = 5, RuleUseTree = 6, 
+    RuleValue = 7, RuleSimplePath = 8, RuleLiteralExpression = 9, RuleIdentifier = 10, 
+    RuleKeyword = 11
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -63,13 +62,11 @@ public:
 
   class CompilationUnitContext;
   class ItemContext;
+  class ValueDeclarationContext;
   class TypedefVersionDeclarationContext;
   class ModuleDeclarationContext;
   class UseDeclarationContext;
   class UseTreeContext;
-  class StructDeclarationContext;
-  class StructBodyContext;
-  class StructFieldDeclarationContext;
   class ValueContext;
   class SimplePathContext;
   class LiteralExpressionContext;
@@ -99,7 +96,7 @@ public:
   public:
     ItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    StructDeclarationContext *structDeclaration();
+    ValueDeclarationContext *valueDeclaration();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -107,6 +104,24 @@ public:
   };
 
   ItemContext* item();
+
+  class  ValueDeclarationContext : public antlr4::ParserRuleContext {
+  public:
+    ValueDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<IdentifierContext *> identifier();
+    IdentifierContext* identifier(size_t i);
+    antlr4::tree::TerminalNode *COLON();
+    antlr4::tree::TerminalNode *EQ();
+    ValueContext *value();
+    antlr4::tree::TerminalNode *SEMI();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  ValueDeclarationContext* valueDeclaration();
 
   class  TypedefVersionDeclarationContext : public antlr4::ParserRuleContext {
   public:
@@ -176,56 +191,6 @@ public:
   };
 
   UseTreeContext* useTree();
-
-  class  StructDeclarationContext : public antlr4::ParserRuleContext {
-  public:
-    StructDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *KW_STRUCT();
-    IdentifierContext *identifier();
-    antlr4::tree::TerminalNode *LBRACE();
-    StructBodyContext *structBody();
-    antlr4::tree::TerminalNode *RBRACE();
-    antlr4::tree::TerminalNode *SEMI();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  StructDeclarationContext* structDeclaration();
-
-  class  StructBodyContext : public antlr4::ParserRuleContext {
-  public:
-    StructBodyContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    std::vector<StructFieldDeclarationContext *> structFieldDeclaration();
-    StructFieldDeclarationContext* structFieldDeclaration(size_t i);
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  StructBodyContext* structBody();
-
-  class  StructFieldDeclarationContext : public antlr4::ParserRuleContext {
-  public:
-    StructFieldDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    std::vector<IdentifierContext *> identifier();
-    IdentifierContext* identifier(size_t i);
-    antlr4::tree::TerminalNode *COLON();
-    antlr4::tree::TerminalNode *SEMI();
-    antlr4::tree::TerminalNode *EQ();
-    ValueContext *value();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  StructFieldDeclarationContext* structFieldDeclaration();
 
   class  ValueContext : public antlr4::ParserRuleContext {
   public:

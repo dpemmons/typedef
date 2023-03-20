@@ -7,7 +7,12 @@ options {
 compilationUnit:
 	typedefVersionDeclaration moduleDeclaration? useDeclaration* item* EOF;
 
-item: structDeclaration;
+item: valueDefinitions;
+
+// ValA: i32 = 42;
+valueDefinitions: identifier COLON type_ EQ value SEMI;
+
+type_: idetifier;
 
 typedefVersionDeclaration: KW_TYPEDEF EQ identifier SEMI;
 moduleDeclaration: KW_MODULE simplePath SEMI;
@@ -24,10 +29,10 @@ useTree: (simplePath? '::')? (
 // enumBody: ( identifier COMMA)+ (identifier COMMA?)?;
 
 // Strucvt
-structDeclaration:
-	KW_STRUCT identifier LBRACE structBody RBRACE SEMI;
-structBody: structFieldDeclaration*;
-structFieldDeclaration: identifier COLON identifier (EQ value)? SEMI;
+// structDeclaration:
+// 	KW_STRUCT identifier LBRACE structBody RBRACE SEMI;
+// structBody: structFieldDeclaration*;
+// structFieldDeclaration: identifier COLON identifier (EQ value)? SEMI;
 
 // Value definitions ----------------------------------------------------------
 // value: literalExpression | array | map | identifier;

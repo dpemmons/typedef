@@ -177,6 +177,12 @@ std::vector<UseDeclaration> GetUseDeclarations(
   return use_decls;
 }
 
+std::vector<UseDeclaration> GetValueDefinitions(
+    TypedefParser::CompilationUnitContext *compilation_unit,
+    std::vector<ParserErrorInfo> *errors_list) {
+      
+    }
+
 std::shared_ptr<ParsedFile> Parse(const std::string &s) {
   std::istringstream ss(s);
   return Parse(ss);
@@ -233,6 +239,8 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
   builder.SetLanguageVersion(GetLanguageVersion(compilation_unit, &errors));
   builder.SetModule(GetModuleDeclaration(compilation_unit, &errors));
   builder.SetUseDeclarations(GetUseDeclarations(compilation_unit, &errors));
+
+  builder.SetValueDefinitions(GetValueDefinitions(compilation_unit, &errors));
 
   builder.SetErrors(errors);
 
