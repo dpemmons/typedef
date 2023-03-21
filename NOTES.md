@@ -49,6 +49,7 @@ Modes:
 ### Type Trees
 
 - Typescript: Every possible TypeScript Type: https://gist.github.com/laughinghan/31e02b3f3b79a4b1d58138beff1a2a89
+- https://v8docs.nodesource.com/node-0.8/d1/d83/classv8_1_1_data.html
 - Thinking of types as sets of values: https://learntypescript.dev/04/l8-sets-of-values
 (CUE does this too.)
 - Unit type? https://en.wikipedia.org/wiki/Unit_type

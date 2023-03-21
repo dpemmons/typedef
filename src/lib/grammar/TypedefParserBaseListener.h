@@ -22,8 +22,11 @@ public:
   virtual void enterItem(TypedefParser::ItemContext * /*ctx*/) override { }
   virtual void exitItem(TypedefParser::ItemContext * /*ctx*/) override { }
 
-  virtual void enterValueDeclaration(TypedefParser::ValueDeclarationContext * /*ctx*/) override { }
-  virtual void exitValueDeclaration(TypedefParser::ValueDeclarationContext * /*ctx*/) override { }
+  virtual void enterValueDefinitions(TypedefParser::ValueDefinitionsContext * /*ctx*/) override { }
+  virtual void exitValueDefinitions(TypedefParser::ValueDefinitionsContext * /*ctx*/) override { }
+
+  virtual void enterType_(TypedefParser::Type_Context * /*ctx*/) override { }
+  virtual void exitType_(TypedefParser::Type_Context * /*ctx*/) override { }
 
   virtual void enterTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext * /*ctx*/) override { }
   virtual void exitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext * /*ctx*/) override { }

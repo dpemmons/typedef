@@ -16,113 +16,95 @@
 
 #pragma once
 
+#include <cstring>
 #include <string>
+
+#include "type.h"
 
 namespace td {
 
 class ScalarValue {
  public:
-
-  ScalarValue(ScalarType type) : type_(type) {}
+  ScalarValue(Type type) : type_(type) {}
 
   static ScalarValue CreateBOOL(bool val) {
-    ScalarValue s(ScalarType::BOOL);
+    ScalarValue s(Type::CreateBOOL());
     s.val_.bool_ = val;
     return s;
   }
   static ScalarValue CreateCHAR(char val) {
-    ScalarValue s(ScalarType::CHAR);
+    ScalarValue s(Type::CreateCHAR());
     s.val_.char_ = val;
     return s;
   }
+  // TODO: figure out how to actually handle UTF-8.
+  static ScalarValue CreateCHAR32(char32_t val) {
+    ScalarValue s(Type::CreateC32());
+    s.val_.c32_ = val;
+    return s;
+  }
   static ScalarValue CreateF32(float val) {
-    ScalarValue s(ScalarType::F32);
+    ScalarValue s(Type::CreateF32());
     s.val_.f32_ = val;
     return s;
   }
   static ScalarValue CreateF64(double val) {
-    ScalarValue s(ScalarType::F64);
+    ScalarValue s(Type::CreateF64());
     s.val_.f64_ = val;
     return s;
   }
   static ScalarValue CreateI8(int8_t val) {
-    ScalarValue s(ScalarType::I8);
+    ScalarValue s(Type::CreateI8());
     s.val_.i8_ = val;
     return s;
   }
   static ScalarValue CreateI16(int16_t val) {
-    ScalarValue s(ScalarType::I16);
+    ScalarValue s(Type::CreateI16());
     s.val_.i16_ = val;
     return s;
   }
   static ScalarValue CreateI32(int32_t val) {
-    ScalarValue s(ScalarType::I32);
+    ScalarValue s(Type::CreateI32());
     s.val_.i32_ = val;
     return s;
   }
   static ScalarValue CreateI64(int64_t val) {
-    ScalarValue s(ScalarType::I64);
+    ScalarValue s(Type::CreateI64());
     s.val_.i64_ = val;
     return s;
   }
   static ScalarValue CreateI128(__int128_t val) {
-    ScalarValue s(ScalarType::I128);
+    ScalarValue s(Type::CreateI128());
     s.val_.i128_ = val;
     return s;
   }
   static ScalarValue CreateU8(uint8_t val) {
-    ScalarValue s(ScalarType::U8);
+    ScalarValue s(Type::CreateU8());
     s.val_.u8_ = val;
     return s;
   }
   static ScalarValue CreateU16(uint16_t val) {
-    ScalarValue s(ScalarType::U16);
+    ScalarValue s(Type::CreateU16());
     s.val_.u16_ = val;
     return s;
   }
   static ScalarValue CreateU32(uint32_t val) {
-    ScalarValue s(ScalarType::U32);
+    ScalarValue s(Type::CreateU32());
     s.val_.u32_ = val;
     return s;
   }
   static ScalarValue CreateU64(uint64_t val) {
-    ScalarValue s(ScalarType::U64);
+    ScalarValue s(Type::CreateU64());
     s.val_.u64_ = val;
     return s;
   }
   static ScalarValue CreateU128(__uint128_t val) {
-    ScalarValue s(ScalarType::U128);
+    ScalarValue s(Type::CreateU128());
     s.val_.u128_ = val;
     return s;
   }
 
-  ScalarType GetType() const { return type_; }
-  bool IsInteger() const {
-    switch (type_) {
-      case ScalarType::I8:
-      case ScalarType::I16:
-      case ScalarType::I32:
-      case ScalarType::I64:
-      case ScalarType::I128:
-      case ScalarType::U8:
-      case ScalarType::U16:
-      case ScalarType::U32:
-      case ScalarType::U64:
-      case ScalarType::U128:
-        return true;
-      default:
-        return false;
-    }
-  }
-  bool IsFloat() const {
-    switch (type_) {
-      case ScalarType::F32:
-      case ScalarType::F64:
-        return true;
-      default:
-        return false;
-    }
-  }
+  Type GetType() const { return type_; }
 
   bool BoolValue() const {}
   char CharValue() const {}
@@ -140,10 +122,11 @@ class ScalarValue {
   __uint128_t Uint128Value() const {}
 
  private:
-  ScalarType type_;
+  Type type_;
   union Val {
     bool bool_;
     char char_;
+    char32_t c32_;
     float f32_;
     double f64_;
     int8_t i8_;

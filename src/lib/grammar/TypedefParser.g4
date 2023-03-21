@@ -12,7 +12,7 @@ item: valueDefinitions;
 // ValA: i32 = 42;
 valueDefinitions: identifier COLON type_ EQ value SEMI;
 
-type_: idetifier;
+type_: identifier;
 
 typedefVersionDeclaration: KW_TYPEDEF EQ identifier SEMI;
 moduleDeclaration: KW_MODULE simplePath SEMI;

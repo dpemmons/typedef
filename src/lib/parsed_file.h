@@ -7,6 +7,7 @@
 #include "language_version.h"
 #include "parser_error_info.h"
 #include "use_declaration.h"
+#include "value_definition.h"
 
 namespace td {
 
@@ -31,6 +32,7 @@ class ParsedFile {
   LanguageVersion langauge_version_;
   QualifiedIdentifier module_;
   std::vector<UseDeclaration> use_declarations_;
+  std::vector<ValueDefinition> value_definitions_;
 };
 
 class ParsedFileBuilder {
@@ -47,6 +49,10 @@ class ParsedFileBuilder {
   ParsedFileBuilder& SetUseDeclarations(
       std::vector<UseDeclaration> use_declarations) {
     file_.use_declarations_ = use_declarations;
+    return *this;
+  }
+  ParsedFileBuilder& SetValueDefinitions(std::vector<ValueDefinition> value_definitions) {
+    file_.value_definitions_ = value_definitions;
     return *this;
   }
   ParsedFileBuilder& SetErrors(std::vector<ParserErrorInfo> errors) {

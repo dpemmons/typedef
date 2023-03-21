@@ -9,6 +9,7 @@
 #include "parsed_file.h"
 #include "parser_error_info.h"
 #include "use_declaration.h"
+#include "value_definition.h"
 
 namespace td {
 
@@ -177,11 +178,9 @@ std::vector<UseDeclaration> GetUseDeclarations(
   return use_decls;
 }
 
-std::vector<UseDeclaration> GetValueDefinitions(
+std::vector<ValueDefinition> GetValueDefinitions(
     TypedefParser::CompilationUnitContext *compilation_unit,
-    std::vector<ParserErrorInfo> *errors_list) {
-      
-    }
+    std::vector<ParserErrorInfo> *errors_list) {}
 
 std::shared_ptr<ParsedFile> Parse(const std::string &s) {
   std::istringstream ss(s);
