@@ -96,7 +96,11 @@ grammar: ./src/lib/grammar/TypedefLexer.cpp ./src/lib/grammar/TypedefParser.cpp
 
 .PHONY: clean
 clean:
-	rm -r $(BASE_BUILD_DIR)
+	rm -rf $(BASE_BUILD_DIR)
+
+.PHONY: clean-test
+clean-test:
+	rm -rf $(BASE_BUILD_DIR)/test
 
 .PHONY: run
 test: $(TEST_EXEC)
