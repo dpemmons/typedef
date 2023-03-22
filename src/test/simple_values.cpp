@@ -10,7 +10,6 @@ using Catch::Matchers::Equals;
 
 namespace {
 const std::vector<td::ParserErrorInfo> empty_errors;
-}  // namespace
 
 struct EqualsValueDefinitionMatcher : Catch::Matchers::MatcherGenericBase {
   EqualsValueDefinitionMatcher(td::ValueDefinition const& vd) : vd_{vd} {}
@@ -32,6 +31,9 @@ auto EqualsValueDefinition(const td::ValueDefinition& vd)
     -> EqualsValueDefinitionMatcher {
   return EqualsValueDefinitionMatcher{vd};
 }
+
+}  // namespace
+
 
 TEST_CASE("Declare a true boolean.", "[simple_values][bool]") {
   auto parsed_file = td::Parse(R"(
