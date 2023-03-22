@@ -2,12 +2,15 @@
 
 ## TODO
 
+Items in ***bold*** are in-progress.
+
 - [ ] Basics (build and lib)
   - [x] change over to using normal VS.Code tasks, instead of makefile extension.
-  - [ ] build parser with makefile (in progress)
+  - [x] build parser with makefile
   - [ ] parse module import statements
+  - [ ] ***parse simple value statements***
   - [ ] parse a very basic struct statement
-  - [ ] Idea to experiment with: basing lexer (and part of parser) on the available Rust grammars?
+  - [ ] ***Idea to experiment with: basing lexer (and part of parser) on the available Rust grammars?***
 
 - [ ] Command line util basics
   - [ ] print default formatting to stdout
