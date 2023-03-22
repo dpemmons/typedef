@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <optional>
 
 #include "identifier.h"
 #include "language_version.h"
@@ -20,17 +21,21 @@ class ParsedFile {
   const std::vector<ParserErrorInfo>& GetErrors() const { return errors_; }
 
   LanguageVersion GetLanguageVersion() const { return langauge_version_; };
-  QualifiedIdentifier GetModule() const { return module_; }
+  std::optional<QualifiedIdentifier> GetModule() const { return module_; }
   std::vector<UseDeclaration> GetUseDeclarations() const {
     return use_declarations_;
   }
+  std::vector<ValueDefinition> GetValueDefinitions() const {
+    return value_definitions_;
+  };
 
  private:
   friend class ParsedFileBuilder;
   std::vector<ParserErrorInfo> errors_;
 
+  // TODO: use std::optional everywhere.
   LanguageVersion langauge_version_;
-  QualifiedIdentifier module_;
+  std::optional<QualifiedIdentifier> module_;
   std::vector<UseDeclaration> use_declarations_;
   std::vector<ValueDefinition> value_definitions_;
 };

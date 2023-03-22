@@ -21,13 +21,66 @@ class Type {
   static Type CreateU32() { return Type(Type_::U32); };
   static Type CreateU64() { return Type(Type_::U64); };
   static Type CreateU128() { return Type(Type_::U128); };
+  static Type CreateFromString(const std::string& str) {
+    if (str.compare("bool") == 0) {
+      return CreateBOOL();
+    } else if (str.compare("char") == 0) {
+      return CreateCHAR();
+    } else if (str.compare("c32") == 0) {
+      return CreateC32();
+    } else if (str.compare("f32") == 0) {
+      return CreateF32();
+    } else if (str.compare("f64") == 0) {
+      return CreateF64();
+    } else if (str.compare("i8") == 0) {
+      return CreateI8();
+    } else if (str.compare("i16") == 0) {
+      return CreateI16();
+    } else if (str.compare("i32") == 0) {
+      return CreateI32();
+    } else if (str.compare("i64") == 0) {
+      return CreateI64();
+    } else if (str.compare("i128") == 0) {
+      return CreateI128();
+    } else if (str.compare("u8") == 0) {
+      return CreateU8();
+    } else if (str.compare("u16") == 0) {
+      return CreateU16();
+    } else if (str.compare("u32") == 0) {
+      return CreateU32();
+    } else if (str.compare("u64") == 0) {
+      return CreateU64();
+    } else if (str.compare("u128") == 0) {
+      return CreateU128();
+    } else {
+      return CreateUnknown();
+    }
+  };
 
+  bool IsUnknown() const { return type_ == Type_::UNKNOWN; }
+
+  bool IsBool() const { return type_ == Type_::BOOL; };
   bool IsInteger() const {
     return type_ > Type_::INTEGERS_START && type_ < Type_::INTEGERS_END;
   };
   bool IsScalar() const {
     return type_ > Type_::SCALARS_START && type_ < Type_::SCALARS_END;
   };
+  bool IsBOOL() const { return type_ == Type_::BOOL; }
+  bool IsCHAR() const { return type_ == Type_::CHAR; }
+  bool IsC32() const { return type_ == Type_::C32; }
+  bool IsF32() const { return type_ == Type_::F32; }
+  bool IsF64() const { return type_ == Type_::F64; }
+  bool IsI8() const { return type_ == Type_::I8; }
+  bool IsI16() const { return type_ == Type_::I16; }
+  bool IsI32() const { return type_ == Type_::I32; }
+  bool IsI64() const { return type_ == Type_::I64; }
+  bool IsI128() const { return type_ == Type_::I128; }
+  bool IsU8() const { return type_ == Type_::U8; }
+  bool IsU16() const { return type_ == Type_::U16; }
+  bool IsU32() const { return type_ == Type_::U32; }
+  bool IsU64() const { return type_ == Type_::U64; }
+  bool IsU128() const { return type_ == Type_::U128; }
 
   std::string ToString() const {
     switch (type_) {
@@ -68,7 +121,15 @@ class Type {
     }
   };
 
+  friend bool operator==(const Type& c1, const Type& c2) {
+    return c1.type_ == c2.type_;
+  }
+  friend bool operator!=(const Type& c1, const Type& c2) {
+    return c1.type_ != c2.type_;
+  }
+
  private:
+  static Type CreateUnknown() { return Type(Type_::UNKNOWN); }
   enum class Type_ {
     UNKNOWN = 0,
 
@@ -125,8 +186,8 @@ class Type {
     // Interface Types
 
   } type_;
-  
-  Type(Type_ t) : type_(t) {};
+
+  Type(Type_ t) : type_(t){};
 };
 
 }  // namespace td

@@ -10,6 +10,7 @@
 #include "parser_error_info.h"
 #include "use_declaration.h"
 #include "value_definition.h"
+#include "values.h"
 
 namespace td {
 
@@ -43,16 +44,17 @@ class LexerErrorListener : public antlr4::BaseErrorListener {
     } catch (antlr4::LexerNoViableAltException &) {
       antlr4::Lexer *lexer = dynamic_cast<antlr4::Lexer *>(recognizer);
 
-      errors_list_->push_back(PEIBuilder()
-                                  .SetType(ParserErrorInfo::LEXER_ERROR)
-                                  .SetMessage("Lexer error")
-                                  .SetTokenType(0)
-                                  .SetCharOffset(lexer->tokenStartCharIndex)
-                                  .SetLine(line)
-                                  .SetLineOffset(charPositionInLine)
-                                  .SetLength(lexer->getInputStream()->index() -
-                                             lexer->tokenStartCharIndex)
-                                  .build());
+      errors_list_->emplace_back(
+          PEIBuilder()
+              .SetType(ParserErrorInfo::LEXER_ERROR)
+              .SetMessage("Lexer error")
+              .SetTokenType(0)
+              .SetCharOffset(lexer->tokenStartCharIndex)
+              .SetLine(line)
+              .SetLineOffset(charPositionInLine)
+              .SetLength(lexer->getInputStream()->index() -
+                         lexer->tokenStartCharIndex)
+              .build());
     }
   }
 
@@ -69,16 +71,17 @@ class ParserErrorListener : public antlr4::BaseErrorListener {
                            antlr4::Token *offendingSymbol, size_t line,
                            size_t charPositionInLine, const std::string &,
                            std::exception_ptr ep) override {
-    errors_list_->push_back(PEIBuilder()
-                                .SetType(ParserErrorInfo::PARSE_ERROR)
-                                .SetMessage("Parse error")
-                                .SetTokenType(offendingSymbol->getType())
-                                .SetCharOffset(offendingSymbol->getStartIndex())
-                                .SetLine(line)
-                                .SetLineOffset(charPositionInLine)
-                                .SetLength(offendingSymbol->getStopIndex() -
-                                           offendingSymbol->getStartIndex() + 1)
-                                .build());
+    errors_list_->emplace_back(
+        PEIBuilder()
+            .SetType(ParserErrorInfo::PARSE_ERROR)
+            .SetMessage("Parse error")
+            .SetTokenType(offendingSymbol->getType())
+            .SetCharOffset(offendingSymbol->getStartIndex())
+            .SetLine(line)
+            .SetLineOffset(charPositionInLine)
+            .SetLength(offendingSymbol->getStopIndex() -
+                       offendingSymbol->getStartIndex() + 1)
+            .build());
   };
 
  private:
@@ -92,7 +95,7 @@ std::string GetIdentifierString(CTX *ctx,
   static_assert(std::is_base_of<antlr4::ParserRuleContext, CTX>::value,
                 "CTX not derived from ParserRuleContext");
   if (!ctx || !ctx->identifier()) {
-    errors_list->push_back(
+    errors_list->emplace_back(
         ErrorFromContext(ctx, ParserErrorInfo::MISSING_IDENTIFIER));
     return "";
   }
@@ -103,6 +106,27 @@ std::string GetIdentifierString(CTX *ctx,
   } else {
     // Parse error.
     return "";
+  }
+}
+
+ScalarValue GetScalarValueFromLiteralExpression(
+    TypedefParser::LiteralExpressionContext *ctx,
+    std::vector<ParserErrorInfo> *errors_list) {
+  if (ctx->CHAR_LITERAL()) {
+  } else if (ctx->STRING_LITERAL()) {
+  } else if (ctx->RAW_STRING_LITERAL()) {
+  } else if (ctx->BYTE_LITERAL()) {
+  } else if (ctx->BYTE_STRING_LITERAL()) {
+  } else if (ctx->RAW_BYTE_STRING_LITERAL()) {
+  } else if (ctx->INTEGER_LITERAL()) {
+  } else if (ctx->FLOAT_LITERAL()) {
+  } else if (ctx->KW_TRUE()) {
+    return ScalarValue::CreateBOOL(true);
+  } else if (ctx->KW_FALSE()) {
+    return ScalarValue::CreateBOOL(false);
+  } else {
+    // This is wrong; we should crash here instead.
+    return ScalarValue::CreateI32(0);
   }
 }
 
@@ -124,7 +148,7 @@ LanguageVersion GetLanguageVersion(
     return LanguageVersion::UNKNOWN;
   }
   if (!IsValidLanguageVersion(versionIdentifier)) {
-    errors_list->push_back(
+    errors_list->emplace_back(
         ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
                          ParserErrorInfo::INVALID_LANGUAGE_VERSION));
     return LanguageVersion::UNKNOWN;
@@ -136,7 +160,7 @@ td::QualifiedIdentifier GetModuleDeclaration(
     TypedefParser::CompilationUnitContext *compilation_unit,
     std::vector<ParserErrorInfo> *errors_list) {
   if (compilation_unit->moduleDeclaration()) {
-    errors_list->push_back(
+    errors_list->emplace_back(
         ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
                          ParserErrorInfo::UNIMPLEMENTED));
   }
@@ -149,38 +173,65 @@ std::vector<UseDeclaration> GetUseDeclarations(
   std::vector<UseDeclaration> use_decls;
 
   if (!compilation_unit->useDeclaration().empty()) {
-    errors_list->push_back(
+    errors_list->emplace_back(
         ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
                          ParserErrorInfo::UNIMPLEMENTED));
   }
-  // auto useDeclaration = compilation_unit_->useDeclaration();
-  // for (auto useDeclaration : importStatements) {
-  //   td::Import import;
-  //   if (auto single_import = importStatement->singleImportStatement()) {
-  //     import.is_wildcard = false;
-  //     if (single_import->qualifiedName()) {
-  //       // TODO(dpemmons) this stuff...
-  //       auto qualifiedName = single_import->qualifiedName();
-  //     }
-  //     if (single_import->identifier()) {
-  //       import.alias = single_import->identifier()->toString();
-  //     }
-  //   } else if (auto wildcard_import =
-  //                  importStatement->wildcardImportStatement()) {
-  //     import.is_wildcard = true;
-  //     if (wildcard_import->qualifiedName()) {
-  //       import.qualified_identifier =
-  //           wildcard_import->qualifiedName()->toString();
-  //     }
-  //   }
-  //   imports.push_back(import);
-  // }
   return use_decls;
 }
 
 std::vector<ValueDefinition> GetValueDefinitions(
     TypedefParser::CompilationUnitContext *compilation_unit,
-    std::vector<ParserErrorInfo> *errors_list) {}
+    std::vector<ParserErrorInfo> *errors_list) {
+  std::vector<ValueDefinition> value_definitions;
+
+  for (auto item : compilation_unit->item()) {
+    if (TypedefParser::ValueDefinitionsContext *vd = item->valueDefinitions()) {
+      QualifiedIdentifier qi(GetIdentifierString(vd, errors_list));
+
+      // Missing type.
+      if (!vd->type_() || !vd->type_()->identifier()) {
+        errors_list->emplace_back(
+            ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
+                             ParserErrorInfo::MISSING_TYPE_IDENTIFIER));
+        continue;
+      }
+      // Missing value.
+      if (!vd->value() || !vd->value()->literalExpression()) {
+        errors_list->emplace_back(
+            ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
+                             ParserErrorInfo::MISSING_VALUE_EXPRESSION));
+        continue;
+      }
+
+      Type type =
+          Type::CreateFromString(GetIdentifierString(vd->type_(), errors_list));
+
+      // Unknown type.
+      if (type.IsUnknown()) {
+        errors_list->emplace_back(
+            ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
+                             ParserErrorInfo::UNKNOWN_TYPE));
+        continue;
+      }
+
+      ScalarValue scalar_value = GetScalarValueFromLiteralExpression(
+          vd->value()->literalExpression(), errors_list);
+
+      // Mismatched type.
+      if (scalar_value.GetType() != type) {
+        errors_list->emplace_back(
+            ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
+                             ParserErrorInfo::TYPE_MISMATCH));
+        continue;
+      }
+
+      value_definitions.emplace_back(ValueDefinition(qi, scalar_value));
+    }
+  }
+
+  return value_definitions;
+}
 
 std::shared_ptr<ParsedFile> Parse(const std::string &s) {
   std::istringstream ss(s);

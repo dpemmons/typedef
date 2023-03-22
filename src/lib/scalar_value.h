@@ -106,20 +106,63 @@ class ScalarValue {
 
   Type GetType() const { return type_; }
 
-  bool BoolValue() const {}
-  char CharValue() const {}
-  float FloatValue() const {}
-  double DoubleValue() const {}
-  int8_t Int8Value() const {}
-  int16_t Int16Value() const {}
-  int32_t Int32Value() const {}
-  int64_t Int64Value() const {}
-  __int128_t Int128Value() const {}
-  uint8_t Uint8Value() const {}
-  uint16_t Uint16Value() const {}
-  uint32_t Uint32Value() const {}
-  uint64_t Uint64Value() const {}
-  __uint128_t Uint128Value() const {}
+  bool BoolValue() const { return val_.bool_; }
+  char CharValue() const { return val_.char_; }
+  float FloatValue() const { return val_.f32_; }
+  double DoubleValue() const { return val_.f64_; }
+  int8_t Int8Value() const { return val_.i8_; }
+  int16_t Int16Value() const { return val_.i16_; }
+  int32_t Int32Value() const { return val_.i32_; }
+  int64_t Int64Value() const { return val_.i64_; }
+  __int128_t Int128Value() const { return val_.i128_; }
+  uint8_t Uint8Value() const { return val_.u8_; }
+  uint16_t Uint16Value() const { return val_.u16_; }
+  uint32_t Uint32Value() const { return val_.u32_; }
+  uint64_t Uint64Value() const { return val_.u64_; }
+  __uint128_t Uint128Value() const { return val_.u128_; }
+
+  friend bool operator==(const ScalarValue& c1, const ScalarValue& c2) {
+    return c1.eq(c2);
+  }
+  friend bool operator!=(const ScalarValue& c1, const ScalarValue& c2) {
+    return !c1.eq(c2);
+  }
+  bool eq(const ScalarValue& other) const {
+    if (type_ == other.type_) {
+      if (type_.IsBOOL()) {
+        return BoolValue() == other.BoolValue();
+      } else if (type_.IsCHAR()) {
+        return CharValue() == other.CharValue();
+      } else if (type_.IsC32()) {
+        return CharValue() == other.CharValue();
+      } else if (type_.IsF32()) {
+        return FloatValue() == other.FloatValue();
+      } else if (type_.IsF64()) {
+        return DoubleValue() == other.DoubleValue();
+      } else if (type_.IsI8()) {
+        return Int8Value() == other.Int8Value();
+      } else if (type_.IsI16()) {
+        return Int16Value() == other.Int16Value();
+      } else if (type_.IsI32()) {
+        return Int32Value() == other.Int32Value();
+      } else if (type_.IsI64()) {
+        return Int64Value() == other.Int64Value();
+      } else if (type_.IsI128()) {
+        return Int128Value() == other.Int128Value();
+      } else if (type_.IsU8()) {
+        return Uint8Value() == other.Uint8Value();
+      } else if (type_.IsU16()) {
+        return Uint16Value() == other.Uint16Value();
+      } else if (type_.IsU32()) {
+        return Uint32Value() == other.Uint32Value();
+      } else if (type_.IsU64()) {
+        return Uint64Value() == other.Uint64Value();
+      } else if (type_.IsU128()) {
+        return Uint128Value() == other.Uint128Value();
+      }
+    }
+    return false;
+  }
 
  private:
   Type type_;
