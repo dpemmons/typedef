@@ -74,7 +74,6 @@ KW_YIELD: 'yield';
 // reserved type-related
 KW_ABSTRACT: 'abstract';
 KW_AUTO: 'auto';
-KW_CHAR: 'char';
 KW_CONST: 'const';
 KW_DOUBLE: 'double';
 KW_EXTERN: 'extern';

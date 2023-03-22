@@ -103,7 +103,6 @@ keyword:
 	// reserved type-related
 	| KW_ABSTRACT
 	| KW_AUTO
-	| KW_CHAR
 	| KW_CONST
 	| KW_DOUBLE
 	| KW_EXTERN
