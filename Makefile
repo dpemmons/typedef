@@ -1,4 +1,9 @@
+.DEFAULT_GOAL := debug
+
 BASE_BUILD_DIR := ./build
+
+DEBUG_FLAGS := -DDEBUG -g3 -ggdb
+RELEASE_FLAGS := -O2
 
 ###############################################################################
 # LIB Rules
@@ -103,13 +108,22 @@ clean-test:
 	rm -rf $(BASE_BUILD_DIR)/test
 
 .PHONY: run
+test: CXXFLAGS += $(DEBUG_FLAGS)
+test: CCFLAGS += $(DEBUG_FLAGS)
 test: $(TEST_EXEC)
 	$(TEST_EXEC)
 
 lib: $(LIB_STATIC_OBJ)
 cmd: $(CMD_EXEC)
 test-bin: $(TEST_EXEC)
-all: lib cmd test-bin
+
+debug: CXXFLAGS += $(DEBUG_FLAGS)
+debug: CCFLAGS += $(DEBUG_FLAGS)
+debug: lib cmd test-bin
+
+release: CXXFLAGS += $(RELEASE_FLAGS)
+release: CCFLAGS += $(RELEASE_FLAGS)
+release: lib cmd
 
 # Include the .d makefiles. The - at the front suppresses the errors of missing
 # Makefiles. Initially, all the .d files will be missing, and we don't want those

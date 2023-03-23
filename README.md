@@ -16,27 +16,25 @@ Building typedef uses simple make files.
 With debug symbols:
 
 ```sh
-make CXXFLAGS='-g'
+make debug
 ```
 
 Release build:
 
 ```sh
-make CXXFLAGS='-O2'
+make release
+```
+
+Run tests using:
+
+```sh
+make test
 ```
 
 Add `-j` to either for a faster parallel build on multicore machines:
 
-Debug:
-
 ```sh
-make -j CXXFLAGS='-g'
-```
-
-Release:
-
-```sh
-make -j CXXFLAGS='-O2'
+make -j debug
 ```
 
 And of course, clean:
