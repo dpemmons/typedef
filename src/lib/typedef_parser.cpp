@@ -4,6 +4,8 @@
 #include "grammar/TypedefLexer.h"
 #include "grammar/TypedefParser.h"
 #include "grammar/TypedefParserBaseListener.h"
+#define FMT_HEADER_ONLY
+#include "fmt/core.h"
 #include "identifier.h"
 #include "language_version.h"
 #include "parsed_file.h"
@@ -17,9 +19,11 @@ namespace td {
 namespace {
 
 ParserErrorInfo ErrorFromContext(antlr4::ParserRuleContext *ctx,
-                                 ParserErrorInfo::Type type) {
+                                 ParserErrorInfo::Type type,
+                                 std::string message = "") {
   return PEIBuilder()
       .SetType(type)
+      .SetMessage(message)
       .SetTokenType(ctx->getStart()->getType())
       .SetCharOffset(ctx->getStart()->getStartIndex())
       .SetLine(ctx->getStart()->getLine())
@@ -109,10 +113,68 @@ std::string GetIdentifierString(CTX *ctx,
   }
 }
 
-ScalarValue GetScalarValueFromLiteralExpression(
+std::optional<char32_t> processCharLiteral(const std::string &char_literal) {
+  if (char_literal.size() < 2 || char_literal.front() != '\'' ||
+      char_literal.back() != '\'') {
+    return std::nullopt;
+  }
+
+  std::string inner = char_literal.substr(1, char_literal.size() - 2);
+
+  if (inner.size() == 1) {
+    return static_cast<char32_t>(inner[0]);
+  }
+
+  if (inner.size() == 2 && inner[0] == '\\') {
+    switch (inner[1]) {
+      case 'n':
+        return U'\n';
+      case 'r':
+        return U'\r';
+      case 't':
+        return U'\t';
+      case '\\':
+        return U'\\';
+      case '0':
+        return U'\0';
+      case '\'':
+        return U'\'';
+      case '\"':
+        return U'\"';
+    }
+  }
+
+  if (inner.size() == 4 && inner[0] == '\\' && inner[1] == 'x') {
+    std::istringstream ss(inner.substr(2));
+    int value;
+    ss >> std::hex >> value;
+    return static_cast<char32_t>(value);
+  }
+
+  if (inner.size() >= 3 && inner.size() <= 10 && inner[0] == '\\' &&
+      inner[1] == 'u' && inner[2] == '{' && inner.back() == '}') {
+    std::istringstream ss(inner.substr(3, inner.size() - 4));
+    int value;
+    ss >> std::hex >> value;
+    return static_cast<char32_t>(value);
+  }
+
+  return std::nullopt;
+}
+
+std::optional<ScalarValue> GetScalarValueFromLiteralExpression(
     TypedefParser::LiteralExpressionContext *ctx,
     std::vector<ParserErrorInfo> *errors_list) {
   if (ctx->CHAR_LITERAL()) {
+    std::optional<char32_t> maybeChar =
+        processCharLiteral(ctx->CHAR_LITERAL()->toString());
+    if (maybeChar.has_value()) {
+      return ScalarValue::CreateCHAR(maybeChar.value());
+    } else {
+      errors_list->emplace_back(
+          ErrorFromContext(ctx, ParserErrorInfo::MISSING_TYPE_IDENTIFIER));
+      return std::nullopt;
+    }
   } else if (ctx->STRING_LITERAL()) {
   } else if (ctx->RAW_STRING_LITERAL()) {
   } else if (ctx->BYTE_LITERAL()) {
@@ -124,10 +186,8 @@ ScalarValue GetScalarValueFromLiteralExpression(
     return ScalarValue::CreateBOOL(true);
   } else if (ctx->KW_FALSE()) {
     return ScalarValue::CreateBOOL(false);
-  } else {
-    // This is wrong; we should crash here instead.
-    return ScalarValue::CreateI32(0);
   }
+  return std::nullopt;
 }
 
 // TODO: use std::set<>.contains() when upgrading to c++20.
@@ -215,18 +275,28 @@ std::vector<ValueDefinition> GetValueDefinitions(
         continue;
       }
 
-      ScalarValue scalar_value = GetScalarValueFromLiteralExpression(
-          vd->value()->literalExpression(), errors_list);
+      std::optional<ScalarValue> maybe_scalar_value =
+          GetScalarValueFromLiteralExpression(vd->value()->literalExpression(),
+                                              errors_list);
 
-      // Mismatched type.
-      if (scalar_value.GetType() != type) {
-        errors_list->emplace_back(
-            ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
-                             ParserErrorInfo::TYPE_MISMATCH));
+      if (!maybe_scalar_value.has_value()) {
         continue;
       }
 
-      value_definitions.emplace_back(ValueDefinition(qi, scalar_value));
+      // Mismatched type.
+      if (maybe_scalar_value.value().GetType() != type) {
+        std::string s = fmt::format(
+            "specified type: \"{}\" is not the same as the value's type \"{}\"",
+            type.ToString(), maybe_scalar_value.value().GetType().ToString());
+
+        errors_list->emplace_back(
+            ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
+                             ParserErrorInfo::TYPE_MISMATCH, s));
+        continue;
+      }
+
+      value_definitions.emplace_back(
+          ValueDefinition(qi, maybe_scalar_value.value()));
     }
   }
 

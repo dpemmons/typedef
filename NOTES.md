@@ -7,7 +7,7 @@ Items in ***bold*** are in-progress.
 - [ ] Basics (build and lib)
   - [x] change over to using normal VS.Code tasks, instead of makefile extension.
   - [x] build parser with makefile
-  - [ ] ***Use error matching in unit tests***
+  - [x] Use error matching in unit tests
   - [x] proper(ish) debug makefile targets
   - [ ] parse module import statements
   - [ ] ***parse simple value statements***

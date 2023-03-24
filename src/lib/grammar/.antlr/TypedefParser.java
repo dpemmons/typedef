@@ -22,24 +22,24 @@ public class TypedefParser extends Parser {
 		KW_XOR=21, KW_BREAK=22, KW_CONTINUE=23, KW_DEFAULT=24, KW_DO=25, KW_ELSE=26, 
 		KW_FOR=27, KW_GOTO=28, KW_IF=29, KW_LOOP=30, KW_MATCH=31, KW_MOVE=32, 
 		KW_RETURN=33, KW_TRY=34, KW_WHILE=35, KW_YIELD=36, KW_ABSTRACT=37, KW_AUTO=38, 
-		KW_CHAR=39, KW_CONST=40, KW_DOUBLE=41, KW_EXTERN=42, KW_FINAL=43, KW_FLOAT=44, 
-		KW_INT=45, KW_LONG=46, KW_MACRO=47, KW_MUT=48, KW_OVERRIDE=49, KW_PRIVATE=50, 
-		KW_PUB=51, KW_REF=52, KW_SELFTYPE=53, KW_SELFVALUE=54, KW_SIGNED=55, KW_STATIC=56, 
-		KW_SUPER=57, KW_SWITCH=58, KW_TYPEOF=59, KW_UNION=60, KW_UNSAFE=61, KW_UNSIGNED=62, 
-		KW_UNSIZED=63, KW_VIRTUAL=64, KW_VOID=65, KW_VOLATILE=66, NON_KEYWORD_IDENTIFIER=67, 
-		RAW_IDENTIFIER=68, LINE_COMMENT=69, BLOCK_COMMENT=70, INNER_LINE_DOC=71, 
-		INNER_BLOCK_DOC=72, OUTER_LINE_DOC=73, OUTER_BLOCK_DOC=74, BLOCK_COMMENT_OR_DOC=75, 
-		SHEBANG=76, WHITESPACE=77, NEWLINE=78, CHAR_LITERAL=79, STRING_LITERAL=80, 
-		RAW_STRING_LITERAL=81, BYTE_LITERAL=82, BYTE_STRING_LITERAL=83, RAW_BYTE_STRING_LITERAL=84, 
-		INTEGER_LITERAL=85, DEC_LITERAL=86, HEX_LITERAL=87, OCT_LITERAL=88, BIN_LITERAL=89, 
-		FLOAT_LITERAL=90, LIFETIME_OR_LABEL=91, PLUS=92, MINUS=93, STAR=94, SLASH=95, 
-		PERCENT=96, CARET=97, NOT=98, AND=99, OR=100, ANDAND=101, OROR=102, PLUSEQ=103, 
-		MINUSEQ=104, STAREQ=105, SLASHEQ=106, PERCENTEQ=107, CARETEQ=108, ANDEQ=109, 
-		OREQ=110, SHLEQ=111, SHREQ=112, EQ=113, EQEQ=114, NE=115, GT=116, LT=117, 
-		GE=118, LE=119, AT=120, UNDERSCORE=121, DOT=122, DOTDOT=123, DOTDOTDOT=124, 
-		COMMA=125, SEMI=126, COLON=127, PATHSEP=128, RARROW=129, FATARROW=130, 
-		POUND=131, DOLLAR=132, QUESTION=133, LBRACE=134, RBRACE=135, LBRACK=136, 
-		RBRACK=137, LPAREN=138, RPAREN=139;
+		KW_CONST=39, KW_DOUBLE=40, KW_EXTERN=41, KW_FINAL=42, KW_FLOAT=43, KW_INT=44, 
+		KW_LONG=45, KW_MACRO=46, KW_MUT=47, KW_OVERRIDE=48, KW_PRIVATE=49, KW_PUB=50, 
+		KW_REF=51, KW_SELFTYPE=52, KW_SELFVALUE=53, KW_SIGNED=54, KW_STATIC=55, 
+		KW_SUPER=56, KW_SWITCH=57, KW_TYPEOF=58, KW_UNION=59, KW_UNSAFE=60, KW_UNSIGNED=61, 
+		KW_UNSIZED=62, KW_VIRTUAL=63, KW_VOID=64, KW_VOLATILE=65, NON_KEYWORD_IDENTIFIER=66, 
+		RAW_IDENTIFIER=67, LINE_COMMENT=68, BLOCK_COMMENT=69, INNER_LINE_DOC=70, 
+		INNER_BLOCK_DOC=71, OUTER_LINE_DOC=72, OUTER_BLOCK_DOC=73, BLOCK_COMMENT_OR_DOC=74, 
+		SHEBANG=75, WHITESPACE=76, NEWLINE=77, CHAR_LITERAL=78, STRING_LITERAL=79, 
+		RAW_STRING_LITERAL=80, BYTE_LITERAL=81, BYTE_STRING_LITERAL=82, RAW_BYTE_STRING_LITERAL=83, 
+		INTEGER_LITERAL=84, DEC_LITERAL=85, HEX_LITERAL=86, OCT_LITERAL=87, BIN_LITERAL=88, 
+		FLOAT_LITERAL=89, LIFETIME_OR_LABEL=90, PLUS=91, MINUS=92, STAR=93, SLASH=94, 
+		PERCENT=95, CARET=96, NOT=97, AND=98, OR=99, ANDAND=100, OROR=101, PLUSEQ=102, 
+		MINUSEQ=103, STAREQ=104, SLASHEQ=105, PERCENTEQ=106, CARETEQ=107, ANDEQ=108, 
+		OREQ=109, SHLEQ=110, SHREQ=111, EQ=112, EQEQ=113, NE=114, GT=115, LT=116, 
+		GE=117, LE=118, AT=119, UNDERSCORE=120, DOT=121, DOTDOT=122, DOTDOTDOT=123, 
+		COMMA=124, SEMI=125, COLON=126, PATHSEP=127, RARROW=128, FATARROW=129, 
+		POUND=130, DOLLAR=131, QUESTION=132, LBRACE=133, RBRACE=134, LBRACK=135, 
+		RBRACK=136, LPAREN=137, RPAREN=138;
 	public static final int
 		RULE_compilationUnit = 0, RULE_item = 1, RULE_valueDefinitions = 2, RULE_type_ = 3, 
 		RULE_typedefVersionDeclaration = 4, RULE_moduleDeclaration = 5, RULE_useDeclaration = 6, 
@@ -61,18 +61,18 @@ public class TypedefParser extends Parser {
 			"'or'", "'sizeof'", "'this'", "'trait'", "'where'", "'xor'", "'break'", 
 			"'continue'", "'default'", "'do'", "'else'", "'for'", "'goto'", "'if'", 
 			"'loop'", "'match'", "'move'", "'return'", "'try'", "'while'", "'yield'", 
-			"'abstract'", "'auto'", "'char'", "'const'", "'double'", "'extern'", 
-			"'final'", "'float'", "'int'", "'long'", "'macro'", "'mut'", "'override'", 
-			"'private'", "'pub'", "'ref'", "'Self'", "'self'", "'signed'", "'static'", 
-			"'super'", "'switch'", "'typeof'", "'union'", "'unsafe'", "'unsigned'", 
-			"'unsized'", "'virtual'", "'void'", "'volatile'", null, null, null, null, 
+			"'abstract'", "'auto'", "'const'", "'double'", "'extern'", "'final'", 
+			"'float'", "'int'", "'long'", "'macro'", "'mut'", "'override'", "'private'", 
+			"'pub'", "'ref'", "'Self'", "'self'", "'signed'", "'static'", "'super'", 
+			"'switch'", "'typeof'", "'union'", "'unsafe'", "'unsigned'", "'unsized'", 
+			"'virtual'", "'void'", "'volatile'", null, null, null, null, null, null, 
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, "'+'", "'-'", "'*'", 
-			"'/'", "'%'", "'^'", "'!'", "'&'", "'|'", "'&&'", "'||'", "'+='", "'-='", 
-			"'*='", "'/='", "'%='", "'^='", "'&='", "'|='", "'<<='", "'>>='", "'='", 
-			"'=='", "'!='", "'>'", "'<'", "'>='", "'<='", "'@'", "'_'", "'.'", "'..'", 
-			"'...'", "','", "';'", "':'", "'::'", "'->'", "'=>'", "'#'", "'$'", "'?'", 
-			"'{'", "'}'", "'['", "']'", "'('", "')'"
+			null, null, null, null, null, null, null, "'+'", "'-'", "'*'", "'/'", 
+			"'%'", "'^'", "'!'", "'&'", "'|'", "'&&'", "'||'", "'+='", "'-='", "'*='", 
+			"'/='", "'%='", "'^='", "'&='", "'|='", "'<<='", "'>>='", "'='", "'=='", 
+			"'!='", "'>'", "'<'", "'>='", "'<='", "'@'", "'_'", "'.'", "'..'", "'...'", 
+			"','", "';'", "':'", "'::'", "'->'", "'=>'", "'#'", "'$'", "'?'", "'{'", 
+			"'}'", "'['", "']'", "'('", "')'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -84,21 +84,21 @@ public class TypedefParser extends Parser {
 			"KW_WHERE", "KW_XOR", "KW_BREAK", "KW_CONTINUE", "KW_DEFAULT", "KW_DO", 
 			"KW_ELSE", "KW_FOR", "KW_GOTO", "KW_IF", "KW_LOOP", "KW_MATCH", "KW_MOVE", 
 			"KW_RETURN", "KW_TRY", "KW_WHILE", "KW_YIELD", "KW_ABSTRACT", "KW_AUTO", 
-			"KW_CHAR", "KW_CONST", "KW_DOUBLE", "KW_EXTERN", "KW_FINAL", "KW_FLOAT", 
-			"KW_INT", "KW_LONG", "KW_MACRO", "KW_MUT", "KW_OVERRIDE", "KW_PRIVATE", 
-			"KW_PUB", "KW_REF", "KW_SELFTYPE", "KW_SELFVALUE", "KW_SIGNED", "KW_STATIC", 
-			"KW_SUPER", "KW_SWITCH", "KW_TYPEOF", "KW_UNION", "KW_UNSAFE", "KW_UNSIGNED", 
-			"KW_UNSIZED", "KW_VIRTUAL", "KW_VOID", "KW_VOLATILE", "NON_KEYWORD_IDENTIFIER", 
-			"RAW_IDENTIFIER", "LINE_COMMENT", "BLOCK_COMMENT", "INNER_LINE_DOC", 
-			"INNER_BLOCK_DOC", "OUTER_LINE_DOC", "OUTER_BLOCK_DOC", "BLOCK_COMMENT_OR_DOC", 
-			"SHEBANG", "WHITESPACE", "NEWLINE", "CHAR_LITERAL", "STRING_LITERAL", 
-			"RAW_STRING_LITERAL", "BYTE_LITERAL", "BYTE_STRING_LITERAL", "RAW_BYTE_STRING_LITERAL", 
-			"INTEGER_LITERAL", "DEC_LITERAL", "HEX_LITERAL", "OCT_LITERAL", "BIN_LITERAL", 
-			"FLOAT_LITERAL", "LIFETIME_OR_LABEL", "PLUS", "MINUS", "STAR", "SLASH", 
-			"PERCENT", "CARET", "NOT", "AND", "OR", "ANDAND", "OROR", "PLUSEQ", "MINUSEQ", 
-			"STAREQ", "SLASHEQ", "PERCENTEQ", "CARETEQ", "ANDEQ", "OREQ", "SHLEQ", 
-			"SHREQ", "EQ", "EQEQ", "NE", "GT", "LT", "GE", "LE", "AT", "UNDERSCORE", 
-			"DOT", "DOTDOT", "DOTDOTDOT", "COMMA", "SEMI", "COLON", "PATHSEP", "RARROW", 
+			"KW_CONST", "KW_DOUBLE", "KW_EXTERN", "KW_FINAL", "KW_FLOAT", "KW_INT", 
+			"KW_LONG", "KW_MACRO", "KW_MUT", "KW_OVERRIDE", "KW_PRIVATE", "KW_PUB", 
+			"KW_REF", "KW_SELFTYPE", "KW_SELFVALUE", "KW_SIGNED", "KW_STATIC", "KW_SUPER", 
+			"KW_SWITCH", "KW_TYPEOF", "KW_UNION", "KW_UNSAFE", "KW_UNSIGNED", "KW_UNSIZED", 
+			"KW_VIRTUAL", "KW_VOID", "KW_VOLATILE", "NON_KEYWORD_IDENTIFIER", "RAW_IDENTIFIER", 
+			"LINE_COMMENT", "BLOCK_COMMENT", "INNER_LINE_DOC", "INNER_BLOCK_DOC", 
+			"OUTER_LINE_DOC", "OUTER_BLOCK_DOC", "BLOCK_COMMENT_OR_DOC", "SHEBANG", 
+			"WHITESPACE", "NEWLINE", "CHAR_LITERAL", "STRING_LITERAL", "RAW_STRING_LITERAL", 
+			"BYTE_LITERAL", "BYTE_STRING_LITERAL", "RAW_BYTE_STRING_LITERAL", "INTEGER_LITERAL", 
+			"DEC_LITERAL", "HEX_LITERAL", "OCT_LITERAL", "BIN_LITERAL", "FLOAT_LITERAL", 
+			"LIFETIME_OR_LABEL", "PLUS", "MINUS", "STAR", "SLASH", "PERCENT", "CARET", 
+			"NOT", "AND", "OR", "ANDAND", "OROR", "PLUSEQ", "MINUSEQ", "STAREQ", 
+			"SLASHEQ", "PERCENTEQ", "CARETEQ", "ANDEQ", "OREQ", "SHLEQ", "SHREQ", 
+			"EQ", "EQEQ", "NE", "GT", "LT", "GE", "LE", "AT", "UNDERSCORE", "DOT", 
+			"DOTDOT", "DOTDOTDOT", "COMMA", "SEMI", "COLON", "PATHSEP", "RARROW", 
 			"FATARROW", "POUND", "DOLLAR", "QUESTION", "LBRACE", "RBRACE", "LBRACK", 
 			"RBRACK", "LPAREN", "RPAREN"
 		};
@@ -511,7 +511,7 @@ public class TypedefParser extends Parser {
 				setState(72);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (NON_KEYWORD_IDENTIFIER - 67)) | (1L << (RAW_IDENTIFIER - 67)) | (1L << (PATHSEP - 67)))) != 0)) {
+				if (((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & ((1L << (NON_KEYWORD_IDENTIFIER - 66)) | (1L << (RAW_IDENTIFIER - 66)) | (1L << (PATHSEP - 66)))) != 0)) {
 					{
 					setState(69);
 					_errHandler.sync(this);
@@ -544,7 +544,7 @@ public class TypedefParser extends Parser {
 					setState(87);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-					if (((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & ((1L << (NON_KEYWORD_IDENTIFIER - 67)) | (1L << (RAW_IDENTIFIER - 67)) | (1L << (STAR - 67)) | (1L << (PATHSEP - 67)))) != 0) || _la==LBRACE) {
+					if (((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & ((1L << (NON_KEYWORD_IDENTIFIER - 66)) | (1L << (RAW_IDENTIFIER - 66)) | (1L << (STAR - 66)) | (1L << (PATHSEP - 66)))) != 0) || _la==LBRACE) {
 						{
 						setState(76);
 						useTree();
@@ -745,7 +745,7 @@ public class TypedefParser extends Parser {
 			{
 			setState(112);
 			_la = _input.LA(1);
-			if ( !(_la==KW_FALSE || _la==KW_TRUE || ((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & ((1L << (CHAR_LITERAL - 79)) | (1L << (STRING_LITERAL - 79)) | (1L << (RAW_STRING_LITERAL - 79)) | (1L << (BYTE_LITERAL - 79)) | (1L << (BYTE_STRING_LITERAL - 79)) | (1L << (RAW_BYTE_STRING_LITERAL - 79)) | (1L << (INTEGER_LITERAL - 79)) | (1L << (FLOAT_LITERAL - 79)))) != 0)) ) {
+			if ( !(_la==KW_FALSE || _la==KW_TRUE || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & ((1L << (CHAR_LITERAL - 78)) | (1L << (STRING_LITERAL - 78)) | (1L << (RAW_STRING_LITERAL - 78)) | (1L << (BYTE_LITERAL - 78)) | (1L << (BYTE_STRING_LITERAL - 78)) | (1L << (RAW_BYTE_STRING_LITERAL - 78)) | (1L << (INTEGER_LITERAL - 78)) | (1L << (FLOAT_LITERAL - 78)))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -886,7 +886,7 @@ public class TypedefParser extends Parser {
 			{
 			setState(116);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << KW_AS) | (1L << KW_ENUM) | (1L << KW_FALSE) | (1L << KW_FN) | (1L << KW_IMPL) | (1L << KW_MODULE) | (1L << KW_STRUCT) | (1L << KW_TRUE) | (1L << KW_TYPE) | (1L << KW_TYPEDEF) | (1L << KW_USE) | (1L << KW_AND) | (1L << KW_IN) | (1L << KW_LET) | (1L << KW_NOT) | (1L << KW_OR) | (1L << KW_SIZEOF) | (1L << KW_THIS) | (1L << KW_TRAIT) | (1L << KW_WHERE) | (1L << KW_XOR) | (1L << KW_BREAK) | (1L << KW_CONTINUE) | (1L << KW_DEFAULT) | (1L << KW_DO) | (1L << KW_ELSE) | (1L << KW_FOR) | (1L << KW_GOTO) | (1L << KW_IF) | (1L << KW_LOOP) | (1L << KW_MATCH) | (1L << KW_MOVE) | (1L << KW_RETURN) | (1L << KW_TRY) | (1L << KW_WHILE) | (1L << KW_YIELD) | (1L << KW_ABSTRACT) | (1L << KW_AUTO) | (1L << KW_CONST) | (1L << KW_DOUBLE) | (1L << KW_EXTERN) | (1L << KW_FINAL) | (1L << KW_FLOAT) | (1L << KW_INT) | (1L << KW_LONG) | (1L << KW_MACRO) | (1L << KW_MUT) | (1L << KW_OVERRIDE) | (1L << KW_PRIVATE) | (1L << KW_PUB) | (1L << KW_REF) | (1L << KW_SELFTYPE) | (1L << KW_SELFVALUE) | (1L << KW_SIGNED) | (1L << KW_STATIC) | (1L << KW_SUPER) | (1L << KW_SWITCH) | (1L << KW_TYPEOF) | (1L << KW_UNION) | (1L << KW_UNSAFE) | (1L << KW_UNSIGNED) | (1L << KW_UNSIZED))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (KW_VIRTUAL - 64)) | (1L << (KW_VOID - 64)) | (1L << (KW_VOLATILE - 64)))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << KW_AS) | (1L << KW_ENUM) | (1L << KW_FALSE) | (1L << KW_FN) | (1L << KW_IMPL) | (1L << KW_MODULE) | (1L << KW_STRUCT) | (1L << KW_TRUE) | (1L << KW_TYPE) | (1L << KW_TYPEDEF) | (1L << KW_USE) | (1L << KW_AND) | (1L << KW_IN) | (1L << KW_LET) | (1L << KW_NOT) | (1L << KW_OR) | (1L << KW_SIZEOF) | (1L << KW_THIS) | (1L << KW_TRAIT) | (1L << KW_WHERE) | (1L << KW_XOR) | (1L << KW_BREAK) | (1L << KW_CONTINUE) | (1L << KW_DEFAULT) | (1L << KW_DO) | (1L << KW_ELSE) | (1L << KW_FOR) | (1L << KW_GOTO) | (1L << KW_IF) | (1L << KW_LOOP) | (1L << KW_MATCH) | (1L << KW_MOVE) | (1L << KW_RETURN) | (1L << KW_TRY) | (1L << KW_WHILE) | (1L << KW_YIELD) | (1L << KW_ABSTRACT) | (1L << KW_AUTO) | (1L << KW_CONST) | (1L << KW_DOUBLE) | (1L << KW_EXTERN) | (1L << KW_FINAL) | (1L << KW_FLOAT) | (1L << KW_INT) | (1L << KW_LONG) | (1L << KW_MACRO) | (1L << KW_MUT) | (1L << KW_OVERRIDE) | (1L << KW_PRIVATE) | (1L << KW_PUB) | (1L << KW_REF) | (1L << KW_SELFTYPE) | (1L << KW_SELFVALUE) | (1L << KW_SIGNED) | (1L << KW_STATIC) | (1L << KW_SUPER) | (1L << KW_SWITCH) | (1L << KW_TYPEOF) | (1L << KW_UNION) | (1L << KW_UNSAFE) | (1L << KW_UNSIGNED) | (1L << KW_UNSIZED) | (1L << KW_VIRTUAL))) != 0) || _la==KW_VOID || _la==KW_VOLATILE) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -908,7 +908,7 @@ public class TypedefParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u008dy\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u008cy\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\3\2\3\2\5\2\37\n\2\3\2\7\2\"\n\2\f\2\16"+
 		"\2%\13\2\3\2\7\2(\n\2\f\2\16\2+\13\2\3\2\3\2\3\3\3\3\3\4\3\4\3\4\3\4\3"+
@@ -917,26 +917,26 @@ public class TypedefParser extends Parser {
 		"\3\t\5\tX\n\t\5\tZ\n\t\3\t\5\t]\n\t\3\t\3\t\3\t\5\tb\n\t\5\td\n\t\3\n"+
 		"\3\n\3\13\5\13i\n\13\3\13\3\13\3\13\7\13n\n\13\f\13\16\13q\13\13\3\f\3"+
 		"\f\3\r\3\r\3\16\3\16\3\16\2\2\17\2\4\6\b\n\f\16\20\22\24\26\30\32\2\5"+
-		"\6\2\5\5\n\nQW\\\\\3\2EF\4\2\3(*D\2x\2\34\3\2\2\2\4.\3\2\2\2\6\60\3\2"+
-		"\2\2\b\67\3\2\2\2\n9\3\2\2\2\f>\3\2\2\2\16B\3\2\2\2\20c\3\2\2\2\22e\3"+
-		"\2\2\2\24h\3\2\2\2\26r\3\2\2\2\30t\3\2\2\2\32v\3\2\2\2\34\36\5\n\6\2\35"+
-		"\37\5\f\7\2\36\35\3\2\2\2\36\37\3\2\2\2\37#\3\2\2\2 \"\5\16\b\2! \3\2"+
-		"\2\2\"%\3\2\2\2#!\3\2\2\2#$\3\2\2\2$)\3\2\2\2%#\3\2\2\2&(\5\4\3\2\'&\3"+
-		"\2\2\2(+\3\2\2\2)\'\3\2\2\2)*\3\2\2\2*,\3\2\2\2+)\3\2\2\2,-\7\2\2\3-\3"+
-		"\3\2\2\2./\5\6\4\2/\5\3\2\2\2\60\61\5\30\r\2\61\62\7\u0081\2\2\62\63\5"+
-		"\b\5\2\63\64\7s\2\2\64\65\5\22\n\2\65\66\7\u0080\2\2\66\7\3\2\2\2\678"+
-		"\5\30\r\28\t\3\2\2\29:\7\f\2\2:;\7s\2\2;<\5\30\r\2<=\7\u0080\2\2=\13\3"+
-		"\2\2\2>?\7\b\2\2?@\5\24\13\2@A\7\u0080\2\2A\r\3\2\2\2BC\7\r\2\2CD\5\20"+
-		"\t\2DE\7\u0080\2\2E\17\3\2\2\2FH\5\24\13\2GF\3\2\2\2GH\3\2\2\2HI\3\2\2"+
-		"\2IK\7\u0082\2\2JG\3\2\2\2JK\3\2\2\2K\\\3\2\2\2L]\7`\2\2MY\7\u0088\2\2"+
-		"NS\5\20\t\2OP\7\177\2\2PR\5\20\t\2QO\3\2\2\2RU\3\2\2\2SQ\3\2\2\2ST\3\2"+
-		"\2\2TW\3\2\2\2US\3\2\2\2VX\7\177\2\2WV\3\2\2\2WX\3\2\2\2XZ\3\2\2\2YN\3"+
-		"\2\2\2YZ\3\2\2\2Z[\3\2\2\2[]\7\u0089\2\2\\L\3\2\2\2\\M\3\2\2\2]d\3\2\2"+
-		"\2^a\5\24\13\2_`\7\3\2\2`b\5\30\r\2a_\3\2\2\2ab\3\2\2\2bd\3\2\2\2cJ\3"+
-		"\2\2\2c^\3\2\2\2d\21\3\2\2\2ef\5\26\f\2f\23\3\2\2\2gi\7\u0082\2\2hg\3"+
-		"\2\2\2hi\3\2\2\2ij\3\2\2\2jo\5\30\r\2kl\7\u0082\2\2ln\5\30\r\2mk\3\2\2"+
-		"\2nq\3\2\2\2om\3\2\2\2op\3\2\2\2p\25\3\2\2\2qo\3\2\2\2rs\t\2\2\2s\27\3"+
-		"\2\2\2tu\t\3\2\2u\31\3\2\2\2vw\t\4\2\2w\33\3\2\2\2\17\36#)GJSWY\\acho";
+		"\6\2\5\5\n\nPV[[\3\2DE\3\2\3C\2x\2\34\3\2\2\2\4.\3\2\2\2\6\60\3\2\2\2"+
+		"\b\67\3\2\2\2\n9\3\2\2\2\f>\3\2\2\2\16B\3\2\2\2\20c\3\2\2\2\22e\3\2\2"+
+		"\2\24h\3\2\2\2\26r\3\2\2\2\30t\3\2\2\2\32v\3\2\2\2\34\36\5\n\6\2\35\37"+
+		"\5\f\7\2\36\35\3\2\2\2\36\37\3\2\2\2\37#\3\2\2\2 \"\5\16\b\2! \3\2\2\2"+
+		"\"%\3\2\2\2#!\3\2\2\2#$\3\2\2\2$)\3\2\2\2%#\3\2\2\2&(\5\4\3\2\'&\3\2\2"+
+		"\2(+\3\2\2\2)\'\3\2\2\2)*\3\2\2\2*,\3\2\2\2+)\3\2\2\2,-\7\2\2\3-\3\3\2"+
+		"\2\2./\5\6\4\2/\5\3\2\2\2\60\61\5\30\r\2\61\62\7\u0080\2\2\62\63\5\b\5"+
+		"\2\63\64\7r\2\2\64\65\5\22\n\2\65\66\7\177\2\2\66\7\3\2\2\2\678\5\30\r"+
+		"\28\t\3\2\2\29:\7\f\2\2:;\7r\2\2;<\5\30\r\2<=\7\177\2\2=\13\3\2\2\2>?"+
+		"\7\b\2\2?@\5\24\13\2@A\7\177\2\2A\r\3\2\2\2BC\7\r\2\2CD\5\20\t\2DE\7\177"+
+		"\2\2E\17\3\2\2\2FH\5\24\13\2GF\3\2\2\2GH\3\2\2\2HI\3\2\2\2IK\7\u0081\2"+
+		"\2JG\3\2\2\2JK\3\2\2\2K\\\3\2\2\2L]\7_\2\2MY\7\u0087\2\2NS\5\20\t\2OP"+
+		"\7~\2\2PR\5\20\t\2QO\3\2\2\2RU\3\2\2\2SQ\3\2\2\2ST\3\2\2\2TW\3\2\2\2U"+
+		"S\3\2\2\2VX\7~\2\2WV\3\2\2\2WX\3\2\2\2XZ\3\2\2\2YN\3\2\2\2YZ\3\2\2\2Z"+
+		"[\3\2\2\2[]\7\u0088\2\2\\L\3\2\2\2\\M\3\2\2\2]d\3\2\2\2^a\5\24\13\2_`"+
+		"\7\3\2\2`b\5\30\r\2a_\3\2\2\2ab\3\2\2\2bd\3\2\2\2cJ\3\2\2\2c^\3\2\2\2"+
+		"d\21\3\2\2\2ef\5\26\f\2f\23\3\2\2\2gi\7\u0081\2\2hg\3\2\2\2hi\3\2\2\2"+
+		"ij\3\2\2\2jo\5\30\r\2kl\7\u0081\2\2ln\5\30\r\2mk\3\2\2\2nq\3\2\2\2om\3"+
+		"\2\2\2op\3\2\2\2p\25\3\2\2\2qo\3\2\2\2rs\t\2\2\2s\27\3\2\2\2tu\t\3\2\2"+
+		"u\31\3\2\2\2vw\t\4\2\2w\33\3\2\2\2\17\36#)GJSWY\\acho";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

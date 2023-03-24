@@ -8,6 +8,10 @@
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 
+namespace {
+const std::vector<td::ParserErrorInfo> empty_errors;
+}  // namespace
+
 TEST_CASE("Use declarations throw UNIMPLEMENTED error.", "[use_declarations]") {
   auto parsed_file = td::Parse(R"(
 typedef=alpha;

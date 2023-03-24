@@ -32,15 +32,9 @@ class ScalarValue {
     s.val_.bool_ = val;
     return s;
   }
-  static ScalarValue CreateCHAR(char val) {
+  static ScalarValue CreateCHAR(char32_t val) {
     ScalarValue s(Type::CreateCHAR());
     s.val_.char_ = val;
-    return s;
-  }
-  // TODO: figure out how to actually handle UTF-8.
-  static ScalarValue CreateCHAR32(char32_t val) {
-    ScalarValue s(Type::CreateC32());
-    s.val_.c32_ = val;
     return s;
   }
   static ScalarValue CreateF32(float val) {
@@ -107,7 +101,7 @@ class ScalarValue {
   Type GetType() const { return type_; }
 
   bool BoolValue() const { return val_.bool_; }
-  char CharValue() const { return val_.char_; }
+  char32_t CharValue() const { return val_.char_; }
   float FloatValue() const { return val_.f32_; }
   double DoubleValue() const { return val_.f64_; }
   int8_t Int8Value() const { return val_.i8_; }
@@ -132,8 +126,6 @@ class ScalarValue {
       if (type_.IsBOOL()) {
         return BoolValue() == other.BoolValue();
       } else if (type_.IsCHAR()) {
-        return CharValue() == other.CharValue();
-      } else if (type_.IsC32()) {
         return CharValue() == other.CharValue();
       } else if (type_.IsF32()) {
         return FloatValue() == other.FloatValue();
@@ -164,12 +156,14 @@ class ScalarValue {
     return false;
   }
 
+  std::string ToString() const;
+  friend std::ostream& operator<<(std::ostream& os, const ScalarValue& value);
+
  private:
   Type type_;
   union Val {
     bool bool_;
-    char char_;
-    char32_t c32_;
+    char32_t char_;
     float f32_;
     double f64_;
     int8_t i8_;

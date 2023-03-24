@@ -3,15 +3,29 @@
 #include <sstream>
 #include <string>
 
+#include "antlr4/antlr4-runtime.h"
+#include "grammar/TypedefLexer.h"
+#include "grammar/TypedefParser.h"
 #include "typedef_parser.h"
 
 using Catch::Matchers::Equals;
+
+namespace {
+const std::vector<td::ParserErrorInfo> empty_errors;
+
+std::vector<td::ParserErrorInfo> SingleError(td::PEIBuilder& builder) {
+  std::vector<td::ParserErrorInfo> errors;
+  errors.emplace_back(builder.build());
+  return errors;
+}
+
+}  // namespace
 
 TEST_CASE("Simple valid 'alpha' version string.", "[version_declarations]") {
   auto parsed_file = td::Parse(R"(
 typedef=alpha;
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE_THAT(parsed_file->GetErrors(), Equals(empty_errors));
   REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::ALPHA);
 }
 
@@ -19,7 +33,7 @@ TEST_CASE("Leading whitespace is ok.", "[version_declarations]") {
   auto parsed_file = td::Parse(R"(
         typedef=alpha;
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE_THAT(parsed_file->GetErrors(), Equals(empty_errors));
   REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::ALPHA);
 }
 
@@ -27,7 +41,7 @@ TEST_CASE("Other whitespace is ok.", "[version_declarations]") {
   auto parsed_file = td::Parse(R"(
         typedef = alpha ;
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE_THAT(parsed_file->GetErrors(), Equals(empty_errors));
   REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::ALPHA);
 }
 
@@ -36,9 +50,16 @@ TEST_CASE("Semicolon required.", "[version_declarations]") {
         typedef = alpha
     )");
   REQUIRE(parsed_file->HasErrors());
-  REQUIRE(parsed_file->GetErrors().size() == 1);
-  REQUIRE(parsed_file->GetErrors()[0].error_type ==
-          td::ParserErrorInfo::PARSE_ERROR);
+  auto expected_errors =
+      SingleError(td::PEIBuilder()
+                      .SetType(td::ParserErrorInfo::PARSE_ERROR)
+                      .SetMessage("Parse error")
+                      .SetTokenType(antlr4::Token::EOF)
+                      .SetCharOffset(29)
+                      .SetLine(3)
+                      .SetLineOffset(4)
+                      .SetLength(0));
+  REQUIRE_THAT(parsed_file->GetErrors(), Equals(expected_errors));
   REQUIRE(parsed_file->GetLanguageVersion() == td::LanguageVersion::ALPHA);
 }
 

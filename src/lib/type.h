@@ -8,7 +8,6 @@ class Type {
  public:
   static Type CreateBOOL() { return Type(Type_::BOOL); };
   static Type CreateCHAR() { return Type(Type_::CHAR); };
-  static Type CreateC32() { return Type(Type_::C32); };
   static Type CreateF32() { return Type(Type_::F32); };
   static Type CreateF64() { return Type(Type_::F64); };
   static Type CreateI8() { return Type(Type_::I8); };
@@ -26,8 +25,6 @@ class Type {
       return CreateBOOL();
     } else if (str.compare("char") == 0) {
       return CreateCHAR();
-    } else if (str.compare("c32") == 0) {
-      return CreateC32();
     } else if (str.compare("f32") == 0) {
       return CreateF32();
     } else if (str.compare("f64") == 0) {
@@ -68,7 +65,6 @@ class Type {
   };
   bool IsBOOL() const { return type_ == Type_::BOOL; }
   bool IsCHAR() const { return type_ == Type_::CHAR; }
-  bool IsC32() const { return type_ == Type_::C32; }
   bool IsF32() const { return type_ == Type_::F32; }
   bool IsF64() const { return type_ == Type_::F64; }
   bool IsI8() const { return type_ == Type_::I8; }
@@ -90,8 +86,6 @@ class Type {
         return "bool";
       case Type_::CHAR:
         return "char";
-      case Type_::C32:
-        return "c32";
       case Type_::F32:
         return "f32";
       case Type_::F64:
@@ -117,7 +111,7 @@ class Type {
       case Type_::U128:
         return "u128";
       default:
-        return "unimplemented";
+        abort();
     }
   };
 
@@ -139,8 +133,7 @@ class Type {
     BOOL = 11,
 
     // Characters
-    CHAR = 20,  // 8-bit 'ascii' char
-    C32 = 21,   // UTF-8 char
+    CHAR = 20,  // 32-bit utf-8 character
 
     // Floating Point Scalars
     F32 = 30,

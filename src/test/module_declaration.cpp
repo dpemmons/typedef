@@ -8,7 +8,12 @@
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 
-TEST_CASE("Module declaration throws an UNIMPLEMENTED error.", "[module_declaration]") {
+namespace {
+const std::vector<td::ParserErrorInfo> empty_errors;
+}  // namespace
+
+TEST_CASE("Module declaration throws an UNIMPLEMENTED error.",
+          "[module_declaration]") {
   auto parsed_file = td::Parse(R"(
 typedef=alpha;
 module someModule;

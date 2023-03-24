@@ -18,9 +18,8 @@ class ValueDefinition {
   Type GetType() const { return value_.GetType(); }
   ScalarValue GetScalarValue() const { return value_; }
 
-  std::string ToString() const {
-    
-  }
+  friend std::ostream &operator<<(std::ostream &os,
+                                  const ValueDefinition &value);
 
  private:
   QualifiedIdentifier qualified_identifier_;
