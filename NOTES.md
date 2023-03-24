@@ -11,8 +11,16 @@ Items in ***bold*** are in-progress.
   - [x] proper(ish) debug makefile targets
   - [ ] parse module import statements
   - [ ] ***parse simple value statements***
+    - [x] booleans
+    - [x] chars
+    - [ ] ***integers***
+    - [ ] floats
+    - [ ] strings
+    - [ ] raw strings
+    - [ ] byte literals
+    - [ ] byte strings
+    - [ ] raw byte strings
   - [ ] parse a very basic struct statement
-  - [ ] ***Idea to experiment with: basing lexer (and part of parser) on the available Rust grammars?***
 
 - [ ] Command line util basics
   - [ ] print default formatting to stdout
