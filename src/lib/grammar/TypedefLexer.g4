@@ -20,9 +20,8 @@
 
 lexer grammar TypedefLexer;
 
-options
-{
-   superClass = TypedefLexerBase;
+options {
+	superClass = TypedefLexerBase;
 }
 
 @header {
@@ -241,13 +240,11 @@ fragment INTEGER_SUFFIX:
 	| 'u32'
 	| 'u64'
 	| 'u128'
-	| 'usize'
 	| 'i8'
 	| 'i16'
 	| 'i32'
 	| 'i64'
-	| 'i128'
-	| 'isize';
+	| 'i128';
 
 fragment FLOAT_SUFFIX: 'f32' | 'f64';
 

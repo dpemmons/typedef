@@ -113,7 +113,7 @@ std::string GetIdentifierString(CTX *ctx,
   }
 }
 
-std::optional<char32_t> processCharLiteral(const std::string &char_literal) {
+std::optional<char32_t> ProcessCharLiteral(const std::string &char_literal) {
   if (char_literal.size() < 2 || char_literal.front() != '\'' ||
       char_literal.back() != '\'') {
     return std::nullopt;
@@ -162,26 +162,56 @@ std::optional<char32_t> processCharLiteral(const std::string &char_literal) {
   return std::nullopt;
 }
 
+std::optional<ScalarValue> ProcessIntegerLiteral(
+    const std::string &char_literal) {
+
+
+      
+  return std::nullopt;
+}
+
 std::optional<ScalarValue> GetScalarValueFromLiteralExpression(
     TypedefParser::LiteralExpressionContext *ctx,
     std::vector<ParserErrorInfo> *errors_list) {
   if (ctx->CHAR_LITERAL()) {
     std::optional<char32_t> maybeChar =
-        processCharLiteral(ctx->CHAR_LITERAL()->toString());
+        ProcessCharLiteral(ctx->CHAR_LITERAL()->toString());
     if (maybeChar.has_value()) {
       return ScalarValue::CreateCHAR(maybeChar.value());
     } else {
+      // TODO is this the right error code?
       errors_list->emplace_back(
           ErrorFromContext(ctx, ParserErrorInfo::MISSING_TYPE_IDENTIFIER));
       return std::nullopt;
     }
   } else if (ctx->STRING_LITERAL()) {
+    errors_list->emplace_back(ErrorFromContext(
+        ctx, ParserErrorInfo::UNIMPLEMENTED, "STRING_LITERAL"));
+    return std::nullopt;
   } else if (ctx->RAW_STRING_LITERAL()) {
+    errors_list->emplace_back(ErrorFromContext(
+        ctx, ParserErrorInfo::UNIMPLEMENTED, "RAW_STRING_LITERAL"));
+    return std::nullopt;
   } else if (ctx->BYTE_LITERAL()) {
+    errors_list->emplace_back(
+        ErrorFromContext(ctx, ParserErrorInfo::UNIMPLEMENTED, "BYTE_LITERAL"));
+    return std::nullopt;
   } else if (ctx->BYTE_STRING_LITERAL()) {
+    errors_list->emplace_back(ErrorFromContext(
+        ctx, ParserErrorInfo::UNIMPLEMENTED, "BYTE_STRING_LITERAL"));
+    return std::nullopt;
   } else if (ctx->RAW_BYTE_STRING_LITERAL()) {
+    errors_list->emplace_back(ErrorFromContext(
+        ctx, ParserErrorInfo::UNIMPLEMENTED, "RAW_BYTE_STRING_LITERAL"));
+    return std::nullopt;
   } else if (ctx->INTEGER_LITERAL()) {
+    errors_list->emplace_back(ErrorFromContext(
+        ctx, ParserErrorInfo::UNIMPLEMENTED, "INTEGER_LITERAL"));
+    return std::nullopt;
   } else if (ctx->FLOAT_LITERAL()) {
+    errors_list->emplace_back(
+        ErrorFromContext(ctx, ParserErrorInfo::UNIMPLEMENTED, "FLOAT_LITERAL"));
+    return std::nullopt;
   } else if (ctx->KW_TRUE()) {
     return ScalarValue::CreateBOOL(true);
   } else if (ctx->KW_FALSE()) {
