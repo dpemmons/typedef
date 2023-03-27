@@ -84,7 +84,8 @@
         "queue": "cpp",
         "stack": "cpp",
         "cstdbool": "cpp",
-        "version": "cpp"
+        "version": "cpp",
+        "expected": "cpp"
     },
     "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
     "C_Cpp.intelliSenseEngineFallback": "enabled",
