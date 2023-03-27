@@ -18,7 +18,7 @@ LIB_OBJS := $(LIB_SRCS:%=$(LIB_BUILD_DIR)/%.o)
 LIB_DEPS := $(LIB_OBJS:.o=.d)
 LIB_INC_DIRS := $(shell find $(LIB_SRC_DIRS) -type d)
 LIB_INC_FLAGS := $(addprefix -I,$(LIB_INC_DIRS))
-LIB_CPPFLAGS := $(LIB_INC_FLAGS) $(GLOBAL_CPPFLAGS)
+LIB_CPPFLAGS := $(GLOBAL_CPPFLAGS) $(LIB_INC_FLAGS)
 
 $(LIB_BUILD_DIR)/%.c.o: %.c
 	mkdir -p $(dir $@)
@@ -44,7 +44,7 @@ CMD_OBJS := $(CMD_SRCS:%=$(CMD_BUILD_DIR)/%.o)
 CMD_DEPS := $(CMD_OBJS:.o=.d)
 CMD_INC_DIRS := $(shell find $(CMD_SRC_DIRS) -type d)
 CMD_INC_FLAGS := $(addprefix -I,$(CMD_INC_DIRS))
-CMD_CPPFLAGS := $(CMD_INC_FLAGS) $(LIB_INC_FLAGS) $(GLOBAL_CPPFLAGS)
+CMD_CPPFLAGS := $(GLOBAL_CPPFLAGS) $(CMD_INC_FLAGS) $(LIB_INC_FLAGS)
 
 $(CMD_BUILD_DIR)/%.c.o: %.c
 	mkdir -p $(dir $@)
@@ -70,7 +70,7 @@ TEST_OBJS := $(TEST_SRCS:%=$(TEST_BUILD_DIR)/%.o)
 TEST_DEPS := $(TEST_OBJS:.o=.d)
 TEST_INC_DIRS := $(shell find $(TEST_SRC_DIRS) -type d)
 TEST_INC_FLAGS := $(addprefix -I,$(TEST_INC_DIRS))
-TEST_CPPFLAGS := $(TEST_INC_FLAGS) $(LIB_INC_FLAGS) $(GLOBAL_CPPFLAGS)
+TEST_CPPFLAGS := $(GLOBAL_CPPFLAGS) $(TEST_INC_FLAGS) $(LIB_INC_FLAGS)
 
 $(TEST_BUILD_DIR)/%.c.o: %.c
 	mkdir -p $(dir $@)
