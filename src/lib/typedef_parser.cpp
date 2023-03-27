@@ -127,8 +127,8 @@ std::optional<ScalarValue> GetScalarValueFromLiteralExpression(
     TypedefParser::LiteralExpressionContext *ctx,
     std::vector<ParserErrorInfo> *errors_list) {
   if (ctx->CHAR_LITERAL()) {
-    std::optional<char32_t> maybeChar =
-        ProcessCharLiteral(ctx->CHAR_LITERAL()->toString());
+    std::optional<char32_t> maybeChar;/* =
+        ProcessCharLiteral(ctx->CHAR_LITERAL()->toString());*/
     if (maybeChar.has_value()) {
       return ScalarValue::CreateCHAR(maybeChar.value());
     } else {

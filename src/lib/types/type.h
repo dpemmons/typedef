@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstdint>
+#include <memory>
+#include <optional>
 #include <string>
 
 namespace td {
@@ -43,7 +46,7 @@ class Type {
   // static Type CreateU32();
   // static Type CreateU64();
   // static Type CreateU128();
-  // static Type CreateFromString(const std::string& str);
+  // static Type CreateFromLiteral(const std::string& str);
 
   // bool IsUnknown() const;
 
@@ -70,69 +73,213 @@ class Type {
   // friend bool operator==(const Type& c1, const Type& c2);
   // friend bool operator!=(const Type& c1, const Type& c2);
 
-  virtual void print(std::ostream& os) const = 0;
+  virtual void print(std::ostream& os) const;
 
  protected:
   Type() {}
+};
 
-  // static Type CreateUnknown() { return Type(Type_::UNKNOWN); }
-  // enum class Type_ {
-  //   UNKNOWN = 0,
+class Primitive : public Type {
+ public:
+  bool IsPrimitive() const override { return true; }
 
-  //   // Scalars
-  //   SCALARS_START = 10,
+ protected:
+  Primitive() : Type() {}
+};
 
-  //   BOOL = 11,
+class Scalar : public Primitive {
+ public:
+  bool IsScalar() const override { return true; }
 
-  //   // Characters
-  //   CHAR = 20,  // 32-bit utf-8 character
+ protected:
+  Scalar() : Primitive(){};
+};
 
-  //   // Floating Point Scalars
-  //   F32 = 30,
-  //   F64 = 31,
+class Bool : public Scalar {
+ public:
+  bool IsBool() const override { return true; }
+  bool HasValue() const override { return val_.has_value(); }
+  std::optional<bool> Value() const { return val_; }
 
-  //   // Integar Scalars
-  //   INTEGERS_START = 40,
-  //   SIGNED_INTEGERS_START = 41,
-  //   I8 = 42,
-  //   I16 = 43,
-  //   I32 = 44,
-  //   I64 = 45,
-  //   I128 = 46,
-  //   SIGNED_INTEGERS_END = 49,
-  //   // Unsigned Integer Scalars
-  //   UNSIGNED_INTEGERS_START = 50,
-  //   U8 = 51,
-  //   U16 = 52,
-  //   U32 = 53,
-  //   U64 = 54,
-  //   U128 = 55,
-  //   UNSIGNED_INTEGERS_END = 58,
-  //   INTEGERS_END = 59,
+  static std::unique_ptr<Bool> FromLiteral(std::string_view literal);
 
-  //   SCALARS_END = 99,
+  virtual void print(std::ostream& os) const = 0;
 
-  //   ENUM = 100,
+ protected:
+  std::optional<bool> val_;
+};
 
-  //   // Product Types
-  //   LIST = 200,
-  //   TUPLE = 300,
-  //   SET = 400,
-  //   DICTIONARY = 500,
+class Char : public Scalar {
+ public:
+  Char(char32_t val) : Scalar(), val_(val){};
+  bool IsChar() const override { return true; }
+  bool HasValue() const override { return val_.has_value(); }
+  std::optional<char32_t> Value() const { return val_; }
 
-  //   STRUCT = 600,
-  //   MESSAGE = 700,
+  static std::unique_ptr<Char> FromLiteral(std::string_view literal);
 
-  //   // Not (yet) sure how to categorize.
+ protected:
+  Char(const Char&) = delete;
 
-  //   // Sum Type
-  //   VARIANT = 1100,
+  std::optional<char32_t> val_;
+};
 
-  //   // Interface Types
+class Float : public Scalar {
+ public:
+  bool IsFloat() const override { return true; }
 
-  // } type_;
+ protected:
+};
 
-  // Type(Type_ t) : type_(t){};
+class Float32 : public Float {
+ public:
+  bool IsF32() const override { return true; }
+  bool HasValue() const override { return val_.has_value(); }
+  std::optional<float> Value() const { return val_; }
+
+  static bool LiteralHasSuffix(std::string_view literal);
+  static std::unique_ptr<Float32> FromLiteral(std::string_view literal);
+
+ protected:
+  std::optional<float> val_;
+};
+
+class Float64 : public Float {
+ public:
+  bool IsF64() const override { return true; }
+  bool HasValue() const override { return val_.has_value(); }
+  std::optional<double> Value() const { return val_; }
+
+  static bool LiteralHasSuffix(std::string_view literal);
+  static std::unique_ptr<Float64> FromLiteral(std::string_view literal);
+
+ protected:
+  std::optional<double> val_;
+};
+
+class Integer : public Scalar {
+ public:
+  bool IsInteger() const override { return true; }
+
+ protected:
+};
+
+class SignedInteger : public Integer {
+ public:
+  bool IsSignedInteger() const override { return true; }
+
+ protected:
+};
+
+class I8 : public SignedInteger {
+ public:
+  bool IsI8() const override { return true; }
+  bool HasValue() const override { return val_.has_value(); }
+  std::optional<int8_t> Value() const { return val_; }
+
+  static bool LiteralHasSuffix(std::string_view literal);
+  static std::unique_ptr<I8> FromLiteral(std::string_view literal);
+
+ protected:
+  std::optional<int8_t> val_;
+};
+
+class I16 : public SignedInteger {
+ public:
+  bool IsI16() const override { return true; }
+  bool HasValue() const override { return val_.has_value(); }
+  std::optional<int16_t> Value() const { return val_; }
+
+  static bool LiteralHasSuffix(std::string_view literal);
+  static std::unique_ptr<I16> FromLiteral(std::string_view literal);
+
+ protected:
+  std::optional<int16_t> val_;
+};
+
+class I32 : public SignedInteger {
+ public:
+  bool IsI32() const override { return true; }
+  bool HasValue() const override { return val_.has_value(); }
+  std::optional<int32_t> Value() const { return val_; }
+
+  static bool LiteralHasSuffix(std::string_view literal);
+  static std::unique_ptr<I32> FromLiteral(std::string_view literal);
+
+ protected:
+  std::optional<int32_t> val_;
+};
+
+class I64 : public SignedInteger {
+ public:
+  bool IsI64() const override { return true; }
+  bool HasValue() const override { return val_.has_value(); }
+  std::optional<int64_t> Value() const { return val_; }
+
+  static bool LiteralHasSuffix(std::string_view literal);
+  static std::unique_ptr<I64> FromLiteral(std::string_view literal);
+
+ protected:
+  std::optional<int64_t> val_;
+};
+
+class UnsignedInteger : public Integer {
+ public:
+  bool IsUnsignedInteger() const override { return true; }
+
+ protected:
+};
+
+class U8 : public SignedInteger {
+ public:
+  bool IsU8() const override { return true; }
+  bool HasValue() const override { return val_.has_value(); }
+  std::optional<uint8_t> Value() const { return val_; }
+
+  static bool LiteralHasSuffix(std::string_view literal);
+  static std::unique_ptr<U8> FromLiteral(std::string_view literal);
+
+ protected:
+  std::optional<uint8_t> val_;
+};
+
+class U16 : public SignedInteger {
+ public:
+  bool IsU16() const override { return true; }
+  bool HasValue() const override { return val_.has_value(); }
+  std::optional<uint16_t> Value() const { return val_; }
+
+  static bool LiteralHasSuffix(std::string_view literal);
+  static std::unique_ptr<U16> FromLiteral(std::string_view literal);
+
+ protected:
+  std::optional<uint16_t> val_;
+};
+
+class U32 : public SignedInteger {
+ public:
+  bool IsU32() const override { return true; }
+  bool HasValue() const override { return val_.has_value(); }
+  std::optional<uint32_t> Value() const { return val_; }
+
+  static bool LiteralHasSuffix(std::string_view literal);
+  static std::unique_ptr<U32> FromLiteral(std::string_view literal);
+
+ protected:
+  std::optional<uint32_t> val_;
+};
+
+class U64 : public SignedInteger {
+ public:
+  bool IsU64() const override { return true; }
+  bool HasValue() const override { return val_.has_value(); }
+  std::optional<uint64_t> Value() const { return val_; }
+
+  static bool LiteralHasSuffix(std::string_view literal);
+  static std::unique_ptr<U64> FromLiteral(std::string_view literal);
+
+ protected:
+  std::optional<uint64_t> val_;
 };
 
 }  // namespace types
