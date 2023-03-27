@@ -1,23 +1,11 @@
 #pragma once
 
-//   template <typename T>
-//   bool nodeToInteger(antlr4::tree::TerminalNode* node, T& numVal) {
-//     static_assert(std::is_integral<T>::value, "Integral required.");
-//     const std::string& text = node->getText();
-//     auto [ptr,
-//           ec]{std::from_chars(text.data(), text.data() + text.size(),
-//           numVal)};
-//     if (ec != std::errc()) {
-//       errors_.push_back(makeError(ec, node));
-//       return false;
-//     }
-//     return true;
-//   }
-
-#pragma once
-
+#include <charconv>
 #include <cstring>
+#include <limits>
+#include <optional>
 #include <string>
+#include <string_view>
 
 #include "type.h"
 
@@ -25,141 +13,111 @@ namespace td {
 
 class ScalarValue {
  public:
-  ScalarValue(Type type) : type_(type) {}
+  ScalarValue(Type type, bool suffixed) : type_(type), suffixed_(suffixed) {}
 
-  static ScalarValue CreateBOOL(bool val) {
-    ScalarValue s(Type::CreateBOOL());
-    s.val_.bool_ = val;
-    return s;
-  }
-  static ScalarValue CreateCHAR(char32_t val) {
-    ScalarValue s(Type::CreateCHAR());
-    s.val_.char_ = val;
-    return s;
-  }
-  static ScalarValue CreateF32(float val) {
-    ScalarValue s(Type::CreateF32());
-    s.val_.f32_ = val;
-    return s;
-  }
-  static ScalarValue CreateF64(double val) {
-    ScalarValue s(Type::CreateF64());
-    s.val_.f64_ = val;
-    return s;
-  }
-  static ScalarValue CreateI8(int8_t val) {
-    ScalarValue s(Type::CreateI8());
-    s.val_.i8_ = val;
-    return s;
-  }
-  static ScalarValue CreateI16(int16_t val) {
-    ScalarValue s(Type::CreateI16());
-    s.val_.i16_ = val;
-    return s;
-  }
-  static ScalarValue CreateI32(int32_t val) {
-    ScalarValue s(Type::CreateI32());
-    s.val_.i32_ = val;
-    return s;
-  }
-  static ScalarValue CreateI64(int64_t val) {
-    ScalarValue s(Type::CreateI64());
-    s.val_.i64_ = val;
-    return s;
-  }
-  static ScalarValue CreateI128(__int128_t val) {
-    ScalarValue s(Type::CreateI128());
-    s.val_.i128_ = val;
-    return s;
-  }
-  static ScalarValue CreateU8(uint8_t val) {
-    ScalarValue s(Type::CreateU8());
-    s.val_.u8_ = val;
-    return s;
-  }
-  static ScalarValue CreateU16(uint16_t val) {
-    ScalarValue s(Type::CreateU16());
-    s.val_.u16_ = val;
-    return s;
-  }
-  static ScalarValue CreateU32(uint32_t val) {
-    ScalarValue s(Type::CreateU32());
-    s.val_.u32_ = val;
-    return s;
-  }
-  static ScalarValue CreateU64(uint64_t val) {
-    ScalarValue s(Type::CreateU64());
-    s.val_.u64_ = val;
-    return s;
-  }
-  static ScalarValue CreateU128(__uint128_t val) {
-    ScalarValue s(Type::CreateU128());
-    s.val_.u128_ = val;
-    return s;
-  }
+  static ScalarValue CreateBOOL(bool val, bool suffixed = true);
+  static ScalarValue CreateCHAR(char32_t val, bool suffixed = true);
+  static ScalarValue CreateF32(float val, bool suffixed = true);
+  static ScalarValue CreateF64(double val, bool suffixed = true);
+  // Integers
+  static ScalarValue CreateI8(int8_t val, bool suffixed = true);
+  static ScalarValue CreateI16(int16_t val, bool suffixed = true);
+  static ScalarValue CreateI32(int32_t val, bool suffixed = true);
+  static ScalarValue CreateI64(int64_t val, bool suffixed = true);
+  static ScalarValue CreateI128(__int128_t val, bool suffixed = true);
+  static ScalarValue CreateU8(uint8_t val, bool suffixed = true);
+  static ScalarValue CreateU16(uint16_t val, bool suffixed = true);
+  static ScalarValue CreateU32(uint32_t val, bool suffixed = true);
+  static ScalarValue CreateU64(uint64_t val, bool suffixed = true);
+  static ScalarValue CreateU128(__uint128_t val, bool suffixed = true);
 
-  Type GetType() const { return type_; }
-
-  bool BoolValue() const { return val_.bool_; }
-  char32_t CharValue() const { return val_.char_; }
-  float FloatValue() const { return val_.f32_; }
-  double DoubleValue() const { return val_.f64_; }
-  int8_t Int8Value() const { return val_.i8_; }
-  int16_t Int16Value() const { return val_.i16_; }
-  int32_t Int32Value() const { return val_.i32_; }
-  int64_t Int64Value() const { return val_.i64_; }
-  __int128_t Int128Value() const { return val_.i128_; }
-  uint8_t Uint8Value() const { return val_.u8_; }
-  uint16_t Uint16Value() const { return val_.u16_; }
-  uint32_t Uint32Value() const { return val_.u32_; }
-  uint64_t Uint64Value() const { return val_.u64_; }
-  __uint128_t Uint128Value() const { return val_.u128_; }
-
-  friend bool operator==(const ScalarValue& c1, const ScalarValue& c2) {
-    return c1.eq(c2);
-  }
-  friend bool operator!=(const ScalarValue& c1, const ScalarValue& c2) {
-    return !c1.eq(c2);
-  }
-  bool eq(const ScalarValue& other) const {
-    if (type_ == other.type_) {
-      if (type_.IsBOOL()) {
-        return BoolValue() == other.BoolValue();
-      } else if (type_.IsCHAR()) {
-        return CharValue() == other.CharValue();
-      } else if (type_.IsF32()) {
-        return FloatValue() == other.FloatValue();
-      } else if (type_.IsF64()) {
-        return DoubleValue() == other.DoubleValue();
-      } else if (type_.IsI8()) {
-        return Int8Value() == other.Int8Value();
-      } else if (type_.IsI16()) {
-        return Int16Value() == other.Int16Value();
-      } else if (type_.IsI32()) {
-        return Int32Value() == other.Int32Value();
-      } else if (type_.IsI64()) {
-        return Int64Value() == other.Int64Value();
-      } else if (type_.IsI128()) {
-        return Int128Value() == other.Int128Value();
-      } else if (type_.IsU8()) {
-        return Uint8Value() == other.Uint8Value();
-      } else if (type_.IsU16()) {
-        return Uint16Value() == other.Uint16Value();
-      } else if (type_.IsU32()) {
-        return Uint32Value() == other.Uint32Value();
-      } else if (type_.IsU64()) {
-        return Uint64Value() == other.Uint64Value();
-      } else if (type_.IsU128()) {
-        return Uint128Value() == other.Uint128Value();
-      }
+  template <typename T>
+  static ScalarValue CreateInt(T val, bool suffixed = true);
+  template <typename T>
+  static std::optional<ScalarValue> MaybeCreateIntFromString(
+      std::string_view digits, int base, bool suffixed = true) {
+    T val = 0;
+    // TODO: Do it faster?
+    // https://kholdstare.github.io/technical/2020/05/26/faster-integer-parsing.html
+    auto result = std::from_chars(digits.begin(), digits.end(), val, base);
+    if (result.ec == std::errc()) {
+      return ScalarValue::CreateInt(val, suffixed);
+    } else {
+      return std::nullopt;
     }
-    return false;
   }
+  static std::optional<ScalarValue> MaybeCreateIntFromUnknownString(
+      std::string_view digits, int base);
 
-  std::string ToString() const;
+  Type GetType() const;
+  bool IsSuffixed() const;
+
+  bool BoolValue() const;
+  char32_t CharValue() const;
+  float FloatValue() const;
+  double DoubleValue() const;
+  int8_t Int8Value() const;
+  int16_t Int16Value() const;
+  int32_t Int32Value() const;
+  int64_t Int64Value() const;
+  __int128_t Int128Value() const;
+  uint8_t Uint8Value() const;
+  uint16_t Uint16Value() const;
+  uint32_t Uint32Value() const;
+  uint64_t Uint64Value() const;
+  __uint128_t Uint128Value() const;
+
+  static const int8_t I8MinValue = std::numeric_limits<int8_t>::min();
+  static const int8_t I8MaxValue = std::numeric_limits<int8_t>::max();
+  static const int16_t I16MinValue = std::numeric_limits<int16_t>::min();
+  static const int16_t I16MaxValue = std::numeric_limits<int16_t>::max();
+  static const int32_t I32MinValue = std::numeric_limits<int32_t>::min();
+  static const int32_t I32MaxValue = std::numeric_limits<int32_t>::max();
+  static const int64_t I64MinValue = std::numeric_limits<int64_t>::min();
+  static const int64_t I64MaxValue = std::numeric_limits<int64_t>::max();
+  static const __int128_t I128MinValue = std::numeric_limits<__int128_t>::min();
+  static const __int128_t I128MaxValue = std::numeric_limits<__int128_t>::max();
+  static const uint8_t U8MinValue = std::numeric_limits<uint8_t>::min();
+  static const uint8_t U8MaxValue = std::numeric_limits<uint8_t>::max();
+  static const uint16_t U16MinValue = std::numeric_limits<uint16_t>::min();
+  static const uint16_t U16MaxValue = std::numeric_limits<uint16_t>::max();
+  static const uint32_t U32MinValue = std::numeric_limits<uint32_t>::min();
+  static const uint32_t U32MaxValue = std::numeric_limits<uint32_t>::max();
+  static const uint64_t U64MinValue = std::numeric_limits<uint64_t>::min();
+  static const uint64_t U64MaxValue = std::numeric_limits<uint64_t>::max();
+  static const __uint128_t U128MinValue = std::numeric_limits<__uint128_t>::min();
+  static const __uint128_t U128MaxValue = std::numeric_limits<__uint128_t>::max();
+
+static const ScalarValue I8Min;
+static const ScalarValue I8Max;
+static const ScalarValue I16Min;
+static const ScalarValue I16Max;
+static const ScalarValue I32Min;
+static const ScalarValue I32Max;
+static const ScalarValue I64Min;
+static const ScalarValue I64Max;
+static const ScalarValue I128Min;
+static const ScalarValue I128Max;
+static const ScalarValue U8Min;
+static const ScalarValue U8Max;
+static const ScalarValue U16Min;
+static const ScalarValue U16Max;
+static const ScalarValue U32Min;
+static const ScalarValue U32Max;
+static const ScalarValue U64Min;
+static const ScalarValue U64Max;
+static const ScalarValue U128Min;
+static const ScalarValue U128Max;
+
+  friend bool operator==(const ScalarValue& c1, const ScalarValue& c2);
+  friend bool operator!=(const ScalarValue& c1, const ScalarValue& c2);
+  bool eq(const ScalarValue& other) const;
+
   friend std::ostream& operator<<(std::ostream& os, const ScalarValue& value);
+  std::string ToString() const;
 
  private:
+  bool suffixed_;
   Type type_;
   union Val {
     bool bool_;

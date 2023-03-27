@@ -113,60 +113,13 @@ std::string GetIdentifierString(CTX *ctx,
   }
 }
 
-std::optional<char32_t> ProcessCharLiteral(const std::string &char_literal) {
-  if (char_literal.size() < 2 || char_literal.front() != '\'' ||
-      char_literal.back() != '\'') {
-    return std::nullopt;
-  }
 
-  std::string inner = char_literal.substr(1, char_literal.size() - 2);
-
-  if (inner.size() == 1) {
-    return static_cast<char32_t>(inner[0]);
-  }
-
-  if (inner.size() == 2 && inner[0] == '\\') {
-    switch (inner[1]) {
-      case 'n':
-        return U'\n';
-      case 'r':
-        return U'\r';
-      case 't':
-        return U'\t';
-      case '\\':
-        return U'\\';
-      case '0':
-        return U'\0';
-      case '\'':
-        return U'\'';
-      case '\"':
-        return U'\"';
-    }
-  }
-
-  if (inner.size() == 4 && inner[0] == '\\' && inner[1] == 'x') {
-    std::istringstream ss(inner.substr(2));
-    int value;
-    ss >> std::hex >> value;
-    return static_cast<char32_t>(value);
-  }
-
-  if (inner.size() >= 3 && inner.size() <= 10 && inner[0] == '\\' &&
-      inner[1] == 'u' && inner[2] == '{' && inner.back() == '}') {
-    std::istringstream ss(inner.substr(3, inner.size() - 4));
-    int value;
-    ss >> std::hex >> value;
-    return static_cast<char32_t>(value);
-  }
-
-  return std::nullopt;
-}
 
 std::optional<ScalarValue> ProcessIntegerLiteral(
     const std::string &char_literal) {
 
 
-      
+
   return std::nullopt;
 }
 
