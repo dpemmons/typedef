@@ -73,7 +73,7 @@ class Type {
   // friend bool operator==(const Type& c1, const Type& c2);
   // friend bool operator!=(const Type& c1, const Type& c2);
 
-  virtual void print(std::ostream& os) const;
+  virtual void print(std::ostream& os) const = 0;
 
  protected:
   Type() {}
@@ -97,13 +97,14 @@ class Scalar : public Primitive {
 
 class Bool : public Scalar {
  public:
+  Bool(bool val) : Scalar(), val_(val){};
   bool IsBool() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<bool> Value() const { return val_; }
 
   static std::unique_ptr<Bool> FromLiteral(std::string_view literal);
 
-  virtual void print(std::ostream& os) const = 0;
+  virtual void print(std::ostream& os) const override;
 
  protected:
   std::optional<bool> val_;
@@ -117,6 +118,8 @@ class Char : public Scalar {
   std::optional<char32_t> Value() const { return val_; }
 
   static std::unique_ptr<Char> FromLiteral(std::string_view literal);
+
+  virtual void print(std::ostream& os) const override;
 
  protected:
   Char(const Char&) = delete;
@@ -140,6 +143,8 @@ class Float32 : public Float {
   static bool LiteralHasSuffix(std::string_view literal);
   static std::unique_ptr<Float32> FromLiteral(std::string_view literal);
 
+  virtual void print(std::ostream& os) const override;
+
  protected:
   std::optional<float> val_;
 };
@@ -152,6 +157,8 @@ class Float64 : public Float {
 
   static bool LiteralHasSuffix(std::string_view literal);
   static std::unique_ptr<Float64> FromLiteral(std::string_view literal);
+
+  virtual void print(std::ostream& os) const override;
 
  protected:
   std::optional<double> val_;
@@ -180,6 +187,8 @@ class I8 : public SignedInteger {
   static bool LiteralHasSuffix(std::string_view literal);
   static std::unique_ptr<I8> FromLiteral(std::string_view literal);
 
+  virtual void print(std::ostream& os) const override;
+
  protected:
   std::optional<int8_t> val_;
 };
@@ -192,6 +201,8 @@ class I16 : public SignedInteger {
 
   static bool LiteralHasSuffix(std::string_view literal);
   static std::unique_ptr<I16> FromLiteral(std::string_view literal);
+
+  virtual void print(std::ostream& os) const override;
 
  protected:
   std::optional<int16_t> val_;
@@ -206,6 +217,8 @@ class I32 : public SignedInteger {
   static bool LiteralHasSuffix(std::string_view literal);
   static std::unique_ptr<I32> FromLiteral(std::string_view literal);
 
+  virtual void print(std::ostream& os) const override;
+
  protected:
   std::optional<int32_t> val_;
 };
@@ -218,6 +231,8 @@ class I64 : public SignedInteger {
 
   static bool LiteralHasSuffix(std::string_view literal);
   static std::unique_ptr<I64> FromLiteral(std::string_view literal);
+
+  virtual void print(std::ostream& os) const override;
 
  protected:
   std::optional<int64_t> val_;
@@ -239,6 +254,8 @@ class U8 : public SignedInteger {
   static bool LiteralHasSuffix(std::string_view literal);
   static std::unique_ptr<U8> FromLiteral(std::string_view literal);
 
+  virtual void print(std::ostream& os) const override;
+
  protected:
   std::optional<uint8_t> val_;
 };
@@ -251,6 +268,8 @@ class U16 : public SignedInteger {
 
   static bool LiteralHasSuffix(std::string_view literal);
   static std::unique_ptr<U16> FromLiteral(std::string_view literal);
+
+  virtual void print(std::ostream& os) const override;
 
  protected:
   std::optional<uint16_t> val_;
@@ -265,6 +284,8 @@ class U32 : public SignedInteger {
   static bool LiteralHasSuffix(std::string_view literal);
   static std::unique_ptr<U32> FromLiteral(std::string_view literal);
 
+  virtual void print(std::ostream& os) const override;
+
  protected:
   std::optional<uint32_t> val_;
 };
@@ -277,6 +298,8 @@ class U64 : public SignedInteger {
 
   static bool LiteralHasSuffix(std::string_view literal);
   static std::unique_ptr<U64> FromLiteral(std::string_view literal);
+
+  virtual void print(std::ostream& os) const override;
 
  protected:
   std::optional<uint64_t> val_;

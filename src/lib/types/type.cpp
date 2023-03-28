@@ -3,6 +3,10 @@
 #include <ios>
 #include <sstream>
 
+#define FMT_HEADER_ONLY
+#include "fmt/core.h"
+#include "fmt/ostream.h"
+
 namespace {
 
 bool startsWith(const std::string& str, const std::string& prefix) {
@@ -25,10 +29,40 @@ bool endsWith(std::string_view str, std::string_view suffix) {
          0 == str.compare(str.size() - suffix.size(), suffix.size(), suffix);
 }
 
+template <typename T>
+void typePrint(std::ostream& os, const T& t) {
+  if (t.HasValue()) {
+    return fmt::print(os, "bool: undefined");
+  }
+  return fmt::print(os, "bool: {}", t.Value().value());
+}
+
 }  // namespace
 
 namespace td {
 namespace types {
+
+// ----------------------------------------------------------------------------
+// Bool
+// ----------------------------------------------------------------------------
+
+std::unique_ptr<Bool> Bool::FromLiteral(std::string_view literal) {
+  if (literal.length() != 4) {
+    return nullptr;
+  }
+  if (literal.compare("true") == 0) {
+    return std::make_unique<Bool>(true);
+  } else if (literal.compare("false") == 0) {
+    return std::make_unique<Bool>(false);
+  }
+  return nullptr;
+}
+
+void Bool::print(std::ostream& os) const { typePrint<Bool>(os, *this); }
+
+// ----------------------------------------------------------------------------
+// Char
+// ----------------------------------------------------------------------------
 
 std::unique_ptr<Char> Char::FromLiteral(std::string_view literal) {
   if (literal.size() < 2 || literal.front() != '\'' || literal.back() != '\'') {
@@ -78,6 +112,14 @@ std::unique_ptr<Char> Char::FromLiteral(std::string_view literal) {
   }
 
   return nullptr;
+}
+
+void Char::print(std::ostream& os) const {
+  // typePrint<Char>(os, *this);
+  // TODO gotta do something like this for char32_t
+  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+  std::string myString = converter.to_bytes(value.CharValue());
+  fmt::print(os, "'{}'", myString);
 }
 
 // Type Type::CreateBOOL() { return Type(Type_::BOOL); }
