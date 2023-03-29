@@ -10,13 +10,19 @@ namespace types {
 
 class Type {
  public:
+  virtual std::string_view TypeName() const = 0;
+
   virtual bool IsPrimitive() const { return false; }
   virtual bool IsScalar() const { return false; }
+
   virtual bool IsBool() const { return false; }
+
   virtual bool IsChar() const { return false; }
+
   virtual bool IsFloat() const { return false; }
   virtual bool IsF32() const { return false; }
   virtual bool IsF64() const { return false; }
+
   virtual bool IsInteger() const { return false; }
   virtual bool IsSignedInteger() const { return false; }
   virtual bool IsUnsignedInteger() const { return false; }
@@ -74,6 +80,7 @@ class Type {
   // friend bool operator!=(const Type& c1, const Type& c2);
 
   virtual void print(std::ostream& os) const = 0;
+  std::string ToString() const;
 
  protected:
   Type() {}
@@ -98,6 +105,9 @@ class Scalar : public Primitive {
 class Bool : public Scalar {
  public:
   Bool(bool val) : Scalar(), val_(val){};
+
+  std::string_view TypeName() const override;
+
   bool IsBool() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<bool> Value() const { return val_; }
@@ -113,6 +123,9 @@ class Bool : public Scalar {
 class Char : public Scalar {
  public:
   Char(char32_t val) : Scalar(), val_(val){};
+
+  std::string_view TypeName() const override;
+
   bool IsChar() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<char32_t> Value() const { return val_; }
@@ -120,6 +133,11 @@ class Char : public Scalar {
   static std::unique_ptr<Char> FromLiteral(std::string_view literal);
 
   virtual void print(std::ostream& os) const override;
+
+  friend std::ostream& operator<<(std::ostream& os, const Char& c) {
+    c.print(os);
+    return os;
+  }
 
  protected:
   Char(const Char&) = delete;
@@ -136,6 +154,10 @@ class Float : public Scalar {
 
 class Float32 : public Float {
  public:
+  Float32(float val) : Float(), val_(val){};
+
+  std::string_view TypeName() const override;
+
   bool IsF32() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<float> Value() const { return val_; }
@@ -151,6 +173,10 @@ class Float32 : public Float {
 
 class Float64 : public Float {
  public:
+  Float64(double val) : Float(), val_(val){};
+
+  std::string_view TypeName() const override;
+
   bool IsF64() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<double> Value() const { return val_; }
@@ -180,6 +206,10 @@ class SignedInteger : public Integer {
 
 class I8 : public SignedInteger {
  public:
+  I8(int8_t val) : SignedInteger(), val_(val){};
+
+  std::string_view TypeName() const override;
+
   bool IsI8() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<int8_t> Value() const { return val_; }
@@ -195,6 +225,10 @@ class I8 : public SignedInteger {
 
 class I16 : public SignedInteger {
  public:
+  I16(int16_t val) : SignedInteger(), val_(val){};
+
+  std::string_view TypeName() const override;
+
   bool IsI16() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<int16_t> Value() const { return val_; }
@@ -210,6 +244,10 @@ class I16 : public SignedInteger {
 
 class I32 : public SignedInteger {
  public:
+  I32(int32_t val) : SignedInteger(), val_(val){};
+
+  std::string_view TypeName() const override;
+
   bool IsI32() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<int32_t> Value() const { return val_; }
@@ -225,6 +263,10 @@ class I32 : public SignedInteger {
 
 class I64 : public SignedInteger {
  public:
+  I64(int64_t val) : SignedInteger(), val_(val){};
+
+  std::string_view TypeName() const override;
+
   bool IsI64() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<int64_t> Value() const { return val_; }
@@ -247,6 +289,10 @@ class UnsignedInteger : public Integer {
 
 class U8 : public SignedInteger {
  public:
+  U8(uint8_t val) : SignedInteger(), val_(val){};
+
+  std::string_view TypeName() const override;
+
   bool IsU8() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<uint8_t> Value() const { return val_; }
@@ -262,6 +308,10 @@ class U8 : public SignedInteger {
 
 class U16 : public SignedInteger {
  public:
+  U16(uint16_t val) : SignedInteger(), val_(val){};
+
+  std::string_view TypeName() const override;
+
   bool IsU16() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<uint16_t> Value() const { return val_; }
@@ -277,6 +327,10 @@ class U16 : public SignedInteger {
 
 class U32 : public SignedInteger {
  public:
+  U32(uint32_t val) : SignedInteger(), val_(val){};
+
+  std::string_view TypeName() const override;
+
   bool IsU32() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<uint32_t> Value() const { return val_; }
@@ -292,6 +346,10 @@ class U32 : public SignedInteger {
 
 class U64 : public SignedInteger {
  public:
+  U64(uint64_t val) : SignedInteger(), val_(val){};
+
+  std::string_view TypeName() const override;
+
   bool IsU64() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<uint64_t> Value() const { return val_; }

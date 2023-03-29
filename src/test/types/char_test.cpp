@@ -1,9 +1,85 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_all.hpp>
+#include <utility>
+#include <vector>
 
-// ----------------------------------------------------------------------------
-// Char
-// ----------------------------------------------------------------------------
+#include "types/type.h"
+
+namespace Catch {
+template <>
+struct StringMaker<std::unique_ptr<td::types::Char>> {
+  static std::string convert(std::unique_ptr<td::types::Char> const& v) {
+    return v->ToString();
+  }
+};
+}  // namespace Catch
+
+namespace td {
+namespace types {
+
+TEST_CASE("Char resolves \"'c''\"", "[types][char]") {
+  auto actual = Char::FromLiteral("'c'");
+  REQUIRE(actual != nullptr);
+  REQUIRE(actual->IsChar());
+  REQUIRE(actual->HasValue());
+  REQUIRE(actual->Value().has_value());
+  REQUIRE(actual->Value() == 'c');
+}
+
+TEST_CASE("Several valid escaped characters", "[types][char]") {
+  std::vector<std::pair<std::string, char32_t>> valid_test_cases = {
+      // normal character
+      {"'a'", U'a'},
+      // quote escapes
+      {"'\\''", U'\''},
+      {"'\\\"'", U'\"'},
+      // ascii escapes
+      {"'\\n'", U'\n'},
+      {"'\\r'", U'\r'},
+      {"'\\t'", U'\t'},
+      {"'\\\\'", U'\\'},
+      {"'\\0'", U'\0'},
+      {"'\\x41'", U'\x41'},
+      {"'\\x0A'", U'\x0A'},
+      // Valid unicode escapes
+      {"'\\u{1F600}'", 0x0001F600},   // smiley face
+      {"'\\u{01F600}'", 0x0001F600},  // smiley face
+      {"'\\u{A9}'", 0x000000A9}       // copyright
+  };
+  for (auto p : valid_test_cases) {
+    DYNAMIC_SECTION(p.first << " -> " << p.second) {
+      auto actual = Char::FromLiteral(p.first);
+      REQUIRE(actual != nullptr);
+      REQUIRE(actual->IsChar());
+      REQUIRE(actual->HasValue());
+      REQUIRE(actual->Value().has_value());
+      REQUIRE(actual->Value() == p.second);
+    }
+  }
+}
+
+TEST_CASE("Several invalid escaped characters", "[types][char]") {
+  std::vector<std::string> invalid_values = {
+      " ",              // empty
+      "''",             // empty
+      "'\\x'",          // invalid escape
+      "'\\xG0'"         //
+      "'\\x1'",         //
+      "'\\u'",          //
+      "'\\u{1F60'",     // incomplete unicode
+      "\\u{01F6000}'",  // Too long unicode sequence
+      "'\\z'"           // invalid escape
+  };
+  for (auto val : invalid_values) {
+    DYNAMIC_SECTION(val) {
+      auto actual = Char::FromLiteral(val);
+      REQUIRE(actual == nullptr);
+    }
+  }
+}
+
+}  // namespace types
+}  // namespace td
 
 #if 0
 
@@ -103,127 +179,5 @@ void InvalidCharsTest(std::string expression,
   }
 }
 }  // namespace
-
-TEST_CASE("Empty char ''", "[simple_values][char]") {
-  InvalidCharsTest("''", td::PEIBuilder()
-                             .SetType(td::ParserErrorInfo::PARSE_ERROR)
-                             .SetMessage("Parse error")
-                             .SetTokenType(TypedefLexer::SEMI)
-                             .SetCharOffset(55)
-                             .SetLine(3)
-                             .SetLineOffset(27)
-                             .SetLength(1)
-                             .build());
-}
-
-TEST_CASE("Missing escape '\\'", "[simple_values][char]") {
-  InvalidCharsTest("'\\'", td::PEIBuilder()
-                               .SetType(td::ParserErrorInfo::PARSE_ERROR)
-                               .SetMessage("Parse error")
-                               .SetTokenType(TypedefLexer::EOF)
-                               .SetCharOffset(68)
-                               .SetLine(4)
-                               .SetLineOffset(10)
-                               .SetLength(0)
-                               .build());
-}
-
-TEST_CASE("Missing ASCII hex sequence '\\x'", "[simple_values][char]") {
-  InvalidCharsTest("'\\x'", td::PEIBuilder()
-                                .SetType(td::ParserErrorInfo::PARSE_ERROR)
-                                .SetMessage("Parse error")
-                                .SetTokenType(TypedefLexer::SEMI)
-                                .SetCharOffset(57)
-                                .SetLine(3)
-                                .SetLineOffset(29)
-                                .SetLength(1)
-                                .build());
-}
-
-// TODO: come back to this after integer parsing is compelte
-// TEST_CASE("Out of range ASCII hex sequence '\\xG0'", "[simple_values][char]")
-// {
-//   InvalidCharsTest("'\\xG0'", td::PEIBuilder()
-//                                   .SetType(td::ParserErrorInfo::PARSE_ERROR)
-//                                   .SetMessage("Parse error")
-//                                   .SetTokenType(TypedefLexer::EOF)
-//                                   .SetCharOffset(71)
-//                                   .SetLine(4)
-//                                   .SetLineOffset(10)
-//                                   .SetLength(0)
-//                                   .build());
-// }
-
-TEST_CASE("Incomplete ASCII hex sequence '\\x1'", "[simple_values][char]") {
-  InvalidCharsTest("'\\x1'", td::PEIBuilder()
-                                 .SetType(td::ParserErrorInfo::PARSE_ERROR)
-                                 .SetMessage("Parse error")
-                                 .SetTokenType(TypedefLexer::SEMI)
-                                 .SetCharOffset(58)
-                                 .SetLine(3)
-                                 .SetLineOffset(30)
-                                 .SetLength(1)
-                                 .build());
-}
-
-TEST_CASE("Missing unicode sequence '\\u'", "[simple_values][char]") {
-  InvalidCharsTest("'\\u'", td::PEIBuilder()
-                                .SetType(td::ParserErrorInfo::PARSE_ERROR)
-                                .SetMessage("Parse error")
-                                .SetTokenType(TypedefLexer::SEMI)
-                                .SetCharOffset(57)
-                                .SetLine(3)
-                                .SetLineOffset(29)
-                                .SetLength(1)
-                                .build());
-}
-
-TEST_CASE("Empty unicode sequence '\\u{}'", "[simple_values][char]") {
-  InvalidCharsTest("'\\u{}'", td::PEIBuilder()
-                                  .SetType(td::ParserErrorInfo::PARSE_ERROR)
-                                  .SetMessage("Parse error")
-                                  .SetTokenType(TypedefLexer::EOF)
-                                  .SetCharOffset(71)
-                                  .SetLine(4)
-                                  .SetLineOffset(10)
-                                  .SetLength(0)
-                                  .build());
-}
-
-TEST_CASE("Open unicode sequence '\\u{1F60'", "[simple_values][char]") {
-  InvalidCharsTest("'\\u{1F60'", td::PEIBuilder()
-                                     .SetType(td::ParserErrorInfo::PARSE_ERROR)
-                                     .SetMessage("Parse error")
-                                     .SetTokenType(TypedefLexer::SEMI)
-                                     .SetCharOffset(62)
-                                     .SetLine(3)
-                                     .SetLineOffset(34)
-                                     .SetLength(1)
-                                     .build());
-}
-
-TEST_CASE("Too long unicode sequence '\\u{01F6000}'", "[simple_values][char]") {
-  std::string file(R"(
-            typedef=alpha;
-            val : char = \\u{01F6000}';
-          )");
-  auto parsed_file = td::Parse(file);
-  // TODO: this currently spits out lots of errors; is it worth consolidating
-  // them somehow?
-  REQUIRE(parsed_file->HasErrors());
-  REQUIRE(parsed_file->GetValueDefinitions().empty());
-}
-
-TEST_CASE("Invalid escape '\\z'", "[simple_values][char]") {
-  InvalidCharsTest("'\\z'", td::PEIBuilder()
-                                .SetType(td::ParserErrorInfo::PARSE_ERROR)
-                                .SetMessage("Parse error")
-                                .SetTokenType(TypedefLexer::EOF)
-                                .SetCharOffset(69)
-                                .SetLine(4)
-                                .SetLineOffset(10)
-                                .SetLength(0)
-                                .build());
-}
 
 #endif
