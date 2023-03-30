@@ -111,6 +111,17 @@ namespace types {
 
 TEST_CASE("i8 literal conversions", "[types][i8]") {
   vector<pair<string, optional<int8_t>>> i8_test_cases = {
+      // no suffix
+      {"42", 42},        // decimal
+      {"0x2A", 42},      // hex
+      {"0o52", 42},      // oct
+      {"0b101010", 42},  // binary
+
+      {"", nullopt},    // decimal
+      {"0x", nullopt},  // hex
+      {"0o", nullopt},  // oct
+      {"0b", nullopt},  // binary
+
       // suffix
       {"42i8", 42},        // decimal
       {"0x2Ai8", 42},      // hex
@@ -208,6 +219,17 @@ TEST_CASE("i8 literal conversions", "[types][i8]") {
 
 TEST_CASE("i16 literal conversions", "[types][i16]") {
   vector<pair<string, optional<int16_t>>> i16_test_cases = {
+      // no suffix
+      {"42", 42},        // decimal
+      {"0x2A", 42},      // hex
+      {"0o52", 42},      // oct
+      {"0b101010", 42},  // binary
+
+      {"", nullopt},    // decimal
+      {"0x", nullopt},  // hex
+      {"0o", nullopt},  // oct
+      {"0b", nullopt},  // binary
+
       // suffix
       {"42i16", 42},        // decimal
       {"0x2Ai16", 42},      // hex
@@ -305,6 +327,17 @@ TEST_CASE("i16 literal conversions", "[types][i16]") {
 
 TEST_CASE("i32 literal conversions", "[types][i32]") {
   vector<pair<string, optional<int32_t>>> i32_test_cases = {
+      // no suffix
+      {"42", 42},        // decimal
+      {"0x2A", 42},      // hex
+      {"0o52", 42},      // oct
+      {"0b101010", 42},  // binary
+
+      {"", nullopt},    // decimal
+      {"0x", nullopt},  // hex
+      {"0o", nullopt},  // oct
+      {"0b", nullopt},  // binary
+
       // suffix
       {"42i32", 42},        // decimal
       {"0x2Ai32", 42},      // hex
@@ -402,6 +435,17 @@ TEST_CASE("i32 literal conversions", "[types][i32]") {
 
 TEST_CASE("i64 literal conversions", "[types][i64]") {
   vector<pair<string, optional<int64_t>>> i64_test_cases = {
+      // no suffix
+      {"42", 42},        // decimal
+      {"0x2A", 42},      // hex
+      {"0o52", 42},      // oct
+      {"0b101010", 42},  // binary
+
+      {"", nullopt},    // decimal
+      {"0x", nullopt},  // hex
+      {"0o", nullopt},  // oct
+      {"0b", nullopt},  // binary
+
       // suffix
       {"42i64", 42},        // decimal
       {"0x2Ai64", 42},      // hex
@@ -500,9 +544,19 @@ TEST_CASE("i64 literal conversions", "[types][i64]") {
   }
 }
 
-
 TEST_CASE("u8 literal conversions", "[types][u8]") {
   vector<pair<string, optional<uint8_t>>> u8_test_cases = {
+      // no suffix
+      {"42", 42},        // decimal
+      {"0x2A", 42},      // hex
+      {"0o52", 42},      // oct
+      {"0b101010", 42},  // binary
+
+      {"", nullopt},    // decimal
+      {"0x", nullopt},  // hex
+      {"0o", nullopt},  // oct
+      {"0b", nullopt},  // binary
+
       // suffix
       {"42u8", 42},        // decimal
       {"0x2Au8", 42},      // hex
@@ -558,25 +612,26 @@ TEST_CASE("u8 literal conversions", "[types][u8]") {
       // {"0o42.1u8", nullopt},  // oct
       // {"0b42.1u8", nullopt},  // binary
 
-      // // max
-      // {"127u8", 127},        // decimal
-      // {"0x7Fu8", 127},       // hex
-      // {"0o177u8", 127},      // oct
-      // {"0b1111111u8", 127},  // binary
+      // max
+      {"255u8", 255},         // decimal
+      {"0xFFu8", 255},        // hex
+      {"0o377u8", 255},       // oct
+      {"0b11111111u8", 255},  // binary
 
-      // // min
-      // {"-128u8", -128},     // decimal
-      // {"0x-80u8", -128},    // hex
-      // {"0x80u8", nullopt},  // two's complement hex
+      // min
+      {"0u8", 0},    // decimal
+      {"0x0u8", 0},  // hex
+      {"0o0u8", 0},  // oct
+      {"0b0u8", 0},  // binary
 
       // // leading zeros are OK
-      // {"0000000000127u8", 127},        // decimal
-      // {"0x00000000007Fu8", 127},       // hex
-      // {"0o0000000000177u8", 127},      // oct
-      // {"0b00000000001111111u8", 127},  // binary
+      {"00000000255u8", 255},         // decimal
+      {"0x00000000FFu8", 255},        // hex
+      {"0o00000000377u8", 255},       // oct
+      {"0b0000000011111111u8", 255},  // binary
 
       // // leading spaces are bad
-      // {"  127u8", nullopt},  // decimal
+      {"  127u8", nullopt},  // decimal
 
   };
   for (auto p : u8_test_cases) {
@@ -600,6 +655,17 @@ TEST_CASE("u8 literal conversions", "[types][u8]") {
 
 TEST_CASE("u16 literal conversions", "[types][u16]") {
   vector<pair<string, optional<uint16_t>>> u16_test_cases = {
+      // no suffix
+      {"42", 42},        // decimal
+      {"0x2A", 42},      // hex
+      {"0o52", 42},      // oct
+      {"0b101010", 42},  // binary
+
+      {"", nullopt},    // decimal
+      {"0x", nullopt},  // hex
+      {"0o", nullopt},  // oct
+      {"0b", nullopt},  // binary
+
       // suffix
       {"42u16", 42},        // decimal
       {"0x2Au16", 42},      // hex
@@ -645,7 +711,7 @@ TEST_CASE("u16 literal conversions", "[types][u16]") {
       {"0xZu16", nullopt},  // hex
       {"0oZu16", nullopt},  // oct
       {"0bZu16", nullopt},  // binary
-      // invalid character
+                            // invalid character
       // TODO(dpemmons): std::from_chars will convert these. we could test for
       // them in the literal conversion function, but it'd be cheaper if the
       // lexer just never produces them, so verify that first before handling
@@ -655,25 +721,26 @@ TEST_CASE("u16 literal conversions", "[types][u16]") {
       // {"0o42.1u16", nullopt},  // oct
       // {"0b42.1u16", nullopt},  // binary
 
-      // // max
-      // {"32767u16", 32767},              // decimal
-      // {"0x7FFFu16", 32767},             // hex
-      // {"0o77777u16", 32767},            // oct
-      // {"0b111111111111111u16", 32767},  // binary
+      // max
+      {"32767u16", 32767},              // decimal
+      {"0x7FFFu16", 32767},             // hex
+      {"0o77777u16", 32767},            // oct
+      {"0b111111111111111u16", 32767},  // binary
 
-      // // min
-      // {"-32768u16", -32768},   // decimal
-      // {"0x-8000u16", -32768},  // hex
-      // {"0x8000u16", nullopt},  // two's complement hex
+      // min
+      {"0u16", 0},    // decimal
+      {"0x0u16", 0},  // hex
+      {"0o0u16", 0},  // oct
+      {"0b0u16", 0},  // binary
 
-      // // leading zeros are OK
-      // {"000000000032767u16", 32767},              // decimal
-      // {"0x00000000007FFFu16", 32767},             // hex
-      // {"0o000000000077777u16", 32767},            // oct
-      // {"0b0000000000111111111111111u16", 32767},  // binary
+      // leading zeros are OK
+      {"000000000032767u16", 32767},              // decimal
+      {"0x00000000007FFFu16", 32767},             // hex
+      {"0o000000000077777u16", 32767},            // oct
+      {"0b0000000000111111111111111u16", 32767},  // binary
 
       // // leading spaces are bad
-      // {"  32767u16", nullopt},  // decimal
+      {"  32767u16", nullopt},  // decimal
 
   };
   for (auto p : u16_test_cases) {
@@ -697,6 +764,17 @@ TEST_CASE("u16 literal conversions", "[types][u16]") {
 
 TEST_CASE("u32 literal conversions", "[types][u32]") {
   vector<pair<string, optional<uint32_t>>> u32_test_cases = {
+      // no suffix
+      {"42", 42},        // decimal
+      {"0x2A", 42},      // hex
+      {"0o52", 42},      // oct
+      {"0b101010", 42},  // binary
+
+      {"", nullopt},    // decimal
+      {"0x", nullopt},  // hex
+      {"0o", nullopt},  // oct
+      {"0b", nullopt},  // binary
+
       // suffix
       {"42u32", 42},        // decimal
       {"0x2Au32", 42},      // hex
@@ -752,22 +830,23 @@ TEST_CASE("u32 literal conversions", "[types][u32]") {
       // {"0o42.1u32", nullopt},  // oct
       // {"0b42.1u32", nullopt},  // binary
 
-      // // max
-      // {"2147483647u32", 2147483647},                         // decimal
-      // {"0x7FFFFFFFu32", 2147483647},                         // hex
-      // {"0o17777777777u32", 2147483647},                      // oct
-      // {"0b1111111111111111111111111111111u32", 2147483647},  // binary
+      // max
+      {"2147483647u32", 2147483647},                         // decimal
+      {"0x7FFFFFFFu32", 2147483647},                         // hex
+      {"0o17777777777u32", 2147483647},                      // oct
+      {"0b1111111111111111111111111111111u32", 2147483647},  // binary
 
-      // // min
-      // {"-2147483648u32", -2147483648},  // decimal
-      // {"0x-80000000u32", -2147483648},  // hex
-      // {"0x80000000u32", nullopt},       // two's complement hex
+      // min
+      {"0u32", 0},    // decimal
+      {"0x0u32", 0},  // hex
+      {"0o0u32", 0},  // oct
+      {"0b0u32", 0},  // binary
 
-      // // leading zeros are OK
-      // {"00000000002147483647u32", 2147483647},                     // decimal
-      // {"0x00000007FFFFFFFu32", 2147483647},                        // hex
-      // {"0o000000017777777777u32", 2147483647},                     // oct
-      // {"0b0000001111111111111111111111111111111u32", 2147483647},  // binary
+      // leading zeros are OK
+      {"00000000002147483647u32", 2147483647},                     // decimal
+      {"0x00000007FFFFFFFu32", 2147483647},                        // hex
+      {"0o000000017777777777u32", 2147483647},                     // oct
+      {"0b0000001111111111111111111111111111111u32", 2147483647},  // binary
 
       // leading spaces are bad
       {"  2147483647u32", nullopt},  // decimal
@@ -794,6 +873,17 @@ TEST_CASE("u32 literal conversions", "[types][u32]") {
 
 TEST_CASE("u64 literal conversions", "[types][u64]") {
   vector<pair<string, optional<uint64_t>>> u64_test_cases = {
+      // no suffix
+      {"42", 42},        // decimal
+      {"0x2A", 42},      // hex
+      {"0o52", 42},      // oct
+      {"0b101010", 42},  // binary
+
+      {"", nullopt},    // decimal
+      {"0x", nullopt},  // hex
+      {"0o", nullopt},  // oct
+      {"0b", nullopt},  // binary
+
       // suffix
       {"42u64", 42},        // decimal
       {"0x2Au64", 42},      // hex
@@ -849,25 +939,26 @@ TEST_CASE("u64 literal conversions", "[types][u64]") {
       // {"0o42.1u64", nullopt},  // oct
       // {"0b42.1u64", nullopt},  // binary
 
-      // // max
-      // {"9223372036854775807u64", 9223372036854775807},      // decimal
-      // {"0x7FFFFFFFFFFFFFFFu64", 9223372036854775807},       // hex
-      // {"0o777777777777777777777u64", 9223372036854775807},  // oct
-      // {"0b111111111111111111111111111111111111111111111111111111111111111u64",
-      //  9223372036854775807},  // binary
+      // max
+      {"18446744073709551615u64", 18446744073709551615},      // decimal
+      {"0xFFFFFFFFFFFFFFFFu64", 18446744073709551615},        // hex
+      {"0o1777777777777777777777u64", 18446744073709551615},  // oct
+      {"0b1111111111111111111111111111111111111111111111111111111111111111u64",
+       18446744073709551615},  // binary
 
-      // // min
-      // {"-9223372036854775808", -9223372036854775808},    // decimal
-      // {"0x-8000000000000000u64", -9223372036854775808},  // hex
-      // {"0x8000000000000000u64", nullopt},                // two's complement hex
+      // min
+      {"0u64", 0},    // decimal
+      {"0x0u64", 0},  // hex
+      {"0o0u64", 0},  // oct
+      {"0b0u64", 0},  // binary
 
-      // // leading zeros are OK
-      // {"00000009223372036854775807u64", 9223372036854775807},      // decimal
-      // {"0x00000007FFFFFFFFFFFFFFFu64", 9223372036854775807},       // hex
-      // {"0o0000000777777777777777777777u64", 9223372036854775807},  // oct
-      // {"0b000000011111111111111111111111111111111111111111111111111111111111111"
-      //  "1u64",
-      //  9223372036854775807},  // binary
+      // leading zeros are OK
+      {"0000000018446744073709551615u64", 18446744073709551615},      // decimal
+      {"0x00000000FFFFFFFFFFFFFFFFu64", 18446744073709551615},        // hex
+      {"0o000000001777777777777777777777u64", 18446744073709551615},  // oct
+      {"0b000000001111111111111111111111111111111111111111111111111111111111111"
+       "111u64",
+       18446744073709551615},  // binary
 
       // leading spaces are bad
       {"  2147483647u64", nullopt},  // decimal
@@ -891,7 +982,6 @@ TEST_CASE("u64 literal conversions", "[types][u64]") {
     }
   }
 }
-
 
 }  // namespace types
 }  // namespace td
