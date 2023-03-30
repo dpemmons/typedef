@@ -1,5 +1,6 @@
 #include "type.h"
 
+#include <algorithm>
 #include <charconv>
 #include <codecvt>
 #include <ios>
@@ -39,8 +40,6 @@ void typePrint(std::ostream& os, const T& t) {
   }
   return fmt::print(os, "{}: {}", t.TypeName(), t.Value().value());
 }
-
-enum IntBase { DECIMAL = 10, HEX = 16, OCT = 8, BIN = 2 };
 
 }  // namespace
 
@@ -162,17 +161,29 @@ std::unique_ptr<Float64> Float64::FromLiteral(std::string_view literal) {
 void Float64::print(std::ostream& os) const { typePrint<Float64>(os, *this); }
 
 // ----------------------------------------------------------------------------
-// I8
+// Integer helpers
 // ----------------------------------------------------------------------------
-std::string_view I8::TypeName() const { return "i8"; }
+enum IntBase { DECIMAL = 10, HEX = 16, OCT = 8, BIN = 2 };
 
-bool I8::LiteralHasSuffix(std::string_view literal) {
-  return endsWith(literal, "i8");
+template <typename INT_TYPE, typename CPP_TYPE>
+static std::unique_ptr<INT_TYPE> ConvertIntChars(std::string_view literal,
+                                                 int base) {
+  CPP_TYPE value = 0;
+  // TODO: Do it faster?
+  // https://kholdstare.github.io/technical/2020/05/26/faster-integer-parsing.html
+  auto result = std::from_chars(literal.begin(), literal.end(), value, base);
+
+  if (result.ec == std::errc()) {
+    return std::make_unique<INT_TYPE>(value);
+  } else {
+    return nullptr;
+  }
 }
 
-std::unique_ptr<I8> I8::FromLiteral(std::string_view literal) {
+template <typename INT_TYPE, typename CPP_TYPE>
+static std::unique_ptr<INT_TYPE> IntFromLiteral(std::string_view literal) {
   // chop off the suffix
-  if (LiteralHasSuffix(literal)) {
+  if (INT_TYPE::LiteralHasSuffix(literal)) {
     literal.remove_suffix(2);
   }
 
@@ -192,7 +203,7 @@ std::unique_ptr<I8> I8::FromLiteral(std::string_view literal) {
     literal.remove_prefix(2);
   }
 
-  // chop off leading underscores
+  // chop off leading and trailing underscores
   literal.remove_prefix(
       std::min(literal.find_first_not_of("_"), literal.size()));
   literal.remove_suffix(literal.size() - literal.find_last_not_of("_") - 1);
@@ -200,19 +211,31 @@ std::unique_ptr<I8> I8::FromLiteral(std::string_view literal) {
   // If there are any underscores left, we have to handle those by creating a
   // temporary string.
   if (literal.find("_") != std::string_view::npos) {
-    abort();
-  }
-
-  int8_t value = 0;
-  // TODO: Do it faster?
-  // https://kholdstare.github.io/technical/2020/05/26/faster-integer-parsing.html
-  auto result = std::from_chars(literal.begin(), literal.end(), value, base);
-
-  if (result.ec == std::errc()) {
-    return std::make_unique<I8>(value);
+    std::string temp;
+    temp.reserve(literal.size());
+    for (auto c : literal) {
+      if (c != '_') {
+        temp += c;
+      }
+    }
+    return ConvertIntChars<INT_TYPE, CPP_TYPE>(temp, base);
   } else {
-    return nullptr;
+    return ConvertIntChars<INT_TYPE, CPP_TYPE>(literal, base);
   }
+  abort();
+}
+
+// ----------------------------------------------------------------------------
+// I8
+// ----------------------------------------------------------------------------
+std::string_view I8::TypeName() const { return "i8"; }
+
+bool I8::LiteralHasSuffix(std::string_view literal) {
+  return endsWith(literal, "i8");
+}
+
+std::unique_ptr<I8> I8::FromLiteral(std::string_view literal) {
+  return IntFromLiteral<I8, int8_t>(literal);
 }
 
 void I8::print(std::ostream& os) const { typePrint<I8>(os, *this); }
@@ -226,7 +249,9 @@ bool I16::LiteralHasSuffix(std::string_view literal) {
   return endsWith(literal, "i16");
 }
 
-std::unique_ptr<I16> I16::FromLiteral(std::string_view literal) {}
+std::unique_ptr<I16> I16::FromLiteral(std::string_view literal) {
+  return IntFromLiteral<I16, int16_t>(literal);
+}
 
 void I16::print(std::ostream& os) const { typePrint<I16>(os, *this); }
 
@@ -239,7 +264,9 @@ bool I32::LiteralHasSuffix(std::string_view literal) {
   return endsWith(literal, "i32");
 }
 
-std::unique_ptr<I32> I32::FromLiteral(std::string_view literal) {}
+std::unique_ptr<I32> I32::FromLiteral(std::string_view literal) {
+  return IntFromLiteral<I32, int32_t>(literal);
+}
 
 void I32::print(std::ostream& os) const { typePrint<I32>(os, *this); }
 
@@ -252,7 +279,9 @@ bool I64::LiteralHasSuffix(std::string_view literal) {
   return endsWith(literal, "i64");
 }
 
-std::unique_ptr<I64> I64::FromLiteral(std::string_view literal) {}
+std::unique_ptr<I64> I64::FromLiteral(std::string_view literal) {
+  return IntFromLiteral<I64, int64_t>(literal);
+}
 
 void I64::print(std::ostream& os) const { typePrint<I64>(os, *this); }
 
@@ -265,7 +294,9 @@ bool U8::LiteralHasSuffix(std::string_view literal) {
   return endsWith(literal, "u8");
 }
 
-std::unique_ptr<U8> U8::FromLiteral(std::string_view literal) {}
+std::unique_ptr<U8> U8::FromLiteral(std::string_view literal) {
+  return IntFromLiteral<U8, uint8_t>(literal);
+}
 
 void U8::print(std::ostream& os) const { typePrint<U8>(os, *this); }
 
@@ -278,7 +309,9 @@ bool U16::LiteralHasSuffix(std::string_view literal) {
   return endsWith(literal, "u16");
 }
 
-std::unique_ptr<U16> U16::FromLiteral(std::string_view literal) {}
+std::unique_ptr<U16> U16::FromLiteral(std::string_view literal) {
+  return IntFromLiteral<U16, uint16_t>(literal);
+}
 
 void U16::print(std::ostream& os) const { typePrint<U16>(os, *this); }
 
@@ -291,7 +324,9 @@ bool U32::LiteralHasSuffix(std::string_view literal) {
   return endsWith(literal, "u32");
 }
 
-std::unique_ptr<U32> U32::FromLiteral(std::string_view literal) {}
+std::unique_ptr<U32> U32::FromLiteral(std::string_view literal) {
+  return IntFromLiteral<U32, uint32_t>(literal);
+}
 
 void U32::print(std::ostream& os) const { typePrint<U32>(os, *this); }
 
@@ -304,7 +339,9 @@ bool U64::LiteralHasSuffix(std::string_view literal) {
   return endsWith(literal, "u64");
 }
 
-std::unique_ptr<U64> U64::FromLiteral(std::string_view literal) {}
+std::unique_ptr<U64> U64::FromLiteral(std::string_view literal) {
+  return IntFromLiteral<U64, uint64_t>(literal);
+}
 
 void U64::print(std::ostream& os) const { typePrint<U64>(os, *this); }
 
