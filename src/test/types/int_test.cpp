@@ -109,6 +109,16 @@ struct StringMaker<unique_ptr<td::types::U64>> {
 namespace td {
 namespace types {
 
+// Handy for debugging a specific case...
+// TEST_CASE("42", "[temporary][debug]") {
+//   auto actual = I8::FromLiteral("42i16");
+//   REQUIRE(actual != nullptr);
+//   REQUIRE(actual->IsI8());
+//   REQUIRE(actual->HasValue());
+//   REQUIRE(actual->Value().has_value());
+//   REQUIRE((int)actual->Value().value() == 42);
+// }
+
 TEST_CASE("i8 literal conversions", "[types][i8]") {
   vector<pair<string, optional<int8_t>>> i8_test_cases = {
       // no suffix
@@ -125,7 +135,7 @@ TEST_CASE("i8 literal conversions", "[types][i8]") {
       // wrong suffix (should fail)
       // this is passing because from_chars ignores non-numbers at the end.
       // should be able to fix using result.ptr ?
-      // {"42i16", nullopt},  // decimal
+      {"42i16", nullopt},  // decimal
 
       // suffix
       {"42i8", 42},        // decimal
@@ -172,15 +182,11 @@ TEST_CASE("i8 literal conversions", "[types][i8]") {
       {"0xZi8", nullopt},  // hex
       {"0oZi8", nullopt},  // oct
       {"0bZi8", nullopt},  // binary
-      // invalid character
-      // TODO(dpemmons): std::from_chars will convert these. we could test for
-      // them in the literal conversion function, but it'd be cheaper if the
-      // lexer just never produces them, so verify that first before handling
-      // these.
-      // {"42.1i8", nullopt},    // decimal
-      // {"0x42.1i8", nullopt},  // hex
-      // {"0o42.1i8", nullopt},  // oct
-      // {"0b42.1i8", nullopt},  // binary
+      // invalid decimal
+      {"42.1i8", nullopt},    // decimal
+      {"0x42.1i8", nullopt},  // hex
+      {"0o42.1i8", nullopt},  // oct
+      {"0b42.1i8", nullopt},  // binary
 
       // max
       {"127i8", 127},        // decimal
@@ -280,15 +286,11 @@ TEST_CASE("i16 literal conversions", "[types][i16]") {
       {"0xZi16", nullopt},  // hex
       {"0oZi16", nullopt},  // oct
       {"0bZi16", nullopt},  // binary
-      // invalid character
-      // TODO(dpemmons): std::from_chars will convert these. we could test for
-      // them in the literal conversion function, but it'd be cheaper if the
-      // lexer just never produces them, so verify that first before handling
-      // these.
-      // {"42.1i16", nullopt},    // decimal
-      // {"0x42.1i16", nullopt},  // hex
-      // {"0o42.1i16", nullopt},  // oct
-      // {"0b42.1i16", nullopt},  // binary
+      // invalid decimal
+      {"42.1i16", nullopt},    // decimal
+      {"0x42.1i16", nullopt},  // hex
+      {"0o42.1i16", nullopt},  // oct
+      {"0b42.1i16", nullopt},  // binary
 
       // max
       {"32767i16", 32767},              // decimal
@@ -388,15 +390,11 @@ TEST_CASE("i32 literal conversions", "[types][i32]") {
       {"0xZi32", nullopt},  // hex
       {"0oZi32", nullopt},  // oct
       {"0bZi32", nullopt},  // binary
-      // invalid character
-      // TODO(dpemmons): std::from_chars will convert these. we could test for
-      // them in the literal conversion function, but it'd be cheaper if the
-      // lexer just never produces them, so verify that first before handling
-      // these.
-      // {"42.1i32", nullopt},    // decimal
-      // {"0x42.1i32", nullopt},  // hex
-      // {"0o42.1i32", nullopt},  // oct
-      // {"0b42.1i32", nullopt},  // binary
+      // invalid decimal
+      {"42.1i32", nullopt},    // decimal
+      {"0x42.1i32", nullopt},  // hex
+      {"0o42.1i32", nullopt},  // oct
+      {"0b42.1i32", nullopt},  // binary
 
       // max
       {"2147483647i32", 2147483647},                         // decimal
@@ -496,15 +494,11 @@ TEST_CASE("i64 literal conversions", "[types][i64]") {
       {"0xZi64", nullopt},  // hex
       {"0oZi64", nullopt},  // oct
       {"0bZi64", nullopt},  // binary
-      // invalid character
-      // TODO(dpemmons): std::from_chars will convert these. we could test for
-      // them in the literal conversion function, but it'd be cheaper if the
-      // lexer just never produces them, so verify that first before handling
-      // these.
-      // {"42.1i64", nullopt},    // decimal
-      // {"0x42.1i64", nullopt},  // hex
-      // {"0o42.1i64", nullopt},  // oct
-      // {"0b42.1i64", nullopt},  // binary
+      // invalid decimal
+      {"42.1i64", nullopt},    // decimal
+      {"0x42.1i64", nullopt},  // hex
+      {"0o42.1i64", nullopt},  // oct
+      {"0b42.1i64", nullopt},  // binary
 
       // max
       {"9223372036854775807i64", 9223372036854775807},      // decimal
@@ -607,15 +601,11 @@ TEST_CASE("u8 literal conversions", "[types][u8]") {
       {"0xZu8", nullopt},  // hex
       {"0oZu8", nullopt},  // oct
       {"0bZu8", nullopt},  // binary
-      // invalid character
-      // TODO(dpemmons): std::from_chars will convert these. we could test for
-      // them in the literal conversion function, but it'd be cheaper if the
-      // lexer just never produces them, so verify that first before handling
-      // these.
-      // {"42.1u8", nullopt},    // decimal
-      // {"0x42.1u8", nullopt},  // hex
-      // {"0o42.1u8", nullopt},  // oct
-      // {"0b42.1u8", nullopt},  // binary
+      // invalid decimal
+      {"42.1u8", nullopt},    // decimal
+      {"0x42.1u8", nullopt},  // hex
+      {"0o42.1u8", nullopt},  // oct
+      {"0b42.1u8", nullopt},  // binary
 
       // max
       {"255u8", 255},         // decimal
@@ -716,15 +706,11 @@ TEST_CASE("u16 literal conversions", "[types][u16]") {
       {"0xZu16", nullopt},  // hex
       {"0oZu16", nullopt},  // oct
       {"0bZu16", nullopt},  // binary
-                            // invalid character
-      // TODO(dpemmons): std::from_chars will convert these. we could test for
-      // them in the literal conversion function, but it'd be cheaper if the
-      // lexer just never produces them, so verify that first before handling
-      // these.
-      // {"42.1u16", nullopt},    // decimal
-      // {"0x42.1u16", nullopt},  // hex
-      // {"0o42.1u16", nullopt},  // oct
-      // {"0b42.1u16", nullopt},  // binary
+      // invalid decimal
+      {"42.1u16", nullopt},    // decimal
+      {"0x42.1u16", nullopt},  // hex
+      {"0o42.1u16", nullopt},  // oct
+      {"0b42.1u16", nullopt},  // binary
 
       // max
       {"32767u16", 32767},              // decimal
@@ -825,15 +811,11 @@ TEST_CASE("u32 literal conversions", "[types][u32]") {
       {"0xZu32", nullopt},  // hex
       {"0oZu32", nullopt},  // oct
       {"0bZu32", nullopt},  // binary
-      // invalid character
-      // TODO(dpemmons): std::from_chars will convert these. we could test for
-      // them in the literal conversion function, but it'd be cheaper if the
-      // lexer just never produces them, so verify that first before handling
-      // these.
-      // {"42.1u32", nullopt},    // decimal
-      // {"0x42.1u32", nullopt},  // hex
-      // {"0o42.1u32", nullopt},  // oct
-      // {"0b42.1u32", nullopt},  // binary
+      // invalid decimal
+      {"42.1u32", nullopt},    // decimal
+      {"0x42.1u32", nullopt},  // hex
+      {"0o42.1u32", nullopt},  // oct
+      {"0b42.1u32", nullopt},  // binary
 
       // max
       {"2147483647u32", 2147483647},                         // decimal
@@ -934,15 +916,11 @@ TEST_CASE("u64 literal conversions", "[types][u64]") {
       {"0xZu64", nullopt},  // hex
       {"0oZu64", nullopt},  // oct
       {"0bZu64", nullopt},  // binary
-      // invalid character
-      // TODO(dpemmons): std::from_chars will convert these. we could test for
-      // them in the literal conversion function, but it'd be cheaper if the
-      // lexer just never produces them, so verify that first before handling
-      // these.
-      // {"42.1u64", nullopt},    // decimal
-      // {"0x42.1u64", nullopt},  // hex
-      // {"0o42.1u64", nullopt},  // oct
-      // {"0b42.1u64", nullopt},  // binary
+      // invalid decimal
+      {"42.1u64", nullopt},    // decimal
+      {"0x42.1u64", nullopt},  // hex
+      {"0o42.1u64", nullopt},  // oct
+      {"0b42.1u64", nullopt},  // binary
 
       // max
       {"18446744073709551615u64", 18446744073709551615},      // decimal

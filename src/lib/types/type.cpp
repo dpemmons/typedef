@@ -210,7 +210,9 @@ static std::unique_ptr<INT_TYPE> ConvertIntChars(std::string_view literal,
   // https://kholdstare.github.io/technical/2020/05/26/faster-integer-parsing.html
   auto result = std::from_chars(literal.begin(), literal.end(), value, base);
 
-  if (result.ec == std::errc()) {
+  bool ended_early = result.ptr != literal.end();
+
+  if (result.ec == std::errc() && !ended_early) {
     return std::make_unique<INT_TYPE>(value);
   } else {
     return nullptr;

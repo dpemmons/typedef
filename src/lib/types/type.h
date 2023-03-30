@@ -37,23 +37,6 @@ class Type {
 
   virtual bool HasValue() const { return false; }
 
-  // static Type CreateBOOL();
-  // static Type CreateCHAR();
-  // static Type CreateF32();
-  // static Type CreateF64();
-
-  // static Type CreateI8();
-  // static Type CreateI16();
-  // static Type CreateI32();
-  // static Type CreateI64();
-  // static Type CreateI128();
-  // static Type CreateU8();
-  // static Type CreateU16();
-  // static Type CreateU32();
-  // static Type CreateU64();
-  // static Type CreateU128();
-  // static Type CreateFromLiteral(const std::string& str);
-
   // bool IsUnknown() const;
 
   // bool IsBool() const;
@@ -312,7 +295,7 @@ class U8 : public SignedInteger {
 
  protected:
   std::optional<uint8_t> val_;
-  static constexpr std::string_view typename_ = std::string_view("i8", 2);
+  static constexpr std::string_view typename_ = std::string_view("u8", 2);
 };
 
 class U16 : public SignedInteger {
@@ -332,7 +315,7 @@ class U16 : public SignedInteger {
 
  protected:
   std::optional<uint16_t> val_;
-  static constexpr std::string_view typename_ = std::string_view("i16", 3);
+  static constexpr std::string_view typename_ = std::string_view("u16", 3);
 };
 
 class U32 : public SignedInteger {
@@ -352,7 +335,7 @@ class U32 : public SignedInteger {
 
  protected:
   std::optional<uint32_t> val_;
-  static constexpr std::string_view typename_ = std::string_view("i32", 3);
+  static constexpr std::string_view typename_ = std::string_view("u32", 3);
 };
 
 class U64 : public SignedInteger {
@@ -372,7 +355,7 @@ class U64 : public SignedInteger {
 
  protected:
   std::optional<uint64_t> val_;
-  static constexpr std::string_view typename_ = std::string_view("i64", 3);
+  static constexpr std::string_view typename_ = std::string_view("u64", 3);
 };
 
 }  // namespace types
