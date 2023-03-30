@@ -122,6 +122,11 @@ TEST_CASE("i8 literal conversions", "[types][i8]") {
       {"0o", nullopt},  // oct
       {"0b", nullopt},  // binary
 
+      // wrong suffix (should fail)
+      // this is passing because from_chars ignores non-numbers at the end.
+      // should be able to fix using result.ptr ?
+      // {"42i16", nullopt},  // decimal
+
       // suffix
       {"42i8", 42},        // decimal
       {"0x2Ai8", 42},      // hex

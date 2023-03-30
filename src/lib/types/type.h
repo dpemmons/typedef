@@ -152,42 +152,44 @@ class Float : public Scalar {
  protected:
 };
 
-class Float32 : public Float {
+class F32 : public Float {
  public:
-  Float32(float val) : Float(), val_(val){};
+  F32(float val) : Float(), val_(val){};
 
-  std::string_view TypeName() const override;
+  std::string_view TypeName() const override { return typename_; }
 
   bool IsF32() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<float> Value() const { return val_; }
 
   static bool LiteralHasSuffix(std::string_view literal);
-  static std::unique_ptr<Float32> FromLiteral(std::string_view literal);
+  static std::unique_ptr<F32> FromLiteral(std::string_view literal);
 
   virtual void print(std::ostream& os) const override;
 
  protected:
   std::optional<float> val_;
+  static constexpr std::string_view typename_ = std::string_view("f32", 3);
 };
 
-class Float64 : public Float {
+class F64 : public Float {
  public:
-  Float64(double val) : Float(), val_(val){};
+  F64(double val) : Float(), val_(val){};
 
-  std::string_view TypeName() const override;
+  std::string_view TypeName() const override { return typename_; }
 
   bool IsF64() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<double> Value() const { return val_; }
 
   static bool LiteralHasSuffix(std::string_view literal);
-  static std::unique_ptr<Float64> FromLiteral(std::string_view literal);
+  static std::unique_ptr<F64> FromLiteral(std::string_view literal);
 
   virtual void print(std::ostream& os) const override;
 
  protected:
   std::optional<double> val_;
+  static constexpr std::string_view typename_ = std::string_view("f64", 3);
 };
 
 class Integer : public Scalar {
@@ -208,26 +210,29 @@ class I8 : public SignedInteger {
  public:
   I8(int8_t val) : SignedInteger(), val_(val){};
 
-  std::string_view TypeName() const override;
+  std::string_view TypeName() const override { return typename_; }
 
   bool IsI8() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
   std::optional<int8_t> Value() const { return val_; }
 
+  // TODO(dpemmons) do we need this?
   static bool LiteralHasSuffix(std::string_view literal);
+
   static std::unique_ptr<I8> FromLiteral(std::string_view literal);
 
   virtual void print(std::ostream& os) const override;
 
  protected:
   std::optional<int8_t> val_;
+  static constexpr std::string_view typename_ = std::string_view("i8", 2);
 };
 
 class I16 : public SignedInteger {
  public:
   I16(int16_t val) : SignedInteger(), val_(val){};
 
-  std::string_view TypeName() const override;
+  std::string_view TypeName() const override { return typename_; }
 
   bool IsI16() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
@@ -240,13 +245,14 @@ class I16 : public SignedInteger {
 
  protected:
   std::optional<int16_t> val_;
+  static constexpr std::string_view typename_ = std::string_view("i16", 3);
 };
 
 class I32 : public SignedInteger {
  public:
   I32(int32_t val) : SignedInteger(), val_(val){};
 
-  std::string_view TypeName() const override;
+  std::string_view TypeName() const override { return typename_; }
 
   bool IsI32() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
@@ -259,13 +265,14 @@ class I32 : public SignedInteger {
 
  protected:
   std::optional<int32_t> val_;
+  static constexpr std::string_view typename_ = std::string_view("i32", 3);
 };
 
 class I64 : public SignedInteger {
  public:
   I64(int64_t val) : SignedInteger(), val_(val){};
 
-  std::string_view TypeName() const override;
+  std::string_view TypeName() const override { return typename_; }
 
   bool IsI64() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
@@ -278,6 +285,7 @@ class I64 : public SignedInteger {
 
  protected:
   std::optional<int64_t> val_;
+  static constexpr std::string_view typename_ = std::string_view("i64", 3);
 };
 
 class UnsignedInteger : public Integer {
@@ -291,7 +299,7 @@ class U8 : public SignedInteger {
  public:
   U8(uint8_t val) : SignedInteger(), val_(val){};
 
-  std::string_view TypeName() const override;
+  std::string_view TypeName() const override { return typename_; }
 
   bool IsU8() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
@@ -304,13 +312,14 @@ class U8 : public SignedInteger {
 
  protected:
   std::optional<uint8_t> val_;
+  static constexpr std::string_view typename_ = std::string_view("i8", 2);
 };
 
 class U16 : public SignedInteger {
  public:
   U16(uint16_t val) : SignedInteger(), val_(val){};
 
-  std::string_view TypeName() const override;
+  std::string_view TypeName() const override { return typename_; }
 
   bool IsU16() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
@@ -323,13 +332,14 @@ class U16 : public SignedInteger {
 
  protected:
   std::optional<uint16_t> val_;
+  static constexpr std::string_view typename_ = std::string_view("i16", 3);
 };
 
 class U32 : public SignedInteger {
  public:
   U32(uint32_t val) : SignedInteger(), val_(val){};
 
-  std::string_view TypeName() const override;
+  std::string_view TypeName() const override { return typename_; }
 
   bool IsU32() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
@@ -342,13 +352,14 @@ class U32 : public SignedInteger {
 
  protected:
   std::optional<uint32_t> val_;
+  static constexpr std::string_view typename_ = std::string_view("i32", 3);
 };
 
 class U64 : public SignedInteger {
  public:
   U64(uint64_t val) : SignedInteger(), val_(val){};
 
-  std::string_view TypeName() const override;
+  std::string_view TypeName() const override { return typename_; }
 
   bool IsU64() const override { return true; }
   bool HasValue() const override { return val_.has_value(); }
@@ -361,6 +372,7 @@ class U64 : public SignedInteger {
 
  protected:
   std::optional<uint64_t> val_;
+  static constexpr std::string_view typename_ = std::string_view("i64", 3);
 };
 
 }  // namespace types

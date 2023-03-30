@@ -132,33 +132,70 @@ void Char::print(std::ostream& os) const {
 }
 
 // ----------------------------------------------------------------------------
-// Float32
+// F32
 // ----------------------------------------------------------------------------
-std::string_view Float32::TypeName() const { return "f32"; }
-
-bool Float32::LiteralHasSuffix(std::string_view literal) {
-  return endsWith(literal, "f32");
+bool F32::LiteralHasSuffix(std::string_view literal) {
+  return endsWith(literal, F32::typename_);
 }
 
-std::unique_ptr<Float32> Float32::FromLiteral(std::string_view literal) {}
+std::unique_ptr<F32> F32::FromLiteral(std::string_view literal) {
+  // chop off the suffix
+  if (LiteralHasSuffix(literal)) {
+    literal.remove_suffix(typename_.size());
+  }
 
-void Float32::print(std::ostream& os) const { typePrint<Float32>(os, *this); }
+  // chop off leading and trailing underscores
+  literal.remove_prefix(
+      std::min(literal.find_first_not_of("_"), literal.size()));
+  literal.remove_suffix(literal.size() - literal.find_last_not_of("_") - 1);
 
-// ----------------------------------------------------------------------------
-// Float64
-// ----------------------------------------------------------------------------
-std::string_view Float64::TypeName() const { return "f64"; }
+  // If there are any underscores left, we have to handle those by creating a
+  // temporary string.
+  if (literal.find("_") != std::string_view::npos) {
+    std::string temp;
+    temp.reserve(literal.size());
+    for (auto c : literal) {
+      if (c != '_') {
+        temp += c;
+      }
+    }
+    literal = temp;
+    float value = 0;
+    auto result = std::from_chars(literal.begin(), literal.end(), value);
 
-bool Float64::LiteralHasSuffix(std::string_view literal) {
-  return endsWith(literal, "f64");
+    if (result.ec == std::errc()) {
+      return std::make_unique<F32>(value);
+    } else {
+      return nullptr;
+    }
+  } else {
+    float value = 0;
+    auto result = std::from_chars(literal.begin(), literal.end(), value);
+
+    if (result.ec == std::errc()) {
+      return std::make_unique<F32>(value);
+    } else {
+      return nullptr;
+    }
+  }
+  abort();
 }
 
-std::unique_ptr<Float64> Float64::FromLiteral(std::string_view literal) {
+void F32::print(std::ostream& os) const { typePrint<F32>(os, *this); }
+
+// ----------------------------------------------------------------------------
+// F64
+// ----------------------------------------------------------------------------
+bool F64::LiteralHasSuffix(std::string_view literal) {
+  return endsWith(literal, F64::typename_);
+}
+
+std::unique_ptr<F64> F64::FromLiteral(std::string_view literal) {
   if (LiteralHasSuffix(literal)) {
   }
 }
 
-void Float64::print(std::ostream& os) const { typePrint<Float64>(os, *this); }
+void F64::print(std::ostream& os) const { typePrint<F64>(os, *this); }
 
 // ----------------------------------------------------------------------------
 // Integer helpers
@@ -181,10 +218,11 @@ static std::unique_ptr<INT_TYPE> ConvertIntChars(std::string_view literal,
 }
 
 template <typename INT_TYPE, typename CPP_TYPE>
-static std::unique_ptr<INT_TYPE> IntFromLiteral(std::string_view literal) {
+static std::unique_ptr<INT_TYPE> IntFromLiteral(std::string_view literal,
+                                                std::string_view suffix) {
   // chop off the suffix
   if (INT_TYPE::LiteralHasSuffix(literal)) {
-    literal.remove_suffix(2);
+    literal.remove_suffix(suffix.size());
   }
 
   // chop off (but remember) prefix
@@ -228,14 +266,12 @@ static std::unique_ptr<INT_TYPE> IntFromLiteral(std::string_view literal) {
 // ----------------------------------------------------------------------------
 // I8
 // ----------------------------------------------------------------------------
-std::string_view I8::TypeName() const { return "i8"; }
-
 bool I8::LiteralHasSuffix(std::string_view literal) {
-  return endsWith(literal, "i8");
+  return endsWith(literal, I8::typename_);
 }
 
 std::unique_ptr<I8> I8::FromLiteral(std::string_view literal) {
-  return IntFromLiteral<I8, int8_t>(literal);
+  return IntFromLiteral<I8, int8_t>(literal, I8::typename_);
 }
 
 void I8::print(std::ostream& os) const { typePrint<I8>(os, *this); }
@@ -243,14 +279,12 @@ void I8::print(std::ostream& os) const { typePrint<I8>(os, *this); }
 // ----------------------------------------------------------------------------
 // I16
 // ----------------------------------------------------------------------------
-std::string_view I16::TypeName() const { return "i16"; }
-
 bool I16::LiteralHasSuffix(std::string_view literal) {
-  return endsWith(literal, "i16");
+  return endsWith(literal, I16::typename_);
 }
 
 std::unique_ptr<I16> I16::FromLiteral(std::string_view literal) {
-  return IntFromLiteral<I16, int16_t>(literal);
+  return IntFromLiteral<I16, int16_t>(literal, I16::typename_);
 }
 
 void I16::print(std::ostream& os) const { typePrint<I16>(os, *this); }
@@ -258,14 +292,12 @@ void I16::print(std::ostream& os) const { typePrint<I16>(os, *this); }
 // ----------------------------------------------------------------------------
 // I32
 // ----------------------------------------------------------------------------
-std::string_view I32::TypeName() const { return "i32"; }
-
 bool I32::LiteralHasSuffix(std::string_view literal) {
-  return endsWith(literal, "i32");
+  return endsWith(literal, I32::typename_);
 }
 
 std::unique_ptr<I32> I32::FromLiteral(std::string_view literal) {
-  return IntFromLiteral<I32, int32_t>(literal);
+  return IntFromLiteral<I32, int32_t>(literal, I32::typename_);
 }
 
 void I32::print(std::ostream& os) const { typePrint<I32>(os, *this); }
@@ -273,14 +305,12 @@ void I32::print(std::ostream& os) const { typePrint<I32>(os, *this); }
 // ----------------------------------------------------------------------------
 // I64
 // ----------------------------------------------------------------------------
-std::string_view I64::TypeName() const { return "i64"; }
-
 bool I64::LiteralHasSuffix(std::string_view literal) {
-  return endsWith(literal, "i64");
+  return endsWith(literal, I64::typename_);
 }
 
 std::unique_ptr<I64> I64::FromLiteral(std::string_view literal) {
-  return IntFromLiteral<I64, int64_t>(literal);
+  return IntFromLiteral<I64, int64_t>(literal, I64::typename_);
 }
 
 void I64::print(std::ostream& os) const { typePrint<I64>(os, *this); }
@@ -288,14 +318,12 @@ void I64::print(std::ostream& os) const { typePrint<I64>(os, *this); }
 // ----------------------------------------------------------------------------
 // U8
 // ----------------------------------------------------------------------------
-std::string_view U8::TypeName() const { return "u8"; }
-
 bool U8::LiteralHasSuffix(std::string_view literal) {
-  return endsWith(literal, "u8");
+  return endsWith(literal, U8::typename_);
 }
 
 std::unique_ptr<U8> U8::FromLiteral(std::string_view literal) {
-  return IntFromLiteral<U8, uint8_t>(literal);
+  return IntFromLiteral<U8, uint8_t>(literal, U8::typename_);
 }
 
 void U8::print(std::ostream& os) const { typePrint<U8>(os, *this); }
@@ -303,14 +331,12 @@ void U8::print(std::ostream& os) const { typePrint<U8>(os, *this); }
 // ----------------------------------------------------------------------------
 // U16
 // ----------------------------------------------------------------------------
-std::string_view U16::TypeName() const { return "u16"; }
-
 bool U16::LiteralHasSuffix(std::string_view literal) {
-  return endsWith(literal, "u16");
+  return endsWith(literal, U16::typename_);
 }
 
 std::unique_ptr<U16> U16::FromLiteral(std::string_view literal) {
-  return IntFromLiteral<U16, uint16_t>(literal);
+  return IntFromLiteral<U16, uint16_t>(literal, U16::typename_);
 }
 
 void U16::print(std::ostream& os) const { typePrint<U16>(os, *this); }
@@ -318,14 +344,12 @@ void U16::print(std::ostream& os) const { typePrint<U16>(os, *this); }
 // ----------------------------------------------------------------------------
 // U32
 // ----------------------------------------------------------------------------
-std::string_view U32::TypeName() const { return "u32"; }
-
 bool U32::LiteralHasSuffix(std::string_view literal) {
-  return endsWith(literal, "u32");
+  return endsWith(literal, U32::typename_);
 }
 
 std::unique_ptr<U32> U32::FromLiteral(std::string_view literal) {
-  return IntFromLiteral<U32, uint32_t>(literal);
+  return IntFromLiteral<U32, uint32_t>(literal, U32::typename_);
 }
 
 void U32::print(std::ostream& os) const { typePrint<U32>(os, *this); }
@@ -333,14 +357,12 @@ void U32::print(std::ostream& os) const { typePrint<U32>(os, *this); }
 // ----------------------------------------------------------------------------
 // U64
 // ----------------------------------------------------------------------------
-std::string_view U64::TypeName() const { return "u64"; }
-
 bool U64::LiteralHasSuffix(std::string_view literal) {
-  return endsWith(literal, "u64");
+  return endsWith(literal, U64::typename_);
 }
 
 std::unique_ptr<U64> U64::FromLiteral(std::string_view literal) {
-  return IntFromLiteral<U64, uint64_t>(literal);
+  return IntFromLiteral<U64, uint64_t>(literal, U64::typename_);
 }
 
 void U64::print(std::ostream& os) const { typePrint<U64>(os, *this); }
