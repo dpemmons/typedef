@@ -88,5 +88,47 @@ TEST_CASE("f32 literal conversions", "[types][f32]") {
   }
 }
 
+TEST_CASE("f64 literal conversions", "[types][f64]") {
+  vector<pair<string, optional<double>>> f64_test_cases = {
+      // no suffix
+      {"3.14", 3.14},
+
+      // suffix
+      {"3.14f64", 3.14},
+
+      // negative
+      {"-3.14f64", -3.14},
+
+      // exponent
+      {"1.0000000000000003e39f64", 1.0000000000000003e39},
+      // positive exponent
+      {"1.0000000000000003e39f64", 1.0000000000000003e39},
+      // negative exponent
+      {"1.0000000000000003e-39f64", 1.0000000000000003e-39},
+
+      // exponents without suffix
+      {"1.0000000000000003e39", 1.0000000000000003e39},
+      {"1.0000000000000003e+39", 1.0000000000000003e39},
+      {"1.0000000000000003e-39", 1.0000000000000003e-39},
+  };
+  for (auto p : f64_test_cases) {
+    if (p.second.has_value()) {
+      DYNAMIC_SECTION(p.first << " -> " << p.second.value()) {
+        auto actual = F64::FromLiteral(p.first);
+        REQUIRE(actual != nullptr);
+        REQUIRE(actual->IsF64());
+        REQUIRE(actual->HasValue());
+        REQUIRE(actual->Value().has_value());
+        REQUIRE(actual->Value().value() == p.second.value());
+      }
+    } else {
+      DYNAMIC_SECTION(p.first << " does not parse") {
+        auto actual = F64::FromLiteral(p.first);
+        REQUIRE(actual == nullptr);
+      }
+    }
+  }
+}
+
 }  // namespace types
 }  // namespace td

@@ -132,16 +132,28 @@ void Char::print(std::ostream& os) const {
 }
 
 // ----------------------------------------------------------------------------
-// F32
+// Float
 // ----------------------------------------------------------------------------
-bool F32::LiteralHasSuffix(std::string_view literal) {
-  return endsWith(literal, F32::typename_);
+template <typename FLOAT_TYPE, typename CPP_TYPE>
+static std::unique_ptr<FLOAT_TYPE> ConvertFloatChars(std::string_view literal) {
+  CPP_TYPE value = 0;
+  auto result = std::from_chars(literal.begin(), literal.end(), value);
+
+  bool ended_early = result.ptr != literal.end();
+
+  if (result.ec == std::errc() && !ended_early) {
+    return std::make_unique<FLOAT_TYPE>(value);
+  } else {
+    return nullptr;
+  }
 }
 
-std::unique_ptr<F32> F32::FromLiteral(std::string_view literal) {
+template <typename FLOAT_TYPE, typename CPP_TYPE>
+static std::unique_ptr<FLOAT_TYPE> FloatFromLiteral(std::string_view literal,
+                                                    std::string_view suffix) {
   // chop off the suffix
-  if (LiteralHasSuffix(literal)) {
-    literal.remove_suffix(typename_.size());
+  if (endsWith(literal, suffix)) {
+    literal.remove_suffix(suffix.size());
   }
 
   // chop off leading and trailing underscores
@@ -159,26 +171,21 @@ std::unique_ptr<F32> F32::FromLiteral(std::string_view literal) {
         temp += c;
       }
     }
-    literal = temp;
-    float value = 0;
-    auto result = std::from_chars(literal.begin(), literal.end(), value);
-
-    if (result.ec == std::errc()) {
-      return std::make_unique<F32>(value);
-    } else {
-      return nullptr;
-    }
+    return ConvertFloatChars<FLOAT_TYPE, CPP_TYPE>(temp);
   } else {
-    float value = 0;
-    auto result = std::from_chars(literal.begin(), literal.end(), value);
-
-    if (result.ec == std::errc()) {
-      return std::make_unique<F32>(value);
-    } else {
-      return nullptr;
-    }
+    return ConvertFloatChars<FLOAT_TYPE, CPP_TYPE>(literal);
   }
-  abort();
+}
+
+// ----------------------------------------------------------------------------
+// F32
+// ----------------------------------------------------------------------------
+bool F32::LiteralHasSuffix(std::string_view literal) {
+  return endsWith(literal, F32::typename_);
+}
+
+std::unique_ptr<F32> F32::FromLiteral(std::string_view literal) {
+  return FloatFromLiteral<F32, float>(literal, F32::typename_);
 }
 
 void F32::print(std::ostream& os) const { typePrint<F32>(os, *this); }
@@ -191,8 +198,7 @@ bool F64::LiteralHasSuffix(std::string_view literal) {
 }
 
 std::unique_ptr<F64> F64::FromLiteral(std::string_view literal) {
-  if (LiteralHasSuffix(literal)) {
-  }
+  return FloatFromLiteral<F64, double>(literal, F64::typename_);
 }
 
 void F64::print(std::ostream& os) const { typePrint<F64>(os, *this); }
@@ -223,7 +229,7 @@ template <typename INT_TYPE, typename CPP_TYPE>
 static std::unique_ptr<INT_TYPE> IntFromLiteral(std::string_view literal,
                                                 std::string_view suffix) {
   // chop off the suffix
-  if (INT_TYPE::LiteralHasSuffix(literal)) {
+  if (endsWith(literal, suffix)) {
     literal.remove_suffix(suffix.size());
   }
 

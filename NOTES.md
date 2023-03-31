@@ -13,8 +13,8 @@ Items in ***bold*** are in-progress.
   - [ ] ***parse simple value statements***
     - [x] booleans
     - [x] chars
-    - [ ] ***integers***
-    - [ ] floats
+    - [x] integers
+    - [x] floats
     - [ ] strings
     - [ ] raw strings
     - [ ] byte literals
