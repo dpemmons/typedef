@@ -342,6 +342,8 @@ void ProcessValueDefinitions(
           builder.AddSymbol(
               std::make_unique<Symbol>(std::move(name), std::move(val)));
         }
+      } else {
+        builder.AddError(ErrorFromContext(vd->type_(), ParserErrorInfo::UNKNOWN_TYPE));
       }
 
       // TODO: type inference.

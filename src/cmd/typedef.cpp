@@ -7,6 +7,7 @@
 
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"
+#include "fmt/ostream.h"
 
 int main(int argc, const char** argv) {
   // Parse args, or die trying.
@@ -26,6 +27,30 @@ int main(int argc, const char** argv) {
 
   auto parser = td::Parse(inputStream);
 
-  fmt::print("Has errors: {}\n", parser->HasErrors());
+  if (parser->HasErrors()) {
+    for (auto err : parser->GetErrors()) {
+      inputStream.clear();
+      inputStream.seekg(std::ios::beg);
+      std::string line;
+
+      fmt::print(stderr, "{}:{}:{}: error: {}\n", args.getInpuFilename(),
+                 err.line, err.line_offset, err.ErrorTypeToString());
+
+      for (int l = 0; std::getline(inputStream, line); l++) {
+        if (l == err.line - 1) {
+          fmt::print(stderr, "{}\n", line);
+          fmt::print(stderr, "{: >{}}{:^>{}}\n", "", err.line_offset, "",
+                     err.length);
+        }
+      }
+    }
+    return 1;  // error.
+  }
+
+  for (int i = 0; i < parser->GetSymbols(); i++) {
+    auto symbol = parser->GetSymbol(i);
+    fmt::print("Symbol: {}\n", fmt::streamed(*symbol));
+  }
+
   return 0;
 }

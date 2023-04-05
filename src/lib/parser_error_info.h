@@ -61,8 +61,9 @@ struct ParserErrorInfo {
   friend std::ostream &operator<<(std::ostream &os,
                                   const ParserErrorInfo &value);
 
- private:
   const char *ErrorTypeToString() const;
+
+ private:
 };
 
 class PEIBuilder {

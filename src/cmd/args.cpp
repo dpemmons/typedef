@@ -7,8 +7,8 @@
 std::variant<Args, int> Args::ParseArgs(int argc, const char* argv[]) {
   Args args;
 
-  CLI::App app{"zbuild: hermetic, cross platform builds."};
-  args.filename_ = "BUILD.zb";
+  CLI::App app{"typedef: a data serizliation, interface definition and configuration language."};
+  args.filename_ = "input.td";
   app.add_option("1, -f,--file", args.filename_, "The input file.");
   app.add_flag("-v,--verbose", args.verbose_, "Verbose.");
 
