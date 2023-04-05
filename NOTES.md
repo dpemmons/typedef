@@ -10,11 +10,12 @@ Items in ***bold*** are in-progress.
   - [x] Use error matching in unit tests
   - [x] proper(ish) debug makefile targets
   - [ ] parse module import statements
-  - [ ] ***parse simple value statements***
-    - [x] booleans
-    - [x] chars
-    - [x] integers
-    - [x] floats
+  - [ ] ***parse primitive value statements***
+    - [x] scalars
+      - [x] booleans
+      - [x] chars
+      - [x] integers
+      - [x] floats
     - [ ] strings
     - [ ] raw strings
     - [ ] byte literals
@@ -23,7 +24,9 @@ Items in ***bold*** are in-progress.
   - [ ] parse a very basic struct statement
 
 - [ ] Command line util basics
+  - [x] write basic errors
   - [ ] print default formatting to stdout
+    - [ ] scalars
   - [ ] write and read a baisc serialized blob, and print to stdout
   - [ ] print a basic struct ito json stdout
   - [ ] input json to basic struct

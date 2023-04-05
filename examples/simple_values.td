@@ -1,4 +1,4 @@
 typedef=alpha;
 
-// This will cause an error.
-ValueA : int32 = 8;
+ValueA : i32 = 8;
+ValB : char = '\u{1F600}'; // Smiling Face with Smiling Eyes

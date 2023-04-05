@@ -122,10 +122,10 @@ std::unique_ptr<Char> Char::FromLiteral(std::string_view literal) {
 
 void Char::print(std::ostream& os) const {
   if (!HasValue()) {
-    return fmt::print(os, "{}: undefined", typename_);
+    return fmt::print(os, "{} = undefined", typename_);
   }
   std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
-  return fmt::print(os, "{}: {}", typename_, converter.to_bytes(val_.value()));
+  return fmt::print(os, "{} = {}", typename_, converter.to_bytes(val_.value()));
 }
 
 // ----------------------------------------------------------------------------
