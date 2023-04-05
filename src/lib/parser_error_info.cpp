@@ -328,8 +328,14 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
       return "UNKNOWN_TYPE";
     case TYPE_MISMATCH:
       return "TYPE_MISMATCH";
+    case INVALID_BOOL_LITERAL:
+      return "INVALID_BOOL_LITERAL";
     case INVALID_CHAR_LITERAL:
       return "INVALID_CHAR_LITERAL";
+    case INVALID_FLOAT_LITERAL:
+      return "INVALID_FLOAT_LITERAL";
+    case INVALID_INTEGER_LITERAL:
+      return "INVALID_INTEGER_LITERAL";
     default:
       abort();
   }

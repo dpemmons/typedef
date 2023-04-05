@@ -243,7 +243,9 @@ void ProcessValueDefinitions(
           builder.AddSymbol(
               std::make_unique<Symbol>(std::move(name), std::move(val)));
         } else {
-          // some useful error message here.
+          builder.AddError(
+              ErrorFromContext(vd->value()->literalExpression(),
+                               ParserErrorInfo::INVALID_BOOL_LITERAL));
         }
       } else if (Char::TypeName().compare(typeStr) == 0) {
         auto val = MaybeGetTypeFromLiteralExpression<Char>(
@@ -252,7 +254,9 @@ void ProcessValueDefinitions(
           builder.AddSymbol(
               std::make_unique<Symbol>(std::move(name), std::move(val)));
         } else {
-          // some useful error message here.
+          builder.AddError(
+              ErrorFromContext(vd->value()->literalExpression(),
+                               ParserErrorInfo::INVALID_CHAR_LITERAL));
         }
       } else if (F32::TypeName().compare(typeStr) == 0) {
         auto val = MaybeGetTypeFromLiteralExpression<F32>(
@@ -261,7 +265,9 @@ void ProcessValueDefinitions(
           builder.AddSymbol(
               std::make_unique<Symbol>(std::move(name), std::move(val)));
         } else {
-          // some useful error message here.
+          builder.AddError(
+              ErrorFromContext(vd->value()->literalExpression(),
+                               ParserErrorInfo::INVALID_FLOAT_LITERAL));
         }
       } else if (F64::TypeName().compare(typeStr) == 0) {
         auto val = MaybeGetTypeFromLiteralExpression<F64>(
@@ -270,7 +276,9 @@ void ProcessValueDefinitions(
           builder.AddSymbol(
               std::make_unique<Symbol>(std::move(name), std::move(val)));
         } else {
-          // some useful error message here.
+          builder.AddError(
+              ErrorFromContext(vd->value()->literalExpression(),
+                               ParserErrorInfo::INVALID_FLOAT_LITERAL));
         }
       } else if (I8::TypeName().compare(typeStr) == 0) {
         auto val = MaybeGetTypeFromLiteralExpression<I8>(
@@ -279,7 +287,9 @@ void ProcessValueDefinitions(
           builder.AddSymbol(
               std::make_unique<Symbol>(std::move(name), std::move(val)));
         } else {
-          // some useful error message here.
+          builder.AddError(
+              ErrorFromContext(vd->value()->literalExpression(),
+                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
         }
       } else if (I16::TypeName().compare(typeStr) == 0) {
         auto val = MaybeGetTypeFromLiteralExpression<I16>(
@@ -288,7 +298,9 @@ void ProcessValueDefinitions(
           builder.AddSymbol(
               std::make_unique<Symbol>(std::move(name), std::move(val)));
         } else {
-          // some useful error message here.
+          builder.AddError(
+              ErrorFromContext(vd->value()->literalExpression(),
+                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
         }
       } else if (I32::TypeName().compare(typeStr) == 0) {
         auto val = MaybeGetTypeFromLiteralExpression<I32>(
@@ -297,7 +309,9 @@ void ProcessValueDefinitions(
           builder.AddSymbol(
               std::make_unique<Symbol>(std::move(name), std::move(val)));
         } else {
-          // some useful error message here.
+          builder.AddError(
+              ErrorFromContext(vd->value()->literalExpression(),
+                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
         }
       } else if (I64::TypeName().compare(typeStr) == 0) {
         auto val = MaybeGetTypeFromLiteralExpression<I64>(
@@ -306,7 +320,9 @@ void ProcessValueDefinitions(
           builder.AddSymbol(
               std::make_unique<Symbol>(std::move(name), std::move(val)));
         } else {
-          // some useful error message here.
+          builder.AddError(
+              ErrorFromContext(vd->value()->literalExpression(),
+                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
         }
       } else if (U8::TypeName().compare(typeStr) == 0) {
         auto val = MaybeGetTypeFromLiteralExpression<U8>(
@@ -315,7 +331,9 @@ void ProcessValueDefinitions(
           builder.AddSymbol(
               std::make_unique<Symbol>(std::move(name), std::move(val)));
         } else {
-          // some useful error message here.
+          builder.AddError(
+              ErrorFromContext(vd->value()->literalExpression(),
+                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
         }
       } else if (U16::TypeName().compare(typeStr) == 0) {
         auto val = MaybeGetTypeFromLiteralExpression<U16>(
@@ -324,7 +342,9 @@ void ProcessValueDefinitions(
           builder.AddSymbol(
               std::make_unique<Symbol>(std::move(name), std::move(val)));
         } else {
-          // some useful error message here.
+          builder.AddError(
+              ErrorFromContext(vd->value()->literalExpression(),
+                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
         }
       } else if (U32::TypeName().compare(typeStr) == 0) {
         auto val = MaybeGetTypeFromLiteralExpression<U32>(
@@ -333,7 +353,9 @@ void ProcessValueDefinitions(
           builder.AddSymbol(
               std::make_unique<Symbol>(std::move(name), std::move(val)));
         } else {
-          // some useful error message here.
+          builder.AddError(
+              ErrorFromContext(vd->value()->literalExpression(),
+                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
         }
       } else if (U64::TypeName().compare(typeStr) == 0) {
         auto val = MaybeGetTypeFromLiteralExpression<U64>(
@@ -341,9 +363,14 @@ void ProcessValueDefinitions(
         if (val) {
           builder.AddSymbol(
               std::make_unique<Symbol>(std::move(name), std::move(val)));
+        } else {
+          builder.AddError(
+              ErrorFromContext(vd->value()->literalExpression(),
+                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
         }
       } else {
-        builder.AddError(ErrorFromContext(vd->type_(), ParserErrorInfo::UNKNOWN_TYPE));
+        builder.AddError(
+            ErrorFromContext(vd->type_(), ParserErrorInfo::UNKNOWN_TYPE));
       }
 
       // TODO: type inference.
