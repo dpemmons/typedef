@@ -4,6 +4,7 @@ BASE_BUILD_DIR := ./build
 
 DEBUG_FLAGS := -DDEBUG -g3 -ggdb
 RELEASE_FLAGS := -O2
+DEBUG_LDFLAGS := -ggdb3
 
 GLOBAL_CPPFLAGS := -std=c++17 -w -MMD -MP
 
@@ -125,6 +126,7 @@ test-bin: $(TEST_EXEC)
 
 debug: CXXFLAGS += $(DEBUG_FLAGS)
 debug: CCFLAGS += $(DEBUG_FLAGS)
+debug: LDFLAGS += $(DEBUG_LDFLAGS)
 debug: lib cmd test-bin
 
 release: CXXFLAGS += $(RELEASE_FLAGS)

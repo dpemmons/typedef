@@ -23,6 +23,26 @@
           "ignoreFailures": true
         }
       ],
+    },
+    {
+      "name": "(gdb) Launch Cmd",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceRoot}/build/cmd/typedef",
+      "args": ["./examples/simple_values.td"],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
     }
   ]
 }
