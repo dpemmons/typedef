@@ -18,14 +18,16 @@ int main(int argc, const char** argv) {
   Args args = std::get<Args>(maybeArgs);
 
   std::ifstream inputStream(args.getInpuFilename());
-  if (inputStream.is_open()) {
-    fmt::print("Processing file: {}\n", args.getInpuFilename());
-  } else {
+  if (!inputStream.is_open()) {
     fmt::print("Unable to open file: {}\n", args.getInpuFilename());
-    return 0;
+    return 1;
   }
 
   auto parser = td::Parse(inputStream);
+  if (!parser) {
+    fmt::print("Unknown error.\n");
+    return 1;
+  }
 
   if (parser->HasErrors()) {
     for (auto err : parser->GetErrors()) {

@@ -43,7 +43,8 @@ TEST_CASE("Several valid escaped characters", "[types][char]") {
       // Valid unicode escapes
       {"'\\u{1F600}'", 0x0001F600},   // smiley face
       {"'\\u{01F600}'", 0x0001F600},  // smiley face
-      {"'\\u{A9}'", 0x000000A9}       // copyright
+      {"'\\u{A9}'", 0x000000A9},      // copyright
+      {"'🔥'", U'🔥'} // fire!
   };
   for (auto p : valid_test_cases) {
     DYNAMIC_SECTION(p.first << " -> " << p.second) {

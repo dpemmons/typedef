@@ -127,6 +127,7 @@ class Char : public Scalar {
  protected:
   Char(const Char&) = delete;
 
+  // UTF-32 aka UCS-4.
   std::optional<char32_t> val_;
   static constexpr std::string_view typename_ = std::string_view("char", 4);
 };

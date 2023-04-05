@@ -117,6 +117,15 @@ std::unique_ptr<Char> Char::FromLiteral(std::string_view literal) {
     return std::make_unique<Char>(static_cast<char32_t>(value));
   }
 
+  if (inner.size() > 0) {
+    std::string inner_str(inner);
+    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+    std::u32string str32 = converter.from_bytes(inner_str);
+    if (str32.size() == 1) {
+      return std::make_unique<Char>(str32[0]);
+    }
+  }
+
   return nullptr;
 }
 
@@ -124,6 +133,7 @@ void Char::print(std::ostream& os) const {
   if (!HasValue()) {
     return fmt::print(os, "{} = undefined", typename_);
   }
+  // Convert to UTF-8.
   std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
   return fmt::print(os, "{} = {}", typename_, converter.to_bytes(val_.value()));
 }
