@@ -373,13 +373,7 @@ void ProcessValueDefinitions(
             ErrorFromContext(vd->type_(), ParserErrorInfo::UNKNOWN_TYPE));
       }
 
-      // TODO: type inference.
-
-      //   errors_list->emplace_back(
-      //       ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
-      //                        ParserErrorInfo::TYPE_MISMATCH, s));
-      //   continue;
-      // }
+      // TODO: type inferences.
 
     }  // if valueDefinition
   }
