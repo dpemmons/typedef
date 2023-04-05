@@ -115,6 +115,10 @@ test: CCFLAGS += $(DEBUG_FLAGS)
 test: $(TEST_EXEC)
 	$(TEST_EXEC)
 
+# or run an individual test suite like:
+# test: $(TEST_EXEC)
+# 	$(TEST_EXEC) "[bool]"
+
 lib: $(LIB_STATIC_OBJ)
 cmd: $(CMD_EXEC)
 test-bin: $(TEST_EXEC)

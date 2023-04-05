@@ -34,17 +34,16 @@ bool endsWith(std::string_view str, std::string_view suffix) {
 }
 
 template <typename T>
-void typePrint(std::ostream& os, const T& t) {
+void typePrint(std::ostream& os, const T& t, std::string_view type_name) {
   if (!t.HasValue()) {
-    return fmt::print(os, "{}: undefined", t.TypeName());
+    return fmt::print(os, "{} = undefined", type_name);
   }
-  return fmt::print(os, "{}: {}", t.TypeName(), t.Value().value());
+  return fmt::print(os, "{} = {}", type_name, t.Value().value());
 }
 
 }  // namespace
 
 namespace td {
-namespace types {
 
 std::string Type::ToString() const {
   std::ostringstream o;
@@ -55,8 +54,6 @@ std::string Type::ToString() const {
 // ----------------------------------------------------------------------------
 // Bool
 // ----------------------------------------------------------------------------
-std::string_view Bool::TypeName() const { return "bool"; }
-
 std::unique_ptr<Bool> Bool::FromLiteral(std::string_view literal) {
   if (literal.compare("true") == 0) {
     return std::make_unique<Bool>(true);
@@ -66,13 +63,13 @@ std::unique_ptr<Bool> Bool::FromLiteral(std::string_view literal) {
   return nullptr;
 }
 
-void Bool::print(std::ostream& os) const { typePrint<Bool>(os, *this); }
+void Bool::print(std::ostream& os) const {
+  typePrint<Bool>(os, *this, typename_);
+}
 
 // ----------------------------------------------------------------------------
 // Char
 // ----------------------------------------------------------------------------
-std::string_view Char::TypeName() const { return "char"; }
-
 std::unique_ptr<Char> Char::FromLiteral(std::string_view literal) {
   if (literal.size() < 2 || literal.front() != '\'' || literal.back() != '\'') {
     return nullptr;
@@ -125,10 +122,10 @@ std::unique_ptr<Char> Char::FromLiteral(std::string_view literal) {
 
 void Char::print(std::ostream& os) const {
   if (!HasValue()) {
-    return fmt::print(os, "{}: undefined", TypeName());
+    return fmt::print(os, "{}: undefined", typename_);
   }
   std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
-  return fmt::print(os, "{}: {}", TypeName(), converter.to_bytes(val_.value()));
+  return fmt::print(os, "{}: {}", typename_, converter.to_bytes(val_.value()));
 }
 
 // ----------------------------------------------------------------------------
@@ -188,7 +185,9 @@ std::unique_ptr<F32> F32::FromLiteral(std::string_view literal) {
   return FloatFromLiteral<F32, float>(literal, F32::typename_);
 }
 
-void F32::print(std::ostream& os) const { typePrint<F32>(os, *this); }
+void F32::print(std::ostream& os) const {
+  typePrint<F32>(os, *this, typename_);
+}
 
 // ----------------------------------------------------------------------------
 // F64
@@ -201,7 +200,9 @@ std::unique_ptr<F64> F64::FromLiteral(std::string_view literal) {
   return FloatFromLiteral<F64, double>(literal, F64::typename_);
 }
 
-void F64::print(std::ostream& os) const { typePrint<F64>(os, *this); }
+void F64::print(std::ostream& os) const {
+  typePrint<F64>(os, *this, typename_);
+}
 
 // ----------------------------------------------------------------------------
 // Integer helpers
@@ -282,7 +283,7 @@ std::unique_ptr<I8> I8::FromLiteral(std::string_view literal) {
   return IntFromLiteral<I8, int8_t>(literal, I8::typename_);
 }
 
-void I8::print(std::ostream& os) const { typePrint<I8>(os, *this); }
+void I8::print(std::ostream& os) const { typePrint<I8>(os, *this, typename_); }
 
 // ----------------------------------------------------------------------------
 // I16
@@ -295,7 +296,9 @@ std::unique_ptr<I16> I16::FromLiteral(std::string_view literal) {
   return IntFromLiteral<I16, int16_t>(literal, I16::typename_);
 }
 
-void I16::print(std::ostream& os) const { typePrint<I16>(os, *this); }
+void I16::print(std::ostream& os) const {
+  typePrint<I16>(os, *this, typename_);
+}
 
 // ----------------------------------------------------------------------------
 // I32
@@ -308,7 +311,9 @@ std::unique_ptr<I32> I32::FromLiteral(std::string_view literal) {
   return IntFromLiteral<I32, int32_t>(literal, I32::typename_);
 }
 
-void I32::print(std::ostream& os) const { typePrint<I32>(os, *this); }
+void I32::print(std::ostream& os) const {
+  typePrint<I32>(os, *this, typename_);
+}
 
 // ----------------------------------------------------------------------------
 // I64
@@ -321,7 +326,9 @@ std::unique_ptr<I64> I64::FromLiteral(std::string_view literal) {
   return IntFromLiteral<I64, int64_t>(literal, I64::typename_);
 }
 
-void I64::print(std::ostream& os) const { typePrint<I64>(os, *this); }
+void I64::print(std::ostream& os) const {
+  typePrint<I64>(os, *this, typename_);
+}
 
 // ----------------------------------------------------------------------------
 // U8
@@ -334,7 +341,7 @@ std::unique_ptr<U8> U8::FromLiteral(std::string_view literal) {
   return IntFromLiteral<U8, uint8_t>(literal, U8::typename_);
 }
 
-void U8::print(std::ostream& os) const { typePrint<U8>(os, *this); }
+void U8::print(std::ostream& os) const { typePrint<U8>(os, *this, typename_); }
 
 // ----------------------------------------------------------------------------
 // U16
@@ -347,7 +354,9 @@ std::unique_ptr<U16> U16::FromLiteral(std::string_view literal) {
   return IntFromLiteral<U16, uint16_t>(literal, U16::typename_);
 }
 
-void U16::print(std::ostream& os) const { typePrint<U16>(os, *this); }
+void U16::print(std::ostream& os) const {
+  typePrint<U16>(os, *this, typename_);
+}
 
 // ----------------------------------------------------------------------------
 // U32
@@ -360,7 +369,9 @@ std::unique_ptr<U32> U32::FromLiteral(std::string_view literal) {
   return IntFromLiteral<U32, uint32_t>(literal, U32::typename_);
 }
 
-void U32::print(std::ostream& os) const { typePrint<U32>(os, *this); }
+void U32::print(std::ostream& os) const {
+  typePrint<U32>(os, *this, typename_);
+}
 
 // ----------------------------------------------------------------------------
 // U64
@@ -373,122 +384,8 @@ std::unique_ptr<U64> U64::FromLiteral(std::string_view literal) {
   return IntFromLiteral<U64, uint64_t>(literal, U64::typename_);
 }
 
-void U64::print(std::ostream& os) const { typePrint<U64>(os, *this); }
+void U64::print(std::ostream& os) const {
+  typePrint<U64>(os, *this, typename_);
+}
 
-// Type Type::CreateBOOL() { return Type(Type_::BOOL); }
-// Type Type::CreateCHAR() { return Type(Type_::CHAR); }
-// Type Type::CreateF32() { return Type(Type_::F32); }
-// Type Type::CreateF64() { return Type(Type_::F64); }
-// Type Type::CreateI8() { return Type(Type_::I8); }
-// Type Type::CreateI16() { return Type(Type_::I16); }
-// Type Type::CreateI32() { return Type(Type_::I32); }
-// Type Type::CreateI64() { return Type(Type_::I64); }
-// Type Type::CreateI128() { return Type(Type_::I128); }
-// Type Type::CreateU8() { return Type(Type_::U8); }
-// Type Type::CreateU16() { return Type(Type_::U16); }
-// Type Type::CreateU32() { return Type(Type_::U32); }
-// Type Type::CreateU64() { return Type(Type_::U64); }
-// Type Type::CreateU128() { return Type(Type_::U128); }
-
-// Type Type::CreateFromString(const std::string& str) {
-//   if (str.compare("bool") == 0) {
-//     return CreateBOOL();
-//   } else if (str.compare("char") == 0) {
-//     return CreateCHAR();
-//   } else if (str.compare("f32") == 0) {
-//     return CreateF32();
-//   } else if (str.compare("f64") == 0) {
-//     return CreateF64();
-//   } else if (str.compare("i8") == 0) {
-//     return CreateI8();
-//   } else if (str.compare("i16") == 0) {
-//     return CreateI16();
-//   } else if (str.compare("i32") == 0) {
-//     return CreateI32();
-//   } else if (str.compare("i64") == 0) {
-//     return CreateI64();
-//   } else if (str.compare("i128") == 0) {
-//     return CreateI128();
-//   } else if (str.compare("u8") == 0) {
-//     return CreateU8();
-//   } else if (str.compare("u16") == 0) {
-//     return CreateU16();
-//   } else if (str.compare("u32") == 0) {
-//     return CreateU32();
-//   } else if (str.compare("u64") == 0) {
-//     return CreateU64();
-//   } else if (str.compare("u128") == 0) {
-//     return CreateU128();
-//   } else {
-//     return CreateUnknown();
-//   }
-// };
-
-// bool Type::IsUnknown() const { return type_ == Type_::UNKNOWN; }
-
-// bool Type::IsBool() const { return type_ == Type_::BOOL; }
-// bool Type::IsInteger() const {
-//   return type_ > Type_::INTEGERS_START && type_ < Type_::INTEGERS_END;
-// }
-// bool Type::IsScalar() const {
-//   return type_ > Type_::SCALARS_START && type_ < Type_::SCALARS_END;
-// }
-
-// bool Type::IsBOOL() const { return type_ == Type_::BOOL; }
-// bool Type::IsCHAR() const { return type_ == Type_::CHAR; }
-// bool Type::IsF32() const { return type_ == Type_::F32; }
-// bool Type::IsF64() const { return type_ == Type_::F64; }
-// bool Type::IsI8() const { return type_ == Type_::I8; }
-// bool Type::IsI16() const { return type_ == Type_::I16; }
-// bool Type::IsI32() const { return type_ == Type_::I32; }
-// bool Type::IsI64() const { return type_ == Type_::I64; }
-// bool Type::IsI128() const { return type_ == Type_::I128; }
-// bool Type::IsU8() const { return type_ == Type_::U8; }
-// bool Type::IsU16() const { return type_ == Type_::U16; }
-// bool Type::IsU32() const { return type_ == Type_::U32; }
-// bool Type::IsU64() const { return type_ == Type_::U64; }
-// bool Type::IsU128() const { return type_ == Type_::U128; }
-
-// std::string Type::ToString() const {
-//   switch (type_) {
-//     case Type_::UNKNOWN:
-//       return "unknown";
-//     case Type_::BOOL:
-//       return "bool";
-//     case Type_::CHAR:
-//       return "char";
-//     case Type_::F32:
-//       return "f32";
-//     case Type_::F64:
-//       return "f64";
-//     case Type_::I8:
-//       return "i8";
-//     case Type_::I16:
-//       return "i16";
-//     case Type_::I32:
-//       return "i32";
-//     case Type_::I64:
-//       return "i64";
-//     case Type_::I128:
-//       return "i128";
-//     case Type_::U8:
-//       return "u8";
-//     case Type_::U16:
-//       return "u16";
-//     case Type_::U32:
-//       return "u32";
-//     case Type_::U64:
-//       return "u64";
-//     case Type_::U128:
-//       return "u128";
-//     default:
-//       abort();
-//   }
-// };
-
-// bool operator==(const Type& c1, const Type& c2) { return c1.type_ ==
-// c2.type_; } bool operator!=(const Type& c1, const Type& c2) { return c1.type_
-// != c2.type_; }
-
-}  // namespace types
 }  // namespace td

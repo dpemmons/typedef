@@ -143,8 +143,8 @@ TypedefParser::ItemContext::ItemContext(ParserRuleContext *parent, size_t invoki
   : ParserRuleContext(parent, invokingState) {
 }
 
-TypedefParser::ValueDefinitionsContext* TypedefParser::ItemContext::valueDefinitions() {
-  return getRuleContext<TypedefParser::ValueDefinitionsContext>(0);
+TypedefParser::ValueDefinitionContext* TypedefParser::ItemContext::valueDefinition() {
+  return getRuleContext<TypedefParser::ValueDefinitionContext>(0);
 }
 
 
@@ -174,7 +174,7 @@ TypedefParser::ItemContext* TypedefParser::item() {
   try {
     enterOuterAlt(_localctx, 1);
     setState(44);
-    valueDefinitions();
+    valueDefinition();
    
   }
   catch (RecognitionException &e) {
@@ -186,56 +186,56 @@ TypedefParser::ItemContext* TypedefParser::item() {
   return _localctx;
 }
 
-//----------------- ValueDefinitionsContext ------------------------------------------------------------------
+//----------------- ValueDefinitionContext ------------------------------------------------------------------
 
-TypedefParser::ValueDefinitionsContext::ValueDefinitionsContext(ParserRuleContext *parent, size_t invokingState)
+TypedefParser::ValueDefinitionContext::ValueDefinitionContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-TypedefParser::IdentifierContext* TypedefParser::ValueDefinitionsContext::identifier() {
+TypedefParser::IdentifierContext* TypedefParser::ValueDefinitionContext::identifier() {
   return getRuleContext<TypedefParser::IdentifierContext>(0);
 }
 
-tree::TerminalNode* TypedefParser::ValueDefinitionsContext::COLON() {
+tree::TerminalNode* TypedefParser::ValueDefinitionContext::COLON() {
   return getToken(TypedefParser::COLON, 0);
 }
 
-TypedefParser::Type_Context* TypedefParser::ValueDefinitionsContext::type_() {
+TypedefParser::Type_Context* TypedefParser::ValueDefinitionContext::type_() {
   return getRuleContext<TypedefParser::Type_Context>(0);
 }
 
-tree::TerminalNode* TypedefParser::ValueDefinitionsContext::EQ() {
+tree::TerminalNode* TypedefParser::ValueDefinitionContext::EQ() {
   return getToken(TypedefParser::EQ, 0);
 }
 
-TypedefParser::ValueContext* TypedefParser::ValueDefinitionsContext::value() {
+TypedefParser::ValueContext* TypedefParser::ValueDefinitionContext::value() {
   return getRuleContext<TypedefParser::ValueContext>(0);
 }
 
-tree::TerminalNode* TypedefParser::ValueDefinitionsContext::SEMI() {
+tree::TerminalNode* TypedefParser::ValueDefinitionContext::SEMI() {
   return getToken(TypedefParser::SEMI, 0);
 }
 
 
-size_t TypedefParser::ValueDefinitionsContext::getRuleIndex() const {
-  return TypedefParser::RuleValueDefinitions;
+size_t TypedefParser::ValueDefinitionContext::getRuleIndex() const {
+  return TypedefParser::RuleValueDefinition;
 }
 
-void TypedefParser::ValueDefinitionsContext::enterRule(tree::ParseTreeListener *listener) {
+void TypedefParser::ValueDefinitionContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterValueDefinitions(this);
+    parserListener->enterValueDefinition(this);
 }
 
-void TypedefParser::ValueDefinitionsContext::exitRule(tree::ParseTreeListener *listener) {
+void TypedefParser::ValueDefinitionContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitValueDefinitions(this);
+    parserListener->exitValueDefinition(this);
 }
 
-TypedefParser::ValueDefinitionsContext* TypedefParser::valueDefinitions() {
-  ValueDefinitionsContext *_localctx = _tracker.createInstance<ValueDefinitionsContext>(_ctx, getState());
-  enterRule(_localctx, 4, TypedefParser::RuleValueDefinitions);
+TypedefParser::ValueDefinitionContext* TypedefParser::valueDefinition() {
+  ValueDefinitionContext *_localctx = _tracker.createInstance<ValueDefinitionContext>(_ctx, getState());
+  enterRule(_localctx, 4, TypedefParser::RuleValueDefinition);
 
   auto onExit = finally([=] {
     exitRule();
@@ -1380,7 +1380,7 @@ atn::ATN TypedefParser::_atn;
 std::vector<uint16_t> TypedefParser::_serializedATN;
 
 std::vector<std::string> TypedefParser::_ruleNames = {
-  "compilationUnit", "item", "valueDefinitions", "type_", "typedefVersionDeclaration", 
+  "compilationUnit", "item", "valueDefinition", "type_", "typedefVersionDeclaration", 
   "moduleDeclaration", "useDeclaration", "useTree", "value", "simplePath", 
   "literalExpression", "identifier", "keyword"
 };

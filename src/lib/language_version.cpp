@@ -4,8 +4,7 @@ namespace td {
 
 namespace {
 const std::map<LanguageVersion, std::string> kLanguageVersionMap = {
-    {LanguageVersion::UNKNOWN, "unknown"},
-    {LanguageVersion::ALPHA, "alpha"}};
+    {LanguageVersion::UNKNOWN, "unknown"}, {LanguageVersion::ALPHA, "alpha"}};
 }
 
 LanguageVersion LangaugeVersionFromString(std::string& str) {

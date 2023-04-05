@@ -20,8 +20,8 @@ public:
   virtual void enterItem(TypedefParser::ItemContext *ctx) = 0;
   virtual void exitItem(TypedefParser::ItemContext *ctx) = 0;
 
-  virtual void enterValueDefinitions(TypedefParser::ValueDefinitionsContext *ctx) = 0;
-  virtual void exitValueDefinitions(TypedefParser::ValueDefinitionsContext *ctx) = 0;
+  virtual void enterValueDefinition(TypedefParser::ValueDefinitionContext *ctx) = 0;
+  virtual void exitValueDefinition(TypedefParser::ValueDefinitionContext *ctx) = 0;
 
   virtual void enterType_(TypedefParser::Type_Context *ctx) = 0;
   virtual void exitType_(TypedefParser::Type_Context *ctx) = 0;

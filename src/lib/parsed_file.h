@@ -1,14 +1,15 @@
 #pragma once
 
+#include <optional>
 #include <string>
 #include <vector>
-#include <optional>
 
 #include "identifier.h"
 #include "language_version.h"
 #include "parser_error_info.h"
+#include "symbol.h"
+#include "type.h"
 #include "use_declaration.h"
-#include "value_definition.h"
 
 namespace td {
 
@@ -21,23 +22,24 @@ class ParsedFile {
   const std::vector<ParserErrorInfo>& GetErrors() const { return errors_; }
 
   LanguageVersion GetLanguageVersion() const { return langauge_version_; };
-  std::optional<QualifiedIdentifier> GetModule() const { return module_; }
-  std::vector<UseDeclaration> GetUseDeclarations() const {
-    return use_declarations_;
+  std::optional<Identifier> const& GetModule() const { return module_; }
+
+  size_t GetUseDeclarations() const { return use_declarations_.size(); }
+  std::shared_ptr<UseDeclaration> GetUseDeclaration(size_t i) {
+    return use_declarations_[i];
   }
-  std::vector<ValueDefinition> GetValueDefinitions() const {
-    return value_definitions_;
-  };
+
+  size_t GetSymbols() const { return symbols_.size(); }
+  std::shared_ptr<Symbol> GetSymbol(size_t i) { return symbols_[i]; }
 
  private:
   friend class ParsedFileBuilder;
   std::vector<ParserErrorInfo> errors_;
 
-  // TODO: use std::optional everywhere.
   LanguageVersion langauge_version_;
-  std::optional<QualifiedIdentifier> module_;
-  std::vector<UseDeclaration> use_declarations_;
-  std::vector<ValueDefinition> value_definitions_;
+  std::optional<Identifier> module_;
+  std::vector<std::shared_ptr<UseDeclaration>> use_declarations_;
+  std::vector<std::shared_ptr<Symbol>> symbols_;
 };
 
 class ParsedFileBuilder {
@@ -47,21 +49,26 @@ class ParsedFileBuilder {
     file_.langauge_version_ = language_version;
     return *this;
   }
-  ParsedFileBuilder& SetModule(QualifiedIdentifier module) {
+  ParsedFileBuilder& SetModule(Identifier module) {
     file_.module_ = module;
     return *this;
   }
-  ParsedFileBuilder& SetUseDeclarations(
-      std::vector<UseDeclaration> use_declarations) {
-    file_.use_declarations_ = use_declarations;
+  ParsedFileBuilder& AddUseDeclaration(
+      std::unique_ptr<UseDeclaration> use_declaration) {
+    file_.use_declarations_.emplace_back(std::move(use_declaration));
     return *this;
   }
-  ParsedFileBuilder& SetValueDefinitions(std::vector<ValueDefinition> value_definitions) {
-    file_.value_definitions_ = value_definitions;
+  ParsedFileBuilder& AddSymbol(std::unique_ptr<Symbol> value_definition) {
+    file_.symbols_.emplace_back(std::move(value_definition));
     return *this;
   }
-  ParsedFileBuilder& SetErrors(std::vector<ParserErrorInfo> errors) {
-    file_.errors_ = errors;
+  ParsedFileBuilder& AddError(ParserErrorInfo error) {
+    file_.errors_.push_back(error);
+    return *this;
+  }
+  ParsedFileBuilder& AddErrors(std::vector<ParserErrorInfo> errors) {
+    file_.errors_.insert(std::end(file_.errors_), std::begin(errors),
+                         std::end(errors));
     return *this;
   }
 

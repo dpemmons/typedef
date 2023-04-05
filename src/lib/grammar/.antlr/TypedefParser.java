@@ -41,13 +41,13 @@ public class TypedefParser extends Parser {
 		POUND=130, DOLLAR=131, QUESTION=132, LBRACE=133, RBRACE=134, LBRACK=135, 
 		RBRACK=136, LPAREN=137, RPAREN=138;
 	public static final int
-		RULE_compilationUnit = 0, RULE_item = 1, RULE_valueDefinitions = 2, RULE_type_ = 3, 
+		RULE_compilationUnit = 0, RULE_item = 1, RULE_valueDefinition = 2, RULE_type_ = 3, 
 		RULE_typedefVersionDeclaration = 4, RULE_moduleDeclaration = 5, RULE_useDeclaration = 6, 
 		RULE_useTree = 7, RULE_value = 8, RULE_simplePath = 9, RULE_literalExpression = 10, 
 		RULE_identifier = 11, RULE_keyword = 12;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"compilationUnit", "item", "valueDefinitions", "type_", "typedefVersionDeclaration", 
+			"compilationUnit", "item", "valueDefinition", "type_", "typedefVersionDeclaration", 
 			"moduleDeclaration", "useDeclaration", "useTree", "value", "simplePath", 
 			"literalExpression", "identifier", "keyword"
 		};
@@ -243,8 +243,8 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class ItemContext extends ParserRuleContext {
-		public ValueDefinitionsContext valueDefinitions() {
-			return getRuleContext(ValueDefinitionsContext.class,0);
+		public ValueDefinitionContext valueDefinition() {
+			return getRuleContext(ValueDefinitionContext.class,0);
 		}
 		public ItemContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -259,7 +259,7 @@ public class TypedefParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(44);
-			valueDefinitions();
+			valueDefinition();
 			}
 		}
 		catch (RecognitionException re) {
@@ -273,7 +273,7 @@ public class TypedefParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ValueDefinitionsContext extends ParserRuleContext {
+	public static class ValueDefinitionContext extends ParserRuleContext {
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
 		}
@@ -286,15 +286,15 @@ public class TypedefParser extends Parser {
 			return getRuleContext(ValueContext.class,0);
 		}
 		public TerminalNode SEMI() { return getToken(TypedefParser.SEMI, 0); }
-		public ValueDefinitionsContext(ParserRuleContext parent, int invokingState) {
+		public ValueDefinitionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_valueDefinitions; }
+		@Override public int getRuleIndex() { return RULE_valueDefinition; }
 	}
 
-	public final ValueDefinitionsContext valueDefinitions() throws RecognitionException {
-		ValueDefinitionsContext _localctx = new ValueDefinitionsContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_valueDefinitions);
+	public final ValueDefinitionContext valueDefinition() throws RecognitionException {
+		ValueDefinitionContext _localctx = new ValueDefinitionContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_valueDefinition);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{

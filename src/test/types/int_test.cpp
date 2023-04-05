@@ -4,14 +4,14 @@
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"
 #include "fmt/ostream.h"
-#include "types/type.h"
+#include "type.h"
 
 using namespace std;
 
 namespace Catch {
 template <>
-struct StringMaker<unique_ptr<td::types::I8>> {
-  static string convert(unique_ptr<td::types::I8> const& v) {
+struct StringMaker<unique_ptr<td::I8>> {
+  static string convert(unique_ptr<td::I8> const& v) {
     if (v == nullptr) {
       return "nullptr";
     } else {
@@ -28,8 +28,8 @@ struct StringMaker<optional<int8_t>> {
 };
 
 template <>
-struct StringMaker<unique_ptr<td::types::I16>> {
-  static string convert(unique_ptr<td::types::I16> const& v) {
+struct StringMaker<unique_ptr<td::I16>> {
+  static string convert(unique_ptr<td::I16> const& v) {
     if (v == nullptr) {
       return "nullptr";
     } else {
@@ -39,8 +39,8 @@ struct StringMaker<unique_ptr<td::types::I16>> {
 };
 
 template <>
-struct StringMaker<unique_ptr<td::types::I32>> {
-  static string convert(unique_ptr<td::types::I32> const& v) {
+struct StringMaker<unique_ptr<td::I32>> {
+  static string convert(unique_ptr<td::I32> const& v) {
     if (v == nullptr) {
       return "nullptr";
     } else {
@@ -50,8 +50,8 @@ struct StringMaker<unique_ptr<td::types::I32>> {
 };
 
 template <>
-struct StringMaker<unique_ptr<td::types::I64>> {
-  static string convert(unique_ptr<td::types::I64> const& v) {
+struct StringMaker<unique_ptr<td::I64>> {
+  static string convert(unique_ptr<td::I64> const& v) {
     if (v == nullptr) {
       return "nullptr";
     } else {
@@ -61,8 +61,8 @@ struct StringMaker<unique_ptr<td::types::I64>> {
 };
 
 template <>
-struct StringMaker<unique_ptr<td::types::U8>> {
-  static string convert(unique_ptr<td::types::U8> const& v) {
+struct StringMaker<unique_ptr<td::U8>> {
+  static string convert(unique_ptr<td::U8> const& v) {
     if (v == nullptr) {
       return "nullptr";
     } else {
@@ -72,8 +72,8 @@ struct StringMaker<unique_ptr<td::types::U8>> {
 };
 
 template <>
-struct StringMaker<unique_ptr<td::types::U16>> {
-  static string convert(unique_ptr<td::types::U16> const& v) {
+struct StringMaker<unique_ptr<td::U16>> {
+  static string convert(unique_ptr<td::U16> const& v) {
     if (v == nullptr) {
       return "nullptr";
     } else {
@@ -83,8 +83,8 @@ struct StringMaker<unique_ptr<td::types::U16>> {
 };
 
 template <>
-struct StringMaker<unique_ptr<td::types::U32>> {
-  static string convert(unique_ptr<td::types::U32> const& v) {
+struct StringMaker<unique_ptr<td::U32>> {
+  static string convert(unique_ptr<td::U32> const& v) {
     if (v == nullptr) {
       return "nullptr";
     } else {
@@ -94,8 +94,8 @@ struct StringMaker<unique_ptr<td::types::U32>> {
 };
 
 template <>
-struct StringMaker<unique_ptr<td::types::U64>> {
-  static string convert(unique_ptr<td::types::U64> const& v) {
+struct StringMaker<unique_ptr<td::U64>> {
+  static string convert(unique_ptr<td::U64> const& v) {
     if (v == nullptr) {
       return "nullptr";
     } else {
@@ -107,7 +107,16 @@ struct StringMaker<unique_ptr<td::types::U64>> {
 }  // namespace Catch
 
 namespace td {
-namespace types {
+
+template <typename T>
+void TestEquality() {
+  auto one = T::FromLiteral("1");
+  auto one_again = T::FromLiteral("1");
+  auto two = T::FromLiteral("2");
+
+  REQUIRE(*one == *one_again);
+  REQUIRE(*one != *two);
+}
 
 // Handy for debugging a specific case...
 // TEST_CASE("42", "[temporary][debug]") {
@@ -228,6 +237,10 @@ TEST_CASE("i8 literal conversions", "[types][i8]") {
   }
 }
 
+TEST_CASE("Equality", "[types][i8]") {
+  TestEquality<I8>();
+}
+
 TEST_CASE("i16 literal conversions", "[types][i16]") {
   vector<pair<string, optional<int16_t>>> i16_test_cases = {
       // no suffix
@@ -332,6 +345,10 @@ TEST_CASE("i16 literal conversions", "[types][i16]") {
   }
 }
 
+TEST_CASE("Equality", "[types][i16]") {
+  TestEquality<I16>();
+}
+
 TEST_CASE("i32 literal conversions", "[types][i32]") {
   vector<pair<string, optional<int32_t>>> i32_test_cases = {
       // no suffix
@@ -434,6 +451,10 @@ TEST_CASE("i32 literal conversions", "[types][i32]") {
       }
     }
   }
+}
+
+TEST_CASE("Equality", "[types][i32]") {
+  TestEquality<I32>();
 }
 
 TEST_CASE("i64 literal conversions", "[types][i64]") {
@@ -543,6 +564,10 @@ TEST_CASE("i64 literal conversions", "[types][i64]") {
   }
 }
 
+TEST_CASE("Equality", "[types][i64]") {
+  TestEquality<I64>();
+}
+
 TEST_CASE("u8 literal conversions", "[types][u8]") {
   vector<pair<string, optional<uint8_t>>> u8_test_cases = {
       // no suffix
@@ -646,6 +671,10 @@ TEST_CASE("u8 literal conversions", "[types][u8]") {
       }
     }
   }
+}
+
+TEST_CASE("Equality", "[types][u8]") {
+  TestEquality<U8>();
 }
 
 TEST_CASE("u16 literal conversions", "[types][u16]") {
@@ -753,6 +782,10 @@ TEST_CASE("u16 literal conversions", "[types][u16]") {
   }
 }
 
+TEST_CASE("Equality", "[types][u16]") {
+  TestEquality<U16>();
+}
+
 TEST_CASE("u32 literal conversions", "[types][u32]") {
   vector<pair<string, optional<uint32_t>>> u32_test_cases = {
       // no suffix
@@ -856,6 +889,10 @@ TEST_CASE("u32 literal conversions", "[types][u32]") {
       }
     }
   }
+}
+
+TEST_CASE("Equality", "[types][u32]") {
+  TestEquality<U32>();
 }
 
 TEST_CASE("u64 literal conversions", "[types][u64]") {
@@ -966,5 +1003,8 @@ TEST_CASE("u64 literal conversions", "[types][u64]") {
   }
 }
 
-}  // namespace types
+TEST_CASE("Equality", "[types][u64]") {
+  TestEquality<U64>();
+}
+
 }  // namespace td

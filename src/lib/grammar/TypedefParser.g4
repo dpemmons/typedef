@@ -7,10 +7,10 @@ options {
 compilationUnit:
 	typedefVersionDeclaration moduleDeclaration? useDeclaration* item* EOF;
 
-item: valueDefinitions;
+item: valueDefinition;
 
 // ValA: i32 = 42;
-valueDefinitions: identifier COLON type_ EQ value SEMI;
+valueDefinition: identifier COLON type_ EQ value SEMI;
 
 type_: identifier;
 

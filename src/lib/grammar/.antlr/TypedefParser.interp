@@ -283,7 +283,7 @@ RPAREN
 rule names:
 compilationUnit
 item
-valueDefinitions
+valueDefinition
 type_
 typedefVersionDeclaration
 moduleDeclaration

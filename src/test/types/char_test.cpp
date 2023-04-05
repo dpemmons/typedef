@@ -3,19 +3,18 @@
 #include <utility>
 #include <vector>
 
-#include "types/type.h"
+#include "type.h"
 
 namespace Catch {
 template <>
-struct StringMaker<std::unique_ptr<td::types::Char>> {
-  static std::string convert(std::unique_ptr<td::types::Char> const& v) {
+struct StringMaker<std::unique_ptr<td::Char>> {
+  static std::string convert(std::unique_ptr<td::Char> const& v) {
     return v->ToString();
   }
 };
 }  // namespace Catch
 
 namespace td {
-namespace types {
 
 TEST_CASE("Char resolves \"'c''\"", "[types][char]") {
   auto actual = Char::FromLiteral("'c'");
@@ -78,7 +77,15 @@ TEST_CASE("Several invalid escaped characters", "[types][char]") {
   }
 }
 
-}  // namespace types
+TEST_CASE("Equality", "[types][char]") {
+  auto char_a = Char::FromLiteral("'a'");
+  auto char_a2 = Char::FromLiteral("'a'");
+  auto char_b = Char::FromLiteral("'b'");
+
+  REQUIRE(*char_a == *char_a2);
+  REQUIRE(*char_a != *char_b);
+}
+
 }  // namespace td
 
 #if 0
@@ -92,10 +99,10 @@ val : char = 'c';
   REQUIRE_THAT(parsed_file->GetErrors(), Equals(empty_errors));
 
   std::vector<td::ValueDefinition> actual_value_definitions =
-      parsed_file->GetValueDefinitions();
+      parsed_file->GetSymbols();
   REQUIRE(actual_value_definitions.size() == 1);
 
-  td::ValueDefinition expected(td::QualifiedIdentifier("val"),
+  td::ValueDefinition expected(td::Identifier("val"),
                                td::ScalarValue::CreateCHAR('c'));
   REQUIRE_THAT(actual_value_definitions[0], EqualsValueDefinition(expected));
 }
@@ -115,11 +122,11 @@ void ValidCharsTest(std::string expression, char32_t expected_char32) {
       REQUIRE_THAT(parsed_file->GetErrors(), Equals(empty_errors));
 
       std::vector<td::ValueDefinition> actual_value_definitions =
-          parsed_file->GetValueDefinitions();
+          parsed_file->GetSymbols();
       REQUIRE(actual_value_definitions.size() == 1);
 
       td::ValueDefinition expected(
-          td::QualifiedIdentifier("val"),
+          td::Identifier("val"),
           td::ScalarValue::CreateCHAR(expected_char32));
       REQUIRE_THAT(actual_value_definitions[0],
                    EqualsValueDefinition(expected));
@@ -172,7 +179,7 @@ void InvalidCharsTest(std::string expression,
       expected_errors.push_back(expected_error);
       REQUIRE_THAT(parsed_file->GetErrors(), Equals(expected_errors));
 
-      REQUIRE(parsed_file->GetValueDefinitions().empty());
+      REQUIRE(parsed_file->GetSymbols().empty());
     } catch (const std::exception& e) {
       FAIL(e.what());
     }

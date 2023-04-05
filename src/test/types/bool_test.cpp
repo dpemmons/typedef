@@ -1,19 +1,18 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_all.hpp>
 
-#include "types/type.h"
+#include "type.h"
 
 namespace Catch {
 template <>
-struct StringMaker<std::unique_ptr<td::types::Bool>> {
-  static std::string convert(std::unique_ptr<td::types::Bool> const& v) {
+struct StringMaker<std::unique_ptr<td::Bool>> {
+  static std::string convert(std::unique_ptr<td::Bool> const& v) {
     return v->ToString();
   }
 };
 }  // namespace Catch
 
 namespace td {
-namespace types {
 
 TEST_CASE("Bool resolves \"true\"", "[types][bool]") {
   auto actual = Bool::FromLiteral("true");
@@ -43,5 +42,16 @@ TEST_CASE("Bool fails \"asdf\"", "[types][bool]") {
   REQUIRE(actual == nullptr);
 }
 
-}  // namespace types
+TEST_CASE("Equality", "[types][bool]") {
+  auto bool_trueA = Bool::FromLiteral("true");
+  auto bool_trueB = Bool::FromLiteral("true");
+  REQUIRE(*bool_trueA == *bool_trueB);
+
+  auto bool_falseA = Bool::FromLiteral("false");
+  auto bool_falseB = Bool::FromLiteral("false");
+  REQUIRE(*bool_falseA == *bool_falseB);
+
+  REQUIRE(*bool_trueA != *bool_falseB);
+}
+
 }  // namespace td

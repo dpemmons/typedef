@@ -43,7 +43,7 @@ public:
   };
 
   enum {
-    RuleCompilationUnit = 0, RuleItem = 1, RuleValueDefinitions = 2, RuleType_ = 3, 
+    RuleCompilationUnit = 0, RuleItem = 1, RuleValueDefinition = 2, RuleType_ = 3, 
     RuleTypedefVersionDeclaration = 4, RuleModuleDeclaration = 5, RuleUseDeclaration = 6, 
     RuleUseTree = 7, RuleValue = 8, RuleSimplePath = 9, RuleLiteralExpression = 10, 
     RuleIdentifier = 11, RuleKeyword = 12
@@ -61,7 +61,7 @@ public:
 
   class CompilationUnitContext;
   class ItemContext;
-  class ValueDefinitionsContext;
+  class ValueDefinitionContext;
   class Type_Context;
   class TypedefVersionDeclarationContext;
   class ModuleDeclarationContext;
@@ -96,7 +96,7 @@ public:
   public:
     ItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    ValueDefinitionsContext *valueDefinitions();
+    ValueDefinitionContext *valueDefinition();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -105,9 +105,9 @@ public:
 
   ItemContext* item();
 
-  class  ValueDefinitionsContext : public antlr4::ParserRuleContext {
+  class  ValueDefinitionContext : public antlr4::ParserRuleContext {
   public:
-    ValueDefinitionsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValueDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     IdentifierContext *identifier();
     antlr4::tree::TerminalNode *COLON();
@@ -121,7 +121,7 @@ public:
    
   };
 
-  ValueDefinitionsContext* valueDefinitions();
+  ValueDefinitionContext* valueDefinition();
 
   class  Type_Context : public antlr4::ParserRuleContext {
   public:

@@ -4,14 +4,14 @@
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"
 #include "fmt/ostream.h"
-#include "types/type.h"
+#include "type.h"
 
 using namespace std;
 
 namespace Catch {
 template <>
-struct StringMaker<unique_ptr<td::types::F32>> {
-  static string convert(unique_ptr<td::types::F32> const& v) {
+struct StringMaker<unique_ptr<td::F32>> {
+  static string convert(unique_ptr<td::F32> const& v) {
     if (v == nullptr) {
       return "nullptr";
     } else {
@@ -21,8 +21,8 @@ struct StringMaker<unique_ptr<td::types::F32>> {
 };
 
 template <>
-struct StringMaker<unique_ptr<td::types::F64>> {
-  static string convert(unique_ptr<td::types::F64> const& v) {
+struct StringMaker<unique_ptr<td::F64>> {
+  static string convert(unique_ptr<td::F64> const& v) {
     if (v == nullptr) {
       return "nullptr";
     } else {
@@ -47,7 +47,6 @@ struct StringMaker<optional<double>> {
 }  // namespace Catch
 
 namespace td {
-namespace types {
 
 TEST_CASE("f32 literal conversions", "[types][f32]") {
   vector<pair<string, optional<float>>> f32_test_cases = {
@@ -130,5 +129,27 @@ TEST_CASE("f64 literal conversions", "[types][f64]") {
   }
 }
 
-}  // namespace types
+TEST_CASE("Equality", "[types][f32]") {
+  auto f32_1 = F32::FromLiteral("1");
+  auto f32_1b = F32::FromLiteral("1");
+  auto f32_2 = F32::FromLiteral("2");
+
+  REQUIRE(*f32_1 == *f32_1b);
+  REQUIRE(*f32_1 != *f32_2);
+}
+
+TEST_CASE("Equality", "[types][f64]") {
+  auto f64_1 = F64::FromLiteral("1");
+  auto f64_1b = F64::FromLiteral("1");
+  auto f64_2 = F64::FromLiteral("2");
+
+  REQUIRE(*f64_1 == *f64_1b);
+  REQUIRE(*f64_1 != *f64_2);
+}
+
+TEST_CASE("Equality", "[types][float]") {
+  // TODO: test floats for equality beteen types?
+  // do we need to? (probably eventually...)
+}
+
 }  // namespace td
