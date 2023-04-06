@@ -16,7 +16,7 @@ Items in ***bold*** are in-progress.
       - [x] chars
       - [x] integers
       - [x] floats
-    - [ ] ***strings***
+    - [x] strings
     - [ ] raw strings
     - [ ] byte literals
     - [ ] byte strings
