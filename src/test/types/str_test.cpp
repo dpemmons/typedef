@@ -8,6 +8,8 @@
 namespace td {
 
 TEST_CASE("Str class tests") {
+  // String Literal
+
   SECTION("FromStringLiteral - normal characters") {
     auto str = Str::FromStringLiteral("Hello, World!");
     REQUIRE(str->Value().has_value());
@@ -75,6 +77,50 @@ TEST_CASE("Str class tests") {
     auto str = Str::FromStringLiteral("Hello,\\n\\u{01F600}!");
     REQUIRE(str->Value().has_value());
     REQUIRE(str->Value().value() == "Hello,\n\U0001F600!");
+  }
+
+  // RawStringLiteral
+  SECTION("FromRawStringLiteral: Basic raw string literal") {
+    auto str = Str::FromRawStringLiteral("r\"Hello, world!\"");
+    REQUIRE(str->Value().value() == "Hello, world!");
+  }
+
+  SECTION("FromRawStringLiteral: Raw string literal with quotes") {
+    auto str =
+        Str::FromRawStringLiteral("r\"String with \\\"quotes\\\" inside\"");
+    REQUIRE(str->Value().value() == "String with \\\"quotes\\\" inside");
+  }
+
+  SECTION("FromRawStringLiteral: Raw string literal with hashes") {
+    auto str = Str::FromRawStringLiteral("r#\"Hello, #world!\"#");
+    REQUIRE(str->Value().value() == "Hello, #world!");
+  }
+
+  SECTION(
+      "FromRawStringLiteral: Raw string literal with multiple matching "
+      "hashes") {
+    auto str = Str::FromRawStringLiteral("r##\"Hello, ##world!\"##");
+    REQUIRE(str->Value().value() == "Hello, ##world!");
+  }
+
+  SECTION("FromRawStringLiteral: Raw string literal with mismatched hashes") {
+    auto str = Str::FromRawStringLiteral("r#\"Hello, #world!\"");
+    REQUIRE(str == nullptr);
+  }
+
+  SECTION("FromRawStringLiteral: Raw string literal with no quotes") {
+    auto str = Str::FromRawStringLiteral("rHello, world!");
+    REQUIRE(str == nullptr);
+  }
+
+  SECTION("FromRawStringLiteral: Empty raw string literal") {
+    auto str = Str::FromRawStringLiteral("");
+    REQUIRE(str == nullptr);
+  }
+
+  SECTION("FromRawStringLiteral: Raw string literal with only r") {
+    auto str = Str::FromRawStringLiteral("r");
+    REQUIRE(str == nullptr);
   }
 
   SECTION("Equality and inequality operators") {

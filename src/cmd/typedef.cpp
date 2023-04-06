@@ -50,7 +50,7 @@ int main(int argc, const char** argv) {
     return 1;  // error.
   }
 
-  fmt::print("Symbols ({}):\n", parser->GetSymbols());
+  fmt::print("File contains {} symbols:\n", parser->GetSymbols());
   for (int i = 0; i < parser->GetSymbols(); i++) {
     auto symbol = parser->GetSymbol(i);
     fmt::print("{}\n", fmt::streamed(*symbol));

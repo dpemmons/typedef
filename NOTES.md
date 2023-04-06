@@ -17,7 +17,8 @@ Items in ***bold*** are in-progress.
       - [x] integers
       - [x] floats
     - [x] strings
-    - [ ] raw strings
+    - [x] raw strings
+      - [ ] needs tests
     - [ ] byte literals
     - [ ] byte strings
     - [ ] raw byte strings

@@ -75,8 +75,6 @@ class ParserErrorListener : public antlr4::BaseErrorListener {
                            antlr4::Token *offendingSymbol, size_t line,
                            size_t charPositionInLine, const std::string &msg,
                            std::exception_ptr ep) override {
-
-
     errors_list_->emplace_back(
         PEIBuilder()
             .SetType(ParserErrorInfo::PARSE_ERROR)
@@ -209,16 +207,16 @@ void ProcessValueDefinitions(
 
       // Missing type.
       if (!vd->type_() || !vd->type_()->identifier()) {
-        builder.AddError(
-            ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
-                             ParserErrorInfo::MISSING_TYPE_IDENTIFIER));
+        // These should stem from parse errors, so probably ok to skip error reporting?
+        // builder.AddError(
+        //     ErrorFromContext(vd, ParserErrorInfo::MISSING_TYPE_IDENTIFIER));
         continue;
       }
       // Missing value.
       if (!vd->value() || !vd->value()->literalExpression()) {
-        builder.AddError(
-            ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
-                             ParserErrorInfo::MISSING_VALUE_EXPRESSION));
+        // These should stem from parse errors, so probably ok to skip error reporting?
+        // builder.AddError(
+        //     ErrorFromContext(vd, ParserErrorInfo::MISSING_VALUE_EXPRESSION));
         continue;
       }
       auto symbol_name = GetIdentifierString(vd, errors_list);
@@ -375,8 +373,10 @@ void ProcessValueDefinitions(
                                  ParserErrorInfo::INVALID_STRING_LITERAL));
           }
         } else if (vd->value()->literalExpression()->RAW_STRING_LITERAL()) {
-          auto val = Str::FromRawStringLiteral(
-              vd->value()->literalExpression()->STRING_LITERAL()->toString());
+          auto val = Str::FromRawStringLiteral(vd->value()
+                                                   ->literalExpression()
+                                                   ->RAW_STRING_LITERAL()
+                                                   ->toString());
           if (val) {
             builder.AddSymbol(
                 std::make_unique<Symbol>(std::move(name), std::move(val)));

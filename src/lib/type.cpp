@@ -479,7 +479,29 @@ std::unique_ptr<Str> Str::FromStringLiteral(std::string_view literal) {
 }
 
 std::unique_ptr<Str> Str::FromRawStringLiteral(std::string_view literal) {
-  return std::make_unique<Str>("raw string literal");
+  if (literal.empty() || literal.front() != 'r') {
+    return nullptr;
+  }
+
+  // Resize the string_view to skip the initial 'r'
+  literal.remove_prefix(1);
+
+  // Remove matching '#'s from the prefix and suffix
+  while (!literal.empty() && literal.front() == '#' && literal.back() == '#') {
+    literal.remove_prefix(1);
+    literal.remove_suffix(1);
+  }
+
+  // Check for matching '"'s and resize the string_view accordingly
+  if (literal.empty() || literal.front() != '"' || literal.back() != '"') {
+    return nullptr;
+  }
+
+  literal.remove_prefix(1);
+  literal.remove_suffix(1);
+
+  // Create a new Str instance with the remaining raw string content
+  return std::make_unique<Str>(std::string(literal));
 }
 
 void Str::print(std::ostream& os) const {
