@@ -35,8 +35,9 @@ int main(int argc, const char** argv) {
       inputStream.seekg(std::ios::beg);
       std::string line;
 
-      fmt::print(stderr, "{}:{}:{}: error: {}\n", args.getInpuFilename(),
-                 err.line, err.line_offset, err.ErrorTypeToString());
+      fmt::print(stderr, "{}:{}:{}: error: {} {}\n", args.getInpuFilename(),
+                 err.line, err.line_offset, err.ErrorTypeToString(),
+                 err.message);
 
       for (int l = 0; std::getline(inputStream, line); l++) {
         if (l == err.line - 1) {

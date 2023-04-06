@@ -33,6 +33,8 @@ class Type {
   virtual bool IsU32() const { return false; }
   virtual bool IsU64() const { return false; }
 
+  virtual bool IsString() const { return false; }
+
   virtual bool HasValue() const { return false; }
 
   virtual void print(std::ostream& os) const = 0;
@@ -56,7 +58,8 @@ class Type {
     U8,
     U16,
     U32,
-    U64
+    U64,
+    STR
   } type_;
   Type(Type_ t) : type_(t) {}
 };
@@ -428,12 +431,45 @@ class U64 : public UnsignedInteger {
     return os;
   }
 
+  // TODO do these comparisons fail if both val_ are empty? (is that ok?)
   bool operator==(U64 const& other) const { return val_ == other.val_; }
   bool operator!=(U64 const& other) const { return val_ != other.val_; }
 
  protected:
   std::optional<uint64_t> val_;
   static constexpr std::string_view typename_ = std::string_view("u64", 3);
+};
+
+class Str : public Primitive {
+ public:
+  Str(std::string val) : Primitive(Type_::STR), val_(val){};
+
+  static std::string_view TypeName() { return typename_; };
+
+  bool IsString() const override { return true; }
+  bool HasValue() const override { return val_.has_value(); }
+  std::optional<std::string> Value() const { return val_; }
+
+  static bool LiteralHasSuffix(std::string_view literal);
+  static std::unique_ptr<Str> FromStringLiteral(std::string_view literal);
+  static std::unique_ptr<Str> FromRawStringLiteral(std::string_view literal);
+
+  virtual void print(std::ostream& os) const override;
+  friend std::ostream& operator<<(std::ostream& os, const Str& c) {
+    c.print(os);
+    return os;
+  }
+
+  bool operator==(Str const& other) const {
+    return val_ && other.val_ && val_.value().compare(other.val_.value()) == 0;
+  }
+  bool operator!=(Str const& other) const {
+    return !val_ || other.val_ || val_.value().compare(other.val_.value());
+  }
+
+ protected:
+  std::optional<std::string> val_;
+  static constexpr std::string_view typename_ = std::string_view("str", 3);
 };
 
 }  // namespace td

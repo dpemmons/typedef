@@ -53,7 +53,7 @@ TEST_CASE("Semicolon required.", "[version_declarations]") {
   auto expected_errors =
       SingleError(td::PEIBuilder()
                       .SetType(td::ParserErrorInfo::PARSE_ERROR)
-                      .SetMessage("Parse error")
+                      .SetMessage("missing ';' at '<EOF>'")
                       .SetTokenType(antlr4::Token::EOF)
                       .SetCharOffset(29)
                       .SetLine(3)

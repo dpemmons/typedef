@@ -336,6 +336,8 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
       return "INVALID_FLOAT_LITERAL";
     case INVALID_INTEGER_LITERAL:
       return "INVALID_INTEGER_LITERAL";
+    case INVALID_STRING_LITERAL:
+      return "INVALID_STRING_LITERAL";
     default:
       abort();
   }

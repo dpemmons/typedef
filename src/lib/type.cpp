@@ -398,4 +398,92 @@ void U64::print(std::ostream& os) const {
   typePrint<U64>(os, *this, typename_);
 }
 
+// ----------------------------------------------------------------------------
+// String
+// ----------------------------------------------------------------------------
+bool Str::LiteralHasSuffix(std::string_view literal) {
+  return endsWith(literal, Str::typename_);
+}
+
+std::unique_ptr<Str> Str::FromStringLiteral(std::string_view literal) {
+  std::ostringstream result;
+  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+  for (size_t i = 0; i < literal.size(); ++i) {
+    if (literal[i] == '\\') {
+      ++i;
+      switch (literal[i]) {
+        case 'n':
+          result << '\n';
+          break;
+        case 'r':
+          result << '\r';
+          break;
+        case 't':
+          result << '\t';
+          break;
+        case '\\':
+          result << '\\';
+          break;
+        case '0':
+          result << '\0';
+          break;
+        case '"':
+          result << '"';
+          break;
+        case '\'':
+          result << '\'';
+          break;
+        case 'x': {
+          if (i + 2 >= literal.size()) {
+            // TODO: we should probably make a useful error message for this.
+            // Invalid ASCII escape sequence
+            return nullptr;
+          }
+          int hexValue = 0;
+          std::from_chars(literal.data() + i + 1, literal.data() + i + 3,
+                          hexValue, 16);
+          result << static_cast<char>(hexValue);
+          i += 2;
+          break;
+        }
+        case 'u': {
+          size_t start = i + 2;
+          if (start >= literal.size()) {
+            // TODO: we should probably make useful error messages for these.
+            // Invalid Unicode escape sequence.
+            return nullptr;
+          }
+          size_t end = literal.find('}', start);
+          if (end == std::string_view::npos || end >= literal.size() ||
+              end - start > 6) {
+            // Invalid Unicode escape sequence.
+            return nullptr;
+          }
+          uint32_t unicodeValue = 0;
+          auto [ptr, ec] = std::from_chars(
+              literal.data() + start, literal.data() + end, unicodeValue, 16);
+          if (ec != std::errc()) {
+            // Invalid Unicode escape sequence.
+            return nullptr;
+          }
+          result << converter.to_bytes(static_cast<char32_t>(unicodeValue));
+          i = end;
+          break;
+        }
+      }
+    } else {
+      result << literal[i];
+    }
+  }
+  return std::make_unique<Str>(result.str());
+}
+
+std::unique_ptr<Str> Str::FromRawStringLiteral(std::string_view literal) {
+  return std::make_unique<Str>("raw string literal");
+}
+
+void Str::print(std::ostream& os) const {
+  typePrint<Str>(os, *this, typename_);
+}
+
 }  // namespace td

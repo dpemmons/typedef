@@ -33,6 +33,7 @@ struct ParserErrorInfo {
     INVALID_CHAR_LITERAL = 13,
     INVALID_FLOAT_LITERAL = 14,
     INVALID_INTEGER_LITERAL = 15,
+    INVALID_STRING_LITERAL = 16,
   };
   Type error_type;
 

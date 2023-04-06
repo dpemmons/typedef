@@ -73,12 +73,14 @@ class ParserErrorListener : public antlr4::BaseErrorListener {
 
   virtual void syntaxError(antlr4::Recognizer *recognizer,
                            antlr4::Token *offendingSymbol, size_t line,
-                           size_t charPositionInLine, const std::string &,
+                           size_t charPositionInLine, const std::string &msg,
                            std::exception_ptr ep) override {
+
+
     errors_list_->emplace_back(
         PEIBuilder()
             .SetType(ParserErrorInfo::PARSE_ERROR)
-            .SetMessage("Parse error")
+            .SetMessage(msg)
             .SetTokenType(offendingSymbol->getType())
             .SetCharOffset(offendingSymbol->getStartIndex())
             .SetLine(line)
@@ -119,14 +121,6 @@ std::unique_ptr<Type> MaybeGetTypeFromLiteralExpression(
     std::vector<ParserErrorInfo> &errors_list) {
   if (ctx->CHAR_LITERAL()) {
     return TYPE::FromLiteral(ctx->CHAR_LITERAL()->toString());
-  } else if (ctx->STRING_LITERAL()) {
-    errors_list.emplace_back(ErrorFromContext(
-        ctx, ParserErrorInfo::UNIMPLEMENTED, "STRING_LITERAL"));
-    return nullptr;
-  } else if (ctx->RAW_STRING_LITERAL()) {
-    errors_list.emplace_back(ErrorFromContext(
-        ctx, ParserErrorInfo::UNIMPLEMENTED, "RAW_STRING_LITERAL"));
-    return nullptr;
   } else if (ctx->BYTE_LITERAL()) {
     errors_list.emplace_back(
         ErrorFromContext(ctx, ParserErrorInfo::UNIMPLEMENTED, "BYTE_LITERAL"));
@@ -368,6 +362,30 @@ void ProcessValueDefinitions(
               ErrorFromContext(vd->value()->literalExpression(),
                                ParserErrorInfo::INVALID_INTEGER_LITERAL));
         }
+      } else if (Str::TypeName().compare(typeStr) == 0) {
+        if (vd->value()->literalExpression()->STRING_LITERAL()) {
+          auto val = Str::FromStringLiteral(
+              vd->value()->literalExpression()->STRING_LITERAL()->toString());
+          if (val) {
+            builder.AddSymbol(
+                std::make_unique<Symbol>(std::move(name), std::move(val)));
+          } else {
+            builder.AddError(
+                ErrorFromContext(vd->value()->literalExpression(),
+                                 ParserErrorInfo::INVALID_STRING_LITERAL));
+          }
+        } else if (vd->value()->literalExpression()->RAW_STRING_LITERAL()) {
+          auto val = Str::FromRawStringLiteral(
+              vd->value()->literalExpression()->STRING_LITERAL()->toString());
+          if (val) {
+            builder.AddSymbol(
+                std::make_unique<Symbol>(std::move(name), std::move(val)));
+          } else {
+            builder.AddError(
+                ErrorFromContext(vd->value()->literalExpression(),
+                                 ParserErrorInfo::INVALID_STRING_LITERAL));
+          }
+        }
       } else {
         builder.AddError(
             ErrorFromContext(vd->type_(), ParserErrorInfo::UNKNOWN_TYPE));
@@ -402,6 +420,7 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
 
   TypedefParser::CompilationUnitContext *compilation_unit = nullptr;
 
+  // TODO revisit this and how it's used below to make a null compilation unit?
   bool fast = false;
   parser.setBuildParseTree(!fast);
 
