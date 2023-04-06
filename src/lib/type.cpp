@@ -406,6 +406,15 @@ bool Str::LiteralHasSuffix(std::string_view literal) {
 }
 
 std::unique_ptr<Str> Str::FromStringLiteral(std::string_view literal) {
+  if (literal.size() < 2) {
+    return nullptr;
+  }
+  if (literal.front() == '"' && literal.back() == '"') {
+    literal.remove_prefix(1);
+    literal.remove_suffix(1);
+  } else {
+    return nullptr;
+  }
   std::ostringstream result;
   std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
   for (size_t i = 0; i < literal.size(); ++i) {
