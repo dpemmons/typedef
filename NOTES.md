@@ -17,8 +17,18 @@ Items in ***bold*** are in-progress.
       - [x] integers
       - [x] floats
     - [x] strings
-    - [x] raw strings
-      - [ ] needs tests
+      - [x] raw strings
+        - [ ] (needs tests)
+    - [ ] parameterized types
+      - [ ] list types
+        - [ ] arrays (which are fixed length)
+        - [ ] vectors
+    - [ ] product types
+      - [ ] struct
+      - [ ] message
+    - [ ] sum types
+      - [ ] enum
+      - [ ] variant
     - [ ] byte literals
     - [ ] byte strings
     - [ ] raw byte strings
