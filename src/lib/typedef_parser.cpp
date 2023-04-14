@@ -207,15 +207,15 @@ void ProcessValueDefinitions(
 
       // Missing type.
       if (!vd->type_() || !vd->type_()->identifier()) {
-        // These should stem from parse errors, so probably ok to skip error reporting?
-        // builder.AddError(
+        // These should stem from parse errors, so probably ok to skip error
+        // reporting? builder.AddError(
         //     ErrorFromContext(vd, ParserErrorInfo::MISSING_TYPE_IDENTIFIER));
         continue;
       }
       // Missing value.
       if (!vd->value() || !vd->value()->literalExpression()) {
-        // These should stem from parse errors, so probably ok to skip error reporting?
-        // builder.AddError(
+        // These should stem from parse errors, so probably ok to skip error
+        // reporting? builder.AddError(
         //     ErrorFromContext(vd, ParserErrorInfo::MISSING_VALUE_EXPRESSION));
         continue;
       }
@@ -386,6 +386,8 @@ void ProcessValueDefinitions(
                                  ParserErrorInfo::INVALID_STRING_LITERAL));
           }
         }
+      } else if (Array::TypeName().compare(typeStr) == 0) {
+        
       } else {
         builder.AddError(
             ErrorFromContext(vd->type_(), ParserErrorInfo::UNKNOWN_TYPE));

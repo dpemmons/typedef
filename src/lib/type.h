@@ -5,6 +5,7 @@
 #include <optional>
 #include <ostream>
 #include <string>
+#include <vector>
 
 namespace td {
 
@@ -35,6 +36,13 @@ class Type {
 
   virtual bool IsString() const { return false; }
 
+  virtual bool IsArray() const { return false; }
+  virtual bool IsVector() const { return false; }
+  virtual bool IsStruct() const { return false; }
+  virtual bool IsMessage() const { return false; }
+  virtual bool IsEnum() const { return false; }
+  virtual bool IsVariant() const { return false; }
+
   virtual bool HasValue() const { return false; }
 
   virtual void print(std::ostream& os) const = 0;
@@ -59,7 +67,13 @@ class Type {
     U16,
     U32,
     U64,
-    STR
+    STR,
+    ARRAY,
+    VECTOR,
+    STRUCT,
+    MESSAGE,
+    ENUM,
+    VARIANT
   } type_;
   Type(Type_ t) : type_(t) {}
 };
@@ -470,6 +484,105 @@ class Str : public Primitive {
  protected:
   std::optional<std::string> val_;
   static constexpr std::string_view typename_ = std::string_view("str", 3);
+};
+
+// ----------------------------------------------------------------------------
+// Parameterized
+// ----------------------------------------------------------------------------
+
+class Parameterized : public Type {
+ public:
+ protected:
+  Parameterized(Type_ t) : Type(t) {}
+};
+
+class Array : public Parameterized {
+ public:
+  Array(std::unique_ptr<Type> contained_type, uint64_t count)
+      : Parameterized(Type_::ARRAY),
+        count_(count),
+        contained_type_(std::move(contained_type)) {}
+
+  static std::string_view TypeName() { return typename_; };
+
+  std::unique_ptr<Type> const& ContainedType() { return contained_type_; }
+  void EmplaceBack(std::unique_ptr<Type> val) {
+    contained_values_.emplace_back(std::move(val));
+  }
+  std::unique_ptr<Type> const& Get(uint64_t index) {
+    return contained_values_[index];
+  }
+
+  virtual bool IsArray() const { return true; }
+
+ protected:
+  std::unique_ptr<Type> contained_type_;  // carries no value.
+  uint64_t count_;
+  std::vector<std::unique_ptr<Type> > contained_values_;
+  static constexpr std::string_view typename_ = std::string_view("array", 5);
+};
+
+class Vector : public Parameterized {
+ public:
+  Vector() : Parameterized(Type_::VECTOR) {}
+
+  static std::string_view TypeName() { return typename_; };
+
+  std::unique_ptr<Type> const& ContainedType() { return containedType_; }
+
+  virtual bool IsVector() const { return true; }
+
+ protected:
+  std::unique_ptr<Type> containedType_;
+  static constexpr std::string_view typename_ = std::string_view("vector", 6);
+};
+
+class Struct : public Type {
+ public:
+  Struct() : Type(Type_::STRUCT) {}
+
+  static std::string_view TypeName() { return typename_; };
+
+  virtual bool IsStruct() const { return true; }
+
+ protected:
+  static constexpr std::string_view typename_ = std::string_view("struct", 6);
+};
+
+class Message : public Type {
+ public:
+  Message() : Type(Type_::MESSAGE) {}
+
+  static std::string_view TypeName() { return typename_; };
+
+  virtual bool IsMessage() const { return true; }
+
+ protected:
+  static constexpr std::string_view typename_ = std::string_view("message", 7);
+};
+
+class Enum : public Type {
+ public:
+  Enum() : Type(Type_::ENUM) {}
+
+  static std::string_view TypeName() { return typename_; };
+
+  virtual bool IsEnum() const { return true; }
+
+ protected:
+  static constexpr std::string_view typename_ = std::string_view("enum", 4);
+};
+
+class Variant : public Type {
+ public:
+  Variant() : Type(Type_::VARIANT) {}
+
+  static std::string_view TypeName() { return typename_; };
+
+  virtual bool IsVariant() const { return true; }
+
+ protected:
+  static constexpr std::string_view typename_ = std::string_view("variant", 7);
 };
 
 }  // namespace td
