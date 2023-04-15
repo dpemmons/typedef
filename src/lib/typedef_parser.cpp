@@ -411,6 +411,54 @@ void AddValueDefinitions(
         builder.AddSymbol(std::make_unique<Symbol>(
             std::move(name),
             std::move(std::make_unique<Bool>(*vd->boolLiteral()->maybe_val))));
+      } else if (vd->charLiteral() && vd->charLiteral()->maybe_val) {
+        builder.AddSymbol(std::make_unique<Symbol>(
+            std::move(name),
+            std::move(std::make_unique<Char>(*vd->charLiteral()->maybe_val))));
+      } else if (vd->stringLiteral() && vd->stringLiteral()->maybe_val) {
+        builder.AddSymbol(std::make_unique<Symbol>(
+            std::move(name),
+            std::move(std::make_unique<Str>(*vd->stringLiteral()->maybe_val))));
+      } else if (vd->f32Literal() && vd->f32Literal()->maybe_val) {
+        builder.AddSymbol(std::make_unique<Symbol>(
+            std::move(name),
+            std::move(std::make_unique<F32>(*vd->f32Literal()->maybe_val))));
+      } else if (vd->f64Literal() && vd->f64Literal()->maybe_val) {
+        builder.AddSymbol(std::make_unique<Symbol>(
+            std::move(name),
+            std::move(std::make_unique<F64>(*vd->f64Literal()->maybe_val))));
+      } else if (vd->u8Literal() && vd->u8Literal()->maybe_val) {
+        builder.AddSymbol(std::make_unique<Symbol>(
+            std::move(name),
+            std::move(std::make_unique<U8>(*vd->u8Literal()->maybe_val))));
+      } else if (vd->u16Literal() && vd->u16Literal()->maybe_val) {
+        builder.AddSymbol(std::make_unique<Symbol>(
+            std::move(name),
+            std::move(std::make_unique<U16>(*vd->u16Literal()->maybe_val))));
+      } else if (vd->u32Literal() && vd->u32Literal()->maybe_val) {
+        builder.AddSymbol(std::make_unique<Symbol>(
+            std::move(name),
+            std::move(std::make_unique<U32>(*vd->u32Literal()->maybe_val))));
+      } else if (vd->u64Literal() && vd->u64Literal()->maybe_val) {
+        builder.AddSymbol(std::make_unique<Symbol>(
+            std::move(name),
+            std::move(std::make_unique<U64>(*vd->u64Literal()->maybe_val))));
+      } else if (vd->i8Literal() && vd->i8Literal()->maybe_val) {
+        builder.AddSymbol(std::make_unique<Symbol>(
+            std::move(name),
+            std::move(std::make_unique<I8>(*vd->i8Literal()->maybe_val))));
+      } else if (vd->i16Literal() && vd->i16Literal()->maybe_val) {
+        builder.AddSymbol(std::make_unique<Symbol>(
+            std::move(name),
+            std::move(std::make_unique<I16>(*vd->i16Literal()->maybe_val))));
+      } else if (vd->i32Literal() && vd->i32Literal()->maybe_val) {
+        builder.AddSymbol(std::make_unique<Symbol>(
+            std::move(name),
+            std::move(std::make_unique<I32>(*vd->i32Literal()->maybe_val))));
+      } else if (vd->i64Literal() && vd->i64Literal()->maybe_val) {
+        builder.AddSymbol(std::make_unique<Symbol>(
+            std::move(name),
+            std::move(std::make_unique<I64>(*vd->i64Literal()->maybe_val))));
       }
     }
   }

@@ -3,7 +3,7 @@ typedef=alpha;
 ValBool : bool = true;
 r#ValBool : bool = true;
 
-// ValueA : i32 = 8;
+ValueA : u32 = 8;
 // ValB : char = '\u{1F600}'; // Smiling Face with Smiling Eyes
 // ValC : char = '🔥';
 // ValD : str = "hello \

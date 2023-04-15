@@ -22,21 +22,18 @@ valueDefinition:
 	identifier COLON type_ EQ (
 		{$type_.start->getType() == KW_BOOL}? boolLiteral
 		| {$type_.start->getType() == KW_CHAR}? charLiteral
-	)
-	// | {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_BOOL()}? boolLiteral |
-	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_CHAR()}? charLiteral |
-	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_STRING()}? stringLiteral
-	// | {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_F32()}? f32Literal |
-	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_F64()}? f64Literal |
-	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_U8()}? u8Literal |
-	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_U16()}? u16Literal |
-	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_U32()}? u32Literal |
-	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_U64()}? u64Literal |
-	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_I8()}? i8Literal |
-	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_I16()}? i16Literal |
-	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_I32()}? i32Literal |
-	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_I64()}? i64Literal
-	SEMI;
+		| {$type_.start->getType() == KW_STRING}? stringLiteral
+		| {$type_.start->getType() == KW_F32}? f32Literal
+		| {$type_.start->getType() == KW_F64}? f64Literal
+		| {$type_.start->getType() == KW_U8}? u8Literal
+		| {$type_.start->getType() == KW_U16}? u16Literal
+		| {$type_.start->getType() == KW_U32}? u32Literal
+		| {$type_.start->getType() == KW_U64}? u64Literal
+		| {$type_.start->getType() == KW_I8}? i8Literal
+		| {$type_.start->getType() == KW_I16}? i16Literal
+		| {$type_.start->getType() == KW_I32}? i32Literal
+		| {$type_.start->getType() == KW_I64}? i64Literal
+	) SEMI;
 
 type_: primitiveType | identifier | parameterizedType;
 
@@ -107,7 +104,11 @@ u8Literal
 u16Literal
 	returns[std::optional<uint16_t> maybe_val]: INTEGER_LITERAL;
 u32Literal
-	returns[std::optional<uint32_t> maybe_val]: INTEGER_LITERAL;
+	returns[std::optional<uint32_t> maybe_val]
+	@after {
+		// From grammar.
+		// End from grammar.
+  }: INTEGER_LITERAL;
 u64Literal
 	returns[std::optional<uint64_t> maybe_val]: INTEGER_LITERAL;
 i8Literal
@@ -128,14 +129,8 @@ byteStringLiteral
 	BYTE_STRING_LITERAL
 	| RAW_BYTE_STRING_LITERAL;
 
-// technical
-// identifier
-// 	returns[std::string id]
-// 	@after {
-// 		$id = $nki->getText();
-//   }:
-// 	nki = NON_KEYWORD_IDENTIFIER
-// 	| RAW_ESCAPE nki = NON_KEYWORD_IDENTIFIER;
+// technical identifier returns[std::string id] @after { $id = $nki->getText(); }: nki =
+// NON_KEYWORD_IDENTIFIER | RAW_ESCAPE nki = NON_KEYWORD_IDENTIFIER;
 
 identifier
 	returns[std::string id]

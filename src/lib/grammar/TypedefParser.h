@@ -151,6 +151,17 @@ public:
     antlr4::tree::TerminalNode *SEMI();
     BoolLiteralContext *boolLiteral();
     CharLiteralContext *charLiteral();
+    StringLiteralContext *stringLiteral();
+    F32LiteralContext *f32Literal();
+    F64LiteralContext *f64Literal();
+    U8LiteralContext *u8Literal();
+    U16LiteralContext *u16Literal();
+    U32LiteralContext *u32Literal();
+    U64LiteralContext *u64Literal();
+    I8LiteralContext *i8Literal();
+    I16LiteralContext *i16Literal();
+    I32LiteralContext *i32Literal();
+    I64LiteralContext *i64Literal();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
