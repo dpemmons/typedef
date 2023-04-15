@@ -32,6 +32,7 @@ Items in ***bold*** are in-progress.
     - [ ] byte literals
     - [ ] byte strings
     - [ ] raw byte strings
+  - [ ] handle raw identifiers
   - [ ] parse a very basic struct statement
 
 - [ ] Command line util basics

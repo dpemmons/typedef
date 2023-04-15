@@ -1,4 +1,11 @@
 
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <string>
+#include "symbol_table.h"
+
+
 // Generated from ./src/lib/grammar/TypedefParser.g4 by ANTLR 4.7.2
 
 #pragma once
@@ -26,6 +33,9 @@ public:
   virtual void enterType_(TypedefParser::Type_Context *ctx) = 0;
   virtual void exitType_(TypedefParser::Type_Context *ctx) = 0;
 
+  virtual void enterParameterizedType(TypedefParser::ParameterizedTypeContext *ctx) = 0;
+  virtual void exitParameterizedType(TypedefParser::ParameterizedTypeContext *ctx) = 0;
+
   virtual void enterTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;
   virtual void exitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;
 
@@ -38,14 +48,56 @@ public:
   virtual void enterUseTree(TypedefParser::UseTreeContext *ctx) = 0;
   virtual void exitUseTree(TypedefParser::UseTreeContext *ctx) = 0;
 
-  virtual void enterValue(TypedefParser::ValueContext *ctx) = 0;
-  virtual void exitValue(TypedefParser::ValueContext *ctx) = 0;
-
   virtual void enterSimplePath(TypedefParser::SimplePathContext *ctx) = 0;
   virtual void exitSimplePath(TypedefParser::SimplePathContext *ctx) = 0;
 
-  virtual void enterLiteralExpression(TypedefParser::LiteralExpressionContext *ctx) = 0;
-  virtual void exitLiteralExpression(TypedefParser::LiteralExpressionContext *ctx) = 0;
+  virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
+  virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
+
+  virtual void enterBoolLiteral(TypedefParser::BoolLiteralContext *ctx) = 0;
+  virtual void exitBoolLiteral(TypedefParser::BoolLiteralContext *ctx) = 0;
+
+  virtual void enterByteLiteral(TypedefParser::ByteLiteralContext *ctx) = 0;
+  virtual void exitByteLiteral(TypedefParser::ByteLiteralContext *ctx) = 0;
+
+  virtual void enterCharLiteral(TypedefParser::CharLiteralContext *ctx) = 0;
+  virtual void exitCharLiteral(TypedefParser::CharLiteralContext *ctx) = 0;
+
+  virtual void enterF32Literal(TypedefParser::F32LiteralContext *ctx) = 0;
+  virtual void exitF32Literal(TypedefParser::F32LiteralContext *ctx) = 0;
+
+  virtual void enterF64Literal(TypedefParser::F64LiteralContext *ctx) = 0;
+  virtual void exitF64Literal(TypedefParser::F64LiteralContext *ctx) = 0;
+
+  virtual void enterU8Literal(TypedefParser::U8LiteralContext *ctx) = 0;
+  virtual void exitU8Literal(TypedefParser::U8LiteralContext *ctx) = 0;
+
+  virtual void enterU16Literal(TypedefParser::U16LiteralContext *ctx) = 0;
+  virtual void exitU16Literal(TypedefParser::U16LiteralContext *ctx) = 0;
+
+  virtual void enterU32Literal(TypedefParser::U32LiteralContext *ctx) = 0;
+  virtual void exitU32Literal(TypedefParser::U32LiteralContext *ctx) = 0;
+
+  virtual void enterU64Literal(TypedefParser::U64LiteralContext *ctx) = 0;
+  virtual void exitU64Literal(TypedefParser::U64LiteralContext *ctx) = 0;
+
+  virtual void enterI8Literal(TypedefParser::I8LiteralContext *ctx) = 0;
+  virtual void exitI8Literal(TypedefParser::I8LiteralContext *ctx) = 0;
+
+  virtual void enterI16Literal(TypedefParser::I16LiteralContext *ctx) = 0;
+  virtual void exitI16Literal(TypedefParser::I16LiteralContext *ctx) = 0;
+
+  virtual void enterI32Literal(TypedefParser::I32LiteralContext *ctx) = 0;
+  virtual void exitI32Literal(TypedefParser::I32LiteralContext *ctx) = 0;
+
+  virtual void enterI64Literal(TypedefParser::I64LiteralContext *ctx) = 0;
+  virtual void exitI64Literal(TypedefParser::I64LiteralContext *ctx) = 0;
+
+  virtual void enterStringLiteral(TypedefParser::StringLiteralContext *ctx) = 0;
+  virtual void exitStringLiteral(TypedefParser::StringLiteralContext *ctx) = 0;
+
+  virtual void enterByteStringLiteral(TypedefParser::ByteStringLiteralContext *ctx) = 0;
+  virtual void exitByteStringLiteral(TypedefParser::ByteStringLiteralContext *ctx) = 0;
 
   virtual void enterIdentifier(TypedefParser::IdentifierContext *ctx) = 0;
   virtual void exitIdentifier(TypedefParser::IdentifierContext *ctx) = 0;

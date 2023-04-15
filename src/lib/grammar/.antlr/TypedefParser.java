@@ -1,4 +1,11 @@
 // Generated from /home/dpemmons/src/typedef/src/lib/grammar/TypedefParser.g4 by ANTLR 4.9.2
+
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <string>
+#include "symbol_table.h"
+
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -16,89 +23,103 @@ public class TypedefParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		KW_AS=1, KW_ENUM=2, KW_FALSE=3, KW_FN=4, KW_IMPL=5, KW_MODULE=6, KW_STRUCT=7, 
-		KW_TRUE=8, KW_TYPE=9, KW_TYPEDEF=10, KW_USE=11, KW_AND=12, KW_IN=13, KW_LET=14, 
-		KW_NOT=15, KW_OR=16, KW_SIZEOF=17, KW_THIS=18, KW_TRAIT=19, KW_WHERE=20, 
-		KW_XOR=21, KW_BREAK=22, KW_CONTINUE=23, KW_DEFAULT=24, KW_DO=25, KW_ELSE=26, 
-		KW_FOR=27, KW_GOTO=28, KW_IF=29, KW_LOOP=30, KW_MATCH=31, KW_MOVE=32, 
-		KW_RETURN=33, KW_TRY=34, KW_WHILE=35, KW_YIELD=36, KW_ABSTRACT=37, KW_AUTO=38, 
-		KW_CONST=39, KW_DOUBLE=40, KW_EXTERN=41, KW_FINAL=42, KW_FLOAT=43, KW_INT=44, 
-		KW_LONG=45, KW_MACRO=46, KW_MUT=47, KW_OVERRIDE=48, KW_PRIVATE=49, KW_PUB=50, 
-		KW_REF=51, KW_SELFTYPE=52, KW_SELFVALUE=53, KW_SIGNED=54, KW_STATIC=55, 
-		KW_SUPER=56, KW_SWITCH=57, KW_TYPEOF=58, KW_UNION=59, KW_UNSAFE=60, KW_UNSIGNED=61, 
-		KW_UNSIZED=62, KW_VIRTUAL=63, KW_VOID=64, KW_VOLATILE=65, NON_KEYWORD_IDENTIFIER=66, 
-		RAW_IDENTIFIER=67, LINE_COMMENT=68, BLOCK_COMMENT=69, INNER_LINE_DOC=70, 
-		INNER_BLOCK_DOC=71, OUTER_LINE_DOC=72, OUTER_BLOCK_DOC=73, BLOCK_COMMENT_OR_DOC=74, 
-		SHEBANG=75, WHITESPACE=76, NEWLINE=77, CHAR_LITERAL=78, STRING_LITERAL=79, 
-		RAW_STRING_LITERAL=80, BYTE_LITERAL=81, BYTE_STRING_LITERAL=82, RAW_BYTE_STRING_LITERAL=83, 
-		INTEGER_LITERAL=84, DEC_LITERAL=85, HEX_LITERAL=86, OCT_LITERAL=87, BIN_LITERAL=88, 
-		FLOAT_LITERAL=89, LIFETIME_OR_LABEL=90, PLUS=91, MINUS=92, STAR=93, SLASH=94, 
-		PERCENT=95, CARET=96, NOT=97, AND=98, OR=99, ANDAND=100, OROR=101, PLUSEQ=102, 
-		MINUSEQ=103, STAREQ=104, SLASHEQ=105, PERCENTEQ=106, CARETEQ=107, ANDEQ=108, 
-		OREQ=109, SHLEQ=110, SHREQ=111, EQ=112, EQEQ=113, NE=114, GT=115, LT=116, 
-		GE=117, LE=118, AT=119, UNDERSCORE=120, DOT=121, DOTDOT=122, DOTDOTDOT=123, 
-		COMMA=124, SEMI=125, COLON=126, PATHSEP=127, RARROW=128, FATARROW=129, 
-		POUND=130, DOLLAR=131, QUESTION=132, LBRACE=133, RBRACE=134, LBRACK=135, 
-		RBRACK=136, LPAREN=137, RPAREN=138;
+		KW_ARRAY=1, KW_AS=2, KW_ENUM=3, KW_FALSE=4, KW_FN=5, KW_IMPL=6, KW_MESSAGE=7, 
+		KW_MODULE=8, KW_STRUCT=9, KW_TRUE=10, KW_TYPE=11, KW_TYPEDEF=12, KW_USE=13, 
+		KW_VARIANT=14, KW_VECTOR=15, KW_AND=16, KW_IN=17, KW_LET=18, KW_NOT=19, 
+		KW_OR=20, KW_SIZEOF=21, KW_THIS=22, KW_TRAIT=23, KW_WHERE=24, KW_XOR=25, 
+		KW_BREAK=26, KW_CONTINUE=27, KW_DEFAULT=28, KW_DO=29, KW_ELSE=30, KW_FOR=31, 
+		KW_GOTO=32, KW_IF=33, KW_LOOP=34, KW_MATCH=35, KW_MOVE=36, KW_RETURN=37, 
+		KW_TRY=38, KW_WHILE=39, KW_YIELD=40, KW_ABSTRACT=41, KW_AUTO=42, KW_CONST=43, 
+		KW_DOUBLE=44, KW_EXTERN=45, KW_FINAL=46, KW_FLOAT=47, KW_INT=48, KW_LONG=49, 
+		KW_MACRO=50, KW_MUT=51, KW_OVERRIDE=52, KW_PRIVATE=53, KW_PUB=54, KW_REF=55, 
+		KW_SELFTYPE=56, KW_SELFVALUE=57, KW_SIGNED=58, KW_STATIC=59, KW_SUPER=60, 
+		KW_SWITCH=61, KW_TYPEOF=62, KW_UNION=63, KW_UNSAFE=64, KW_UNSIGNED=65, 
+		KW_UNSIZED=66, KW_VIRTUAL=67, KW_VOID=68, KW_VOLATILE=69, KW_BOOL=70, 
+		KW_CHAR=71, KW_STRING=72, KW_F32=73, KW_F64=74, KW_U8=75, KW_U16=76, KW_U32=77, 
+		KW_U64=78, KW_I8=79, KW_I16=80, KW_I32=81, KW_I64=82, NON_KEYWORD_IDENTIFIER=83, 
+		LINE_COMMENT=84, BLOCK_COMMENT=85, INNER_LINE_DOC=86, INNER_BLOCK_DOC=87, 
+		OUTER_LINE_DOC=88, OUTER_BLOCK_DOC=89, BLOCK_COMMENT_OR_DOC=90, SHEBANG=91, 
+		WHITESPACE=92, NEWLINE=93, CHAR_LITERAL=94, STRING_LITERAL=95, RAW_STRING_LITERAL=96, 
+		BYTE_LITERAL=97, BYTE_STRING_LITERAL=98, RAW_BYTE_STRING_LITERAL=99, INTEGER_LITERAL=100, 
+		DEC_LITERAL=101, HEX_LITERAL=102, OCT_LITERAL=103, BIN_LITERAL=104, FLOAT_LITERAL=105, 
+		LIFETIME_OR_LABEL=106, RAW_ESCAPE=107, PLUS=108, MINUS=109, STAR=110, 
+		SLASH=111, PERCENT=112, CARET=113, NOT=114, AND=115, OR=116, ANDAND=117, 
+		OROR=118, PLUSEQ=119, MINUSEQ=120, STAREQ=121, SLASHEQ=122, PERCENTEQ=123, 
+		CARETEQ=124, ANDEQ=125, OREQ=126, SHLEQ=127, SHREQ=128, EQ=129, EQEQ=130, 
+		NE=131, GT=132, LT=133, GE=134, LE=135, AT=136, UNDERSCORE=137, DOT=138, 
+		DOTDOT=139, DOTDOTDOT=140, COMMA=141, SEMI=142, COLON=143, PATHSEP=144, 
+		RARROW=145, FATARROW=146, POUND=147, DOLLAR=148, QUESTION=149, LBRACE=150, 
+		RBRACE=151, LBRACK=152, RBRACK=153, LPAREN=154, RPAREN=155;
 	public static final int
 		RULE_compilationUnit = 0, RULE_item = 1, RULE_valueDefinition = 2, RULE_type_ = 3, 
-		RULE_typedefVersionDeclaration = 4, RULE_moduleDeclaration = 5, RULE_useDeclaration = 6, 
-		RULE_useTree = 7, RULE_value = 8, RULE_simplePath = 9, RULE_literalExpression = 10, 
-		RULE_identifier = 11, RULE_keyword = 12;
+		RULE_parameterizedType = 4, RULE_typedefVersionDeclaration = 5, RULE_moduleDeclaration = 6, 
+		RULE_useDeclaration = 7, RULE_useTree = 8, RULE_simplePath = 9, RULE_primitiveType = 10, 
+		RULE_boolLiteral = 11, RULE_byteLiteral = 12, RULE_charLiteral = 13, RULE_f32Literal = 14, 
+		RULE_f64Literal = 15, RULE_u8Literal = 16, RULE_u16Literal = 17, RULE_u32Literal = 18, 
+		RULE_u64Literal = 19, RULE_i8Literal = 20, RULE_i16Literal = 21, RULE_i32Literal = 22, 
+		RULE_i64Literal = 23, RULE_stringLiteral = 24, RULE_byteStringLiteral = 25, 
+		RULE_identifier = 26, RULE_keyword = 27;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"compilationUnit", "item", "valueDefinition", "type_", "typedefVersionDeclaration", 
-			"moduleDeclaration", "useDeclaration", "useTree", "value", "simplePath", 
-			"literalExpression", "identifier", "keyword"
+			"compilationUnit", "item", "valueDefinition", "type_", "parameterizedType", 
+			"typedefVersionDeclaration", "moduleDeclaration", "useDeclaration", "useTree", 
+			"simplePath", "primitiveType", "boolLiteral", "byteLiteral", "charLiteral", 
+			"f32Literal", "f64Literal", "u8Literal", "u16Literal", "u32Literal", 
+			"u64Literal", "i8Literal", "i16Literal", "i32Literal", "i64Literal", 
+			"stringLiteral", "byteStringLiteral", "identifier", "keyword"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'as'", "'enum'", "'false'", "'fn'", "'impl'", "'module'", "'struct'", 
-			"'true'", "'type'", "'typedef'", "'use'", "'and'", "'in'", "'let'", "'not'", 
-			"'or'", "'sizeof'", "'this'", "'trait'", "'where'", "'xor'", "'break'", 
-			"'continue'", "'default'", "'do'", "'else'", "'for'", "'goto'", "'if'", 
-			"'loop'", "'match'", "'move'", "'return'", "'try'", "'while'", "'yield'", 
-			"'abstract'", "'auto'", "'const'", "'double'", "'extern'", "'final'", 
-			"'float'", "'int'", "'long'", "'macro'", "'mut'", "'override'", "'private'", 
-			"'pub'", "'ref'", "'Self'", "'self'", "'signed'", "'static'", "'super'", 
-			"'switch'", "'typeof'", "'union'", "'unsafe'", "'unsigned'", "'unsized'", 
-			"'virtual'", "'void'", "'volatile'", null, null, null, null, null, null, 
+			null, "'array'", "'as'", "'enum'", "'false'", "'fn'", "'impl'", "'message'", 
+			"'module'", "'struct'", "'true'", "'type'", "'typedef'", "'use'", "'variant'", 
+			"'vector'", "'and'", "'in'", "'let'", "'not'", "'or'", "'sizeof'", "'this'", 
+			"'trait'", "'where'", "'xor'", "'break'", "'continue'", "'default'", 
+			"'do'", "'else'", "'for'", "'goto'", "'if'", "'loop'", "'match'", "'move'", 
+			"'return'", "'try'", "'while'", "'yield'", "'abstract'", "'auto'", "'const'", 
+			"'double'", "'extern'", "'final'", "'float'", "'int'", "'long'", "'macro'", 
+			"'mut'", "'override'", "'private'", "'pub'", "'ref'", "'Self'", "'self'", 
+			"'signed'", "'static'", "'super'", "'switch'", "'typeof'", "'union'", 
+			"'unsafe'", "'unsigned'", "'unsized'", "'virtual'", "'void'", "'volatile'", 
+			"'bool'", "'char'", "'string'", "'f32'", "'f64'", "'u8'", "'u16'", "'u32'", 
+			"'u64'", "'i8'", "'i16'", "'i32'", "'i64'", null, null, null, null, null, 
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, "'+'", "'-'", "'*'", "'/'", 
-			"'%'", "'^'", "'!'", "'&'", "'|'", "'&&'", "'||'", "'+='", "'-='", "'*='", 
-			"'/='", "'%='", "'^='", "'&='", "'|='", "'<<='", "'>>='", "'='", "'=='", 
-			"'!='", "'>'", "'<'", "'>='", "'<='", "'@'", "'_'", "'.'", "'..'", "'...'", 
-			"','", "';'", "':'", "'::'", "'->'", "'=>'", "'#'", "'$'", "'?'", "'{'", 
-			"'}'", "'['", "']'", "'('", "')'"
+			null, null, null, null, null, null, null, "'r#'", "'+'", "'-'", "'*'", 
+			"'/'", "'%'", "'^'", "'!'", "'&'", "'|'", "'&&'", "'||'", "'+='", "'-='", 
+			"'*='", "'/='", "'%='", "'^='", "'&='", "'|='", "'<<='", "'>>='", "'='", 
+			"'=='", "'!='", "'>'", "'<'", "'>='", "'<='", "'@'", "'_'", "'.'", "'..'", 
+			"'...'", "','", "';'", "':'", "'::'", "'->'", "'=>'", "'#'", "'$'", "'?'", 
+			"'{'", "'}'", "'['", "']'", "'('", "')'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "KW_AS", "KW_ENUM", "KW_FALSE", "KW_FN", "KW_IMPL", "KW_MODULE", 
-			"KW_STRUCT", "KW_TRUE", "KW_TYPE", "KW_TYPEDEF", "KW_USE", "KW_AND", 
-			"KW_IN", "KW_LET", "KW_NOT", "KW_OR", "KW_SIZEOF", "KW_THIS", "KW_TRAIT", 
-			"KW_WHERE", "KW_XOR", "KW_BREAK", "KW_CONTINUE", "KW_DEFAULT", "KW_DO", 
-			"KW_ELSE", "KW_FOR", "KW_GOTO", "KW_IF", "KW_LOOP", "KW_MATCH", "KW_MOVE", 
-			"KW_RETURN", "KW_TRY", "KW_WHILE", "KW_YIELD", "KW_ABSTRACT", "KW_AUTO", 
-			"KW_CONST", "KW_DOUBLE", "KW_EXTERN", "KW_FINAL", "KW_FLOAT", "KW_INT", 
-			"KW_LONG", "KW_MACRO", "KW_MUT", "KW_OVERRIDE", "KW_PRIVATE", "KW_PUB", 
-			"KW_REF", "KW_SELFTYPE", "KW_SELFVALUE", "KW_SIGNED", "KW_STATIC", "KW_SUPER", 
-			"KW_SWITCH", "KW_TYPEOF", "KW_UNION", "KW_UNSAFE", "KW_UNSIGNED", "KW_UNSIZED", 
-			"KW_VIRTUAL", "KW_VOID", "KW_VOLATILE", "NON_KEYWORD_IDENTIFIER", "RAW_IDENTIFIER", 
+			null, "KW_ARRAY", "KW_AS", "KW_ENUM", "KW_FALSE", "KW_FN", "KW_IMPL", 
+			"KW_MESSAGE", "KW_MODULE", "KW_STRUCT", "KW_TRUE", "KW_TYPE", "KW_TYPEDEF", 
+			"KW_USE", "KW_VARIANT", "KW_VECTOR", "KW_AND", "KW_IN", "KW_LET", "KW_NOT", 
+			"KW_OR", "KW_SIZEOF", "KW_THIS", "KW_TRAIT", "KW_WHERE", "KW_XOR", "KW_BREAK", 
+			"KW_CONTINUE", "KW_DEFAULT", "KW_DO", "KW_ELSE", "KW_FOR", "KW_GOTO", 
+			"KW_IF", "KW_LOOP", "KW_MATCH", "KW_MOVE", "KW_RETURN", "KW_TRY", "KW_WHILE", 
+			"KW_YIELD", "KW_ABSTRACT", "KW_AUTO", "KW_CONST", "KW_DOUBLE", "KW_EXTERN", 
+			"KW_FINAL", "KW_FLOAT", "KW_INT", "KW_LONG", "KW_MACRO", "KW_MUT", "KW_OVERRIDE", 
+			"KW_PRIVATE", "KW_PUB", "KW_REF", "KW_SELFTYPE", "KW_SELFVALUE", "KW_SIGNED", 
+			"KW_STATIC", "KW_SUPER", "KW_SWITCH", "KW_TYPEOF", "KW_UNION", "KW_UNSAFE", 
+			"KW_UNSIGNED", "KW_UNSIZED", "KW_VIRTUAL", "KW_VOID", "KW_VOLATILE", 
+			"KW_BOOL", "KW_CHAR", "KW_STRING", "KW_F32", "KW_F64", "KW_U8", "KW_U16", 
+			"KW_U32", "KW_U64", "KW_I8", "KW_I16", "KW_I32", "KW_I64", "NON_KEYWORD_IDENTIFIER", 
 			"LINE_COMMENT", "BLOCK_COMMENT", "INNER_LINE_DOC", "INNER_BLOCK_DOC", 
 			"OUTER_LINE_DOC", "OUTER_BLOCK_DOC", "BLOCK_COMMENT_OR_DOC", "SHEBANG", 
 			"WHITESPACE", "NEWLINE", "CHAR_LITERAL", "STRING_LITERAL", "RAW_STRING_LITERAL", 
 			"BYTE_LITERAL", "BYTE_STRING_LITERAL", "RAW_BYTE_STRING_LITERAL", "INTEGER_LITERAL", 
 			"DEC_LITERAL", "HEX_LITERAL", "OCT_LITERAL", "BIN_LITERAL", "FLOAT_LITERAL", 
-			"LIFETIME_OR_LABEL", "PLUS", "MINUS", "STAR", "SLASH", "PERCENT", "CARET", 
-			"NOT", "AND", "OR", "ANDAND", "OROR", "PLUSEQ", "MINUSEQ", "STAREQ", 
-			"SLASHEQ", "PERCENTEQ", "CARETEQ", "ANDEQ", "OREQ", "SHLEQ", "SHREQ", 
-			"EQ", "EQEQ", "NE", "GT", "LT", "GE", "LE", "AT", "UNDERSCORE", "DOT", 
-			"DOTDOT", "DOTDOTDOT", "COMMA", "SEMI", "COLON", "PATHSEP", "RARROW", 
+			"LIFETIME_OR_LABEL", "RAW_ESCAPE", "PLUS", "MINUS", "STAR", "SLASH", 
+			"PERCENT", "CARET", "NOT", "AND", "OR", "ANDAND", "OROR", "PLUSEQ", "MINUSEQ", 
+			"STAREQ", "SLASHEQ", "PERCENTEQ", "CARETEQ", "ANDEQ", "OREQ", "SHLEQ", 
+			"SHREQ", "EQ", "EQEQ", "NE", "GT", "LT", "GE", "LE", "AT", "UNDERSCORE", 
+			"DOT", "DOTDOT", "DOTDOTDOT", "COMMA", "SEMI", "COLON", "PATHSEP", "RARROW", 
 			"FATARROW", "POUND", "DOLLAR", "QUESTION", "LBRACE", "RBRACE", "LBRACK", 
 			"RBRACK", "LPAREN", "RPAREN"
 		};
@@ -187,47 +208,47 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(26);
+			setState(56);
 			typedefVersionDeclaration();
-			setState(28);
+			setState(58);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==KW_MODULE) {
 				{
-				setState(27);
+				setState(57);
 				moduleDeclaration();
 				}
 			}
 
-			setState(33);
+			setState(63);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==KW_USE) {
 				{
 				{
-				setState(30);
+				setState(60);
 				useDeclaration();
 				}
 				}
-				setState(35);
+				setState(65);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(39);
+			setState(69);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==NON_KEYWORD_IDENTIFIER || _la==RAW_IDENTIFIER) {
+			while (_la==NON_KEYWORD_IDENTIFIER || _la==RAW_ESCAPE) {
 				{
 				{
-				setState(36);
+				setState(66);
 				item();
 				}
 				}
-				setState(41);
+				setState(71);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(42);
+			setState(72);
 			match(EOF);
 			}
 		}
@@ -258,7 +279,7 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(44);
+			setState(74);
 			valueDefinition();
 			}
 		}
@@ -274,6 +295,7 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class ValueDefinitionContext extends ParserRuleContext {
+		public Type_Context type_;
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
 		}
@@ -282,10 +304,13 @@ public class TypedefParser extends Parser {
 			return getRuleContext(Type_Context.class,0);
 		}
 		public TerminalNode EQ() { return getToken(TypedefParser.EQ, 0); }
-		public ValueContext value() {
-			return getRuleContext(ValueContext.class,0);
-		}
 		public TerminalNode SEMI() { return getToken(TypedefParser.SEMI, 0); }
+		public BoolLiteralContext boolLiteral() {
+			return getRuleContext(BoolLiteralContext.class,0);
+		}
+		public CharLiteralContext charLiteral() {
+			return getRuleContext(CharLiteralContext.class,0);
+		}
 		public ValueDefinitionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -298,17 +323,35 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(46);
+			setState(76);
 			identifier();
-			setState(47);
+			setState(77);
 			match(COLON);
-			setState(48);
-			type_();
-			setState(49);
+			setState(78);
+			((ValueDefinitionContext)_localctx).type_ = type_();
+			setState(79);
 			match(EQ);
-			setState(50);
-			value();
-			setState(51);
+			setState(84);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
+			case 1:
+				{
+				setState(80);
+				if (!((((ValueDefinitionContext)_localctx).type_!=null?(((ValueDefinitionContext)_localctx).type_.start):null)->getType() == KW_BOOL)) throw new FailedPredicateException(this, "$type_.start->getType() == KW_BOOL");
+				setState(81);
+				boolLiteral();
+				}
+				break;
+			case 2:
+				{
+				setState(82);
+				if (!((((ValueDefinitionContext)_localctx).type_!=null?(((ValueDefinitionContext)_localctx).type_.start):null)->getType() == KW_CHAR)) throw new FailedPredicateException(this, "$type_.start->getType() == KW_CHAR");
+				setState(83);
+				charLiteral();
+				}
+				break;
+			}
+			setState(86);
 			match(SEMI);
 			}
 		}
@@ -324,8 +367,14 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class Type_Context extends ParserRuleContext {
+		public PrimitiveTypeContext primitiveType() {
+			return getRuleContext(PrimitiveTypeContext.class,0);
+		}
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
+		}
+		public ParameterizedTypeContext parameterizedType() {
+			return getRuleContext(ParameterizedTypeContext.class,0);
 		}
 		public Type_Context(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -337,10 +386,104 @@ public class TypedefParser extends Parser {
 		Type_Context _localctx = new Type_Context(_ctx, getState());
 		enterRule(_localctx, 6, RULE_type_);
 		try {
+			setState(91);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
+			case 1:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(88);
+				primitiveType();
+				}
+				break;
+			case 2:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(89);
+				identifier();
+				}
+				break;
+			case 3:
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(90);
+				parameterizedType();
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class ParameterizedTypeContext extends ParserRuleContext {
+		public List<IdentifierContext> identifier() {
+			return getRuleContexts(IdentifierContext.class);
+		}
+		public IdentifierContext identifier(int i) {
+			return getRuleContext(IdentifierContext.class,i);
+		}
+		public TerminalNode LT() { return getToken(TypedefParser.LT, 0); }
+		public TerminalNode GT() { return getToken(TypedefParser.GT, 0); }
+		public List<TerminalNode> INTEGER_LITERAL() { return getTokens(TypedefParser.INTEGER_LITERAL); }
+		public TerminalNode INTEGER_LITERAL(int i) {
+			return getToken(TypedefParser.INTEGER_LITERAL, i);
+		}
+		public ParameterizedTypeContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_parameterizedType; }
+	}
+
+	public final ParameterizedTypeContext parameterizedType() throws RecognitionException {
+		ParameterizedTypeContext _localctx = new ParameterizedTypeContext(_ctx, getState());
+		enterRule(_localctx, 8, RULE_parameterizedType);
+		int _la;
+		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(53);
+			setState(93);
 			identifier();
+			setState(94);
+			match(LT);
+			setState(97); 
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			do {
+				{
+				setState(97);
+				_errHandler.sync(this);
+				switch (_input.LA(1)) {
+				case NON_KEYWORD_IDENTIFIER:
+				case RAW_ESCAPE:
+					{
+					setState(95);
+					identifier();
+					}
+					break;
+				case INTEGER_LITERAL:
+					{
+					setState(96);
+					match(INTEGER_LITERAL);
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				}
+				setState(99); 
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			} while ( ((((_la - 83)) & ~0x3f) == 0 && ((1L << (_la - 83)) & ((1L << (NON_KEYWORD_IDENTIFIER - 83)) | (1L << (INTEGER_LITERAL - 83)) | (1L << (RAW_ESCAPE - 83)))) != 0) );
+			setState(101);
+			match(GT);
 			}
 		}
 		catch (RecognitionException re) {
@@ -369,17 +512,17 @@ public class TypedefParser extends Parser {
 
 	public final TypedefVersionDeclarationContext typedefVersionDeclaration() throws RecognitionException {
 		TypedefVersionDeclarationContext _localctx = new TypedefVersionDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_typedefVersionDeclaration);
+		enterRule(_localctx, 10, RULE_typedefVersionDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(55);
+			setState(103);
 			match(KW_TYPEDEF);
-			setState(56);
+			setState(104);
 			match(EQ);
-			setState(57);
+			setState(105);
 			identifier();
-			setState(58);
+			setState(106);
 			match(SEMI);
 			}
 		}
@@ -408,15 +551,15 @@ public class TypedefParser extends Parser {
 
 	public final ModuleDeclarationContext moduleDeclaration() throws RecognitionException {
 		ModuleDeclarationContext _localctx = new ModuleDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_moduleDeclaration);
+		enterRule(_localctx, 12, RULE_moduleDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(60);
+			setState(108);
 			match(KW_MODULE);
-			setState(61);
+			setState(109);
 			simplePath();
-			setState(62);
+			setState(110);
 			match(SEMI);
 			}
 		}
@@ -445,15 +588,15 @@ public class TypedefParser extends Parser {
 
 	public final UseDeclarationContext useDeclaration() throws RecognitionException {
 		UseDeclarationContext _localctx = new UseDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_useDeclaration);
+		enterRule(_localctx, 14, RULE_useDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(64);
+			setState(112);
 			match(KW_USE);
-			setState(65);
+			setState(113);
 			useTree();
-			setState(66);
+			setState(114);
 			match(SEMI);
 			}
 		}
@@ -498,80 +641,80 @@ public class TypedefParser extends Parser {
 
 	public final UseTreeContext useTree() throws RecognitionException {
 		UseTreeContext _localctx = new UseTreeContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_useTree);
+		enterRule(_localctx, 16, RULE_useTree);
 		int _la;
 		try {
 			int _alt;
-			setState(97);
+			setState(145);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,10,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(72);
+				setState(120);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & ((1L << (NON_KEYWORD_IDENTIFIER - 66)) | (1L << (RAW_IDENTIFIER - 66)) | (1L << (PATHSEP - 66)))) != 0)) {
+				if (((((_la - 83)) & ~0x3f) == 0 && ((1L << (_la - 83)) & ((1L << (NON_KEYWORD_IDENTIFIER - 83)) | (1L << (RAW_ESCAPE - 83)) | (1L << (PATHSEP - 83)))) != 0)) {
 					{
-					setState(69);
+					setState(117);
 					_errHandler.sync(this);
-					switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
+					switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
 					case 1:
 						{
-						setState(68);
+						setState(116);
 						simplePath();
 						}
 						break;
 					}
-					setState(71);
+					setState(119);
 					match(PATHSEP);
 					}
 				}
 
-				setState(90);
+				setState(138);
 				_errHandler.sync(this);
 				switch (_input.LA(1)) {
 				case STAR:
 					{
-					setState(74);
+					setState(122);
 					match(STAR);
 					}
 					break;
 				case LBRACE:
 					{
-					setState(75);
+					setState(123);
 					match(LBRACE);
-					setState(87);
+					setState(135);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-					if (((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & ((1L << (NON_KEYWORD_IDENTIFIER - 66)) | (1L << (RAW_IDENTIFIER - 66)) | (1L << (STAR - 66)) | (1L << (PATHSEP - 66)))) != 0) || _la==LBRACE) {
+					if (((((_la - 83)) & ~0x3f) == 0 && ((1L << (_la - 83)) & ((1L << (NON_KEYWORD_IDENTIFIER - 83)) | (1L << (RAW_ESCAPE - 83)) | (1L << (STAR - 83)) | (1L << (PATHSEP - 83)))) != 0) || _la==LBRACE) {
 						{
-						setState(76);
+						setState(124);
 						useTree();
-						setState(81);
+						setState(129);
 						_errHandler.sync(this);
-						_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
+						_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
 						while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 							if ( _alt==1 ) {
 								{
 								{
-								setState(77);
+								setState(125);
 								match(COMMA);
-								setState(78);
+								setState(126);
 								useTree();
 								}
 								} 
 							}
-							setState(83);
+							setState(131);
 							_errHandler.sync(this);
-							_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
+							_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
 						}
-						setState(85);
+						setState(133);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 						if (_la==COMMA) {
 							{
-							setState(84);
+							setState(132);
 							match(COMMA);
 							}
 						}
@@ -579,7 +722,7 @@ public class TypedefParser extends Parser {
 						}
 					}
 
-					setState(89);
+					setState(137);
 					match(RBRACE);
 					}
 					break;
@@ -591,53 +734,22 @@ public class TypedefParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(92);
+				setState(140);
 				simplePath();
-				setState(95);
+				setState(143);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==KW_AS) {
 					{
-					setState(93);
+					setState(141);
 					match(KW_AS);
-					setState(94);
+					setState(142);
 					identifier();
 					}
 				}
 
 				}
 				break;
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class ValueContext extends ParserRuleContext {
-		public LiteralExpressionContext literalExpression() {
-			return getRuleContext(LiteralExpressionContext.class,0);
-		}
-		public ValueContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_value; }
-	}
-
-	public final ValueContext value() throws RecognitionException {
-		ValueContext _localctx = new ValueContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_value);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(99);
-			literalExpression();
 			}
 		}
 		catch (RecognitionException re) {
@@ -676,35 +788,35 @@ public class TypedefParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(102);
+			setState(148);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==PATHSEP) {
 				{
-				setState(101);
+				setState(147);
 				match(PATHSEP);
 				}
 			}
 
-			setState(104);
+			setState(150);
 			identifier();
-			setState(109);
+			setState(155);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,12,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,16,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					setState(105);
+					setState(151);
 					match(PATHSEP);
-					setState(106);
+					setState(152);
 					identifier();
 					}
 					} 
 				}
-				setState(111);
+				setState(157);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,12,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,16,_ctx);
 			}
 			}
 		}
@@ -719,33 +831,526 @@ public class TypedefParser extends Parser {
 		return _localctx;
 	}
 
-	public static class LiteralExpressionContext extends ParserRuleContext {
-		public TerminalNode CHAR_LITERAL() { return getToken(TypedefParser.CHAR_LITERAL, 0); }
-		public TerminalNode STRING_LITERAL() { return getToken(TypedefParser.STRING_LITERAL, 0); }
-		public TerminalNode RAW_STRING_LITERAL() { return getToken(TypedefParser.RAW_STRING_LITERAL, 0); }
-		public TerminalNode BYTE_LITERAL() { return getToken(TypedefParser.BYTE_LITERAL, 0); }
-		public TerminalNode BYTE_STRING_LITERAL() { return getToken(TypedefParser.BYTE_STRING_LITERAL, 0); }
-		public TerminalNode RAW_BYTE_STRING_LITERAL() { return getToken(TypedefParser.RAW_BYTE_STRING_LITERAL, 0); }
-		public TerminalNode INTEGER_LITERAL() { return getToken(TypedefParser.INTEGER_LITERAL, 0); }
-		public TerminalNode FLOAT_LITERAL() { return getToken(TypedefParser.FLOAT_LITERAL, 0); }
-		public TerminalNode KW_TRUE() { return getToken(TypedefParser.KW_TRUE, 0); }
-		public TerminalNode KW_FALSE() { return getToken(TypedefParser.KW_FALSE, 0); }
-		public LiteralExpressionContext(ParserRuleContext parent, int invokingState) {
+	public static class PrimitiveTypeContext extends ParserRuleContext {
+		public TerminalNode KW_BOOL() { return getToken(TypedefParser.KW_BOOL, 0); }
+		public TerminalNode KW_CHAR() { return getToken(TypedefParser.KW_CHAR, 0); }
+		public TerminalNode KW_STRING() { return getToken(TypedefParser.KW_STRING, 0); }
+		public TerminalNode KW_F32() { return getToken(TypedefParser.KW_F32, 0); }
+		public TerminalNode KW_F64() { return getToken(TypedefParser.KW_F64, 0); }
+		public TerminalNode KW_U8() { return getToken(TypedefParser.KW_U8, 0); }
+		public TerminalNode KW_U16() { return getToken(TypedefParser.KW_U16, 0); }
+		public TerminalNode KW_U32() { return getToken(TypedefParser.KW_U32, 0); }
+		public TerminalNode KW_U64() { return getToken(TypedefParser.KW_U64, 0); }
+		public TerminalNode KW_I8() { return getToken(TypedefParser.KW_I8, 0); }
+		public TerminalNode KW_I16() { return getToken(TypedefParser.KW_I16, 0); }
+		public TerminalNode KW_I32() { return getToken(TypedefParser.KW_I32, 0); }
+		public TerminalNode KW_I64() { return getToken(TypedefParser.KW_I64, 0); }
+		public PrimitiveTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_literalExpression; }
+		@Override public int getRuleIndex() { return RULE_primitiveType; }
 	}
 
-	public final LiteralExpressionContext literalExpression() throws RecognitionException {
-		LiteralExpressionContext _localctx = new LiteralExpressionContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_literalExpression);
+	public final PrimitiveTypeContext primitiveType() throws RecognitionException {
+		PrimitiveTypeContext _localctx = new PrimitiveTypeContext(_ctx, getState());
+		enterRule(_localctx, 20, RULE_primitiveType);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(112);
+			setState(158);
 			_la = _input.LA(1);
-			if ( !(_la==KW_FALSE || _la==KW_TRUE || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & ((1L << (CHAR_LITERAL - 78)) | (1L << (STRING_LITERAL - 78)) | (1L << (RAW_STRING_LITERAL - 78)) | (1L << (BYTE_LITERAL - 78)) | (1L << (BYTE_STRING_LITERAL - 78)) | (1L << (RAW_BYTE_STRING_LITERAL - 78)) | (1L << (INTEGER_LITERAL - 78)) | (1L << (FLOAT_LITERAL - 78)))) != 0)) ) {
+			if ( !(((((_la - 70)) & ~0x3f) == 0 && ((1L << (_la - 70)) & ((1L << (KW_BOOL - 70)) | (1L << (KW_CHAR - 70)) | (1L << (KW_STRING - 70)) | (1L << (KW_F32 - 70)) | (1L << (KW_F64 - 70)) | (1L << (KW_U8 - 70)) | (1L << (KW_U16 - 70)) | (1L << (KW_U32 - 70)) | (1L << (KW_U64 - 70)) | (1L << (KW_I8 - 70)) | (1L << (KW_I16 - 70)) | (1L << (KW_I32 - 70)) | (1L << (KW_I64 - 70)))) != 0)) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class BoolLiteralContext extends ParserRuleContext {
+		public std::optional<bool> maybe_val;
+		public TerminalNode KW_TRUE() { return getToken(TypedefParser.KW_TRUE, 0); }
+		public TerminalNode KW_FALSE() { return getToken(TypedefParser.KW_FALSE, 0); }
+		public BoolLiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_boolLiteral; }
+	}
+
+	public final BoolLiteralContext boolLiteral() throws RecognitionException {
+		BoolLiteralContext _localctx = new BoolLiteralContext(_ctx, getState());
+		enterRule(_localctx, 22, RULE_boolLiteral);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(160);
+			_la = _input.LA(1);
+			if ( !(_la==KW_FALSE || _la==KW_TRUE) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
+			}
+			_ctx.stop = _input.LT(-1);
+
+					// From grammar.
+					if (_localctx->start->getType() == TypedefParser::KW_FALSE) {
+						((BoolLiteralContext)_localctx).maybe_val =  false;
+					} else if (_localctx->start->getType() == TypedefParser::KW_TRUE) {
+						((BoolLiteralContext)_localctx).maybe_val =  true;
+					}
+					// End from grammar.
+			  
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class ByteLiteralContext extends ParserRuleContext {
+		public std::optional<uint8_t> maybe_val;
+		public TerminalNode BYTE_LITERAL() { return getToken(TypedefParser.BYTE_LITERAL, 0); }
+		public ByteLiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_byteLiteral; }
+	}
+
+	public final ByteLiteralContext byteLiteral() throws RecognitionException {
+		ByteLiteralContext _localctx = new ByteLiteralContext(_ctx, getState());
+		enterRule(_localctx, 24, RULE_byteLiteral);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(162);
+			match(BYTE_LITERAL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class CharLiteralContext extends ParserRuleContext {
+		public std::optional<char32_t> maybe_val;
+		public TerminalNode CHAR_LITERAL() { return getToken(TypedefParser.CHAR_LITERAL, 0); }
+		public CharLiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_charLiteral; }
+	}
+
+	public final CharLiteralContext charLiteral() throws RecognitionException {
+		CharLiteralContext _localctx = new CharLiteralContext(_ctx, getState());
+		enterRule(_localctx, 26, RULE_charLiteral);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(164);
+			match(CHAR_LITERAL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class F32LiteralContext extends ParserRuleContext {
+		public std::optional<float> maybe_val;
+		public TerminalNode FLOAT_LITERAL() { return getToken(TypedefParser.FLOAT_LITERAL, 0); }
+		public F32LiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_f32Literal; }
+	}
+
+	public final F32LiteralContext f32Literal() throws RecognitionException {
+		F32LiteralContext _localctx = new F32LiteralContext(_ctx, getState());
+		enterRule(_localctx, 28, RULE_f32Literal);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(166);
+			match(FLOAT_LITERAL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class F64LiteralContext extends ParserRuleContext {
+		public std::optional<double> maybe_val;
+		public TerminalNode FLOAT_LITERAL() { return getToken(TypedefParser.FLOAT_LITERAL, 0); }
+		public F64LiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_f64Literal; }
+	}
+
+	public final F64LiteralContext f64Literal() throws RecognitionException {
+		F64LiteralContext _localctx = new F64LiteralContext(_ctx, getState());
+		enterRule(_localctx, 30, RULE_f64Literal);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(168);
+			match(FLOAT_LITERAL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class U8LiteralContext extends ParserRuleContext {
+		public std::optional<uint8_t> maybe_val;
+		public TerminalNode INTEGER_LITERAL() { return getToken(TypedefParser.INTEGER_LITERAL, 0); }
+		public U8LiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_u8Literal; }
+	}
+
+	public final U8LiteralContext u8Literal() throws RecognitionException {
+		U8LiteralContext _localctx = new U8LiteralContext(_ctx, getState());
+		enterRule(_localctx, 32, RULE_u8Literal);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(170);
+			match(INTEGER_LITERAL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class U16LiteralContext extends ParserRuleContext {
+		public std::optional<uint16_t> maybe_val;
+		public TerminalNode INTEGER_LITERAL() { return getToken(TypedefParser.INTEGER_LITERAL, 0); }
+		public U16LiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_u16Literal; }
+	}
+
+	public final U16LiteralContext u16Literal() throws RecognitionException {
+		U16LiteralContext _localctx = new U16LiteralContext(_ctx, getState());
+		enterRule(_localctx, 34, RULE_u16Literal);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(172);
+			match(INTEGER_LITERAL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class U32LiteralContext extends ParserRuleContext {
+		public std::optional<uint32_t> maybe_val;
+		public TerminalNode INTEGER_LITERAL() { return getToken(TypedefParser.INTEGER_LITERAL, 0); }
+		public U32LiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_u32Literal; }
+	}
+
+	public final U32LiteralContext u32Literal() throws RecognitionException {
+		U32LiteralContext _localctx = new U32LiteralContext(_ctx, getState());
+		enterRule(_localctx, 36, RULE_u32Literal);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(174);
+			match(INTEGER_LITERAL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class U64LiteralContext extends ParserRuleContext {
+		public std::optional<uint64_t> maybe_val;
+		public TerminalNode INTEGER_LITERAL() { return getToken(TypedefParser.INTEGER_LITERAL, 0); }
+		public U64LiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_u64Literal; }
+	}
+
+	public final U64LiteralContext u64Literal() throws RecognitionException {
+		U64LiteralContext _localctx = new U64LiteralContext(_ctx, getState());
+		enterRule(_localctx, 38, RULE_u64Literal);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(176);
+			match(INTEGER_LITERAL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class I8LiteralContext extends ParserRuleContext {
+		public std::optional<int8_t> maybe_val;
+		public TerminalNode INTEGER_LITERAL() { return getToken(TypedefParser.INTEGER_LITERAL, 0); }
+		public I8LiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_i8Literal; }
+	}
+
+	public final I8LiteralContext i8Literal() throws RecognitionException {
+		I8LiteralContext _localctx = new I8LiteralContext(_ctx, getState());
+		enterRule(_localctx, 40, RULE_i8Literal);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(178);
+			match(INTEGER_LITERAL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class I16LiteralContext extends ParserRuleContext {
+		public std::optional<int16_t> maybe_val;
+		public TerminalNode INTEGER_LITERAL() { return getToken(TypedefParser.INTEGER_LITERAL, 0); }
+		public I16LiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_i16Literal; }
+	}
+
+	public final I16LiteralContext i16Literal() throws RecognitionException {
+		I16LiteralContext _localctx = new I16LiteralContext(_ctx, getState());
+		enterRule(_localctx, 42, RULE_i16Literal);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(180);
+			match(INTEGER_LITERAL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class I32LiteralContext extends ParserRuleContext {
+		public std::optional<int32_t> maybe_val;
+		public TerminalNode INTEGER_LITERAL() { return getToken(TypedefParser.INTEGER_LITERAL, 0); }
+		public I32LiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_i32Literal; }
+	}
+
+	public final I32LiteralContext i32Literal() throws RecognitionException {
+		I32LiteralContext _localctx = new I32LiteralContext(_ctx, getState());
+		enterRule(_localctx, 44, RULE_i32Literal);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(182);
+			match(INTEGER_LITERAL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class I64LiteralContext extends ParserRuleContext {
+		public std::optional<int64_t> maybe_val;
+		public TerminalNode INTEGER_LITERAL() { return getToken(TypedefParser.INTEGER_LITERAL, 0); }
+		public I64LiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_i64Literal; }
+	}
+
+	public final I64LiteralContext i64Literal() throws RecognitionException {
+		I64LiteralContext _localctx = new I64LiteralContext(_ctx, getState());
+		enterRule(_localctx, 46, RULE_i64Literal);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(184);
+			match(INTEGER_LITERAL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class StringLiteralContext extends ParserRuleContext {
+		public std::optional<std::string> maybe_val;
+		public TerminalNode STRING_LITERAL() { return getToken(TypedefParser.STRING_LITERAL, 0); }
+		public TerminalNode RAW_STRING_LITERAL() { return getToken(TypedefParser.RAW_STRING_LITERAL, 0); }
+		public StringLiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_stringLiteral; }
+	}
+
+	public final StringLiteralContext stringLiteral() throws RecognitionException {
+		StringLiteralContext _localctx = new StringLiteralContext(_ctx, getState());
+		enterRule(_localctx, 48, RULE_stringLiteral);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(186);
+			_la = _input.LA(1);
+			if ( !(_la==STRING_LITERAL || _la==RAW_STRING_LITERAL) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class ByteStringLiteralContext extends ParserRuleContext {
+		public std::optional<std::string> maybe_val;
+		public TerminalNode BYTE_STRING_LITERAL() { return getToken(TypedefParser.BYTE_STRING_LITERAL, 0); }
+		public TerminalNode RAW_BYTE_STRING_LITERAL() { return getToken(TypedefParser.RAW_BYTE_STRING_LITERAL, 0); }
+		public ByteStringLiteralContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_byteStringLiteral; }
+	}
+
+	public final ByteStringLiteralContext byteStringLiteral() throws RecognitionException {
+		ByteStringLiteralContext _localctx = new ByteStringLiteralContext(_ctx, getState());
+		enterRule(_localctx, 50, RULE_byteStringLiteral);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(188);
+			_la = _input.LA(1);
+			if ( !(_la==BYTE_STRING_LITERAL || _la==RAW_BYTE_STRING_LITERAL) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -767,8 +1372,10 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class IdentifierContext extends ParserRuleContext {
+		public std::string id;
+		public Token nki;
 		public TerminalNode NON_KEYWORD_IDENTIFIER() { return getToken(TypedefParser.NON_KEYWORD_IDENTIFIER, 0); }
-		public TerminalNode RAW_IDENTIFIER() { return getToken(TypedefParser.RAW_IDENTIFIER, 0); }
+		public TerminalNode RAW_ESCAPE() { return getToken(TypedefParser.RAW_ESCAPE, 0); }
 		public IdentifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -777,22 +1384,34 @@ public class TypedefParser extends Parser {
 
 	public final IdentifierContext identifier() throws RecognitionException {
 		IdentifierContext _localctx = new IdentifierContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_identifier);
-		int _la;
+		enterRule(_localctx, 52, RULE_identifier);
 		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(114);
-			_la = _input.LA(1);
-			if ( !(_la==NON_KEYWORD_IDENTIFIER || _la==RAW_IDENTIFIER) ) {
-			_errHandler.recoverInline(this);
+			setState(193);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case NON_KEYWORD_IDENTIFIER:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(190);
+				((IdentifierContext)_localctx).nki = match(NON_KEYWORD_IDENTIFIER);
+				}
+				break;
+			case RAW_ESCAPE:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(191);
+				match(RAW_ESCAPE);
+				setState(192);
+				((IdentifierContext)_localctx).nki = match(NON_KEYWORD_IDENTIFIER);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
-			else {
-				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-				_errHandler.reportMatch(this);
-				consume();
-			}
-			}
+			_ctx.stop = _input.LT(-1);
+
+					((IdentifierContext)_localctx).id =  ((IdentifierContext)_localctx).nki->getText();
+			  
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -879,14 +1498,14 @@ public class TypedefParser extends Parser {
 
 	public final KeywordContext keyword() throws RecognitionException {
 		KeywordContext _localctx = new KeywordContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_keyword);
+		enterRule(_localctx, 54, RULE_keyword);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(116);
+			setState(195);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << KW_AS) | (1L << KW_ENUM) | (1L << KW_FALSE) | (1L << KW_FN) | (1L << KW_IMPL) | (1L << KW_MODULE) | (1L << KW_STRUCT) | (1L << KW_TRUE) | (1L << KW_TYPE) | (1L << KW_TYPEDEF) | (1L << KW_USE) | (1L << KW_AND) | (1L << KW_IN) | (1L << KW_LET) | (1L << KW_NOT) | (1L << KW_OR) | (1L << KW_SIZEOF) | (1L << KW_THIS) | (1L << KW_TRAIT) | (1L << KW_WHERE) | (1L << KW_XOR) | (1L << KW_BREAK) | (1L << KW_CONTINUE) | (1L << KW_DEFAULT) | (1L << KW_DO) | (1L << KW_ELSE) | (1L << KW_FOR) | (1L << KW_GOTO) | (1L << KW_IF) | (1L << KW_LOOP) | (1L << KW_MATCH) | (1L << KW_MOVE) | (1L << KW_RETURN) | (1L << KW_TRY) | (1L << KW_WHILE) | (1L << KW_YIELD) | (1L << KW_ABSTRACT) | (1L << KW_AUTO) | (1L << KW_CONST) | (1L << KW_DOUBLE) | (1L << KW_EXTERN) | (1L << KW_FINAL) | (1L << KW_FLOAT) | (1L << KW_INT) | (1L << KW_LONG) | (1L << KW_MACRO) | (1L << KW_MUT) | (1L << KW_OVERRIDE) | (1L << KW_PRIVATE) | (1L << KW_PUB) | (1L << KW_REF) | (1L << KW_SELFTYPE) | (1L << KW_SELFVALUE) | (1L << KW_SIGNED) | (1L << KW_STATIC) | (1L << KW_SUPER) | (1L << KW_SWITCH) | (1L << KW_TYPEOF) | (1L << KW_UNION) | (1L << KW_UNSAFE) | (1L << KW_UNSIGNED) | (1L << KW_UNSIZED) | (1L << KW_VIRTUAL))) != 0) || _la==KW_VOID || _la==KW_VOLATILE) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << KW_AS) | (1L << KW_ENUM) | (1L << KW_FALSE) | (1L << KW_FN) | (1L << KW_IMPL) | (1L << KW_MODULE) | (1L << KW_STRUCT) | (1L << KW_TRUE) | (1L << KW_TYPE) | (1L << KW_TYPEDEF) | (1L << KW_USE) | (1L << KW_AND) | (1L << KW_IN) | (1L << KW_LET) | (1L << KW_NOT) | (1L << KW_OR) | (1L << KW_SIZEOF) | (1L << KW_THIS) | (1L << KW_TRAIT) | (1L << KW_WHERE) | (1L << KW_XOR) | (1L << KW_BREAK) | (1L << KW_CONTINUE) | (1L << KW_DEFAULT) | (1L << KW_DO) | (1L << KW_ELSE) | (1L << KW_FOR) | (1L << KW_GOTO) | (1L << KW_IF) | (1L << KW_LOOP) | (1L << KW_MATCH) | (1L << KW_MOVE) | (1L << KW_RETURN) | (1L << KW_TRY) | (1L << KW_WHILE) | (1L << KW_YIELD) | (1L << KW_ABSTRACT) | (1L << KW_AUTO) | (1L << KW_CONST) | (1L << KW_DOUBLE) | (1L << KW_EXTERN) | (1L << KW_FINAL) | (1L << KW_FLOAT) | (1L << KW_INT) | (1L << KW_LONG) | (1L << KW_MACRO) | (1L << KW_MUT) | (1L << KW_OVERRIDE) | (1L << KW_PRIVATE) | (1L << KW_PUB) | (1L << KW_REF) | (1L << KW_SELFTYPE) | (1L << KW_SELFVALUE) | (1L << KW_SIGNED) | (1L << KW_STATIC) | (1L << KW_SUPER) | (1L << KW_SWITCH) | (1L << KW_TYPEOF) | (1L << KW_UNION))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (KW_UNSAFE - 64)) | (1L << (KW_UNSIGNED - 64)) | (1L << (KW_UNSIZED - 64)) | (1L << (KW_VIRTUAL - 64)) | (1L << (KW_VOID - 64)) | (1L << (KW_VOLATILE - 64)))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -907,36 +1526,82 @@ public class TypedefParser extends Parser {
 		return _localctx;
 	}
 
+	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
+		switch (ruleIndex) {
+		case 2:
+			return valueDefinition_sempred((ValueDefinitionContext)_localctx, predIndex);
+		}
+		return true;
+	}
+	private boolean valueDefinition_sempred(ValueDefinitionContext _localctx, int predIndex) {
+		switch (predIndex) {
+		case 0:
+			return (((ValueDefinitionContext)_localctx).type_!=null?(((ValueDefinitionContext)_localctx).type_.start):null)->getType() == KW_BOOL;
+		case 1:
+			return (((ValueDefinitionContext)_localctx).type_!=null?(((ValueDefinitionContext)_localctx).type_.start):null)->getType() == KW_CHAR;
+		}
+		return true;
+	}
+
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u008cy\4\2\t\2\4"+
-		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
-		"\13\4\f\t\f\4\r\t\r\4\16\t\16\3\2\3\2\5\2\37\n\2\3\2\7\2\"\n\2\f\2\16"+
-		"\2%\13\2\3\2\7\2(\n\2\f\2\16\2+\13\2\3\2\3\2\3\3\3\3\3\4\3\4\3\4\3\4\3"+
-		"\4\3\4\3\4\3\5\3\5\3\6\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\b\3\b\3\b\3\b"+
-		"\3\t\5\tH\n\t\3\t\5\tK\n\t\3\t\3\t\3\t\3\t\3\t\7\tR\n\t\f\t\16\tU\13\t"+
-		"\3\t\5\tX\n\t\5\tZ\n\t\3\t\5\t]\n\t\3\t\3\t\3\t\5\tb\n\t\5\td\n\t\3\n"+
-		"\3\n\3\13\5\13i\n\13\3\13\3\13\3\13\7\13n\n\13\f\13\16\13q\13\13\3\f\3"+
-		"\f\3\r\3\r\3\16\3\16\3\16\2\2\17\2\4\6\b\n\f\16\20\22\24\26\30\32\2\5"+
-		"\6\2\5\5\n\nPV[[\3\2DE\3\2\3C\2x\2\34\3\2\2\2\4.\3\2\2\2\6\60\3\2\2\2"+
-		"\b\67\3\2\2\2\n9\3\2\2\2\f>\3\2\2\2\16B\3\2\2\2\20c\3\2\2\2\22e\3\2\2"+
-		"\2\24h\3\2\2\2\26r\3\2\2\2\30t\3\2\2\2\32v\3\2\2\2\34\36\5\n\6\2\35\37"+
-		"\5\f\7\2\36\35\3\2\2\2\36\37\3\2\2\2\37#\3\2\2\2 \"\5\16\b\2! \3\2\2\2"+
-		"\"%\3\2\2\2#!\3\2\2\2#$\3\2\2\2$)\3\2\2\2%#\3\2\2\2&(\5\4\3\2\'&\3\2\2"+
-		"\2(+\3\2\2\2)\'\3\2\2\2)*\3\2\2\2*,\3\2\2\2+)\3\2\2\2,-\7\2\2\3-\3\3\2"+
-		"\2\2./\5\6\4\2/\5\3\2\2\2\60\61\5\30\r\2\61\62\7\u0080\2\2\62\63\5\b\5"+
-		"\2\63\64\7r\2\2\64\65\5\22\n\2\65\66\7\177\2\2\66\7\3\2\2\2\678\5\30\r"+
-		"\28\t\3\2\2\29:\7\f\2\2:;\7r\2\2;<\5\30\r\2<=\7\177\2\2=\13\3\2\2\2>?"+
-		"\7\b\2\2?@\5\24\13\2@A\7\177\2\2A\r\3\2\2\2BC\7\r\2\2CD\5\20\t\2DE\7\177"+
-		"\2\2E\17\3\2\2\2FH\5\24\13\2GF\3\2\2\2GH\3\2\2\2HI\3\2\2\2IK\7\u0081\2"+
-		"\2JG\3\2\2\2JK\3\2\2\2K\\\3\2\2\2L]\7_\2\2MY\7\u0087\2\2NS\5\20\t\2OP"+
-		"\7~\2\2PR\5\20\t\2QO\3\2\2\2RU\3\2\2\2SQ\3\2\2\2ST\3\2\2\2TW\3\2\2\2U"+
-		"S\3\2\2\2VX\7~\2\2WV\3\2\2\2WX\3\2\2\2XZ\3\2\2\2YN\3\2\2\2YZ\3\2\2\2Z"+
-		"[\3\2\2\2[]\7\u0088\2\2\\L\3\2\2\2\\M\3\2\2\2]d\3\2\2\2^a\5\24\13\2_`"+
-		"\7\3\2\2`b\5\30\r\2a_\3\2\2\2ab\3\2\2\2bd\3\2\2\2cJ\3\2\2\2c^\3\2\2\2"+
-		"d\21\3\2\2\2ef\5\26\f\2f\23\3\2\2\2gi\7\u0081\2\2hg\3\2\2\2hi\3\2\2\2"+
-		"ij\3\2\2\2jo\5\30\r\2kl\7\u0081\2\2ln\5\30\r\2mk\3\2\2\2nq\3\2\2\2om\3"+
-		"\2\2\2op\3\2\2\2p\25\3\2\2\2qo\3\2\2\2rs\t\2\2\2s\27\3\2\2\2tu\t\3\2\2"+
-		"u\31\3\2\2\2vw\t\4\2\2w\33\3\2\2\2\17\36#)GJSWY\\acho";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u009d\u00c8\4\2\t"+
+		"\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
+		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
+		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
+		"\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\3\2\3\2\5\2=\n\2\3\2\7\2@\n\2"+
+		"\f\2\16\2C\13\2\3\2\7\2F\n\2\f\2\16\2I\13\2\3\2\3\2\3\3\3\3\3\4\3\4\3"+
+		"\4\3\4\3\4\3\4\3\4\3\4\5\4W\n\4\3\4\3\4\3\5\3\5\3\5\5\5^\n\5\3\6\3\6\3"+
+		"\6\3\6\6\6d\n\6\r\6\16\6e\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\b\3\b\3\b\3\b"+
+		"\3\t\3\t\3\t\3\t\3\n\5\nx\n\n\3\n\5\n{\n\n\3\n\3\n\3\n\3\n\3\n\7\n\u0082"+
+		"\n\n\f\n\16\n\u0085\13\n\3\n\5\n\u0088\n\n\5\n\u008a\n\n\3\n\5\n\u008d"+
+		"\n\n\3\n\3\n\3\n\5\n\u0092\n\n\5\n\u0094\n\n\3\13\5\13\u0097\n\13\3\13"+
+		"\3\13\3\13\7\13\u009c\n\13\f\13\16\13\u009f\13\13\3\f\3\f\3\r\3\r\3\16"+
+		"\3\16\3\17\3\17\3\20\3\20\3\21\3\21\3\22\3\22\3\23\3\23\3\24\3\24\3\25"+
+		"\3\25\3\26\3\26\3\27\3\27\3\30\3\30\3\31\3\31\3\32\3\32\3\33\3\33\3\34"+
+		"\3\34\3\34\5\34\u00c4\n\34\3\35\3\35\3\35\2\2\36\2\4\6\b\n\f\16\20\22"+
+		"\24\26\30\32\34\36 \"$&(*,.\60\62\64\668\2\7\3\2HT\4\2\6\6\f\f\3\2ab\3"+
+		"\2de\5\2\4\b\n\17\22G\2\u00be\2:\3\2\2\2\4L\3\2\2\2\6N\3\2\2\2\b]\3\2"+
+		"\2\2\n_\3\2\2\2\fi\3\2\2\2\16n\3\2\2\2\20r\3\2\2\2\22\u0093\3\2\2\2\24"+
+		"\u0096\3\2\2\2\26\u00a0\3\2\2\2\30\u00a2\3\2\2\2\32\u00a4\3\2\2\2\34\u00a6"+
+		"\3\2\2\2\36\u00a8\3\2\2\2 \u00aa\3\2\2\2\"\u00ac\3\2\2\2$\u00ae\3\2\2"+
+		"\2&\u00b0\3\2\2\2(\u00b2\3\2\2\2*\u00b4\3\2\2\2,\u00b6\3\2\2\2.\u00b8"+
+		"\3\2\2\2\60\u00ba\3\2\2\2\62\u00bc\3\2\2\2\64\u00be\3\2\2\2\66\u00c3\3"+
+		"\2\2\28\u00c5\3\2\2\2:<\5\f\7\2;=\5\16\b\2<;\3\2\2\2<=\3\2\2\2=A\3\2\2"+
+		"\2>@\5\20\t\2?>\3\2\2\2@C\3\2\2\2A?\3\2\2\2AB\3\2\2\2BG\3\2\2\2CA\3\2"+
+		"\2\2DF\5\4\3\2ED\3\2\2\2FI\3\2\2\2GE\3\2\2\2GH\3\2\2\2HJ\3\2\2\2IG\3\2"+
+		"\2\2JK\7\2\2\3K\3\3\2\2\2LM\5\6\4\2M\5\3\2\2\2NO\5\66\34\2OP\7\u0091\2"+
+		"\2PQ\5\b\5\2QV\7\u0083\2\2RS\6\4\2\3SW\5\30\r\2TU\6\4\3\3UW\5\34\17\2"+
+		"VR\3\2\2\2VT\3\2\2\2WX\3\2\2\2XY\7\u0090\2\2Y\7\3\2\2\2Z^\5\26\f\2[^\5"+
+		"\66\34\2\\^\5\n\6\2]Z\3\2\2\2][\3\2\2\2]\\\3\2\2\2^\t\3\2\2\2_`\5\66\34"+
+		"\2`c\7\u0087\2\2ad\5\66\34\2bd\7f\2\2ca\3\2\2\2cb\3\2\2\2de\3\2\2\2ec"+
+		"\3\2\2\2ef\3\2\2\2fg\3\2\2\2gh\7\u0086\2\2h\13\3\2\2\2ij\7\16\2\2jk\7"+
+		"\u0083\2\2kl\5\66\34\2lm\7\u0090\2\2m\r\3\2\2\2no\7\n\2\2op\5\24\13\2"+
+		"pq\7\u0090\2\2q\17\3\2\2\2rs\7\17\2\2st\5\22\n\2tu\7\u0090\2\2u\21\3\2"+
+		"\2\2vx\5\24\13\2wv\3\2\2\2wx\3\2\2\2xy\3\2\2\2y{\7\u0092\2\2zw\3\2\2\2"+
+		"z{\3\2\2\2{\u008c\3\2\2\2|\u008d\7p\2\2}\u0089\7\u0098\2\2~\u0083\5\22"+
+		"\n\2\177\u0080\7\u008f\2\2\u0080\u0082\5\22\n\2\u0081\177\3\2\2\2\u0082"+
+		"\u0085\3\2\2\2\u0083\u0081\3\2\2\2\u0083\u0084\3\2\2\2\u0084\u0087\3\2"+
+		"\2\2\u0085\u0083\3\2\2\2\u0086\u0088\7\u008f\2\2\u0087\u0086\3\2\2\2\u0087"+
+		"\u0088\3\2\2\2\u0088\u008a\3\2\2\2\u0089~\3\2\2\2\u0089\u008a\3\2\2\2"+
+		"\u008a\u008b\3\2\2\2\u008b\u008d\7\u0099\2\2\u008c|\3\2\2\2\u008c}\3\2"+
+		"\2\2\u008d\u0094\3\2\2\2\u008e\u0091\5\24\13\2\u008f\u0090\7\4\2\2\u0090"+
+		"\u0092\5\66\34\2\u0091\u008f\3\2\2\2\u0091\u0092\3\2\2\2\u0092\u0094\3"+
+		"\2\2\2\u0093z\3\2\2\2\u0093\u008e\3\2\2\2\u0094\23\3\2\2\2\u0095\u0097"+
+		"\7\u0092\2\2\u0096\u0095\3\2\2\2\u0096\u0097\3\2\2\2\u0097\u0098\3\2\2"+
+		"\2\u0098\u009d\5\66\34\2\u0099\u009a\7\u0092\2\2\u009a\u009c\5\66\34\2"+
+		"\u009b\u0099\3\2\2\2\u009c\u009f\3\2\2\2\u009d\u009b\3\2\2\2\u009d\u009e"+
+		"\3\2\2\2\u009e\25\3\2\2\2\u009f\u009d\3\2\2\2\u00a0\u00a1\t\2\2\2\u00a1"+
+		"\27\3\2\2\2\u00a2\u00a3\t\3\2\2\u00a3\31\3\2\2\2\u00a4\u00a5\7c\2\2\u00a5"+
+		"\33\3\2\2\2\u00a6\u00a7\7`\2\2\u00a7\35\3\2\2\2\u00a8\u00a9\7k\2\2\u00a9"+
+		"\37\3\2\2\2\u00aa\u00ab\7k\2\2\u00ab!\3\2\2\2\u00ac\u00ad\7f\2\2\u00ad"+
+		"#\3\2\2\2\u00ae\u00af\7f\2\2\u00af%\3\2\2\2\u00b0\u00b1\7f\2\2\u00b1\'"+
+		"\3\2\2\2\u00b2\u00b3\7f\2\2\u00b3)\3\2\2\2\u00b4\u00b5\7f\2\2\u00b5+\3"+
+		"\2\2\2\u00b6\u00b7\7f\2\2\u00b7-\3\2\2\2\u00b8\u00b9\7f\2\2\u00b9/\3\2"+
+		"\2\2\u00ba\u00bb\7f\2\2\u00bb\61\3\2\2\2\u00bc\u00bd\t\4\2\2\u00bd\63"+
+		"\3\2\2\2\u00be\u00bf\t\5\2\2\u00bf\65\3\2\2\2\u00c0\u00c4\7U\2\2\u00c1"+
+		"\u00c2\7m\2\2\u00c2\u00c4\7U\2\2\u00c3\u00c0\3\2\2\2\u00c3\u00c1\3\2\2"+
+		"\2\u00c4\67\3\2\2\2\u00c5\u00c6\t\6\2\2\u00c69\3\2\2\2\24<AGV]cewz\u0083"+
+		"\u0087\u0089\u008c\u0091\u0093\u0096\u009d\u00c3";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

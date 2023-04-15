@@ -93,7 +93,7 @@ $(TEST_EXEC): $(TEST_OBJS) $(LIB_STATIC_OBJ)
 # automatically with the other rules. You must run it  manually if you change
 # the grammar.
 ./src/lib/grammar/TypedefParser.cpp: ./src/lib/grammar/TypedefLexer.cpp ./src/lib/grammar/TypedefParser.g4 
-	/usr/bin/antlr4 -Dlanguage=Cpp ./src/lib/grammar/TypedefParser.g4 
+	/usr/bin/antlr4 -Dlanguage=Cpp -visitor ./src/lib/grammar/TypedefParser.g4 
 
 ./src/lib/grammar/TypedefLexer.cpp: ./src/lib/grammar/TypedefLexer.g4
 	/usr/bin/antlr4 -Dlanguage=Cpp ./src/lib/grammar/TypedefLexer.g4

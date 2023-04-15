@@ -29,17 +29,21 @@ options {
 }
 
 // Keywords
+KW_ARRAY: 'array';
 KW_AS: 'as';
 KW_ENUM: 'enum';
 KW_FALSE: 'false';
 KW_FN: 'fn';
 KW_IMPL: 'impl';
+KW_MESSAGE: 'message';
 KW_MODULE: 'module';
 KW_STRUCT: 'struct';
 KW_TRUE: 'true';
 KW_TYPE: 'type';
 KW_TYPEDEF: 'typedef';
 KW_USE: 'use';
+KW_VARIANT: 'variant';
+KW_VECTOR: 'vector';
 
 // reserved misc
 KW_AND: 'and';
@@ -101,6 +105,21 @@ KW_VIRTUAL: 'virtual';
 KW_VOID: 'void';
 KW_VOLATILE: 'volatile';
 
+// Built-in types
+KW_BOOL: 'bool';
+KW_CHAR: 'char';
+KW_STRING: 'string';
+KW_F32: 'f32';
+KW_F64: 'f64';
+KW_U8: 'u8';
+KW_U16: 'u16';
+KW_U32: 'u32';
+KW_U64: 'u64';
+KW_I8: 'i8';
+KW_I16: 'i16';
+KW_I32: 'i32';
+KW_I64: 'i64';
+
 // rule itself allow any identifier, but keyword has been matched before
 NON_KEYWORD_IDENTIFIER:
 	XID_Start XID_Continue*
@@ -127,7 +146,7 @@ fragment UNICODE_OIDC:
 	| '\u1369' ..'\u1371'
 	| '\u19da';
 
-RAW_IDENTIFIER: 'r#' NON_KEYWORD_IDENTIFIER;
+// RAW_IDENTIFIER: 'r#' NON_KEYWORD_IDENTIFIER;
 // comments https://doc.rust-lang.org/reference/comments.html
 LINE_COMMENT: ('//' (~[/!] | '//') ~[\r\n]* | '//') -> channel (HIDDEN);
 
@@ -260,6 +279,7 @@ fragment HEX_DIGIT: [0-9a-fA-F];
 
 LIFETIME_OR_LABEL: '\'' NON_KEYWORD_IDENTIFIER;
 
+RAW_ESCAPE: 'r#';
 PLUS: '+';
 MINUS: '-';
 STAR: '*';

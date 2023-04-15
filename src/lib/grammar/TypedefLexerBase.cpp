@@ -75,7 +75,7 @@ bool TypedefLexerBase::floatLiteralPossible() {
     case TypedefLexer::RPAREN:
 
     case TypedefLexer::NON_KEYWORD_IDENTIFIER:
-    case TypedefLexer::RAW_IDENTIFIER:
+    // case TypedefLexer::RAW_IDENTIFIER:
       // No float literal can follow any of the above tokens.
       return false;
     default:

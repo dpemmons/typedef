@@ -113,289 +113,306 @@ std::string GetIdentifierString(CTX *ctx,
   }
 }
 
-template <class TYPE>
-std::unique_ptr<Type> MaybeGetTypeFromLiteralExpression(
-    TypedefParser::LiteralExpressionContext *ctx,
-    std::vector<ParserErrorInfo> &errors_list) {
-  if (ctx->CHAR_LITERAL()) {
-    return TYPE::FromLiteral(ctx->CHAR_LITERAL()->toString());
-  } else if (ctx->BYTE_LITERAL()) {
-    errors_list.emplace_back(
-        ErrorFromContext(ctx, ParserErrorInfo::UNIMPLEMENTED, "BYTE_LITERAL"));
-    return nullptr;
-  } else if (ctx->BYTE_STRING_LITERAL()) {
-    errors_list.emplace_back(ErrorFromContext(
-        ctx, ParserErrorInfo::UNIMPLEMENTED, "BYTE_STRING_LITERAL"));
-    return nullptr;
-  } else if (ctx->RAW_BYTE_STRING_LITERAL()) {
-    errors_list.emplace_back(ErrorFromContext(
-        ctx, ParserErrorInfo::UNIMPLEMENTED, "RAW_BYTE_STRING_LITERAL"));
-    return nullptr;
-  } else if (ctx->INTEGER_LITERAL()) {
-    return TYPE::FromLiteral(ctx->INTEGER_LITERAL()->toString());
-  } else if (ctx->FLOAT_LITERAL()) {
-    return TYPE::FromLiteral(ctx->FLOAT_LITERAL()->toString());
-  } else if (ctx->KW_TRUE()) {
-    return TYPE::FromLiteral(ctx->KW_TRUE()->toString());
-  } else if (ctx->KW_FALSE()) {
-    return TYPE::FromLiteral(ctx->KW_FALSE()->toString());
-  }
-  return nullptr;
-}
+// template <class TYPE>
+// std::unique_ptr<Type> MaybeGetTypeFromLiteralExpression(
+//     TypedefParser::LiteralExpressionContext *ctx,
+//     std::vector<ParserErrorInfo> &errors_list) {
+//   if (ctx->CHAR_LITERAL()) {
+//     return TYPE::FromLiteral(ctx->CHAR_LITERAL()->toString());
+//   } else if (ctx->BYTE_LITERAL()) {
+//     errors_list.emplace_back(
+//         ErrorFromContext(ctx, ParserErrorInfo::UNIMPLEMENTED,
+//         "BYTE_LITERAL"));
+//     return nullptr;
+//   } else if (ctx->BYTE_STRING_LITERAL()) {
+//     errors_list.emplace_back(ErrorFromContext(
+//         ctx, ParserErrorInfo::UNIMPLEMENTED, "BYTE_STRING_LITERAL"));
+//     return nullptr;
+//   } else if (ctx->RAW_BYTE_STRING_LITERAL()) {
+//     errors_list.emplace_back(ErrorFromContext(
+//         ctx, ParserErrorInfo::UNIMPLEMENTED, "RAW_BYTE_STRING_LITERAL"));
+//     return nullptr;
+//   } else if (ctx->INTEGER_LITERAL()) {
+//     return TYPE::FromLiteral(ctx->INTEGER_LITERAL()->toString());
+//   } else if (ctx->FLOAT_LITERAL()) {
+//     return TYPE::FromLiteral(ctx->FLOAT_LITERAL()->toString());
+//   } else if (ctx->KW_TRUE()) {
+//     return TYPE::FromLiteral(ctx->KW_TRUE()->toString());
+//   } else if (ctx->KW_FALSE()) {
+//     return TYPE::FromLiteral(ctx->KW_FALSE()->toString());
+//   }
+//   return nullptr;
+// }
 
-// TODO: use std::set<>.contains() when upgrading to c++20.
-template <typename T>
-bool SetContains(std::set<T> set, T &x) {
-  return set.find(x) != set.end();
-}
+// // TODO: use std::set<>.contains() when upgrading to c++20.
+// template <typename T>
+// bool SetContains(std::set<T> set, T &x) {
+//   return set.find(x) != set.end();
+// }
 
 }  // namespace
 
-void ProcessLanguageVersion(
-    TypedefParser::CompilationUnitContext *compilation_unit,
-    ParsedFileBuilder &builder, std::vector<ParserErrorInfo> &errors_list) {
-  std::string versionIdentifier = GetIdentifierString(
-      compilation_unit->typedefVersionDeclaration(), errors_list);
-  if (versionIdentifier.empty()) {
-    // Missing identifer error already generated.
-    builder.SetLanguageVersion(LanguageVersion::UNKNOWN);
-    return;
-  }
+// void ProcessLanguageVersion(
+//     TypedefParser::CompilationUnitContext *compilation_unit,
+//     ParsedFileBuilder &builder, std::vector<ParserErrorInfo> &errors_list) {
+//   std::string versionIdentifier = GetIdentifierString(
+//       compilation_unit->typedefVersionDeclaration(), errors_list);
+//   if (versionIdentifier.empty()) {
+//     // Missing identifer error already generated.
+//     builder.SetLanguageVersion(LanguageVersion::UNKNOWN);
+//     return;
+//   }
 
-  if (!IsValidLanguageVersion(versionIdentifier)) {
-    errors_list.emplace_back(
-        ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
-                         ParserErrorInfo::INVALID_LANGUAGE_VERSION));
-    builder.SetLanguageVersion(LanguageVersion::UNKNOWN);
-    return;
-  }
+//   if (!IsValidLanguageVersion(versionIdentifier)) {
+//     errors_list.emplace_back(
+//         ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
+//                          ParserErrorInfo::INVALID_LANGUAGE_VERSION));
+//     builder.SetLanguageVersion(LanguageVersion::UNKNOWN);
+//     return;
+//   }
 
-  builder.SetLanguageVersion(LangaugeVersionFromString(versionIdentifier));
-}
+//   builder.SetLanguageVersion(LangaugeVersionFromString(versionIdentifier));
+// }
 
-void ProcessModuleDeclaration(
-    TypedefParser::CompilationUnitContext *compilation_unit,
-    ParsedFileBuilder &builder, std::vector<ParserErrorInfo> &errors_list) {
-  if (compilation_unit->moduleDeclaration()) {
-    // TODO(dpemmons) module declarations.
-    errors_list.emplace_back(
-        ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
-                         ParserErrorInfo::UNIMPLEMENTED));
-    // builder.SetModule(/*something*/);
-  }
-}
+// void ProcessModuleDeclaration(
+//     TypedefParser::CompilationUnitContext *compilation_unit,
+//     ParsedFileBuilder &builder, std::vector<ParserErrorInfo> &errors_list) {
+//   if (compilation_unit->moduleDeclaration()) {
+//     // TODO(dpemmons) module declarations.
+//     errors_list.emplace_back(
+//         ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
+//                          ParserErrorInfo::UNIMPLEMENTED));
+//     // builder.SetModule(/*something*/);
+//   }
+// }
 
-void ProcessUseDeclarations(
-    TypedefParser::CompilationUnitContext *compilation_unit,
-    ParsedFileBuilder &builder, std::vector<ParserErrorInfo> &errors_list) {
-  std::vector<UseDeclaration> use_decls;
+// void ProcessUseDeclarations(
+//     TypedefParser::CompilationUnitContext *compilation_unit,
+//     ParsedFileBuilder &builder, std::vector<ParserErrorInfo> &errors_list) {
+//   std::vector<UseDeclaration> use_decls;
 
-  if (!compilation_unit->useDeclaration().empty()) {
-    errors_list.emplace_back(
-        ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
-                         ParserErrorInfo::UNIMPLEMENTED));
-    // builder.AddUseDeclaration(/*something*/);
-  }
-}
+//   if (!compilation_unit->useDeclaration().empty()) {
+//     errors_list.emplace_back(
+//         ErrorFromContext(compilation_unit->typedefVersionDeclaration(),
+//                          ParserErrorInfo::UNIMPLEMENTED));
+//     // builder.AddUseDeclaration(/*something*/);
+//   }
+// }
 
-void ProcessValueDefinitions(
+// void ProcessValueDefinitions(
+//     TypedefParser::CompilationUnitContext *compilation_unit,
+//     ParsedFileBuilder &builder, std::vector<ParserErrorInfo> &errors_list) {
+//   for (auto item : compilation_unit->item()) {
+//     if (TypedefParser::ValueDefinitionContext *vd = item->valueDefinition())
+//     {
+//       // Identifier qi(GetIdentifierString(vd, errors_list));
+
+//       // Missing type.
+//       if (!vd->type_() || !vd->type_()->identifier()) {
+//         // These should stem from parse errors, so probably ok to skip error
+//         // reporting? builder.AddError(
+//         //     ErrorFromContext(vd,
+//         ParserErrorInfo::MISSING_TYPE_IDENTIFIER)); continue;
+//       }
+//       // Missing value.
+//       if (!vd->value() || !vd->value()->literalExpression()) {
+//         // These should stem from parse errors, so probably ok to skip error
+//         // reporting? builder.AddError(
+//         //     ErrorFromContext(vd,
+//         ParserErrorInfo::MISSING_VALUE_EXPRESSION)); continue;
+//       }
+//       auto symbol_name = GetIdentifierString(vd, errors_list);
+//       if (symbol_name.empty()) {
+//         continue;
+//       }
+//       auto name = std::make_unique<Identifier>(symbol_name);
+
+//       std::string typeStr = GetIdentifierString(vd->type_(), errors_list);
+
+//       // Bool type
+//       if (Bool::TypeName().compare(typeStr) == 0) {
+//         auto val = MaybeGetTypeFromLiteralExpression<Bool>(
+//             vd->value()->literalExpression(), errors_list);
+//         if (val) {
+//           builder.AddSymbol(
+//               std::make_unique<Symbol>(std::move(name), std::move(val)));
+//         } else {
+//           builder.AddError(
+//               ErrorFromContext(vd->value()->literalExpression(),
+//                                ParserErrorInfo::INVALID_BOOL_LITERAL));
+//         }
+//       } else if (Char::TypeName().compare(typeStr) == 0) {
+//         auto val = MaybeGetTypeFromLiteralExpression<Char>(
+//             vd->value()->literalExpression(), errors_list);
+//         if (val) {
+//           builder.AddSymbol(
+//               std::make_unique<Symbol>(std::move(name), std::move(val)));
+//         } else {
+//           builder.AddError(
+//               ErrorFromContext(vd->value()->literalExpression(),
+//                                ParserErrorInfo::INVALID_CHAR_LITERAL));
+//         }
+//       } else if (F32::TypeName().compare(typeStr) == 0) {
+//         auto val = MaybeGetTypeFromLiteralExpression<F32>(
+//             vd->value()->literalExpression(), errors_list);
+//         if (val) {
+//           builder.AddSymbol(
+//               std::make_unique<Symbol>(std::move(name), std::move(val)));
+//         } else {
+//           builder.AddError(
+//               ErrorFromContext(vd->value()->literalExpression(),
+//                                ParserErrorInfo::INVALID_FLOAT_LITERAL));
+//         }
+//       } else if (F64::TypeName().compare(typeStr) == 0) {
+//         auto val = MaybeGetTypeFromLiteralExpression<F64>(
+//             vd->value()->literalExpression(), errors_list);
+//         if (val) {
+//           builder.AddSymbol(
+//               std::make_unique<Symbol>(std::move(name), std::move(val)));
+//         } else {
+//           builder.AddError(
+//               ErrorFromContext(vd->value()->literalExpression(),
+//                                ParserErrorInfo::INVALID_FLOAT_LITERAL));
+//         }
+//       } else if (I8::TypeName().compare(typeStr) == 0) {
+//         auto val = MaybeGetTypeFromLiteralExpression<I8>(
+//             vd->value()->literalExpression(), errors_list);
+//         if (val) {
+//           builder.AddSymbol(
+//               std::make_unique<Symbol>(std::move(name), std::move(val)));
+//         } else {
+//           builder.AddError(
+//               ErrorFromContext(vd->value()->literalExpression(),
+//                                ParserErrorInfo::INVALID_INTEGER_LITERAL));
+//         }
+//       } else if (I16::TypeName().compare(typeStr) == 0) {
+//         auto val = MaybeGetTypeFromLiteralExpression<I16>(
+//             vd->value()->literalExpression(), errors_list);
+//         if (val) {
+//           builder.AddSymbol(
+//               std::make_unique<Symbol>(std::move(name), std::move(val)));
+//         } else {
+//           builder.AddError(
+//               ErrorFromContext(vd->value()->literalExpression(),
+//                                ParserErrorInfo::INVALID_INTEGER_LITERAL));
+//         }
+//       } else if (I32::TypeName().compare(typeStr) == 0) {
+//         auto val = MaybeGetTypeFromLiteralExpression<I32>(
+//             vd->value()->literalExpression(), errors_list);
+//         if (val) {
+//           builder.AddSymbol(
+//               std::make_unique<Symbol>(std::move(name), std::move(val)));
+//         } else {
+//           builder.AddError(
+//               ErrorFromContext(vd->value()->literalExpression(),
+//                                ParserErrorInfo::INVALID_INTEGER_LITERAL));
+//         }
+//       } else if (I64::TypeName().compare(typeStr) == 0) {
+//         auto val = MaybeGetTypeFromLiteralExpression<I64>(
+//             vd->value()->literalExpression(), errors_list);
+//         if (val) {
+//           builder.AddSymbol(
+//               std::make_unique<Symbol>(std::move(name), std::move(val)));
+//         } else {
+//           builder.AddError(
+//               ErrorFromContext(vd->value()->literalExpression(),
+//                                ParserErrorInfo::INVALID_INTEGER_LITERAL));
+//         }
+//       } else if (U8::TypeName().compare(typeStr) == 0) {
+//         auto val = MaybeGetTypeFromLiteralExpression<U8>(
+//             vd->value()->literalExpression(), errors_list);
+//         if (val) {
+//           builder.AddSymbol(
+//               std::make_unique<Symbol>(std::move(name), std::move(val)));
+//         } else {
+//           builder.AddError(
+//               ErrorFromContext(vd->value()->literalExpression(),
+//                                ParserErrorInfo::INVALID_INTEGER_LITERAL));
+//         }
+//       } else if (U16::TypeName().compare(typeStr) == 0) {
+//         auto val = MaybeGetTypeFromLiteralExpression<U16>(
+//             vd->value()->literalExpression(), errors_list);
+//         if (val) {
+//           builder.AddSymbol(
+//               std::make_unique<Symbol>(std::move(name), std::move(val)));
+//         } else {
+//           builder.AddError(
+//               ErrorFromContext(vd->value()->literalExpression(),
+//                                ParserErrorInfo::INVALID_INTEGER_LITERAL));
+//         }
+//       } else if (U32::TypeName().compare(typeStr) == 0) {
+//         auto val = MaybeGetTypeFromLiteralExpression<U32>(
+//             vd->value()->literalExpression(), errors_list);
+//         if (val) {
+//           builder.AddSymbol(
+//               std::make_unique<Symbol>(std::move(name), std::move(val)));
+//         } else {
+//           builder.AddError(
+//               ErrorFromContext(vd->value()->literalExpression(),
+//                                ParserErrorInfo::INVALID_INTEGER_LITERAL));
+//         }
+//       } else if (U64::TypeName().compare(typeStr) == 0) {
+//         auto val = MaybeGetTypeFromLiteralExpression<U64>(
+//             vd->value()->literalExpression(), errors_list);
+//         if (val) {
+//           builder.AddSymbol(
+//               std::make_unique<Symbol>(std::move(name), std::move(val)));
+//         } else {
+//           builder.AddError(
+//               ErrorFromContext(vd->value()->literalExpression(),
+//                                ParserErrorInfo::INVALID_INTEGER_LITERAL));
+//         }
+//       } else if (Str::TypeName().compare(typeStr) == 0) {
+//         if (vd->value()->literalExpression()->STRING_LITERAL()) {
+//           auto val = Str::FromStringLiteral(
+//               vd->value()->literalExpression()->STRING_LITERAL()->toString());
+//           if (val) {
+//             builder.AddSymbol(
+//                 std::make_unique<Symbol>(std::move(name), std::move(val)));
+//           } else {
+//             builder.AddError(
+//                 ErrorFromContext(vd->value()->literalExpression(),
+//                                  ParserErrorInfo::INVALID_STRING_LITERAL));
+//           }
+//         } else if (vd->value()->literalExpression()->RAW_STRING_LITERAL()) {
+//           auto val = Str::FromRawStringLiteral(vd->value()
+//                                                    ->literalExpression()
+//                                                    ->RAW_STRING_LITERAL()
+//                                                    ->toString());
+//           if (val) {
+//             builder.AddSymbol(
+//                 std::make_unique<Symbol>(std::move(name), std::move(val)));
+//           } else {
+//             builder.AddError(
+//                 ErrorFromContext(vd->value()->literalExpression(),
+//                                  ParserErrorInfo::INVALID_STRING_LITERAL));
+//           }
+//         }
+//       } else if (Array::TypeName().compare(typeStr) == 0) {
+
+//       // } else {
+//         builder.AddError(
+//             ErrorFromContext(vd->type_(), ParserErrorInfo::UNKNOWN_TYPE));
+//       // }
+
+//       // TODO: type inferences.
+
+//     }  // if valueDefinition
+//   }
+// }
+
+void AddValueDefinitions(
     TypedefParser::CompilationUnitContext *compilation_unit,
     ParsedFileBuilder &builder, std::vector<ParserErrorInfo> &errors_list) {
   for (auto item : compilation_unit->item()) {
     if (TypedefParser::ValueDefinitionContext *vd = item->valueDefinition()) {
-      // Identifier qi(GetIdentifierString(vd, errors_list));
-
-      // Missing type.
-      if (!vd->type_() || !vd->type_()->identifier()) {
-        // These should stem from parse errors, so probably ok to skip error
-        // reporting? builder.AddError(
-        //     ErrorFromContext(vd, ParserErrorInfo::MISSING_TYPE_IDENTIFIER));
-        continue;
+      auto name = std::make_unique<Identifier>(vd->identifier()->id);
+      if (vd->boolLiteral() && vd->boolLiteral()->maybe_val) {
+        builder.AddSymbol(std::make_unique<Symbol>(
+            std::move(name),
+            std::move(std::make_unique<Bool>(*vd->boolLiteral()->maybe_val))));
       }
-      // Missing value.
-      if (!vd->value() || !vd->value()->literalExpression()) {
-        // These should stem from parse errors, so probably ok to skip error
-        // reporting? builder.AddError(
-        //     ErrorFromContext(vd, ParserErrorInfo::MISSING_VALUE_EXPRESSION));
-        continue;
-      }
-      auto symbol_name = GetIdentifierString(vd, errors_list);
-      if (symbol_name.empty()) {
-        continue;
-      }
-      auto name = std::make_unique<Identifier>(symbol_name);
-
-      std::string typeStr = GetIdentifierString(vd->type_(), errors_list);
-
-      // Bool type
-      if (Bool::TypeName().compare(typeStr) == 0) {
-        auto val = MaybeGetTypeFromLiteralExpression<Bool>(
-            vd->value()->literalExpression(), errors_list);
-        if (val) {
-          builder.AddSymbol(
-              std::make_unique<Symbol>(std::move(name), std::move(val)));
-        } else {
-          builder.AddError(
-              ErrorFromContext(vd->value()->literalExpression(),
-                               ParserErrorInfo::INVALID_BOOL_LITERAL));
-        }
-      } else if (Char::TypeName().compare(typeStr) == 0) {
-        auto val = MaybeGetTypeFromLiteralExpression<Char>(
-            vd->value()->literalExpression(), errors_list);
-        if (val) {
-          builder.AddSymbol(
-              std::make_unique<Symbol>(std::move(name), std::move(val)));
-        } else {
-          builder.AddError(
-              ErrorFromContext(vd->value()->literalExpression(),
-                               ParserErrorInfo::INVALID_CHAR_LITERAL));
-        }
-      } else if (F32::TypeName().compare(typeStr) == 0) {
-        auto val = MaybeGetTypeFromLiteralExpression<F32>(
-            vd->value()->literalExpression(), errors_list);
-        if (val) {
-          builder.AddSymbol(
-              std::make_unique<Symbol>(std::move(name), std::move(val)));
-        } else {
-          builder.AddError(
-              ErrorFromContext(vd->value()->literalExpression(),
-                               ParserErrorInfo::INVALID_FLOAT_LITERAL));
-        }
-      } else if (F64::TypeName().compare(typeStr) == 0) {
-        auto val = MaybeGetTypeFromLiteralExpression<F64>(
-            vd->value()->literalExpression(), errors_list);
-        if (val) {
-          builder.AddSymbol(
-              std::make_unique<Symbol>(std::move(name), std::move(val)));
-        } else {
-          builder.AddError(
-              ErrorFromContext(vd->value()->literalExpression(),
-                               ParserErrorInfo::INVALID_FLOAT_LITERAL));
-        }
-      } else if (I8::TypeName().compare(typeStr) == 0) {
-        auto val = MaybeGetTypeFromLiteralExpression<I8>(
-            vd->value()->literalExpression(), errors_list);
-        if (val) {
-          builder.AddSymbol(
-              std::make_unique<Symbol>(std::move(name), std::move(val)));
-        } else {
-          builder.AddError(
-              ErrorFromContext(vd->value()->literalExpression(),
-                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
-        }
-      } else if (I16::TypeName().compare(typeStr) == 0) {
-        auto val = MaybeGetTypeFromLiteralExpression<I16>(
-            vd->value()->literalExpression(), errors_list);
-        if (val) {
-          builder.AddSymbol(
-              std::make_unique<Symbol>(std::move(name), std::move(val)));
-        } else {
-          builder.AddError(
-              ErrorFromContext(vd->value()->literalExpression(),
-                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
-        }
-      } else if (I32::TypeName().compare(typeStr) == 0) {
-        auto val = MaybeGetTypeFromLiteralExpression<I32>(
-            vd->value()->literalExpression(), errors_list);
-        if (val) {
-          builder.AddSymbol(
-              std::make_unique<Symbol>(std::move(name), std::move(val)));
-        } else {
-          builder.AddError(
-              ErrorFromContext(vd->value()->literalExpression(),
-                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
-        }
-      } else if (I64::TypeName().compare(typeStr) == 0) {
-        auto val = MaybeGetTypeFromLiteralExpression<I64>(
-            vd->value()->literalExpression(), errors_list);
-        if (val) {
-          builder.AddSymbol(
-              std::make_unique<Symbol>(std::move(name), std::move(val)));
-        } else {
-          builder.AddError(
-              ErrorFromContext(vd->value()->literalExpression(),
-                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
-        }
-      } else if (U8::TypeName().compare(typeStr) == 0) {
-        auto val = MaybeGetTypeFromLiteralExpression<U8>(
-            vd->value()->literalExpression(), errors_list);
-        if (val) {
-          builder.AddSymbol(
-              std::make_unique<Symbol>(std::move(name), std::move(val)));
-        } else {
-          builder.AddError(
-              ErrorFromContext(vd->value()->literalExpression(),
-                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
-        }
-      } else if (U16::TypeName().compare(typeStr) == 0) {
-        auto val = MaybeGetTypeFromLiteralExpression<U16>(
-            vd->value()->literalExpression(), errors_list);
-        if (val) {
-          builder.AddSymbol(
-              std::make_unique<Symbol>(std::move(name), std::move(val)));
-        } else {
-          builder.AddError(
-              ErrorFromContext(vd->value()->literalExpression(),
-                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
-        }
-      } else if (U32::TypeName().compare(typeStr) == 0) {
-        auto val = MaybeGetTypeFromLiteralExpression<U32>(
-            vd->value()->literalExpression(), errors_list);
-        if (val) {
-          builder.AddSymbol(
-              std::make_unique<Symbol>(std::move(name), std::move(val)));
-        } else {
-          builder.AddError(
-              ErrorFromContext(vd->value()->literalExpression(),
-                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
-        }
-      } else if (U64::TypeName().compare(typeStr) == 0) {
-        auto val = MaybeGetTypeFromLiteralExpression<U64>(
-            vd->value()->literalExpression(), errors_list);
-        if (val) {
-          builder.AddSymbol(
-              std::make_unique<Symbol>(std::move(name), std::move(val)));
-        } else {
-          builder.AddError(
-              ErrorFromContext(vd->value()->literalExpression(),
-                               ParserErrorInfo::INVALID_INTEGER_LITERAL));
-        }
-      } else if (Str::TypeName().compare(typeStr) == 0) {
-        if (vd->value()->literalExpression()->STRING_LITERAL()) {
-          auto val = Str::FromStringLiteral(
-              vd->value()->literalExpression()->STRING_LITERAL()->toString());
-          if (val) {
-            builder.AddSymbol(
-                std::make_unique<Symbol>(std::move(name), std::move(val)));
-          } else {
-            builder.AddError(
-                ErrorFromContext(vd->value()->literalExpression(),
-                                 ParserErrorInfo::INVALID_STRING_LITERAL));
-          }
-        } else if (vd->value()->literalExpression()->RAW_STRING_LITERAL()) {
-          auto val = Str::FromRawStringLiteral(vd->value()
-                                                   ->literalExpression()
-                                                   ->RAW_STRING_LITERAL()
-                                                   ->toString());
-          if (val) {
-            builder.AddSymbol(
-                std::make_unique<Symbol>(std::move(name), std::move(val)));
-          } else {
-            builder.AddError(
-                ErrorFromContext(vd->value()->literalExpression(),
-                                 ParserErrorInfo::INVALID_STRING_LITERAL));
-          }
-        }
-      } else if (Array::TypeName().compare(typeStr) == 0) {
-        
-      } else {
-        builder.AddError(
-            ErrorFromContext(vd->type_(), ParserErrorInfo::UNKNOWN_TYPE));
-      }
-
-      // TODO: type inferences.
-
-    }  // if valueDefinition
+    }
   }
 }
 
@@ -422,12 +439,13 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
 
   TypedefParser::CompilationUnitContext *compilation_unit = nullptr;
 
-  // TODO revisit this and how it's used below to make a null compilation unit?
+  // TODO revisit this and how it's used below to make a null compilation
+  // unit?
   bool fast = false;
   parser.setBuildParseTree(!fast);
 
-  // First parse with the bail error strategy to get quick feedback for correct
-  // queries.
+  // First parse with the bail error strategy to get quick feedback for
+  // correct queries.
   parser.setErrorHandler(std::make_shared<antlr4::BailErrorStrategy>());
   parser.getInterpreter<antlr4::atn::ParserATNSimulator>()->setPredictionMode(
       antlr4::atn::PredictionMode::SLL);
@@ -440,8 +458,9 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
     if (fast && !errors.empty()) {
       compilation_unit = nullptr;
     } else {
-      // If parsing was canceled we either really have a syntax error or we need
-      // to do a second step, now with the default strategy and LL parsing.
+      // If parsing was canceled we either really have a syntax error or we
+      // need to do a second step, now with the default strategy and LL
+      // parsing.
       tokens.reset();
       parser.reset();
       errors.clear();
@@ -453,11 +472,12 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
   }
 
   ParsedFileBuilder builder;
-  ProcessLanguageVersion(compilation_unit, builder, errors);
-  ProcessModuleDeclaration(compilation_unit, builder, errors);
-  ProcessUseDeclarations(compilation_unit, builder, errors);
-  ProcessValueDefinitions(compilation_unit, builder, errors);
+  // ProcessLanguageVersion(compilation_unit, builder, errors);
+  // ProcessModuleDeclaration(compilation_unit, builder, errors);
+  // ProcessUseDeclarations(compilation_unit, builder, errors);
+  // ProcessValueDefinitions(compilation_unit, builder, errors);
 
+  AddValueDefinitions(compilation_unit, builder, errors);
   builder.AddErrors(errors);
 
   return std::make_shared<ParsedFile>(builder.build());

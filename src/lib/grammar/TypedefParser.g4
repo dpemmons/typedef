@@ -4,15 +4,45 @@ options {
 	tokenVocab = TypedefLexer;
 }
 
+@header {
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <string>
+#include "symbol_table.h"
+}
+
 compilationUnit:
 	typedefVersionDeclaration moduleDeclaration? useDeclaration* item* EOF;
 
 item: valueDefinition;
 
 // ValA: i32 = 42;
-valueDefinition: identifier COLON type_ EQ value SEMI;
+valueDefinition:
+	identifier COLON type_ EQ (
+		{$type_.start->getType() == KW_BOOL}? boolLiteral
+		| {$type_.start->getType() == KW_CHAR}? charLiteral
+	)
+	// | {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_BOOL()}? boolLiteral |
+	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_CHAR()}? charLiteral |
+	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_STRING()}? stringLiteral
+	// | {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_F32()}? f32Literal |
+	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_F64()}? f64Literal |
+	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_U8()}? u8Literal |
+	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_U16()}? u16Literal |
+	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_U32()}? u32Literal |
+	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_U64()}? u64Literal |
+	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_I8()}? i8Literal |
+	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_I16()}? i16Literal |
+	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_I32()}? i32Literal |
+	// {type_() && type_()->primitiveType() && type_()->primitiveType()->KW_I64()}? i64Literal
+	SEMI;
 
-type_: identifier;
+type_: primitiveType | identifier | parameterizedType;
+
+// thing < arg2, 42 >
+parameterizedType:
+	identifier LT (identifier | INTEGER_LITERAL)+ GT;
 
 typedefVersionDeclaration: KW_TYPEDEF EQ identifier SEMI;
 moduleDeclaration: KW_MODULE simplePath SEMI;
@@ -24,40 +54,96 @@ useTree: (simplePath? '::')? (
 	)
 	| simplePath ('as' identifier)?;
 
-// // Enums
-// enumDeclaration: KW_ENUM identifier LBRACE enumBody RBRACE SEMI;
+// Enums enumDeclaration: KW_ENUM (LT integerLiteral GT)? identifier LBRACE enumBody RBRACE SEMI;
 // enumBody: ( identifier COMMA)+ (identifier COMMA?)?;
 
-// Strucvt
-// structDeclaration:
-// 	KW_STRUCT identifier LBRACE structBody RBRACE SEMI;
-// structBody: structFieldDeclaration*;
-// structFieldDeclaration: identifier COLON identifier (EQ value)? SEMI;
+// Struct structDeclaration: KW_STRUCT identifier LBRACE structBody RBRACE SEMI; structBody:
+// structFieldDeclaration*; structFieldDeclaration: identifier COLON identifier (EQ value)? SEMI;
 
-// Value definitions ----------------------------------------------------------
-// value: literalExpression | array | map | identifier;
-value: literalExpression;
+// Value definitions ---------------------------------------------------------- value:
+// literalExpression | array | map | identifier; value: literalExpression;
 
-// array: LBRACK (value (COMMA value)*)? COMMA? RBRACK;
-// map: LBRACE (keyValue (COMMA keyValue)* COMMA?)? RBRACE;
-// keyValue: identifier COLON value;
+// array: LBRACK (value (COMMA value)*)? COMMA? RBRACK; map: LBRACE (keyValue (COMMA keyValue)*
+// COMMA?)? RBRACE; keyValue: identifier COLON value;
 
 simplePath: '::'? identifier ('::' identifier)*;
 
-literalExpression:
-	CHAR_LITERAL
-	| STRING_LITERAL
-	| RAW_STRING_LITERAL
-	| BYTE_LITERAL
-	| BYTE_STRING_LITERAL
-	| RAW_BYTE_STRING_LITERAL
-	| INTEGER_LITERAL
-	| FLOAT_LITERAL
-	| KW_TRUE
-	| KW_FALSE;
+primitiveType:
+	KW_BOOL
+	| KW_CHAR
+	| KW_STRING
+	| KW_F32
+	| KW_F64
+	| KW_U8
+	| KW_U16
+	| KW_U32
+	| KW_U64
+	| KW_I8
+	| KW_I16
+	| KW_I32
+	| KW_I64;
+
+boolLiteral
+	returns[std::optional<bool> maybe_val]
+	@after {
+		// From grammar.
+		if ($ctx->start->getType() == TypedefParser::KW_FALSE) {
+			$maybe_val = false;
+		} else if ($ctx->start->getType() == TypedefParser::KW_TRUE) {
+			$maybe_val = true;
+		}
+		// End from grammar.
+  }: KW_TRUE | KW_FALSE;
+byteLiteral
+	returns[std::optional<uint8_t> maybe_val]: BYTE_LITERAL;
+charLiteral
+	returns[std::optional<char32_t> maybe_val]: CHAR_LITERAL;
+f32Literal
+	returns[std::optional<float> maybe_val]: FLOAT_LITERAL;
+f64Literal
+	returns[std::optional<double> maybe_val]: FLOAT_LITERAL;
+u8Literal
+	returns[std::optional<uint8_t> maybe_val]: INTEGER_LITERAL;
+u16Literal
+	returns[std::optional<uint16_t> maybe_val]: INTEGER_LITERAL;
+u32Literal
+	returns[std::optional<uint32_t> maybe_val]: INTEGER_LITERAL;
+u64Literal
+	returns[std::optional<uint64_t> maybe_val]: INTEGER_LITERAL;
+i8Literal
+	returns[std::optional<int8_t> maybe_val]: INTEGER_LITERAL;
+i16Literal
+	returns[std::optional<int16_t> maybe_val]: INTEGER_LITERAL;
+i32Literal
+	returns[std::optional<int32_t> maybe_val]: INTEGER_LITERAL;
+i64Literal
+	returns[std::optional<int64_t> maybe_val]: INTEGER_LITERAL;
+
+stringLiteral
+	returns[std::optional<std::string> maybe_val]:
+	STRING_LITERAL
+	| RAW_STRING_LITERAL;
+byteStringLiteral
+	returns[std::optional<std::string> maybe_val]:
+	BYTE_STRING_LITERAL
+	| RAW_BYTE_STRING_LITERAL;
 
 // technical
-identifier: NON_KEYWORD_IDENTIFIER | RAW_IDENTIFIER;
+// identifier
+// 	returns[std::string id]
+// 	@after {
+// 		$id = $nki->getText();
+//   }:
+// 	nki = NON_KEYWORD_IDENTIFIER
+// 	| RAW_ESCAPE nki = NON_KEYWORD_IDENTIFIER;
+
+identifier
+	returns[std::string id]
+	@after {
+		$id = $nki->getText();
+  }:
+	nki = NON_KEYWORD_IDENTIFIER
+	| RAW_ESCAPE nki = NON_KEYWORD_IDENTIFIER;
 keyword:
 	KW_AS
 	| KW_ENUM

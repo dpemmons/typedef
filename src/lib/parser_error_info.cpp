@@ -150,8 +150,8 @@ const char *TokenToString(size_t token) {
       return "KW_VOLATILE";
     case TypedefParser::NON_KEYWORD_IDENTIFIER:
       return "NON_KEYWORD_IDENTIFIER";
-    case TypedefParser::RAW_IDENTIFIER:
-      return "RAW_IDENTIFIER";
+    // case TypedefParser::RAW_IDENTIFIER:
+    //   return "RAW_IDENTIFIER";
     case TypedefParser::LINE_COMMENT:
       return "LINE_COMMENT";
     case TypedefParser::BLOCK_COMMENT:
