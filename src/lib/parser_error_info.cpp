@@ -168,10 +168,10 @@ const char *TokenToString(size_t token) {
       return "BLOCK_COMMENT_OR_DOC";
     case TypedefParser::SHEBANG:
       return "SHEBANG";
-    case TypedefParser::WHITESPACE:
-      return "WHITESPACE";
-    case TypedefParser::NEWLINE:
-      return "NEWLINE";
+    // case TypedefParser::WHITESPACE:
+    //   return "WHITESPACE";
+    // case TypedefParser::NEWLINE:
+    //   return "NEWLINE";
     case TypedefParser::CHAR_LITERAL:
       return "CHAR_LITERAL";
     case TypedefParser::STRING_LITERAL:
@@ -184,16 +184,16 @@ const char *TokenToString(size_t token) {
       return "BYTE_STRING_LITERAL";
     case TypedefParser::RAW_BYTE_STRING_LITERAL:
       return "RAW_BYTE_STRING_LITERAL";
-    case TypedefParser::INTEGER_LITERAL:
-      return "INTEGER_LITERAL";
-    case TypedefParser::DEC_LITERAL:
-      return "DEC_LITERAL";
-    case TypedefParser::HEX_LITERAL:
-      return "HEX_LITERAL";
-    case TypedefParser::OCT_LITERAL:
-      return "OCT_LITERAL";
-    case TypedefParser::BIN_LITERAL:
-      return "BIN_LITERAL";
+    // case TypedefParser::INTEGER_LITERAL:
+    //   return "INTEGER_LITERAL";
+    // case TypedefParser::DEC_LITERAL:
+    //   return "DEC_LITERAL";
+    // case TypedefParser::HEX_LITERAL:
+    //   return "HEX_LITERAL";
+    // case TypedefParser::OCT_LITERAL:
+    //   return "OCT_LITERAL";
+    // case TypedefParser::BIN_LITERAL:
+    //   return "BIN_LITERAL";
     case TypedefParser::FLOAT_LITERAL:
       return "FLOAT_LITERAL";
     case TypedefParser::LIFETIME_OR_LABEL:

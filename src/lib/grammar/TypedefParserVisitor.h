@@ -3,6 +3,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include "parser_helpers.h"
 #include "symbol_table.h"
 
 
@@ -32,6 +33,34 @@ public:
 
     virtual antlrcpp::Any visitValueDefinition(TypedefParser::ValueDefinitionContext *context) = 0;
 
+    virtual antlrcpp::Any visitPrimitiveFragment(TypedefParser::PrimitiveFragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitBoolFragment(TypedefParser::BoolFragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitCharFragment(TypedefParser::CharFragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitStringFragment(TypedefParser::StringFragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitF32Fragment(TypedefParser::F32FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitF64Fragment(TypedefParser::F64FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitU8Fragment(TypedefParser::U8FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitU16Fragment(TypedefParser::U16FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitU32Fragment(TypedefParser::U32FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitU64Fragment(TypedefParser::U64FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitI8Fragment(TypedefParser::I8FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitI16Fragment(TypedefParser::I16FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitI32Fragment(TypedefParser::I32FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitI64Fragment(TypedefParser::I64FragmentContext *context) = 0;
+
     virtual antlrcpp::Any visitType_(TypedefParser::Type_Context *context) = 0;
 
     virtual antlrcpp::Any visitParameterizedType(TypedefParser::ParameterizedTypeContext *context) = 0;
@@ -45,8 +74,6 @@ public:
     virtual antlrcpp::Any visitUseTree(TypedefParser::UseTreeContext *context) = 0;
 
     virtual antlrcpp::Any visitSimplePath(TypedefParser::SimplePathContext *context) = 0;
-
-    virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *context) = 0;
 
     virtual antlrcpp::Any visitBoolLiteral(TypedefParser::BoolLiteralContext *context) = 0;
 

@@ -3,6 +3,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include "parser_helpers.h"
 #include "symbol_table.h"
 
 

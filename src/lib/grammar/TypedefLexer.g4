@@ -185,8 +185,9 @@ SHEBANG:
 // : '\r' {_input.LA(1)!='\n'}// not followed with \n ;
 
 // whitespace https://doc.rust-lang.org/reference/whitespace.html
-WHITESPACE: [\p{Zs}] -> channel(HIDDEN);
-NEWLINE: ('\r\n' | [\r\n]) -> channel(HIDDEN);
+// WS: [\p{Zs}] -> channel(HIDDEN);
+// NEWLINE: ('\r\n' | [\r\n]) -> channel(HIDDEN);
+WS: [\p{Zs}] | ('\r\n' | [\r\n]);
 
 // tokens char and string
 CHAR_LITERAL:
@@ -236,44 +237,42 @@ fragment ESC_NEWLINE: '\\' '\n';
 
 // number
 
-INTEGER_LITERAL:
-	(DEC_LITERAL | BIN_LITERAL | OCT_LITERAL | HEX_LITERAL) INTEGER_SUFFIX?;
+// INTEGER_LITERAL:
+// 	(DEC_LITERAL | BIN_LITERAL | OCT_LITERAL | HEX_LITERAL) INTEGER_SUFFIX?;
 
-DEC_LITERAL: DEC_DIGIT (DEC_DIGIT | '_')*;
+// DEC_LITERAL: DEC_DIGIT (DEC_DIGIT | '_')*;
 
-HEX_LITERAL: '0x' '_'* HEX_DIGIT (HEX_DIGIT | '_')*;
+// HEX_LITERAL: '0x' '_'* HEX_DIGIT (HEX_DIGIT | '_')*;
 
-OCT_LITERAL: '0o' '_'* OCT_DIGIT (OCT_DIGIT | '_')*;
+// OCT_LITERAL: '0o' '_'* OCT_DIGIT (OCT_DIGIT | '_')*;
 
-BIN_LITERAL: '0b' '_'* [01] [01_]*;
+// BIN_LITERAL: '0b' '_'* [01] [01_]*;
+
+DEC_DIGITS: DEC_DIGIT+;
+DEC_DIGITS_UNDERSCORE: DEC_DIGIT (DEC_DIGIT | '_')*;
+HEX_DIGITS: HEX_DIGIT+;
+HEX_DIGITS_UNDERSCORE:  '_'* HEX_DIGIT (HEX_DIGIT | '_')*;
+OCT_DIGITS: OCT_DIGIT+;
+OCT_DIGITS_UNDERSCORE: '_'* OCT_DIGIT (OCT_DIGIT | '_')*;
+BIN_DIGITS: [01]+;
+BIN_DIGITS_UNDERSCORE: '_'* [01] [01_]*;
 
 FLOAT_LITERAL:
 	{this->floatLiteralPossible()}? (
-		DEC_LITERAL '.' {this->floatDotPossible()}?
-		| DEC_LITERAL ('.' DEC_LITERAL)? FLOAT_EXPONENT? FLOAT_SUFFIX?
+		DEC_DIGITS '.' {this->floatDotPossible()}?
+		| DEC_DIGITS ('.' DEC_DIGITS)? FLOAT_EXPONENT? FLOAT_SUFFIX?
 	);
-
-fragment INTEGER_SUFFIX:
-	'u8'
-	| 'u16'
-	| 'u32'
-	| 'u64'
-	| 'u128'
-	| 'i8'
-	| 'i16'
-	| 'i32'
-	| 'i64'
-	| 'i128';
 
 fragment FLOAT_SUFFIX: 'f32' | 'f64';
 
-fragment FLOAT_EXPONENT: [eE] [+-]? '_'* DEC_LITERAL;
+fragment FLOAT_EXPONENT: [eE] [+-]? '_'* DEC_DIGITS;
 
-fragment OCT_DIGIT: [0-7];
-
-fragment DEC_DIGIT: [0-9];
-
-fragment HEX_DIGIT: [0-9a-fA-F];
+OCT_DIGIT: [0-7];
+DEC_DIGIT: [0-9];
+HEX_DIGIT: [0-9a-fA-F];
+HEX_PREFIX: '0x';
+OCT_PREFIX: '0o';
+BIN_PREFIX: '0b';
 
 // LIFETIME_TOKEN: '\'' IDENTIFIER_OR_KEYWORD | '\'_';
 

@@ -3,6 +3,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include "parser_helpers.h"
 #include "symbol_table.h"
 
 
@@ -30,6 +31,48 @@ public:
   virtual void enterValueDefinition(TypedefParser::ValueDefinitionContext *ctx) = 0;
   virtual void exitValueDefinition(TypedefParser::ValueDefinitionContext *ctx) = 0;
 
+  virtual void enterPrimitiveFragment(TypedefParser::PrimitiveFragmentContext *ctx) = 0;
+  virtual void exitPrimitiveFragment(TypedefParser::PrimitiveFragmentContext *ctx) = 0;
+
+  virtual void enterBoolFragment(TypedefParser::BoolFragmentContext *ctx) = 0;
+  virtual void exitBoolFragment(TypedefParser::BoolFragmentContext *ctx) = 0;
+
+  virtual void enterCharFragment(TypedefParser::CharFragmentContext *ctx) = 0;
+  virtual void exitCharFragment(TypedefParser::CharFragmentContext *ctx) = 0;
+
+  virtual void enterStringFragment(TypedefParser::StringFragmentContext *ctx) = 0;
+  virtual void exitStringFragment(TypedefParser::StringFragmentContext *ctx) = 0;
+
+  virtual void enterF32Fragment(TypedefParser::F32FragmentContext *ctx) = 0;
+  virtual void exitF32Fragment(TypedefParser::F32FragmentContext *ctx) = 0;
+
+  virtual void enterF64Fragment(TypedefParser::F64FragmentContext *ctx) = 0;
+  virtual void exitF64Fragment(TypedefParser::F64FragmentContext *ctx) = 0;
+
+  virtual void enterU8Fragment(TypedefParser::U8FragmentContext *ctx) = 0;
+  virtual void exitU8Fragment(TypedefParser::U8FragmentContext *ctx) = 0;
+
+  virtual void enterU16Fragment(TypedefParser::U16FragmentContext *ctx) = 0;
+  virtual void exitU16Fragment(TypedefParser::U16FragmentContext *ctx) = 0;
+
+  virtual void enterU32Fragment(TypedefParser::U32FragmentContext *ctx) = 0;
+  virtual void exitU32Fragment(TypedefParser::U32FragmentContext *ctx) = 0;
+
+  virtual void enterU64Fragment(TypedefParser::U64FragmentContext *ctx) = 0;
+  virtual void exitU64Fragment(TypedefParser::U64FragmentContext *ctx) = 0;
+
+  virtual void enterI8Fragment(TypedefParser::I8FragmentContext *ctx) = 0;
+  virtual void exitI8Fragment(TypedefParser::I8FragmentContext *ctx) = 0;
+
+  virtual void enterI16Fragment(TypedefParser::I16FragmentContext *ctx) = 0;
+  virtual void exitI16Fragment(TypedefParser::I16FragmentContext *ctx) = 0;
+
+  virtual void enterI32Fragment(TypedefParser::I32FragmentContext *ctx) = 0;
+  virtual void exitI32Fragment(TypedefParser::I32FragmentContext *ctx) = 0;
+
+  virtual void enterI64Fragment(TypedefParser::I64FragmentContext *ctx) = 0;
+  virtual void exitI64Fragment(TypedefParser::I64FragmentContext *ctx) = 0;
+
   virtual void enterType_(TypedefParser::Type_Context *ctx) = 0;
   virtual void exitType_(TypedefParser::Type_Context *ctx) = 0;
 
@@ -50,9 +93,6 @@ public:
 
   virtual void enterSimplePath(TypedefParser::SimplePathContext *ctx) = 0;
   virtual void exitSimplePath(TypedefParser::SimplePathContext *ctx) = 0;
-
-  virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
-  virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
 
   virtual void enterBoolLiteral(TypedefParser::BoolLiteralContext *ctx) = 0;
   virtual void exitBoolLiteral(TypedefParser::BoolLiteralContext *ctx) = 0;

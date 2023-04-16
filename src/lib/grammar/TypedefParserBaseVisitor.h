@@ -3,6 +3,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include "parser_helpers.h"
 #include "symbol_table.h"
 
 
@@ -34,6 +35,62 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitPrimitiveFragment(TypedefParser::PrimitiveFragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitBoolFragment(TypedefParser::BoolFragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitCharFragment(TypedefParser::CharFragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitStringFragment(TypedefParser::StringFragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitF32Fragment(TypedefParser::F32FragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitF64Fragment(TypedefParser::F64FragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitU8Fragment(TypedefParser::U8FragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitU16Fragment(TypedefParser::U16FragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitU32Fragment(TypedefParser::U32FragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitU64Fragment(TypedefParser::U64FragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitI8Fragment(TypedefParser::I8FragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitI16Fragment(TypedefParser::I16FragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitI32Fragment(TypedefParser::I32FragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitI64Fragment(TypedefParser::I64FragmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitType_(TypedefParser::Type_Context *ctx) override {
     return visitChildren(ctx);
   }
@@ -59,10 +116,6 @@ public:
   }
 
   virtual antlrcpp::Any visitSimplePath(TypedefParser::SimplePathContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) override {
     return visitChildren(ctx);
   }
 

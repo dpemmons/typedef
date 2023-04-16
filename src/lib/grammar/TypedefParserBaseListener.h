@@ -3,6 +3,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include "parser_helpers.h"
 #include "symbol_table.h"
 
 
@@ -32,6 +33,48 @@ public:
   virtual void enterValueDefinition(TypedefParser::ValueDefinitionContext * /*ctx*/) override { }
   virtual void exitValueDefinition(TypedefParser::ValueDefinitionContext * /*ctx*/) override { }
 
+  virtual void enterPrimitiveFragment(TypedefParser::PrimitiveFragmentContext * /*ctx*/) override { }
+  virtual void exitPrimitiveFragment(TypedefParser::PrimitiveFragmentContext * /*ctx*/) override { }
+
+  virtual void enterBoolFragment(TypedefParser::BoolFragmentContext * /*ctx*/) override { }
+  virtual void exitBoolFragment(TypedefParser::BoolFragmentContext * /*ctx*/) override { }
+
+  virtual void enterCharFragment(TypedefParser::CharFragmentContext * /*ctx*/) override { }
+  virtual void exitCharFragment(TypedefParser::CharFragmentContext * /*ctx*/) override { }
+
+  virtual void enterStringFragment(TypedefParser::StringFragmentContext * /*ctx*/) override { }
+  virtual void exitStringFragment(TypedefParser::StringFragmentContext * /*ctx*/) override { }
+
+  virtual void enterF32Fragment(TypedefParser::F32FragmentContext * /*ctx*/) override { }
+  virtual void exitF32Fragment(TypedefParser::F32FragmentContext * /*ctx*/) override { }
+
+  virtual void enterF64Fragment(TypedefParser::F64FragmentContext * /*ctx*/) override { }
+  virtual void exitF64Fragment(TypedefParser::F64FragmentContext * /*ctx*/) override { }
+
+  virtual void enterU8Fragment(TypedefParser::U8FragmentContext * /*ctx*/) override { }
+  virtual void exitU8Fragment(TypedefParser::U8FragmentContext * /*ctx*/) override { }
+
+  virtual void enterU16Fragment(TypedefParser::U16FragmentContext * /*ctx*/) override { }
+  virtual void exitU16Fragment(TypedefParser::U16FragmentContext * /*ctx*/) override { }
+
+  virtual void enterU32Fragment(TypedefParser::U32FragmentContext * /*ctx*/) override { }
+  virtual void exitU32Fragment(TypedefParser::U32FragmentContext * /*ctx*/) override { }
+
+  virtual void enterU64Fragment(TypedefParser::U64FragmentContext * /*ctx*/) override { }
+  virtual void exitU64Fragment(TypedefParser::U64FragmentContext * /*ctx*/) override { }
+
+  virtual void enterI8Fragment(TypedefParser::I8FragmentContext * /*ctx*/) override { }
+  virtual void exitI8Fragment(TypedefParser::I8FragmentContext * /*ctx*/) override { }
+
+  virtual void enterI16Fragment(TypedefParser::I16FragmentContext * /*ctx*/) override { }
+  virtual void exitI16Fragment(TypedefParser::I16FragmentContext * /*ctx*/) override { }
+
+  virtual void enterI32Fragment(TypedefParser::I32FragmentContext * /*ctx*/) override { }
+  virtual void exitI32Fragment(TypedefParser::I32FragmentContext * /*ctx*/) override { }
+
+  virtual void enterI64Fragment(TypedefParser::I64FragmentContext * /*ctx*/) override { }
+  virtual void exitI64Fragment(TypedefParser::I64FragmentContext * /*ctx*/) override { }
+
   virtual void enterType_(TypedefParser::Type_Context * /*ctx*/) override { }
   virtual void exitType_(TypedefParser::Type_Context * /*ctx*/) override { }
 
@@ -52,9 +95,6 @@ public:
 
   virtual void enterSimplePath(TypedefParser::SimplePathContext * /*ctx*/) override { }
   virtual void exitSimplePath(TypedefParser::SimplePathContext * /*ctx*/) override { }
-
-  virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
-  virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
 
   virtual void enterBoolLiteral(TypedefParser::BoolLiteralContext * /*ctx*/) override { }
   virtual void exitBoolLiteral(TypedefParser::BoolLiteralContext * /*ctx*/) override { }

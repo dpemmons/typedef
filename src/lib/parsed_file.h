@@ -8,6 +8,7 @@
 #include "language_version.h"
 #include "parser_error_info.h"
 #include "symbol.h"
+#include "symbol_table.h"
 #include "type.h"
 #include "use_declaration.h"
 
@@ -31,6 +32,8 @@ class ParsedFile {
 
   size_t GetSymbols() const { return symbols_.size(); }
   std::shared_ptr<Symbol> GetSymbol(size_t i) { return symbols_[i]; }
+
+  SymbolTable symbols2_;
 
  private:
   friend class ParsedFileBuilder;
@@ -69,6 +72,11 @@ class ParsedFileBuilder {
   ParsedFileBuilder& AddErrors(std::vector<ParserErrorInfo> errors) {
     file_.errors_.insert(std::end(file_.errors_), std::begin(errors),
                          std::end(errors));
+    return *this;
+  }
+
+  ParsedFileBuilder& AddSymbols2(SymbolTable table) {
+    file_.symbols2_ = table;
     return *this;
   }
 

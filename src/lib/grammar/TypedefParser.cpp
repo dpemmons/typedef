@@ -3,6 +3,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include "parser_helpers.h"
 #include "symbol_table.h"
 
 
@@ -51,6 +52,14 @@ TypedefParser::TypedefVersionDeclarationContext* TypedefParser::CompilationUnitC
 
 tree::TerminalNode* TypedefParser::CompilationUnitContext::EOF() {
   return getToken(TypedefParser::EOF, 0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::CompilationUnitContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::CompilationUnitContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
 }
 
 TypedefParser::ModuleDeclarationContext* TypedefParser::CompilationUnitContext::moduleDeclaration() {
@@ -107,40 +116,85 @@ TypedefParser::CompilationUnitContext* TypedefParser::compilationUnit() {
     exitRule();
   });
   try {
+    size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(56);
+    setState(82);
     typedefVersionDeclaration();
-    setState(58);
+    setState(86);
+    _errHandler->sync(this);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 0, _ctx);
+    while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
+      if (alt == 1) {
+        setState(83);
+        match(TypedefParser::WS); 
+      }
+      setState(88);
+      _errHandler->sync(this);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 0, _ctx);
+    }
+    setState(90);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == TypedefParser::KW_MODULE) {
-      setState(57);
+      setState(89);
       moduleDeclaration();
     }
-    setState(63);
+    setState(101);
+    _errHandler->sync(this);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 3, _ctx);
+    while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
+      if (alt == 1) {
+        setState(95);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(92);
+          match(TypedefParser::WS);
+          setState(97);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(98);
+        useDeclaration(); 
+      }
+      setState(103);
+      _errHandler->sync(this);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 3, _ctx);
+    }
+    setState(113);
+    _errHandler->sync(this);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 5, _ctx);
+    while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
+      if (alt == 1) {
+        setState(107);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(104);
+          match(TypedefParser::WS);
+          setState(109);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(110);
+        item(); 
+      }
+      setState(115);
+      _errHandler->sync(this);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 5, _ctx);
+    }
+    setState(119);
     _errHandler->sync(this);
     _la = _input->LA(1);
-    while (_la == TypedefParser::KW_USE) {
-      setState(60);
-      useDeclaration();
-      setState(65);
+    while (_la == TypedefParser::WS) {
+      setState(116);
+      match(TypedefParser::WS);
+      setState(121);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
-    setState(69);
-    _errHandler->sync(this);
-    _la = _input->LA(1);
-    while (_la == TypedefParser::NON_KEYWORD_IDENTIFIER
-
-    || _la == TypedefParser::RAW_ESCAPE) {
-      setState(66);
-      item();
-      setState(71);
-      _errHandler->sync(this);
-      _la = _input->LA(1);
-    }
-    setState(72);
+    setState(122);
     match(TypedefParser::EOF);
    
   }
@@ -197,7 +251,7 @@ TypedefParser::ItemContext* TypedefParser::item() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(74);
+    setState(124);
     valueDefinition();
    
   }
@@ -220,72 +274,20 @@ TypedefParser::IdentifierContext* TypedefParser::ValueDefinitionContext::identif
   return getRuleContext<TypedefParser::IdentifierContext>(0);
 }
 
-tree::TerminalNode* TypedefParser::ValueDefinitionContext::COLON() {
-  return getToken(TypedefParser::COLON, 0);
-}
-
-TypedefParser::Type_Context* TypedefParser::ValueDefinitionContext::type_() {
-  return getRuleContext<TypedefParser::Type_Context>(0);
-}
-
-tree::TerminalNode* TypedefParser::ValueDefinitionContext::EQ() {
-  return getToken(TypedefParser::EQ, 0);
+TypedefParser::PrimitiveFragmentContext* TypedefParser::ValueDefinitionContext::primitiveFragment() {
+  return getRuleContext<TypedefParser::PrimitiveFragmentContext>(0);
 }
 
 tree::TerminalNode* TypedefParser::ValueDefinitionContext::SEMI() {
   return getToken(TypedefParser::SEMI, 0);
 }
 
-TypedefParser::BoolLiteralContext* TypedefParser::ValueDefinitionContext::boolLiteral() {
-  return getRuleContext<TypedefParser::BoolLiteralContext>(0);
+std::vector<tree::TerminalNode *> TypedefParser::ValueDefinitionContext::WS() {
+  return getTokens(TypedefParser::WS);
 }
 
-TypedefParser::CharLiteralContext* TypedefParser::ValueDefinitionContext::charLiteral() {
-  return getRuleContext<TypedefParser::CharLiteralContext>(0);
-}
-
-TypedefParser::StringLiteralContext* TypedefParser::ValueDefinitionContext::stringLiteral() {
-  return getRuleContext<TypedefParser::StringLiteralContext>(0);
-}
-
-TypedefParser::F32LiteralContext* TypedefParser::ValueDefinitionContext::f32Literal() {
-  return getRuleContext<TypedefParser::F32LiteralContext>(0);
-}
-
-TypedefParser::F64LiteralContext* TypedefParser::ValueDefinitionContext::f64Literal() {
-  return getRuleContext<TypedefParser::F64LiteralContext>(0);
-}
-
-TypedefParser::U8LiteralContext* TypedefParser::ValueDefinitionContext::u8Literal() {
-  return getRuleContext<TypedefParser::U8LiteralContext>(0);
-}
-
-TypedefParser::U16LiteralContext* TypedefParser::ValueDefinitionContext::u16Literal() {
-  return getRuleContext<TypedefParser::U16LiteralContext>(0);
-}
-
-TypedefParser::U32LiteralContext* TypedefParser::ValueDefinitionContext::u32Literal() {
-  return getRuleContext<TypedefParser::U32LiteralContext>(0);
-}
-
-TypedefParser::U64LiteralContext* TypedefParser::ValueDefinitionContext::u64Literal() {
-  return getRuleContext<TypedefParser::U64LiteralContext>(0);
-}
-
-TypedefParser::I8LiteralContext* TypedefParser::ValueDefinitionContext::i8Literal() {
-  return getRuleContext<TypedefParser::I8LiteralContext>(0);
-}
-
-TypedefParser::I16LiteralContext* TypedefParser::ValueDefinitionContext::i16Literal() {
-  return getRuleContext<TypedefParser::I16LiteralContext>(0);
-}
-
-TypedefParser::I32LiteralContext* TypedefParser::ValueDefinitionContext::i32Literal() {
-  return getRuleContext<TypedefParser::I32LiteralContext>(0);
-}
-
-TypedefParser::I64LiteralContext* TypedefParser::ValueDefinitionContext::i64Literal() {
-  return getRuleContext<TypedefParser::I64LiteralContext>(0);
+tree::TerminalNode* TypedefParser::ValueDefinitionContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
 }
 
 
@@ -316,143 +318,2043 @@ antlrcpp::Any TypedefParser::ValueDefinitionContext::accept(tree::ParseTreeVisit
 TypedefParser::ValueDefinitionContext* TypedefParser::valueDefinition() {
   ValueDefinitionContext *_localctx = _tracker.createInstance<ValueDefinitionContext>(_ctx, getState());
   enterRule(_localctx, 4, TypedefParser::RuleValueDefinition);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    size_t alt;
+    enterOuterAlt(_localctx, 1);
+    setState(126);
+    dynamic_cast<ValueDefinitionContext *>(_localctx)->identifierContext = identifier();
+    setState(130);
+    _errHandler->sync(this);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 7, _ctx);
+    while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
+      if (alt == 1) {
+        setState(127);
+        match(TypedefParser::WS); 
+      }
+      setState(132);
+      _errHandler->sync(this);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 7, _ctx);
+    }
+    setState(133);
+    dynamic_cast<ValueDefinitionContext *>(_localctx)->primitiveFragmentContext = primitiveFragment();
+    setState(137);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(134);
+      match(TypedefParser::WS);
+      setState(139);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(140);
+    match(TypedefParser::SEMI);
+
+    	if (dynamic_cast<ValueDefinitionContext *>(_localctx)->primitiveFragmentContext->maybe_val) {
+    		if (!symbol_table.TryInsert(dynamic_cast<ValueDefinitionContext *>(_localctx)->identifierContext->id, dynamic_cast<ValueDefinitionContext *>(_localctx)->primitiveFragmentContext->maybe_val.value())) {
+    			throw DuplicateSymbol(this, dynamic_cast<ValueDefinitionContext *>(_localctx)->identifierContext, dynamic_cast<ValueDefinitionContext *>(_localctx)->identifierContext->NON_KEYWORD_IDENTIFIER()->getSymbol());
+    		}
+    	}
+
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- PrimitiveFragmentContext ------------------------------------------------------------------
+
+TypedefParser::PrimitiveFragmentContext::PrimitiveFragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+TypedefParser::BoolFragmentContext* TypedefParser::PrimitiveFragmentContext::boolFragment() {
+  return getRuleContext<TypedefParser::BoolFragmentContext>(0);
+}
+
+TypedefParser::CharFragmentContext* TypedefParser::PrimitiveFragmentContext::charFragment() {
+  return getRuleContext<TypedefParser::CharFragmentContext>(0);
+}
+
+TypedefParser::StringFragmentContext* TypedefParser::PrimitiveFragmentContext::stringFragment() {
+  return getRuleContext<TypedefParser::StringFragmentContext>(0);
+}
+
+TypedefParser::F32FragmentContext* TypedefParser::PrimitiveFragmentContext::f32Fragment() {
+  return getRuleContext<TypedefParser::F32FragmentContext>(0);
+}
+
+TypedefParser::F64FragmentContext* TypedefParser::PrimitiveFragmentContext::f64Fragment() {
+  return getRuleContext<TypedefParser::F64FragmentContext>(0);
+}
+
+TypedefParser::U8FragmentContext* TypedefParser::PrimitiveFragmentContext::u8Fragment() {
+  return getRuleContext<TypedefParser::U8FragmentContext>(0);
+}
+
+TypedefParser::U16FragmentContext* TypedefParser::PrimitiveFragmentContext::u16Fragment() {
+  return getRuleContext<TypedefParser::U16FragmentContext>(0);
+}
+
+TypedefParser::U32FragmentContext* TypedefParser::PrimitiveFragmentContext::u32Fragment() {
+  return getRuleContext<TypedefParser::U32FragmentContext>(0);
+}
+
+TypedefParser::U64FragmentContext* TypedefParser::PrimitiveFragmentContext::u64Fragment() {
+  return getRuleContext<TypedefParser::U64FragmentContext>(0);
+}
+
+TypedefParser::I8FragmentContext* TypedefParser::PrimitiveFragmentContext::i8Fragment() {
+  return getRuleContext<TypedefParser::I8FragmentContext>(0);
+}
+
+TypedefParser::I16FragmentContext* TypedefParser::PrimitiveFragmentContext::i16Fragment() {
+  return getRuleContext<TypedefParser::I16FragmentContext>(0);
+}
+
+TypedefParser::I32FragmentContext* TypedefParser::PrimitiveFragmentContext::i32Fragment() {
+  return getRuleContext<TypedefParser::I32FragmentContext>(0);
+}
+
+TypedefParser::I64FragmentContext* TypedefParser::PrimitiveFragmentContext::i64Fragment() {
+  return getRuleContext<TypedefParser::I64FragmentContext>(0);
+}
+
+
+size_t TypedefParser::PrimitiveFragmentContext::getRuleIndex() const {
+  return TypedefParser::RulePrimitiveFragment;
+}
+
+void TypedefParser::PrimitiveFragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterPrimitiveFragment(this);
+}
+
+void TypedefParser::PrimitiveFragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitPrimitiveFragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::PrimitiveFragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitPrimitiveFragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::PrimitiveFragmentContext* TypedefParser::primitiveFragment() {
+  PrimitiveFragmentContext *_localctx = _tracker.createInstance<PrimitiveFragmentContext>(_ctx, getState());
+  enterRule(_localctx, 6, TypedefParser::RulePrimitiveFragment);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(76);
-    identifier();
-    setState(77);
-    match(TypedefParser::COLON);
-    setState(78);
-    dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context = type_();
-    setState(79);
-    match(TypedefParser::EQ);
-    setState(106);
+    setState(182);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 3, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 9, _ctx)) {
     case 1: {
-      setState(80);
-
-      if (!((dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_BOOL)) throw FailedPredicateException(this, "$type_.start->getType() == KW_BOOL");
-      setState(81);
-      boolLiteral();
+      setState(143);
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->boolFragmentContext = boolFragment();
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->maybe_val =  dynamic_cast<PrimitiveFragmentContext *>(_localctx)->boolFragmentContext->literal->maybe_val;
       break;
     }
 
     case 2: {
-      setState(82);
-
-      if (!((dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_CHAR)) throw FailedPredicateException(this, "$type_.start->getType() == KW_CHAR");
-      setState(83);
-      charLiteral();
+      setState(146);
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->charFragmentContext = charFragment();
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->maybe_val =  dynamic_cast<PrimitiveFragmentContext *>(_localctx)->charFragmentContext->literal->maybe_val;
       break;
     }
 
     case 3: {
-      setState(84);
-
-      if (!((dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_STRING)) throw FailedPredicateException(this, "$type_.start->getType() == KW_STRING");
-      setState(85);
-      stringLiteral();
+      setState(149);
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->stringFragmentContext = stringFragment();
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->maybe_val =  dynamic_cast<PrimitiveFragmentContext *>(_localctx)->stringFragmentContext->literal->maybe_val;
       break;
     }
 
     case 4: {
-      setState(86);
-
-      if (!((dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_F32)) throw FailedPredicateException(this, "$type_.start->getType() == KW_F32");
-      setState(87);
-      f32Literal();
+      setState(152);
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->f32FragmentContext = f32Fragment();
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->maybe_val =  dynamic_cast<PrimitiveFragmentContext *>(_localctx)->f32FragmentContext->literal->maybe_val;
       break;
     }
 
     case 5: {
-      setState(88);
-
-      if (!((dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_F64)) throw FailedPredicateException(this, "$type_.start->getType() == KW_F64");
-      setState(89);
-      f64Literal();
+      setState(155);
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->f64FragmentContext = f64Fragment();
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->maybe_val =  dynamic_cast<PrimitiveFragmentContext *>(_localctx)->f64FragmentContext->literal->maybe_val;
       break;
     }
 
     case 6: {
-      setState(90);
-
-      if (!((dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_U8)) throw FailedPredicateException(this, "$type_.start->getType() == KW_U8");
-      setState(91);
-      u8Literal();
+      setState(158);
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->u8FragmentContext = u8Fragment();
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->maybe_val =  dynamic_cast<PrimitiveFragmentContext *>(_localctx)->u8FragmentContext->literal->maybe_val;
       break;
     }
 
     case 7: {
-      setState(92);
-
-      if (!((dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_U16)) throw FailedPredicateException(this, "$type_.start->getType() == KW_U16");
-      setState(93);
-      u16Literal();
+      setState(161);
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->u16FragmentContext = u16Fragment();
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->maybe_val =  dynamic_cast<PrimitiveFragmentContext *>(_localctx)->u16FragmentContext->literal->maybe_val;
       break;
     }
 
     case 8: {
-      setState(94);
-
-      if (!((dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_U32)) throw FailedPredicateException(this, "$type_.start->getType() == KW_U32");
-      setState(95);
-      u32Literal();
+      setState(164);
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->u32FragmentContext = u32Fragment();
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->maybe_val =  dynamic_cast<PrimitiveFragmentContext *>(_localctx)->u32FragmentContext->literal->maybe_val;
       break;
     }
 
     case 9: {
-      setState(96);
-
-      if (!((dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_U64)) throw FailedPredicateException(this, "$type_.start->getType() == KW_U64");
-      setState(97);
-      u64Literal();
+      setState(167);
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->u64FragmentContext = u64Fragment();
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->maybe_val =  dynamic_cast<PrimitiveFragmentContext *>(_localctx)->u64FragmentContext->literal->maybe_val;
       break;
     }
 
     case 10: {
-      setState(98);
-
-      if (!((dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_I8)) throw FailedPredicateException(this, "$type_.start->getType() == KW_I8");
-      setState(99);
-      i8Literal();
+      setState(170);
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->i8FragmentContext = i8Fragment();
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->maybe_val =  dynamic_cast<PrimitiveFragmentContext *>(_localctx)->i8FragmentContext->literal->maybe_val;
       break;
     }
 
     case 11: {
-      setState(100);
-
-      if (!((dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_I16)) throw FailedPredicateException(this, "$type_.start->getType() == KW_I16");
-      setState(101);
-      i16Literal();
+      setState(173);
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->i16FragmentContext = i16Fragment();
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->maybe_val =  dynamic_cast<PrimitiveFragmentContext *>(_localctx)->i16FragmentContext->literal->maybe_val;
       break;
     }
 
     case 12: {
-      setState(102);
-
-      if (!((dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_I32)) throw FailedPredicateException(this, "$type_.start->getType() == KW_I32");
-      setState(103);
-      i32Literal();
+      setState(176);
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->i32FragmentContext = i32Fragment();
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->maybe_val =  dynamic_cast<PrimitiveFragmentContext *>(_localctx)->i32FragmentContext->literal->maybe_val;
       break;
     }
 
     case 13: {
-      setState(104);
-
-      if (!((dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_I64)) throw FailedPredicateException(this, "$type_.start->getType() == KW_I64");
-      setState(105);
-      i64Literal();
+      setState(179);
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->i64FragmentContext = i64Fragment();
+      dynamic_cast<PrimitiveFragmentContext *>(_localctx)->maybe_val =  dynamic_cast<PrimitiveFragmentContext *>(_localctx)->i64FragmentContext->literal->maybe_val;
       break;
     }
 
     }
-    setState(108);
-    match(TypedefParser::SEMI);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- BoolFragmentContext ------------------------------------------------------------------
+
+TypedefParser::BoolFragmentContext::BoolFragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TypedefParser::BoolFragmentContext::EQ() {
+  return getToken(TypedefParser::EQ, 0);
+}
+
+TypedefParser::BoolLiteralContext* TypedefParser::BoolFragmentContext::boolLiteral() {
+  return getRuleContext<TypedefParser::BoolLiteralContext>(0);
+}
+
+tree::TerminalNode* TypedefParser::BoolFragmentContext::COLON() {
+  return getToken(TypedefParser::COLON, 0);
+}
+
+tree::TerminalNode* TypedefParser::BoolFragmentContext::KW_BOOL() {
+  return getToken(TypedefParser::KW_BOOL, 0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::BoolFragmentContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::BoolFragmentContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
+
+size_t TypedefParser::BoolFragmentContext::getRuleIndex() const {
+  return TypedefParser::RuleBoolFragment;
+}
+
+void TypedefParser::BoolFragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterBoolFragment(this);
+}
+
+void TypedefParser::BoolFragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitBoolFragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::BoolFragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitBoolFragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::BoolFragmentContext* TypedefParser::boolFragment() {
+  BoolFragmentContext *_localctx = _tracker.createInstance<BoolFragmentContext>(_ctx, getState());
+  enterRule(_localctx, 8, TypedefParser::RuleBoolFragment);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(192);
+    _errHandler->sync(this);
+
+    _la = _input->LA(1);
+    if (_la == TypedefParser::COLON) {
+      setState(184);
+      match(TypedefParser::COLON);
+      setState(188);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+      while (_la == TypedefParser::WS) {
+        setState(185);
+        match(TypedefParser::WS);
+        setState(190);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+      }
+      setState(191);
+      match(TypedefParser::KW_BOOL);
+    }
+    setState(197);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(194);
+      match(TypedefParser::WS);
+      setState(199);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(200);
+    match(TypedefParser::EQ);
+    setState(204);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(201);
+      match(TypedefParser::WS);
+      setState(206);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(207);
+    dynamic_cast<BoolFragmentContext *>(_localctx)->literal = boolLiteral();
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- CharFragmentContext ------------------------------------------------------------------
+
+TypedefParser::CharFragmentContext::CharFragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TypedefParser::CharFragmentContext::EQ() {
+  return getToken(TypedefParser::EQ, 0);
+}
+
+TypedefParser::CharLiteralContext* TypedefParser::CharFragmentContext::charLiteral() {
+  return getRuleContext<TypedefParser::CharLiteralContext>(0);
+}
+
+tree::TerminalNode* TypedefParser::CharFragmentContext::COLON() {
+  return getToken(TypedefParser::COLON, 0);
+}
+
+tree::TerminalNode* TypedefParser::CharFragmentContext::KW_CHAR() {
+  return getToken(TypedefParser::KW_CHAR, 0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::CharFragmentContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::CharFragmentContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
+
+size_t TypedefParser::CharFragmentContext::getRuleIndex() const {
+  return TypedefParser::RuleCharFragment;
+}
+
+void TypedefParser::CharFragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterCharFragment(this);
+}
+
+void TypedefParser::CharFragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitCharFragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::CharFragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitCharFragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::CharFragmentContext* TypedefParser::charFragment() {
+  CharFragmentContext *_localctx = _tracker.createInstance<CharFragmentContext>(_ctx, getState());
+  enterRule(_localctx, 10, TypedefParser::RuleCharFragment);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(217);
+    _errHandler->sync(this);
+
+    _la = _input->LA(1);
+    if (_la == TypedefParser::COLON) {
+      setState(209);
+      match(TypedefParser::COLON);
+      setState(213);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+      while (_la == TypedefParser::WS) {
+        setState(210);
+        match(TypedefParser::WS);
+        setState(215);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+      }
+      setState(216);
+      match(TypedefParser::KW_CHAR);
+    }
+    setState(222);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(219);
+      match(TypedefParser::WS);
+      setState(224);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(225);
+    match(TypedefParser::EQ);
+    setState(229);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(226);
+      match(TypedefParser::WS);
+      setState(231);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(232);
+    dynamic_cast<CharFragmentContext *>(_localctx)->literal = charLiteral();
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- StringFragmentContext ------------------------------------------------------------------
+
+TypedefParser::StringFragmentContext::StringFragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TypedefParser::StringFragmentContext::KW_STRING() {
+  return getToken(TypedefParser::KW_STRING, 0);
+}
+
+tree::TerminalNode* TypedefParser::StringFragmentContext::EQ() {
+  return getToken(TypedefParser::EQ, 0);
+}
+
+TypedefParser::StringLiteralContext* TypedefParser::StringFragmentContext::stringLiteral() {
+  return getRuleContext<TypedefParser::StringLiteralContext>(0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::StringFragmentContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::StringFragmentContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
+
+size_t TypedefParser::StringFragmentContext::getRuleIndex() const {
+  return TypedefParser::RuleStringFragment;
+}
+
+void TypedefParser::StringFragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterStringFragment(this);
+}
+
+void TypedefParser::StringFragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitStringFragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::StringFragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitStringFragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::StringFragmentContext* TypedefParser::stringFragment() {
+  StringFragmentContext *_localctx = _tracker.createInstance<StringFragmentContext>(_ctx, getState());
+  enterRule(_localctx, 12, TypedefParser::RuleStringFragment);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(234);
+    match(TypedefParser::KW_STRING);
+    setState(238);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(235);
+      match(TypedefParser::WS);
+      setState(240);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(241);
+    match(TypedefParser::EQ);
+    setState(245);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(242);
+      match(TypedefParser::WS);
+      setState(247);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(248);
+    dynamic_cast<StringFragmentContext *>(_localctx)->literal = stringLiteral();
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- F32FragmentContext ------------------------------------------------------------------
+
+TypedefParser::F32FragmentContext::F32FragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TypedefParser::F32FragmentContext::KW_F32() {
+  return getToken(TypedefParser::KW_F32, 0);
+}
+
+tree::TerminalNode* TypedefParser::F32FragmentContext::EQ() {
+  return getToken(TypedefParser::EQ, 0);
+}
+
+TypedefParser::F32LiteralContext* TypedefParser::F32FragmentContext::f32Literal() {
+  return getRuleContext<TypedefParser::F32LiteralContext>(0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::F32FragmentContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::F32FragmentContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
+
+size_t TypedefParser::F32FragmentContext::getRuleIndex() const {
+  return TypedefParser::RuleF32Fragment;
+}
+
+void TypedefParser::F32FragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterF32Fragment(this);
+}
+
+void TypedefParser::F32FragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitF32Fragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::F32FragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitF32Fragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::F32FragmentContext* TypedefParser::f32Fragment() {
+  F32FragmentContext *_localctx = _tracker.createInstance<F32FragmentContext>(_ctx, getState());
+  enterRule(_localctx, 14, TypedefParser::RuleF32Fragment);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(250);
+    match(TypedefParser::KW_F32);
+    setState(254);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(251);
+      match(TypedefParser::WS);
+      setState(256);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(257);
+    match(TypedefParser::EQ);
+    setState(261);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(258);
+      match(TypedefParser::WS);
+      setState(263);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(264);
+    dynamic_cast<F32FragmentContext *>(_localctx)->literal = f32Literal();
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- F64FragmentContext ------------------------------------------------------------------
+
+TypedefParser::F64FragmentContext::F64FragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TypedefParser::F64FragmentContext::KW_F64() {
+  return getToken(TypedefParser::KW_F64, 0);
+}
+
+tree::TerminalNode* TypedefParser::F64FragmentContext::EQ() {
+  return getToken(TypedefParser::EQ, 0);
+}
+
+TypedefParser::F64LiteralContext* TypedefParser::F64FragmentContext::f64Literal() {
+  return getRuleContext<TypedefParser::F64LiteralContext>(0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::F64FragmentContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::F64FragmentContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
+
+size_t TypedefParser::F64FragmentContext::getRuleIndex() const {
+  return TypedefParser::RuleF64Fragment;
+}
+
+void TypedefParser::F64FragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterF64Fragment(this);
+}
+
+void TypedefParser::F64FragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitF64Fragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::F64FragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitF64Fragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::F64FragmentContext* TypedefParser::f64Fragment() {
+  F64FragmentContext *_localctx = _tracker.createInstance<F64FragmentContext>(_ctx, getState());
+  enterRule(_localctx, 16, TypedefParser::RuleF64Fragment);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(266);
+    match(TypedefParser::KW_F64);
+    setState(270);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(267);
+      match(TypedefParser::WS);
+      setState(272);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(273);
+    match(TypedefParser::EQ);
+    setState(277);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(274);
+      match(TypedefParser::WS);
+      setState(279);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(280);
+    dynamic_cast<F64FragmentContext *>(_localctx)->literal = f64Literal();
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- U8FragmentContext ------------------------------------------------------------------
+
+TypedefParser::U8FragmentContext::U8FragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TypedefParser::U8FragmentContext::COLON() {
+  return getToken(TypedefParser::COLON, 0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::U8FragmentContext::KW_U8() {
+  return getTokens(TypedefParser::KW_U8);
+}
+
+tree::TerminalNode* TypedefParser::U8FragmentContext::KW_U8(size_t i) {
+  return getToken(TypedefParser::KW_U8, i);
+}
+
+tree::TerminalNode* TypedefParser::U8FragmentContext::EQ() {
+  return getToken(TypedefParser::EQ, 0);
+}
+
+TypedefParser::U8LiteralContext* TypedefParser::U8FragmentContext::u8Literal() {
+  return getRuleContext<TypedefParser::U8LiteralContext>(0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::U8FragmentContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::U8FragmentContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
+
+size_t TypedefParser::U8FragmentContext::getRuleIndex() const {
+  return TypedefParser::RuleU8Fragment;
+}
+
+void TypedefParser::U8FragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterU8Fragment(this);
+}
+
+void TypedefParser::U8FragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitU8Fragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::U8FragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitU8Fragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::U8FragmentContext* TypedefParser::u8Fragment() {
+  U8FragmentContext *_localctx = _tracker.createInstance<U8FragmentContext>(_ctx, getState());
+  enterRule(_localctx, 18, TypedefParser::RuleU8Fragment);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    setState(317);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::COLON: {
+        enterOuterAlt(_localctx, 1);
+        setState(282);
+        match(TypedefParser::COLON);
+        setState(286);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(283);
+          match(TypedefParser::WS);
+          setState(288);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(289);
+        match(TypedefParser::KW_U8);
+        setState(293);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(290);
+          match(TypedefParser::WS);
+          setState(295);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(296);
+        match(TypedefParser::EQ);
+        setState(300);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(297);
+          match(TypedefParser::WS);
+          setState(302);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(303);
+        dynamic_cast<U8FragmentContext *>(_localctx)->literal = u8Literal();
+        setState(305);
+        _errHandler->sync(this);
+
+        _la = _input->LA(1);
+        if (_la == TypedefParser::KW_U8) {
+          setState(304);
+          match(TypedefParser::KW_U8);
+        }
+        break;
+      }
+
+      case TypedefParser::EQ: {
+        enterOuterAlt(_localctx, 2);
+        setState(307);
+        match(TypedefParser::EQ);
+        setState(311);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(308);
+          match(TypedefParser::WS);
+          setState(313);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(314);
+        dynamic_cast<U8FragmentContext *>(_localctx)->literal = u8Literal();
+        setState(315);
+        match(TypedefParser::KW_U8);
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- U16FragmentContext ------------------------------------------------------------------
+
+TypedefParser::U16FragmentContext::U16FragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TypedefParser::U16FragmentContext::COLON() {
+  return getToken(TypedefParser::COLON, 0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::U16FragmentContext::KW_U16() {
+  return getTokens(TypedefParser::KW_U16);
+}
+
+tree::TerminalNode* TypedefParser::U16FragmentContext::KW_U16(size_t i) {
+  return getToken(TypedefParser::KW_U16, i);
+}
+
+tree::TerminalNode* TypedefParser::U16FragmentContext::EQ() {
+  return getToken(TypedefParser::EQ, 0);
+}
+
+TypedefParser::U16LiteralContext* TypedefParser::U16FragmentContext::u16Literal() {
+  return getRuleContext<TypedefParser::U16LiteralContext>(0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::U16FragmentContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::U16FragmentContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
+
+size_t TypedefParser::U16FragmentContext::getRuleIndex() const {
+  return TypedefParser::RuleU16Fragment;
+}
+
+void TypedefParser::U16FragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterU16Fragment(this);
+}
+
+void TypedefParser::U16FragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitU16Fragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::U16FragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitU16Fragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::U16FragmentContext* TypedefParser::u16Fragment() {
+  U16FragmentContext *_localctx = _tracker.createInstance<U16FragmentContext>(_ctx, getState());
+  enterRule(_localctx, 20, TypedefParser::RuleU16Fragment);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    setState(354);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::COLON: {
+        enterOuterAlt(_localctx, 1);
+        setState(319);
+        match(TypedefParser::COLON);
+        setState(323);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(320);
+          match(TypedefParser::WS);
+          setState(325);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(326);
+        match(TypedefParser::KW_U16);
+        setState(330);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(327);
+          match(TypedefParser::WS);
+          setState(332);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(333);
+        match(TypedefParser::EQ);
+        setState(337);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(334);
+          match(TypedefParser::WS);
+          setState(339);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(340);
+        dynamic_cast<U16FragmentContext *>(_localctx)->literal = u16Literal();
+        setState(342);
+        _errHandler->sync(this);
+
+        _la = _input->LA(1);
+        if (_la == TypedefParser::KW_U16) {
+          setState(341);
+          match(TypedefParser::KW_U16);
+        }
+        break;
+      }
+
+      case TypedefParser::EQ: {
+        enterOuterAlt(_localctx, 2);
+        setState(344);
+        match(TypedefParser::EQ);
+        setState(348);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(345);
+          match(TypedefParser::WS);
+          setState(350);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(351);
+        dynamic_cast<U16FragmentContext *>(_localctx)->literal = u16Literal();
+        setState(352);
+        match(TypedefParser::KW_U16);
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- U32FragmentContext ------------------------------------------------------------------
+
+TypedefParser::U32FragmentContext::U32FragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TypedefParser::U32FragmentContext::COLON() {
+  return getToken(TypedefParser::COLON, 0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::U32FragmentContext::KW_U32() {
+  return getTokens(TypedefParser::KW_U32);
+}
+
+tree::TerminalNode* TypedefParser::U32FragmentContext::KW_U32(size_t i) {
+  return getToken(TypedefParser::KW_U32, i);
+}
+
+tree::TerminalNode* TypedefParser::U32FragmentContext::EQ() {
+  return getToken(TypedefParser::EQ, 0);
+}
+
+TypedefParser::U32LiteralContext* TypedefParser::U32FragmentContext::u32Literal() {
+  return getRuleContext<TypedefParser::U32LiteralContext>(0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::U32FragmentContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::U32FragmentContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
+
+size_t TypedefParser::U32FragmentContext::getRuleIndex() const {
+  return TypedefParser::RuleU32Fragment;
+}
+
+void TypedefParser::U32FragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterU32Fragment(this);
+}
+
+void TypedefParser::U32FragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitU32Fragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::U32FragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitU32Fragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::U32FragmentContext* TypedefParser::u32Fragment() {
+  U32FragmentContext *_localctx = _tracker.createInstance<U32FragmentContext>(_ctx, getState());
+  enterRule(_localctx, 22, TypedefParser::RuleU32Fragment);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    setState(391);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::COLON: {
+        enterOuterAlt(_localctx, 1);
+        setState(356);
+        match(TypedefParser::COLON);
+        setState(360);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(357);
+          match(TypedefParser::WS);
+          setState(362);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(363);
+        match(TypedefParser::KW_U32);
+        setState(367);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(364);
+          match(TypedefParser::WS);
+          setState(369);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(370);
+        match(TypedefParser::EQ);
+        setState(374);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(371);
+          match(TypedefParser::WS);
+          setState(376);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(377);
+        dynamic_cast<U32FragmentContext *>(_localctx)->literal = u32Literal();
+        setState(379);
+        _errHandler->sync(this);
+
+        _la = _input->LA(1);
+        if (_la == TypedefParser::KW_U32) {
+          setState(378);
+          match(TypedefParser::KW_U32);
+        }
+        break;
+      }
+
+      case TypedefParser::EQ: {
+        enterOuterAlt(_localctx, 2);
+        setState(381);
+        match(TypedefParser::EQ);
+        setState(385);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(382);
+          match(TypedefParser::WS);
+          setState(387);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(388);
+        dynamic_cast<U32FragmentContext *>(_localctx)->literal = u32Literal();
+        setState(389);
+        match(TypedefParser::KW_U32);
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- U64FragmentContext ------------------------------------------------------------------
+
+TypedefParser::U64FragmentContext::U64FragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TypedefParser::U64FragmentContext::COLON() {
+  return getToken(TypedefParser::COLON, 0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::U64FragmentContext::KW_U64() {
+  return getTokens(TypedefParser::KW_U64);
+}
+
+tree::TerminalNode* TypedefParser::U64FragmentContext::KW_U64(size_t i) {
+  return getToken(TypedefParser::KW_U64, i);
+}
+
+tree::TerminalNode* TypedefParser::U64FragmentContext::EQ() {
+  return getToken(TypedefParser::EQ, 0);
+}
+
+TypedefParser::U64LiteralContext* TypedefParser::U64FragmentContext::u64Literal() {
+  return getRuleContext<TypedefParser::U64LiteralContext>(0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::U64FragmentContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::U64FragmentContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
+
+size_t TypedefParser::U64FragmentContext::getRuleIndex() const {
+  return TypedefParser::RuleU64Fragment;
+}
+
+void TypedefParser::U64FragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterU64Fragment(this);
+}
+
+void TypedefParser::U64FragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitU64Fragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::U64FragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitU64Fragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::U64FragmentContext* TypedefParser::u64Fragment() {
+  U64FragmentContext *_localctx = _tracker.createInstance<U64FragmentContext>(_ctx, getState());
+  enterRule(_localctx, 24, TypedefParser::RuleU64Fragment);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    setState(428);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::COLON: {
+        enterOuterAlt(_localctx, 1);
+        setState(393);
+        match(TypedefParser::COLON);
+        setState(397);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(394);
+          match(TypedefParser::WS);
+          setState(399);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(400);
+        match(TypedefParser::KW_U64);
+        setState(404);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(401);
+          match(TypedefParser::WS);
+          setState(406);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(407);
+        match(TypedefParser::EQ);
+        setState(411);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(408);
+          match(TypedefParser::WS);
+          setState(413);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(414);
+        dynamic_cast<U64FragmentContext *>(_localctx)->literal = u64Literal();
+        setState(416);
+        _errHandler->sync(this);
+
+        _la = _input->LA(1);
+        if (_la == TypedefParser::KW_U64) {
+          setState(415);
+          match(TypedefParser::KW_U64);
+        }
+        break;
+      }
+
+      case TypedefParser::EQ: {
+        enterOuterAlt(_localctx, 2);
+        setState(418);
+        match(TypedefParser::EQ);
+        setState(422);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(419);
+          match(TypedefParser::WS);
+          setState(424);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(425);
+        dynamic_cast<U64FragmentContext *>(_localctx)->literal = u64Literal();
+        setState(426);
+        match(TypedefParser::KW_U64);
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- I8FragmentContext ------------------------------------------------------------------
+
+TypedefParser::I8FragmentContext::I8FragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TypedefParser::I8FragmentContext::COLON() {
+  return getToken(TypedefParser::COLON, 0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::I8FragmentContext::KW_I8() {
+  return getTokens(TypedefParser::KW_I8);
+}
+
+tree::TerminalNode* TypedefParser::I8FragmentContext::KW_I8(size_t i) {
+  return getToken(TypedefParser::KW_I8, i);
+}
+
+tree::TerminalNode* TypedefParser::I8FragmentContext::EQ() {
+  return getToken(TypedefParser::EQ, 0);
+}
+
+TypedefParser::I8LiteralContext* TypedefParser::I8FragmentContext::i8Literal() {
+  return getRuleContext<TypedefParser::I8LiteralContext>(0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::I8FragmentContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::I8FragmentContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
+
+size_t TypedefParser::I8FragmentContext::getRuleIndex() const {
+  return TypedefParser::RuleI8Fragment;
+}
+
+void TypedefParser::I8FragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterI8Fragment(this);
+}
+
+void TypedefParser::I8FragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitI8Fragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::I8FragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitI8Fragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::I8FragmentContext* TypedefParser::i8Fragment() {
+  I8FragmentContext *_localctx = _tracker.createInstance<I8FragmentContext>(_ctx, getState());
+  enterRule(_localctx, 26, TypedefParser::RuleI8Fragment);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    setState(465);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::COLON: {
+        enterOuterAlt(_localctx, 1);
+        setState(430);
+        match(TypedefParser::COLON);
+        setState(434);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(431);
+          match(TypedefParser::WS);
+          setState(436);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(437);
+        match(TypedefParser::KW_I8);
+        setState(441);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(438);
+          match(TypedefParser::WS);
+          setState(443);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(444);
+        match(TypedefParser::EQ);
+        setState(448);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(445);
+          match(TypedefParser::WS);
+          setState(450);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(451);
+        dynamic_cast<I8FragmentContext *>(_localctx)->literal = i8Literal();
+        setState(453);
+        _errHandler->sync(this);
+
+        _la = _input->LA(1);
+        if (_la == TypedefParser::KW_I8) {
+          setState(452);
+          match(TypedefParser::KW_I8);
+        }
+        break;
+      }
+
+      case TypedefParser::EQ: {
+        enterOuterAlt(_localctx, 2);
+        setState(455);
+        match(TypedefParser::EQ);
+        setState(459);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(456);
+          match(TypedefParser::WS);
+          setState(461);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(462);
+        dynamic_cast<I8FragmentContext *>(_localctx)->literal = i8Literal();
+        setState(463);
+        match(TypedefParser::KW_I8);
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- I16FragmentContext ------------------------------------------------------------------
+
+TypedefParser::I16FragmentContext::I16FragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TypedefParser::I16FragmentContext::COLON() {
+  return getToken(TypedefParser::COLON, 0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::I16FragmentContext::KW_I16() {
+  return getTokens(TypedefParser::KW_I16);
+}
+
+tree::TerminalNode* TypedefParser::I16FragmentContext::KW_I16(size_t i) {
+  return getToken(TypedefParser::KW_I16, i);
+}
+
+tree::TerminalNode* TypedefParser::I16FragmentContext::EQ() {
+  return getToken(TypedefParser::EQ, 0);
+}
+
+TypedefParser::I16LiteralContext* TypedefParser::I16FragmentContext::i16Literal() {
+  return getRuleContext<TypedefParser::I16LiteralContext>(0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::I16FragmentContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::I16FragmentContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
+
+size_t TypedefParser::I16FragmentContext::getRuleIndex() const {
+  return TypedefParser::RuleI16Fragment;
+}
+
+void TypedefParser::I16FragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterI16Fragment(this);
+}
+
+void TypedefParser::I16FragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitI16Fragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::I16FragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitI16Fragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::I16FragmentContext* TypedefParser::i16Fragment() {
+  I16FragmentContext *_localctx = _tracker.createInstance<I16FragmentContext>(_ctx, getState());
+  enterRule(_localctx, 28, TypedefParser::RuleI16Fragment);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    setState(502);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::COLON: {
+        enterOuterAlt(_localctx, 1);
+        setState(467);
+        match(TypedefParser::COLON);
+        setState(471);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(468);
+          match(TypedefParser::WS);
+          setState(473);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(474);
+        match(TypedefParser::KW_I16);
+        setState(478);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(475);
+          match(TypedefParser::WS);
+          setState(480);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(481);
+        match(TypedefParser::EQ);
+        setState(485);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(482);
+          match(TypedefParser::WS);
+          setState(487);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(488);
+        dynamic_cast<I16FragmentContext *>(_localctx)->literal = i16Literal();
+        setState(490);
+        _errHandler->sync(this);
+
+        _la = _input->LA(1);
+        if (_la == TypedefParser::KW_I16) {
+          setState(489);
+          match(TypedefParser::KW_I16);
+        }
+        break;
+      }
+
+      case TypedefParser::EQ: {
+        enterOuterAlt(_localctx, 2);
+        setState(492);
+        match(TypedefParser::EQ);
+        setState(496);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(493);
+          match(TypedefParser::WS);
+          setState(498);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(499);
+        dynamic_cast<I16FragmentContext *>(_localctx)->literal = i16Literal();
+        setState(500);
+        match(TypedefParser::KW_I16);
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- I32FragmentContext ------------------------------------------------------------------
+
+TypedefParser::I32FragmentContext::I32FragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TypedefParser::I32FragmentContext::COLON() {
+  return getToken(TypedefParser::COLON, 0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::I32FragmentContext::KW_I32() {
+  return getTokens(TypedefParser::KW_I32);
+}
+
+tree::TerminalNode* TypedefParser::I32FragmentContext::KW_I32(size_t i) {
+  return getToken(TypedefParser::KW_I32, i);
+}
+
+tree::TerminalNode* TypedefParser::I32FragmentContext::EQ() {
+  return getToken(TypedefParser::EQ, 0);
+}
+
+TypedefParser::I32LiteralContext* TypedefParser::I32FragmentContext::i32Literal() {
+  return getRuleContext<TypedefParser::I32LiteralContext>(0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::I32FragmentContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::I32FragmentContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
+
+size_t TypedefParser::I32FragmentContext::getRuleIndex() const {
+  return TypedefParser::RuleI32Fragment;
+}
+
+void TypedefParser::I32FragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterI32Fragment(this);
+}
+
+void TypedefParser::I32FragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitI32Fragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::I32FragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitI32Fragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::I32FragmentContext* TypedefParser::i32Fragment() {
+  I32FragmentContext *_localctx = _tracker.createInstance<I32FragmentContext>(_ctx, getState());
+  enterRule(_localctx, 30, TypedefParser::RuleI32Fragment);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    setState(540);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::COLON: {
+        enterOuterAlt(_localctx, 1);
+        setState(504);
+        match(TypedefParser::COLON);
+        setState(508);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(505);
+          match(TypedefParser::WS);
+          setState(510);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(511);
+        match(TypedefParser::KW_I32);
+        setState(515);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(512);
+          match(TypedefParser::WS);
+          setState(517);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(518);
+        match(TypedefParser::EQ);
+        setState(522);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(519);
+          match(TypedefParser::WS);
+          setState(524);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(525);
+        dynamic_cast<I32FragmentContext *>(_localctx)->literal = i32Literal();
+        setState(527);
+        _errHandler->sync(this);
+
+        _la = _input->LA(1);
+        if (_la == TypedefParser::KW_I32) {
+          setState(526);
+          match(TypedefParser::KW_I32);
+        }
+        break;
+      }
+
+      case TypedefParser::EQ: {
+        enterOuterAlt(_localctx, 2);
+        setState(529);
+        match(TypedefParser::EQ);
+        setState(533);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(530);
+          match(TypedefParser::WS);
+          setState(535);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(536);
+        dynamic_cast<I32FragmentContext *>(_localctx)->literal = i32Literal();
+        setState(538);
+        _errHandler->sync(this);
+
+        _la = _input->LA(1);
+        if (_la == TypedefParser::KW_I32) {
+          setState(537);
+          match(TypedefParser::KW_I32);
+        }
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- I64FragmentContext ------------------------------------------------------------------
+
+TypedefParser::I64FragmentContext::I64FragmentContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* TypedefParser::I64FragmentContext::COLON() {
+  return getToken(TypedefParser::COLON, 0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::I64FragmentContext::KW_I64() {
+  return getTokens(TypedefParser::KW_I64);
+}
+
+tree::TerminalNode* TypedefParser::I64FragmentContext::KW_I64(size_t i) {
+  return getToken(TypedefParser::KW_I64, i);
+}
+
+tree::TerminalNode* TypedefParser::I64FragmentContext::EQ() {
+  return getToken(TypedefParser::EQ, 0);
+}
+
+TypedefParser::I64LiteralContext* TypedefParser::I64FragmentContext::i64Literal() {
+  return getRuleContext<TypedefParser::I64LiteralContext>(0);
+}
+
+std::vector<tree::TerminalNode *> TypedefParser::I64FragmentContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::I64FragmentContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
+
+size_t TypedefParser::I64FragmentContext::getRuleIndex() const {
+  return TypedefParser::RuleI64Fragment;
+}
+
+void TypedefParser::I64FragmentContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterI64Fragment(this);
+}
+
+void TypedefParser::I64FragmentContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitI64Fragment(this);
+}
+
+
+antlrcpp::Any TypedefParser::I64FragmentContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
+    return parserVisitor->visitI64Fragment(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+TypedefParser::I64FragmentContext* TypedefParser::i64Fragment() {
+  I64FragmentContext *_localctx = _tracker.createInstance<I64FragmentContext>(_ctx, getState());
+  enterRule(_localctx, 32, TypedefParser::RuleI64Fragment);
+  size_t _la = 0;
+
+  auto onExit = finally([=] {
+    exitRule();
+  });
+  try {
+    setState(577);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::COLON: {
+        enterOuterAlt(_localctx, 1);
+        setState(542);
+        match(TypedefParser::COLON);
+        setState(546);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(543);
+          match(TypedefParser::WS);
+          setState(548);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(549);
+        match(TypedefParser::KW_I64);
+        setState(553);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(550);
+          match(TypedefParser::WS);
+          setState(555);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(556);
+        match(TypedefParser::EQ);
+        setState(560);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(557);
+          match(TypedefParser::WS);
+          setState(562);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(563);
+        dynamic_cast<I64FragmentContext *>(_localctx)->literal = i64Literal();
+        setState(565);
+        _errHandler->sync(this);
+
+        _la = _input->LA(1);
+        if (_la == TypedefParser::KW_I64) {
+          setState(564);
+          match(TypedefParser::KW_I64);
+        }
+        break;
+      }
+
+      case TypedefParser::EQ: {
+        enterOuterAlt(_localctx, 2);
+        setState(567);
+        match(TypedefParser::EQ);
+        setState(571);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+        while (_la == TypedefParser::WS) {
+          setState(568);
+          match(TypedefParser::WS);
+          setState(573);
+          _errHandler->sync(this);
+          _la = _input->LA(1);
+        }
+        setState(574);
+        dynamic_cast<I64FragmentContext *>(_localctx)->literal = i64Literal();
+        setState(575);
+        match(TypedefParser::KW_I64);
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
    
   }
   catch (RecognitionException &e) {
@@ -468,10 +2370,6 @@ TypedefParser::ValueDefinitionContext* TypedefParser::valueDefinition() {
 
 TypedefParser::Type_Context::Type_Context(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
-}
-
-TypedefParser::PrimitiveTypeContext* TypedefParser::Type_Context::primitiveType() {
-  return getRuleContext<TypedefParser::PrimitiveTypeContext>(0);
 }
 
 TypedefParser::IdentifierContext* TypedefParser::Type_Context::identifier() {
@@ -509,32 +2407,25 @@ antlrcpp::Any TypedefParser::Type_Context::accept(tree::ParseTreeVisitor *visito
 
 TypedefParser::Type_Context* TypedefParser::type_() {
   Type_Context *_localctx = _tracker.createInstance<Type_Context>(_ctx, getState());
-  enterRule(_localctx, 6, TypedefParser::RuleType_);
+  enterRule(_localctx, 34, TypedefParser::RuleType_);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
-    setState(113);
+    setState(581);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 4, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 73, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(110);
-      primitiveType();
+      setState(579);
+      identifier();
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(111);
-      identifier();
-      break;
-    }
-
-    case 3: {
-      enterOuterAlt(_localctx, 3);
-      setState(112);
+      setState(580);
       parameterizedType();
       break;
     }
@@ -573,12 +2464,12 @@ tree::TerminalNode* TypedefParser::ParameterizedTypeContext::GT() {
   return getToken(TypedefParser::GT, 0);
 }
 
-std::vector<tree::TerminalNode *> TypedefParser::ParameterizedTypeContext::INTEGER_LITERAL() {
-  return getTokens(TypedefParser::INTEGER_LITERAL);
+std::vector<TypedefParser::U64LiteralContext *> TypedefParser::ParameterizedTypeContext::u64Literal() {
+  return getRuleContexts<TypedefParser::U64LiteralContext>();
 }
 
-tree::TerminalNode* TypedefParser::ParameterizedTypeContext::INTEGER_LITERAL(size_t i) {
-  return getToken(TypedefParser::INTEGER_LITERAL, i);
+TypedefParser::U64LiteralContext* TypedefParser::ParameterizedTypeContext::u64Literal(size_t i) {
+  return getRuleContext<TypedefParser::U64LiteralContext>(i);
 }
 
 
@@ -608,7 +2499,7 @@ antlrcpp::Any TypedefParser::ParameterizedTypeContext::accept(tree::ParseTreeVis
 
 TypedefParser::ParameterizedTypeContext* TypedefParser::parameterizedType() {
   ParameterizedTypeContext *_localctx = _tracker.createInstance<ParameterizedTypeContext>(_ctx, getState());
-  enterRule(_localctx, 8, TypedefParser::RuleParameterizedType);
+  enterRule(_localctx, 36, TypedefParser::RuleParameterizedType);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -616,41 +2507,49 @@ TypedefParser::ParameterizedTypeContext* TypedefParser::parameterizedType() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(115);
+    setState(583);
     identifier();
-    setState(116);
+    setState(584);
     match(TypedefParser::LT);
-    setState(119); 
+    setState(587); 
     _errHandler->sync(this);
     _la = _input->LA(1);
     do {
-      setState(119);
+      setState(587);
       _errHandler->sync(this);
       switch (_input->LA(1)) {
         case TypedefParser::NON_KEYWORD_IDENTIFIER:
         case TypedefParser::RAW_ESCAPE: {
-          setState(117);
+          setState(585);
           identifier();
           break;
         }
 
-        case TypedefParser::INTEGER_LITERAL: {
-          setState(118);
-          match(TypedefParser::INTEGER_LITERAL);
+        case TypedefParser::DEC_DIGITS:
+        case TypedefParser::DEC_DIGITS_UNDERSCORE:
+        case TypedefParser::HEX_PREFIX:
+        case TypedefParser::OCT_PREFIX:
+        case TypedefParser::BIN_PREFIX: {
+          setState(586);
+          u64Literal();
           break;
         }
 
       default:
         throw NoViableAltException(this);
       }
-      setState(121); 
+      setState(589); 
       _errHandler->sync(this);
       _la = _input->LA(1);
     } while (((((_la - 83) & ~ 0x3fULL) == 0) &&
       ((1ULL << (_la - 83)) & ((1ULL << (TypedefParser::NON_KEYWORD_IDENTIFIER - 83))
-      | (1ULL << (TypedefParser::INTEGER_LITERAL - 83))
+      | (1ULL << (TypedefParser::DEC_DIGITS - 83))
+      | (1ULL << (TypedefParser::DEC_DIGITS_UNDERSCORE - 83))
+      | (1ULL << (TypedefParser::HEX_PREFIX - 83))
+      | (1ULL << (TypedefParser::OCT_PREFIX - 83))
+      | (1ULL << (TypedefParser::BIN_PREFIX - 83))
       | (1ULL << (TypedefParser::RAW_ESCAPE - 83)))) != 0));
-    setState(123);
+    setState(591);
     match(TypedefParser::GT);
    
   }
@@ -685,6 +2584,14 @@ tree::TerminalNode* TypedefParser::TypedefVersionDeclarationContext::SEMI() {
   return getToken(TypedefParser::SEMI, 0);
 }
 
+std::vector<tree::TerminalNode *> TypedefParser::TypedefVersionDeclarationContext::WS() {
+  return getTokens(TypedefParser::WS);
+}
+
+tree::TerminalNode* TypedefParser::TypedefVersionDeclarationContext::WS(size_t i) {
+  return getToken(TypedefParser::WS, i);
+}
+
 
 size_t TypedefParser::TypedefVersionDeclarationContext::getRuleIndex() const {
   return TypedefParser::RuleTypedefVersionDeclaration;
@@ -712,20 +2619,51 @@ antlrcpp::Any TypedefParser::TypedefVersionDeclarationContext::accept(tree::Pars
 
 TypedefParser::TypedefVersionDeclarationContext* TypedefParser::typedefVersionDeclaration() {
   TypedefVersionDeclarationContext *_localctx = _tracker.createInstance<TypedefVersionDeclarationContext>(_ctx, getState());
-  enterRule(_localctx, 10, TypedefParser::RuleTypedefVersionDeclaration);
+  enterRule(_localctx, 38, TypedefParser::RuleTypedefVersionDeclaration);
+  size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(125);
+    setState(593);
     match(TypedefParser::KW_TYPEDEF);
-    setState(126);
+    setState(597);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(594);
+      match(TypedefParser::WS);
+      setState(599);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(600);
     match(TypedefParser::EQ);
-    setState(127);
+    setState(604);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(601);
+      match(TypedefParser::WS);
+      setState(606);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(607);
     identifier();
-    setState(128);
+    setState(611);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == TypedefParser::WS) {
+      setState(608);
+      match(TypedefParser::WS);
+      setState(613);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(614);
     match(TypedefParser::SEMI);
    
   }
@@ -783,18 +2721,18 @@ antlrcpp::Any TypedefParser::ModuleDeclarationContext::accept(tree::ParseTreeVis
 
 TypedefParser::ModuleDeclarationContext* TypedefParser::moduleDeclaration() {
   ModuleDeclarationContext *_localctx = _tracker.createInstance<ModuleDeclarationContext>(_ctx, getState());
-  enterRule(_localctx, 12, TypedefParser::RuleModuleDeclaration);
+  enterRule(_localctx, 40, TypedefParser::RuleModuleDeclaration);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(130);
+    setState(616);
     match(TypedefParser::KW_MODULE);
-    setState(131);
+    setState(617);
     simplePath();
-    setState(132);
+    setState(618);
     match(TypedefParser::SEMI);
    
   }
@@ -852,18 +2790,18 @@ antlrcpp::Any TypedefParser::UseDeclarationContext::accept(tree::ParseTreeVisito
 
 TypedefParser::UseDeclarationContext* TypedefParser::useDeclaration() {
   UseDeclarationContext *_localctx = _tracker.createInstance<UseDeclarationContext>(_ctx, getState());
-  enterRule(_localctx, 14, TypedefParser::RuleUseDeclaration);
+  enterRule(_localctx, 42, TypedefParser::RuleUseDeclaration);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(134);
+    setState(620);
     match(TypedefParser::KW_USE);
-    setState(135);
+    setState(621);
     useTree();
-    setState(136);
+    setState(622);
     match(TypedefParser::SEMI);
    
   }
@@ -953,7 +2891,7 @@ antlrcpp::Any TypedefParser::UseTreeContext::accept(tree::ParseTreeVisitor *visi
 
 TypedefParser::UseTreeContext* TypedefParser::useTree() {
   UseTreeContext *_localctx = _tracker.createInstance<UseTreeContext>(_ctx, getState());
-  enterRule(_localctx, 16, TypedefParser::RuleUseTree);
+  enterRule(_localctx, 44, TypedefParser::RuleUseTree);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -961,80 +2899,80 @@ TypedefParser::UseTreeContext* TypedefParser::useTree() {
   });
   try {
     size_t alt;
-    setState(167);
+    setState(653);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 14, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 86, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(142);
+      setState(628);
       _errHandler->sync(this);
 
       _la = _input->LA(1);
-      if (((((_la - 83) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 83)) & ((1ULL << (TypedefParser::NON_KEYWORD_IDENTIFIER - 83))
-        | (1ULL << (TypedefParser::RAW_ESCAPE - 83))
-        | (1ULL << (TypedefParser::PATHSEP - 83)))) != 0)) {
-        setState(139);
+      if (_la == TypedefParser::NON_KEYWORD_IDENTIFIER
+
+      || _la == TypedefParser::RAW_ESCAPE || _la == TypedefParser::PATHSEP) {
+        setState(625);
         _errHandler->sync(this);
 
-        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 7, _ctx)) {
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 79, _ctx)) {
         case 1: {
-          setState(138);
+          setState(624);
           simplePath();
           break;
         }
 
         }
-        setState(141);
+        setState(627);
         match(TypedefParser::PATHSEP);
       }
-      setState(160);
+      setState(646);
       _errHandler->sync(this);
       switch (_input->LA(1)) {
         case TypedefParser::STAR: {
-          setState(144);
+          setState(630);
           match(TypedefParser::STAR);
           break;
         }
 
         case TypedefParser::LBRACE: {
-          setState(145);
+          setState(631);
           match(TypedefParser::LBRACE);
-          setState(157);
+          setState(643);
           _errHandler->sync(this);
 
           _la = _input->LA(1);
           if (((((_la - 83) & ~ 0x3fULL) == 0) &&
             ((1ULL << (_la - 83)) & ((1ULL << (TypedefParser::NON_KEYWORD_IDENTIFIER - 83))
             | (1ULL << (TypedefParser::RAW_ESCAPE - 83))
-            | (1ULL << (TypedefParser::STAR - 83))
-            | (1ULL << (TypedefParser::PATHSEP - 83)))) != 0) || _la == TypedefParser::LBRACE) {
-            setState(146);
+            | (1ULL << (TypedefParser::STAR - 83)))) != 0) || _la == TypedefParser::PATHSEP
+
+          || _la == TypedefParser::LBRACE) {
+            setState(632);
             useTree();
-            setState(151);
+            setState(637);
             _errHandler->sync(this);
-            alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 9, _ctx);
+            alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 81, _ctx);
             while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
               if (alt == 1) {
-                setState(147);
+                setState(633);
                 match(TypedefParser::COMMA);
-                setState(148);
+                setState(634);
                 useTree(); 
               }
-              setState(153);
+              setState(639);
               _errHandler->sync(this);
-              alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 9, _ctx);
+              alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 81, _ctx);
             }
-            setState(155);
+            setState(641);
             _errHandler->sync(this);
 
             _la = _input->LA(1);
             if (_la == TypedefParser::COMMA) {
-              setState(154);
+              setState(640);
               match(TypedefParser::COMMA);
             }
           }
-          setState(159);
+          setState(645);
           match(TypedefParser::RBRACE);
           break;
         }
@@ -1047,16 +2985,16 @@ TypedefParser::UseTreeContext* TypedefParser::useTree() {
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(162);
+      setState(648);
       simplePath();
-      setState(165);
+      setState(651);
       _errHandler->sync(this);
 
       _la = _input->LA(1);
       if (_la == TypedefParser::KW_AS) {
-        setState(163);
+        setState(649);
         match(TypedefParser::KW_AS);
-        setState(164);
+        setState(650);
         identifier();
       }
       break;
@@ -1123,7 +3061,7 @@ antlrcpp::Any TypedefParser::SimplePathContext::accept(tree::ParseTreeVisitor *v
 
 TypedefParser::SimplePathContext* TypedefParser::simplePath() {
   SimplePathContext *_localctx = _tracker.createInstance<SimplePathContext>(_ctx, getState());
-  enterRule(_localctx, 18, TypedefParser::RuleSimplePath);
+  enterRule(_localctx, 46, TypedefParser::RuleSimplePath);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -1132,155 +3070,29 @@ TypedefParser::SimplePathContext* TypedefParser::simplePath() {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(170);
+    setState(656);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == TypedefParser::PATHSEP) {
-      setState(169);
+      setState(655);
       match(TypedefParser::PATHSEP);
     }
-    setState(172);
+    setState(658);
     identifier();
-    setState(177);
+    setState(663);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 16, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 88, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
-        setState(173);
+        setState(659);
         match(TypedefParser::PATHSEP);
-        setState(174);
+        setState(660);
         identifier(); 
       }
-      setState(179);
+      setState(665);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 16, _ctx);
-    }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- PrimitiveTypeContext ------------------------------------------------------------------
-
-TypedefParser::PrimitiveTypeContext::PrimitiveTypeContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::KW_BOOL() {
-  return getToken(TypedefParser::KW_BOOL, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::KW_CHAR() {
-  return getToken(TypedefParser::KW_CHAR, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::KW_STRING() {
-  return getToken(TypedefParser::KW_STRING, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::KW_F32() {
-  return getToken(TypedefParser::KW_F32, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::KW_F64() {
-  return getToken(TypedefParser::KW_F64, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::KW_U8() {
-  return getToken(TypedefParser::KW_U8, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::KW_U16() {
-  return getToken(TypedefParser::KW_U16, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::KW_U32() {
-  return getToken(TypedefParser::KW_U32, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::KW_U64() {
-  return getToken(TypedefParser::KW_U64, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::KW_I8() {
-  return getToken(TypedefParser::KW_I8, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::KW_I16() {
-  return getToken(TypedefParser::KW_I16, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::KW_I32() {
-  return getToken(TypedefParser::KW_I32, 0);
-}
-
-tree::TerminalNode* TypedefParser::PrimitiveTypeContext::KW_I64() {
-  return getToken(TypedefParser::KW_I64, 0);
-}
-
-
-size_t TypedefParser::PrimitiveTypeContext::getRuleIndex() const {
-  return TypedefParser::RulePrimitiveType;
-}
-
-void TypedefParser::PrimitiveTypeContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterPrimitiveType(this);
-}
-
-void TypedefParser::PrimitiveTypeContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitPrimitiveType(this);
-}
-
-
-antlrcpp::Any TypedefParser::PrimitiveTypeContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
-    return parserVisitor->visitPrimitiveType(this);
-  else
-    return visitor->visitChildren(this);
-}
-
-TypedefParser::PrimitiveTypeContext* TypedefParser::primitiveType() {
-  PrimitiveTypeContext *_localctx = _tracker.createInstance<PrimitiveTypeContext>(_ctx, getState());
-  enterRule(_localctx, 20, TypedefParser::RulePrimitiveType);
-  size_t _la = 0;
-
-  auto onExit = finally([=] {
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(180);
-    _la = _input->LA(1);
-    if (!(((((_la - 70) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 70)) & ((1ULL << (TypedefParser::KW_BOOL - 70))
-      | (1ULL << (TypedefParser::KW_CHAR - 70))
-      | (1ULL << (TypedefParser::KW_STRING - 70))
-      | (1ULL << (TypedefParser::KW_F32 - 70))
-      | (1ULL << (TypedefParser::KW_F64 - 70))
-      | (1ULL << (TypedefParser::KW_U8 - 70))
-      | (1ULL << (TypedefParser::KW_U16 - 70))
-      | (1ULL << (TypedefParser::KW_U32 - 70))
-      | (1ULL << (TypedefParser::KW_U64 - 70))
-      | (1ULL << (TypedefParser::KW_I8 - 70))
-      | (1ULL << (TypedefParser::KW_I16 - 70))
-      | (1ULL << (TypedefParser::KW_I32 - 70))
-      | (1ULL << (TypedefParser::KW_I64 - 70)))) != 0))) {
-    _errHandler->recoverInline(this);
-    }
-    else {
-      _errHandler->reportMatch(this);
-      consume();
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 88, _ctx);
     }
    
   }
@@ -1334,7 +3146,7 @@ antlrcpp::Any TypedefParser::BoolLiteralContext::accept(tree::ParseTreeVisitor *
 
 TypedefParser::BoolLiteralContext* TypedefParser::boolLiteral() {
   BoolLiteralContext *_localctx = _tracker.createInstance<BoolLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 22, TypedefParser::RuleBoolLiteral);
+  enterRule(_localctx, 48, TypedefParser::RuleBoolLiteral);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -1342,7 +3154,7 @@ TypedefParser::BoolLiteralContext* TypedefParser::boolLiteral() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(182);
+    setState(666);
     _la = _input->LA(1);
     if (!(_la == TypedefParser::KW_FALSE
 
@@ -1355,13 +3167,15 @@ TypedefParser::BoolLiteralContext* TypedefParser::boolLiteral() {
     }
    _ctx->stop = _input->LT(-1);
 
-    		// From grammar.
+    		// From boolLiteral grammar.
     		if (_localctx->start->getType() == TypedefParser::KW_FALSE) {
     			dynamic_cast<BoolLiteralContext *>(_localctx)->maybe_val =  false;
     		} else if (_localctx->start->getType() == TypedefParser::KW_TRUE) {
     			dynamic_cast<BoolLiteralContext *>(_localctx)->maybe_val =  true;
-    		}
-    		// End from grammar.
+    		} else {
+    			throw InputMismatchException(this);
+    		}	
+    		// End from boolLiteral grammar.
       
   }
   catch (RecognitionException &e) {
@@ -1410,14 +3224,14 @@ antlrcpp::Any TypedefParser::ByteLiteralContext::accept(tree::ParseTreeVisitor *
 
 TypedefParser::ByteLiteralContext* TypedefParser::byteLiteral() {
   ByteLiteralContext *_localctx = _tracker.createInstance<ByteLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 24, TypedefParser::RuleByteLiteral);
+  enterRule(_localctx, 50, TypedefParser::RuleByteLiteral);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(184);
+    setState(668);
     match(TypedefParser::BYTE_LITERAL);
    
   }
@@ -1467,14 +3281,14 @@ antlrcpp::Any TypedefParser::CharLiteralContext::accept(tree::ParseTreeVisitor *
 
 TypedefParser::CharLiteralContext* TypedefParser::charLiteral() {
   CharLiteralContext *_localctx = _tracker.createInstance<CharLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 26, TypedefParser::RuleCharLiteral);
+  enterRule(_localctx, 52, TypedefParser::RuleCharLiteral);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(186);
+    setState(670);
     match(TypedefParser::CHAR_LITERAL);
    
   }
@@ -1524,14 +3338,14 @@ antlrcpp::Any TypedefParser::F32LiteralContext::accept(tree::ParseTreeVisitor *v
 
 TypedefParser::F32LiteralContext* TypedefParser::f32Literal() {
   F32LiteralContext *_localctx = _tracker.createInstance<F32LiteralContext>(_ctx, getState());
-  enterRule(_localctx, 28, TypedefParser::RuleF32Literal);
+  enterRule(_localctx, 54, TypedefParser::RuleF32Literal);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(188);
+    setState(672);
     match(TypedefParser::FLOAT_LITERAL);
    
   }
@@ -1581,14 +3395,14 @@ antlrcpp::Any TypedefParser::F64LiteralContext::accept(tree::ParseTreeVisitor *v
 
 TypedefParser::F64LiteralContext* TypedefParser::f64Literal() {
   F64LiteralContext *_localctx = _tracker.createInstance<F64LiteralContext>(_ctx, getState());
-  enterRule(_localctx, 30, TypedefParser::RuleF64Literal);
+  enterRule(_localctx, 56, TypedefParser::RuleF64Literal);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(190);
+    setState(674);
     match(TypedefParser::FLOAT_LITERAL);
    
   }
@@ -1607,8 +3421,48 @@ TypedefParser::U8LiteralContext::U8LiteralContext(ParserRuleContext *parent, siz
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::U8LiteralContext::INTEGER_LITERAL() {
-  return getToken(TypedefParser::INTEGER_LITERAL, 0);
+tree::TerminalNode* TypedefParser::U8LiteralContext::DEC_DIGITS() {
+  return getToken(TypedefParser::DEC_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U8LiteralContext::DEC_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::DEC_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::U8LiteralContext::HEX_PREFIX() {
+  return getToken(TypedefParser::HEX_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::U8LiteralContext::OCT_PREFIX() {
+  return getToken(TypedefParser::OCT_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::U8LiteralContext::BIN_PREFIX() {
+  return getToken(TypedefParser::BIN_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::U8LiteralContext::HEX_DIGITS() {
+  return getToken(TypedefParser::HEX_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U8LiteralContext::HEX_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::HEX_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::U8LiteralContext::OCT_DIGITS() {
+  return getToken(TypedefParser::OCT_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U8LiteralContext::OCT_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::OCT_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::U8LiteralContext::BIN_DIGITS() {
+  return getToken(TypedefParser::BIN_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U8LiteralContext::BIN_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::BIN_DIGITS_UNDERSCORE, 0);
 }
 
 
@@ -1638,16 +3492,91 @@ antlrcpp::Any TypedefParser::U8LiteralContext::accept(tree::ParseTreeVisitor *vi
 
 TypedefParser::U8LiteralContext* TypedefParser::u8Literal() {
   U8LiteralContext *_localctx = _tracker.createInstance<U8LiteralContext>(_ctx, getState());
-  enterRule(_localctx, 32, TypedefParser::RuleU8Literal);
+  enterRule(_localctx, 58, TypedefParser::RuleU8Literal);
+  size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(192);
-    match(TypedefParser::INTEGER_LITERAL);
-   
+    setState(683);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::DEC_DIGITS:
+      case TypedefParser::DEC_DIGITS_UNDERSCORE: {
+        setState(676);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::DEC_DIGITS
+
+        || _la == TypedefParser::DEC_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::HEX_PREFIX: {
+        setState(677);
+        match(TypedefParser::HEX_PREFIX);
+        setState(678);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::HEX_DIGITS
+
+        || _la == TypedefParser::HEX_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::OCT_PREFIX: {
+        setState(679);
+        match(TypedefParser::OCT_PREFIX);
+        setState(680);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::OCT_DIGITS
+
+        || _la == TypedefParser::OCT_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::BIN_PREFIX: {
+        setState(681);
+        match(TypedefParser::BIN_PREFIX);
+        setState(682);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::BIN_DIGITS
+
+        || _la == TypedefParser::BIN_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   _ctx->stop = _input->LT(-1);
+
+    		dynamic_cast<U8LiteralContext *>(_localctx)->maybe_val =  GetIntValue<uint8_t>(this, _localctx);
+      
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1664,8 +3593,48 @@ TypedefParser::U16LiteralContext::U16LiteralContext(ParserRuleContext *parent, s
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::U16LiteralContext::INTEGER_LITERAL() {
-  return getToken(TypedefParser::INTEGER_LITERAL, 0);
+tree::TerminalNode* TypedefParser::U16LiteralContext::DEC_DIGITS() {
+  return getToken(TypedefParser::DEC_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U16LiteralContext::DEC_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::DEC_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::U16LiteralContext::HEX_PREFIX() {
+  return getToken(TypedefParser::HEX_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::U16LiteralContext::OCT_PREFIX() {
+  return getToken(TypedefParser::OCT_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::U16LiteralContext::BIN_PREFIX() {
+  return getToken(TypedefParser::BIN_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::U16LiteralContext::HEX_DIGITS() {
+  return getToken(TypedefParser::HEX_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U16LiteralContext::HEX_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::HEX_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::U16LiteralContext::OCT_DIGITS() {
+  return getToken(TypedefParser::OCT_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U16LiteralContext::OCT_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::OCT_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::U16LiteralContext::BIN_DIGITS() {
+  return getToken(TypedefParser::BIN_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U16LiteralContext::BIN_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::BIN_DIGITS_UNDERSCORE, 0);
 }
 
 
@@ -1695,16 +3664,91 @@ antlrcpp::Any TypedefParser::U16LiteralContext::accept(tree::ParseTreeVisitor *v
 
 TypedefParser::U16LiteralContext* TypedefParser::u16Literal() {
   U16LiteralContext *_localctx = _tracker.createInstance<U16LiteralContext>(_ctx, getState());
-  enterRule(_localctx, 34, TypedefParser::RuleU16Literal);
+  enterRule(_localctx, 60, TypedefParser::RuleU16Literal);
+  size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(194);
-    match(TypedefParser::INTEGER_LITERAL);
-   
+    setState(692);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::DEC_DIGITS:
+      case TypedefParser::DEC_DIGITS_UNDERSCORE: {
+        setState(685);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::DEC_DIGITS
+
+        || _la == TypedefParser::DEC_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::HEX_PREFIX: {
+        setState(686);
+        match(TypedefParser::HEX_PREFIX);
+        setState(687);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::HEX_DIGITS
+
+        || _la == TypedefParser::HEX_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::OCT_PREFIX: {
+        setState(688);
+        match(TypedefParser::OCT_PREFIX);
+        setState(689);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::OCT_DIGITS
+
+        || _la == TypedefParser::OCT_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::BIN_PREFIX: {
+        setState(690);
+        match(TypedefParser::BIN_PREFIX);
+        setState(691);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::BIN_DIGITS
+
+        || _la == TypedefParser::BIN_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   _ctx->stop = _input->LT(-1);
+
+    		dynamic_cast<U16LiteralContext *>(_localctx)->maybe_val =  GetIntValue<uint16_t>(this, _localctx);
+      
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1721,8 +3765,48 @@ TypedefParser::U32LiteralContext::U32LiteralContext(ParserRuleContext *parent, s
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::U32LiteralContext::INTEGER_LITERAL() {
-  return getToken(TypedefParser::INTEGER_LITERAL, 0);
+tree::TerminalNode* TypedefParser::U32LiteralContext::DEC_DIGITS() {
+  return getToken(TypedefParser::DEC_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U32LiteralContext::DEC_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::DEC_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::U32LiteralContext::HEX_PREFIX() {
+  return getToken(TypedefParser::HEX_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::U32LiteralContext::OCT_PREFIX() {
+  return getToken(TypedefParser::OCT_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::U32LiteralContext::BIN_PREFIX() {
+  return getToken(TypedefParser::BIN_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::U32LiteralContext::HEX_DIGITS() {
+  return getToken(TypedefParser::HEX_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U32LiteralContext::HEX_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::HEX_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::U32LiteralContext::OCT_DIGITS() {
+  return getToken(TypedefParser::OCT_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U32LiteralContext::OCT_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::OCT_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::U32LiteralContext::BIN_DIGITS() {
+  return getToken(TypedefParser::BIN_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U32LiteralContext::BIN_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::BIN_DIGITS_UNDERSCORE, 0);
 }
 
 
@@ -1752,16 +3836,91 @@ antlrcpp::Any TypedefParser::U32LiteralContext::accept(tree::ParseTreeVisitor *v
 
 TypedefParser::U32LiteralContext* TypedefParser::u32Literal() {
   U32LiteralContext *_localctx = _tracker.createInstance<U32LiteralContext>(_ctx, getState());
-  enterRule(_localctx, 36, TypedefParser::RuleU32Literal);
+  enterRule(_localctx, 62, TypedefParser::RuleU32Literal);
+  size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(196);
-    match(TypedefParser::INTEGER_LITERAL);
-   
+    setState(701);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::DEC_DIGITS:
+      case TypedefParser::DEC_DIGITS_UNDERSCORE: {
+        setState(694);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::DEC_DIGITS
+
+        || _la == TypedefParser::DEC_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::HEX_PREFIX: {
+        setState(695);
+        match(TypedefParser::HEX_PREFIX);
+        setState(696);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::HEX_DIGITS
+
+        || _la == TypedefParser::HEX_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::OCT_PREFIX: {
+        setState(697);
+        match(TypedefParser::OCT_PREFIX);
+        setState(698);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::OCT_DIGITS
+
+        || _la == TypedefParser::OCT_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::BIN_PREFIX: {
+        setState(699);
+        match(TypedefParser::BIN_PREFIX);
+        setState(700);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::BIN_DIGITS
+
+        || _la == TypedefParser::BIN_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   _ctx->stop = _input->LT(-1);
+
+    		dynamic_cast<U32LiteralContext *>(_localctx)->maybe_val =  GetIntValue<uint32_t>(this, _localctx);
+      
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1778,8 +3937,48 @@ TypedefParser::U64LiteralContext::U64LiteralContext(ParserRuleContext *parent, s
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::U64LiteralContext::INTEGER_LITERAL() {
-  return getToken(TypedefParser::INTEGER_LITERAL, 0);
+tree::TerminalNode* TypedefParser::U64LiteralContext::DEC_DIGITS() {
+  return getToken(TypedefParser::DEC_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U64LiteralContext::DEC_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::DEC_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::U64LiteralContext::HEX_PREFIX() {
+  return getToken(TypedefParser::HEX_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::U64LiteralContext::OCT_PREFIX() {
+  return getToken(TypedefParser::OCT_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::U64LiteralContext::BIN_PREFIX() {
+  return getToken(TypedefParser::BIN_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::U64LiteralContext::HEX_DIGITS() {
+  return getToken(TypedefParser::HEX_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U64LiteralContext::HEX_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::HEX_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::U64LiteralContext::OCT_DIGITS() {
+  return getToken(TypedefParser::OCT_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U64LiteralContext::OCT_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::OCT_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::U64LiteralContext::BIN_DIGITS() {
+  return getToken(TypedefParser::BIN_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::U64LiteralContext::BIN_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::BIN_DIGITS_UNDERSCORE, 0);
 }
 
 
@@ -1809,16 +4008,91 @@ antlrcpp::Any TypedefParser::U64LiteralContext::accept(tree::ParseTreeVisitor *v
 
 TypedefParser::U64LiteralContext* TypedefParser::u64Literal() {
   U64LiteralContext *_localctx = _tracker.createInstance<U64LiteralContext>(_ctx, getState());
-  enterRule(_localctx, 38, TypedefParser::RuleU64Literal);
+  enterRule(_localctx, 64, TypedefParser::RuleU64Literal);
+  size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(198);
-    match(TypedefParser::INTEGER_LITERAL);
-   
+    setState(710);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::DEC_DIGITS:
+      case TypedefParser::DEC_DIGITS_UNDERSCORE: {
+        setState(703);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::DEC_DIGITS
+
+        || _la == TypedefParser::DEC_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::HEX_PREFIX: {
+        setState(704);
+        match(TypedefParser::HEX_PREFIX);
+        setState(705);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::HEX_DIGITS
+
+        || _la == TypedefParser::HEX_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::OCT_PREFIX: {
+        setState(706);
+        match(TypedefParser::OCT_PREFIX);
+        setState(707);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::OCT_DIGITS
+
+        || _la == TypedefParser::OCT_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::BIN_PREFIX: {
+        setState(708);
+        match(TypedefParser::BIN_PREFIX);
+        setState(709);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::BIN_DIGITS
+
+        || _la == TypedefParser::BIN_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   _ctx->stop = _input->LT(-1);
+
+    		dynamic_cast<U64LiteralContext *>(_localctx)->maybe_val =  GetIntValue<uint64_t>(this, _localctx);
+      
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1835,8 +4109,48 @@ TypedefParser::I8LiteralContext::I8LiteralContext(ParserRuleContext *parent, siz
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::I8LiteralContext::INTEGER_LITERAL() {
-  return getToken(TypedefParser::INTEGER_LITERAL, 0);
+tree::TerminalNode* TypedefParser::I8LiteralContext::DEC_DIGITS() {
+  return getToken(TypedefParser::DEC_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I8LiteralContext::DEC_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::DEC_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::I8LiteralContext::HEX_PREFIX() {
+  return getToken(TypedefParser::HEX_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::I8LiteralContext::OCT_PREFIX() {
+  return getToken(TypedefParser::OCT_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::I8LiteralContext::BIN_PREFIX() {
+  return getToken(TypedefParser::BIN_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::I8LiteralContext::HEX_DIGITS() {
+  return getToken(TypedefParser::HEX_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I8LiteralContext::HEX_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::HEX_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::I8LiteralContext::OCT_DIGITS() {
+  return getToken(TypedefParser::OCT_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I8LiteralContext::OCT_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::OCT_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::I8LiteralContext::BIN_DIGITS() {
+  return getToken(TypedefParser::BIN_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I8LiteralContext::BIN_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::BIN_DIGITS_UNDERSCORE, 0);
 }
 
 
@@ -1866,16 +4180,91 @@ antlrcpp::Any TypedefParser::I8LiteralContext::accept(tree::ParseTreeVisitor *vi
 
 TypedefParser::I8LiteralContext* TypedefParser::i8Literal() {
   I8LiteralContext *_localctx = _tracker.createInstance<I8LiteralContext>(_ctx, getState());
-  enterRule(_localctx, 40, TypedefParser::RuleI8Literal);
+  enterRule(_localctx, 66, TypedefParser::RuleI8Literal);
+  size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(200);
-    match(TypedefParser::INTEGER_LITERAL);
-   
+    setState(719);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::DEC_DIGITS:
+      case TypedefParser::DEC_DIGITS_UNDERSCORE: {
+        setState(712);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::DEC_DIGITS
+
+        || _la == TypedefParser::DEC_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::HEX_PREFIX: {
+        setState(713);
+        match(TypedefParser::HEX_PREFIX);
+        setState(714);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::HEX_DIGITS
+
+        || _la == TypedefParser::HEX_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::OCT_PREFIX: {
+        setState(715);
+        match(TypedefParser::OCT_PREFIX);
+        setState(716);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::OCT_DIGITS
+
+        || _la == TypedefParser::OCT_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::BIN_PREFIX: {
+        setState(717);
+        match(TypedefParser::BIN_PREFIX);
+        setState(718);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::BIN_DIGITS
+
+        || _la == TypedefParser::BIN_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   _ctx->stop = _input->LT(-1);
+
+    		dynamic_cast<I8LiteralContext *>(_localctx)->maybe_val =  GetIntValue<int8_t>(this, _localctx);
+      
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1892,8 +4281,48 @@ TypedefParser::I16LiteralContext::I16LiteralContext(ParserRuleContext *parent, s
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::I16LiteralContext::INTEGER_LITERAL() {
-  return getToken(TypedefParser::INTEGER_LITERAL, 0);
+tree::TerminalNode* TypedefParser::I16LiteralContext::DEC_DIGITS() {
+  return getToken(TypedefParser::DEC_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I16LiteralContext::DEC_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::DEC_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::I16LiteralContext::HEX_PREFIX() {
+  return getToken(TypedefParser::HEX_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::I16LiteralContext::OCT_PREFIX() {
+  return getToken(TypedefParser::OCT_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::I16LiteralContext::BIN_PREFIX() {
+  return getToken(TypedefParser::BIN_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::I16LiteralContext::HEX_DIGITS() {
+  return getToken(TypedefParser::HEX_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I16LiteralContext::HEX_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::HEX_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::I16LiteralContext::OCT_DIGITS() {
+  return getToken(TypedefParser::OCT_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I16LiteralContext::OCT_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::OCT_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::I16LiteralContext::BIN_DIGITS() {
+  return getToken(TypedefParser::BIN_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I16LiteralContext::BIN_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::BIN_DIGITS_UNDERSCORE, 0);
 }
 
 
@@ -1923,16 +4352,91 @@ antlrcpp::Any TypedefParser::I16LiteralContext::accept(tree::ParseTreeVisitor *v
 
 TypedefParser::I16LiteralContext* TypedefParser::i16Literal() {
   I16LiteralContext *_localctx = _tracker.createInstance<I16LiteralContext>(_ctx, getState());
-  enterRule(_localctx, 42, TypedefParser::RuleI16Literal);
+  enterRule(_localctx, 68, TypedefParser::RuleI16Literal);
+  size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(202);
-    match(TypedefParser::INTEGER_LITERAL);
-   
+    setState(728);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::DEC_DIGITS:
+      case TypedefParser::DEC_DIGITS_UNDERSCORE: {
+        setState(721);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::DEC_DIGITS
+
+        || _la == TypedefParser::DEC_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::HEX_PREFIX: {
+        setState(722);
+        match(TypedefParser::HEX_PREFIX);
+        setState(723);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::HEX_DIGITS
+
+        || _la == TypedefParser::HEX_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::OCT_PREFIX: {
+        setState(724);
+        match(TypedefParser::OCT_PREFIX);
+        setState(725);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::OCT_DIGITS
+
+        || _la == TypedefParser::OCT_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::BIN_PREFIX: {
+        setState(726);
+        match(TypedefParser::BIN_PREFIX);
+        setState(727);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::BIN_DIGITS
+
+        || _la == TypedefParser::BIN_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   _ctx->stop = _input->LT(-1);
+
+    		dynamic_cast<I16LiteralContext *>(_localctx)->maybe_val =  GetIntValue<int16_t>(this, _localctx);
+      
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1949,8 +4453,48 @@ TypedefParser::I32LiteralContext::I32LiteralContext(ParserRuleContext *parent, s
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::I32LiteralContext::INTEGER_LITERAL() {
-  return getToken(TypedefParser::INTEGER_LITERAL, 0);
+tree::TerminalNode* TypedefParser::I32LiteralContext::DEC_DIGITS() {
+  return getToken(TypedefParser::DEC_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I32LiteralContext::DEC_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::DEC_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::I32LiteralContext::HEX_PREFIX() {
+  return getToken(TypedefParser::HEX_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::I32LiteralContext::OCT_PREFIX() {
+  return getToken(TypedefParser::OCT_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::I32LiteralContext::BIN_PREFIX() {
+  return getToken(TypedefParser::BIN_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::I32LiteralContext::HEX_DIGITS() {
+  return getToken(TypedefParser::HEX_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I32LiteralContext::HEX_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::HEX_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::I32LiteralContext::OCT_DIGITS() {
+  return getToken(TypedefParser::OCT_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I32LiteralContext::OCT_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::OCT_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::I32LiteralContext::BIN_DIGITS() {
+  return getToken(TypedefParser::BIN_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I32LiteralContext::BIN_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::BIN_DIGITS_UNDERSCORE, 0);
 }
 
 
@@ -1980,15 +4524,90 @@ antlrcpp::Any TypedefParser::I32LiteralContext::accept(tree::ParseTreeVisitor *v
 
 TypedefParser::I32LiteralContext* TypedefParser::i32Literal() {
   I32LiteralContext *_localctx = _tracker.createInstance<I32LiteralContext>(_ctx, getState());
-  enterRule(_localctx, 44, TypedefParser::RuleI32Literal);
+  enterRule(_localctx, 70, TypedefParser::RuleI32Literal);
+  size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(204);
-    match(TypedefParser::INTEGER_LITERAL);
+    setState(737);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::DEC_DIGITS:
+      case TypedefParser::DEC_DIGITS_UNDERSCORE: {
+        setState(730);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::DEC_DIGITS
+
+        || _la == TypedefParser::DEC_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::HEX_PREFIX: {
+        setState(731);
+        match(TypedefParser::HEX_PREFIX);
+        setState(732);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::HEX_DIGITS
+
+        || _la == TypedefParser::HEX_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::OCT_PREFIX: {
+        setState(733);
+        match(TypedefParser::OCT_PREFIX);
+        setState(734);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::OCT_DIGITS
+
+        || _la == TypedefParser::OCT_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::BIN_PREFIX: {
+        setState(735);
+        match(TypedefParser::BIN_PREFIX);
+        setState(736);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::BIN_DIGITS
+
+        || _la == TypedefParser::BIN_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+
+    		dynamic_cast<I32LiteralContext *>(_localctx)->maybe_val =  GetIntValue<int32_t>(this, _localctx);
+      
    
   }
   catch (RecognitionException &e) {
@@ -2006,8 +4625,48 @@ TypedefParser::I64LiteralContext::I64LiteralContext(ParserRuleContext *parent, s
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::I64LiteralContext::INTEGER_LITERAL() {
-  return getToken(TypedefParser::INTEGER_LITERAL, 0);
+tree::TerminalNode* TypedefParser::I64LiteralContext::DEC_DIGITS() {
+  return getToken(TypedefParser::DEC_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I64LiteralContext::DEC_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::DEC_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::I64LiteralContext::HEX_PREFIX() {
+  return getToken(TypedefParser::HEX_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::I64LiteralContext::OCT_PREFIX() {
+  return getToken(TypedefParser::OCT_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::I64LiteralContext::BIN_PREFIX() {
+  return getToken(TypedefParser::BIN_PREFIX, 0);
+}
+
+tree::TerminalNode* TypedefParser::I64LiteralContext::HEX_DIGITS() {
+  return getToken(TypedefParser::HEX_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I64LiteralContext::HEX_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::HEX_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::I64LiteralContext::OCT_DIGITS() {
+  return getToken(TypedefParser::OCT_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I64LiteralContext::OCT_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::OCT_DIGITS_UNDERSCORE, 0);
+}
+
+tree::TerminalNode* TypedefParser::I64LiteralContext::BIN_DIGITS() {
+  return getToken(TypedefParser::BIN_DIGITS, 0);
+}
+
+tree::TerminalNode* TypedefParser::I64LiteralContext::BIN_DIGITS_UNDERSCORE() {
+  return getToken(TypedefParser::BIN_DIGITS_UNDERSCORE, 0);
 }
 
 
@@ -2037,15 +4696,90 @@ antlrcpp::Any TypedefParser::I64LiteralContext::accept(tree::ParseTreeVisitor *v
 
 TypedefParser::I64LiteralContext* TypedefParser::i64Literal() {
   I64LiteralContext *_localctx = _tracker.createInstance<I64LiteralContext>(_ctx, getState());
-  enterRule(_localctx, 46, TypedefParser::RuleI64Literal);
+  enterRule(_localctx, 72, TypedefParser::RuleI64Literal);
+  size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(206);
-    match(TypedefParser::INTEGER_LITERAL);
+    setState(748);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case TypedefParser::DEC_DIGITS:
+      case TypedefParser::DEC_DIGITS_UNDERSCORE: {
+        setState(741);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::DEC_DIGITS
+
+        || _la == TypedefParser::DEC_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::HEX_PREFIX: {
+        setState(742);
+        match(TypedefParser::HEX_PREFIX);
+        setState(743);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::HEX_DIGITS
+
+        || _la == TypedefParser::HEX_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::OCT_PREFIX: {
+        setState(744);
+        match(TypedefParser::OCT_PREFIX);
+        setState(745);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::OCT_DIGITS
+
+        || _la == TypedefParser::OCT_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+      case TypedefParser::BIN_PREFIX: {
+        setState(746);
+        match(TypedefParser::BIN_PREFIX);
+        setState(747);
+        _la = _input->LA(1);
+        if (!(_la == TypedefParser::BIN_DIGITS
+
+        || _la == TypedefParser::BIN_DIGITS_UNDERSCORE)) {
+        _errHandler->recoverInline(this);
+        }
+        else {
+          _errHandler->reportMatch(this);
+          consume();
+        }
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+
+    		dynamic_cast<I64LiteralContext *>(_localctx)->maybe_val =  GetIntValue<int64_t>(this, _localctx);
+      
    
   }
   catch (RecognitionException &e) {
@@ -2098,7 +4832,7 @@ antlrcpp::Any TypedefParser::StringLiteralContext::accept(tree::ParseTreeVisitor
 
 TypedefParser::StringLiteralContext* TypedefParser::stringLiteral() {
   StringLiteralContext *_localctx = _tracker.createInstance<StringLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 48, TypedefParser::RuleStringLiteral);
+  enterRule(_localctx, 74, TypedefParser::RuleStringLiteral);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -2106,7 +4840,7 @@ TypedefParser::StringLiteralContext* TypedefParser::stringLiteral() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(208);
+    setState(752);
     _la = _input->LA(1);
     if (!(_la == TypedefParser::STRING_LITERAL
 
@@ -2169,7 +4903,7 @@ antlrcpp::Any TypedefParser::ByteStringLiteralContext::accept(tree::ParseTreeVis
 
 TypedefParser::ByteStringLiteralContext* TypedefParser::byteStringLiteral() {
   ByteStringLiteralContext *_localctx = _tracker.createInstance<ByteStringLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 50, TypedefParser::RuleByteStringLiteral);
+  enterRule(_localctx, 76, TypedefParser::RuleByteStringLiteral);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -2177,7 +4911,7 @@ TypedefParser::ByteStringLiteralContext* TypedefParser::byteStringLiteral() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(210);
+    setState(754);
     _la = _input->LA(1);
     if (!(_la == TypedefParser::BYTE_STRING_LITERAL
 
@@ -2240,27 +4974,27 @@ antlrcpp::Any TypedefParser::IdentifierContext::accept(tree::ParseTreeVisitor *v
 
 TypedefParser::IdentifierContext* TypedefParser::identifier() {
   IdentifierContext *_localctx = _tracker.createInstance<IdentifierContext>(_ctx, getState());
-  enterRule(_localctx, 52, TypedefParser::RuleIdentifier);
+  enterRule(_localctx, 78, TypedefParser::RuleIdentifier);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
-    setState(215);
+    setState(759);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case TypedefParser::NON_KEYWORD_IDENTIFIER: {
         enterOuterAlt(_localctx, 1);
-        setState(212);
+        setState(756);
         dynamic_cast<IdentifierContext *>(_localctx)->nki = match(TypedefParser::NON_KEYWORD_IDENTIFIER);
         break;
       }
 
       case TypedefParser::RAW_ESCAPE: {
         enterOuterAlt(_localctx, 2);
-        setState(213);
+        setState(757);
         match(TypedefParser::RAW_ESCAPE);
-        setState(214);
+        setState(758);
         dynamic_cast<IdentifierContext *>(_localctx)->nki = match(TypedefParser::NON_KEYWORD_IDENTIFIER);
         break;
       }
@@ -2575,7 +5309,7 @@ antlrcpp::Any TypedefParser::KeywordContext::accept(tree::ParseTreeVisitor *visi
 
 TypedefParser::KeywordContext* TypedefParser::keyword() {
   KeywordContext *_localctx = _tracker.createInstance<KeywordContext>(_ctx, getState());
-  enterRule(_localctx, 54, TypedefParser::RuleKeyword);
+  enterRule(_localctx, 80, TypedefParser::RuleKeyword);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -2583,7 +5317,7 @@ TypedefParser::KeywordContext* TypedefParser::keyword() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(217);
+    setState(761);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & ((1ULL << TypedefParser::KW_AS)
@@ -2668,38 +5402,6 @@ TypedefParser::KeywordContext* TypedefParser::keyword() {
   return _localctx;
 }
 
-bool TypedefParser::sempred(RuleContext *context, size_t ruleIndex, size_t predicateIndex) {
-  switch (ruleIndex) {
-    case 2: return valueDefinitionSempred(dynamic_cast<ValueDefinitionContext *>(context), predicateIndex);
-
-  default:
-    break;
-  }
-  return true;
-}
-
-bool TypedefParser::valueDefinitionSempred(ValueDefinitionContext *_localctx, size_t predicateIndex) {
-  switch (predicateIndex) {
-    case 0: return (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_BOOL;
-    case 1: return (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_CHAR;
-    case 2: return (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_STRING;
-    case 3: return (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_F32;
-    case 4: return (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_F64;
-    case 5: return (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_U8;
-    case 6: return (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_U16;
-    case 7: return (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_U32;
-    case 8: return (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_U64;
-    case 9: return (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_I8;
-    case 10: return (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_I16;
-    case 11: return (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_I32;
-    case 12: return (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context != nullptr ? (dynamic_cast<ValueDefinitionContext *>(_localctx)->type_Context->start) : nullptr)->getType() == KW_I64;
-
-  default:
-    break;
-  }
-  return true;
-}
-
 // Static vars and initialization.
 std::vector<dfa::DFA> TypedefParser::_decisionToDFA;
 atn::PredictionContextCache TypedefParser::_sharedContextCache;
@@ -2709,12 +5411,14 @@ atn::ATN TypedefParser::_atn;
 std::vector<uint16_t> TypedefParser::_serializedATN;
 
 std::vector<std::string> TypedefParser::_ruleNames = {
-  "compilationUnit", "item", "valueDefinition", "type_", "parameterizedType", 
-  "typedefVersionDeclaration", "moduleDeclaration", "useDeclaration", "useTree", 
-  "simplePath", "primitiveType", "boolLiteral", "byteLiteral", "charLiteral", 
-  "f32Literal", "f64Literal", "u8Literal", "u16Literal", "u32Literal", "u64Literal", 
-  "i8Literal", "i16Literal", "i32Literal", "i64Literal", "stringLiteral", 
-  "byteStringLiteral", "identifier", "keyword"
+  "compilationUnit", "item", "valueDefinition", "primitiveFragment", "boolFragment", 
+  "charFragment", "stringFragment", "f32Fragment", "f64Fragment", "u8Fragment", 
+  "u16Fragment", "u32Fragment", "u64Fragment", "i8Fragment", "i16Fragment", 
+  "i32Fragment", "i64Fragment", "type_", "parameterizedType", "typedefVersionDeclaration", 
+  "moduleDeclaration", "useDeclaration", "useTree", "simplePath", "boolLiteral", 
+  "byteLiteral", "charLiteral", "f32Literal", "f64Literal", "u8Literal", 
+  "u16Literal", "u32Literal", "u64Literal", "i8Literal", "i16Literal", "i32Literal", 
+  "i64Literal", "stringLiteral", "byteStringLiteral", "identifier", "keyword"
 };
 
 std::vector<std::string> TypedefParser::_literalNames = {
@@ -2730,12 +5434,13 @@ std::vector<std::string> TypedefParser::_literalNames = {
   "'unsigned'", "'unsized'", "'virtual'", "'void'", "'volatile'", "'bool'", 
   "'char'", "'string'", "'f32'", "'f64'", "'u8'", "'u16'", "'u32'", "'u64'", 
   "'i8'", "'i16'", "'i32'", "'i64'", "", "", "", "", "", "", "", "", "", 
-  "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "'r#'", "'+'", 
-  "'-'", "'*'", "'/'", "'%'", "'^'", "'!'", "'&'", "'|'", "'&&'", "'||'", 
-  "'+='", "'-='", "'*='", "'/='", "'%='", "'^='", "'&='", "'|='", "'<<='", 
-  "'>>='", "'='", "'=='", "'!='", "'>'", "'<'", "'>='", "'<='", "'@'", "'_'", 
-  "'.'", "'..'", "'...'", "','", "';'", "':'", "'::'", "'->'", "'=>'", "'#'", 
-  "'$'", "'?'", "'{'", "'}'", "'['", "']'", "'('", "')'"
+  "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
+  "", "'0x'", "'0o'", "'0b'", "", "'r#'", "'+'", "'-'", "'*'", "'/'", "'%'", 
+  "'^'", "'!'", "'&'", "'|'", "'&&'", "'||'", "'+='", "'-='", "'*='", "'/='", 
+  "'%='", "'^='", "'&='", "'|='", "'<<='", "'>>='", "'='", "'=='", "'!='", 
+  "'>'", "'<'", "'>='", "'<='", "'@'", "'_'", "'.'", "'..'", "'...'", "','", 
+  "';'", "':'", "'::'", "'->'", "'=>'", "'#'", "'$'", "'?'", "'{'", "'}'", 
+  "'['", "']'", "'('", "')'"
 };
 
 std::vector<std::string> TypedefParser::_symbolicNames = {
@@ -2754,16 +5459,17 @@ std::vector<std::string> TypedefParser::_symbolicNames = {
   "KW_U64", "KW_I8", "KW_I16", "KW_I32", "KW_I64", "NON_KEYWORD_IDENTIFIER", 
   "LINE_COMMENT", "BLOCK_COMMENT", "INNER_LINE_DOC", "INNER_BLOCK_DOC", 
   "OUTER_LINE_DOC", "OUTER_BLOCK_DOC", "BLOCK_COMMENT_OR_DOC", "SHEBANG", 
-  "WHITESPACE", "NEWLINE", "CHAR_LITERAL", "STRING_LITERAL", "RAW_STRING_LITERAL", 
-  "BYTE_LITERAL", "BYTE_STRING_LITERAL", "RAW_BYTE_STRING_LITERAL", "INTEGER_LITERAL", 
-  "DEC_LITERAL", "HEX_LITERAL", "OCT_LITERAL", "BIN_LITERAL", "FLOAT_LITERAL", 
-  "LIFETIME_OR_LABEL", "RAW_ESCAPE", "PLUS", "MINUS", "STAR", "SLASH", "PERCENT", 
-  "CARET", "NOT", "AND", "OR", "ANDAND", "OROR", "PLUSEQ", "MINUSEQ", "STAREQ", 
-  "SLASHEQ", "PERCENTEQ", "CARETEQ", "ANDEQ", "OREQ", "SHLEQ", "SHREQ", 
-  "EQ", "EQEQ", "NE", "GT", "LT", "GE", "LE", "AT", "UNDERSCORE", "DOT", 
-  "DOTDOT", "DOTDOTDOT", "COMMA", "SEMI", "COLON", "PATHSEP", "RARROW", 
-  "FATARROW", "POUND", "DOLLAR", "QUESTION", "LBRACE", "RBRACE", "LBRACK", 
-  "RBRACK", "LPAREN", "RPAREN"
+  "WS", "CHAR_LITERAL", "STRING_LITERAL", "RAW_STRING_LITERAL", "BYTE_LITERAL", 
+  "BYTE_STRING_LITERAL", "RAW_BYTE_STRING_LITERAL", "DEC_DIGITS", "DEC_DIGITS_UNDERSCORE", 
+  "HEX_DIGITS", "HEX_DIGITS_UNDERSCORE", "OCT_DIGITS", "OCT_DIGITS_UNDERSCORE", 
+  "BIN_DIGITS", "BIN_DIGITS_UNDERSCORE", "FLOAT_LITERAL", "OCT_DIGIT", "DEC_DIGIT", 
+  "HEX_DIGIT", "HEX_PREFIX", "OCT_PREFIX", "BIN_PREFIX", "LIFETIME_OR_LABEL", 
+  "RAW_ESCAPE", "PLUS", "MINUS", "STAR", "SLASH", "PERCENT", "CARET", "NOT", 
+  "AND", "OR", "ANDAND", "OROR", "PLUSEQ", "MINUSEQ", "STAREQ", "SLASHEQ", 
+  "PERCENTEQ", "CARETEQ", "ANDEQ", "OREQ", "SHLEQ", "SHREQ", "EQ", "EQEQ", 
+  "NE", "GT", "LT", "GE", "LE", "AT", "UNDERSCORE", "DOT", "DOTDOT", "DOTDOTDOT", 
+  "COMMA", "SEMI", "COLON", "PATHSEP", "RARROW", "FATARROW", "POUND", "DOLLAR", 
+  "QUESTION", "LBRACE", "RBRACE", "LBRACK", "RBRACK", "LPAREN", "RPAREN"
 };
 
 dfa::Vocabulary TypedefParser::_vocabulary(_literalNames, _symbolicNames);
@@ -2786,149 +5492,563 @@ TypedefParser::Initializer::Initializer() {
 
   _serializedATN = {
     0x3, 0x608b, 0xa72a, 0x8133, 0xb9ed, 0x417c, 0x3be7, 0x7786, 0x5964, 
-    0x3, 0x9d, 0xde, 0x4, 0x2, 0x9, 0x2, 0x4, 0x3, 0x9, 0x3, 0x4, 0x4, 0x9, 
-    0x4, 0x4, 0x5, 0x9, 0x5, 0x4, 0x6, 0x9, 0x6, 0x4, 0x7, 0x9, 0x7, 0x4, 
-    0x8, 0x9, 0x8, 0x4, 0x9, 0x9, 0x9, 0x4, 0xa, 0x9, 0xa, 0x4, 0xb, 0x9, 
-    0xb, 0x4, 0xc, 0x9, 0xc, 0x4, 0xd, 0x9, 0xd, 0x4, 0xe, 0x9, 0xe, 0x4, 
-    0xf, 0x9, 0xf, 0x4, 0x10, 0x9, 0x10, 0x4, 0x11, 0x9, 0x11, 0x4, 0x12, 
-    0x9, 0x12, 0x4, 0x13, 0x9, 0x13, 0x4, 0x14, 0x9, 0x14, 0x4, 0x15, 0x9, 
-    0x15, 0x4, 0x16, 0x9, 0x16, 0x4, 0x17, 0x9, 0x17, 0x4, 0x18, 0x9, 0x18, 
-    0x4, 0x19, 0x9, 0x19, 0x4, 0x1a, 0x9, 0x1a, 0x4, 0x1b, 0x9, 0x1b, 0x4, 
-    0x1c, 0x9, 0x1c, 0x4, 0x1d, 0x9, 0x1d, 0x3, 0x2, 0x3, 0x2, 0x5, 0x2, 
-    0x3d, 0xa, 0x2, 0x3, 0x2, 0x7, 0x2, 0x40, 0xa, 0x2, 0xc, 0x2, 0xe, 0x2, 
-    0x43, 0xb, 0x2, 0x3, 0x2, 0x7, 0x2, 0x46, 0xa, 0x2, 0xc, 0x2, 0xe, 0x2, 
-    0x49, 0xb, 0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 0x3, 0x3, 0x3, 0x3, 0x4, 0x3, 
-    0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 
-    0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 
-    0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 
-    0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 
-    0x4, 0x5, 0x4, 0x6d, 0xa, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x5, 0x3, 0x5, 
-    0x3, 0x5, 0x5, 0x5, 0x74, 0xa, 0x5, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 
-    0x6, 0x6, 0x6, 0x7a, 0xa, 0x6, 0xd, 0x6, 0xe, 0x6, 0x7b, 0x3, 0x6, 0x3, 
-    0x6, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 0x3, 0x8, 0x3, 
-    0x8, 0x3, 0x8, 0x3, 0x8, 0x3, 0x9, 0x3, 0x9, 0x3, 0x9, 0x3, 0x9, 0x3, 
-    0xa, 0x5, 0xa, 0x8e, 0xa, 0xa, 0x3, 0xa, 0x5, 0xa, 0x91, 0xa, 0xa, 0x3, 
-    0xa, 0x3, 0xa, 0x3, 0xa, 0x3, 0xa, 0x3, 0xa, 0x7, 0xa, 0x98, 0xa, 0xa, 
-    0xc, 0xa, 0xe, 0xa, 0x9b, 0xb, 0xa, 0x3, 0xa, 0x5, 0xa, 0x9e, 0xa, 0xa, 
-    0x5, 0xa, 0xa0, 0xa, 0xa, 0x3, 0xa, 0x5, 0xa, 0xa3, 0xa, 0xa, 0x3, 0xa, 
-    0x3, 0xa, 0x3, 0xa, 0x5, 0xa, 0xa8, 0xa, 0xa, 0x5, 0xa, 0xaa, 0xa, 0xa, 
-    0x3, 0xb, 0x5, 0xb, 0xad, 0xa, 0xb, 0x3, 0xb, 0x3, 0xb, 0x3, 0xb, 0x7, 
-    0xb, 0xb2, 0xa, 0xb, 0xc, 0xb, 0xe, 0xb, 0xb5, 0xb, 0xb, 0x3, 0xc, 0x3, 
-    0xc, 0x3, 0xd, 0x3, 0xd, 0x3, 0xe, 0x3, 0xe, 0x3, 0xf, 0x3, 0xf, 0x3, 
-    0x10, 0x3, 0x10, 0x3, 0x11, 0x3, 0x11, 0x3, 0x12, 0x3, 0x12, 0x3, 0x13, 
-    0x3, 0x13, 0x3, 0x14, 0x3, 0x14, 0x3, 0x15, 0x3, 0x15, 0x3, 0x16, 0x3, 
-    0x16, 0x3, 0x17, 0x3, 0x17, 0x3, 0x18, 0x3, 0x18, 0x3, 0x19, 0x3, 0x19, 
-    0x3, 0x1a, 0x3, 0x1a, 0x3, 0x1b, 0x3, 0x1b, 0x3, 0x1c, 0x3, 0x1c, 0x3, 
-    0x1c, 0x5, 0x1c, 0xda, 0xa, 0x1c, 0x3, 0x1d, 0x3, 0x1d, 0x3, 0x1d, 0x2, 
-    0x2, 0x1e, 0x2, 0x4, 0x6, 0x8, 0xa, 0xc, 0xe, 0x10, 0x12, 0x14, 0x16, 
-    0x18, 0x1a, 0x1c, 0x1e, 0x20, 0x22, 0x24, 0x26, 0x28, 0x2a, 0x2c, 0x2e, 
-    0x30, 0x32, 0x34, 0x36, 0x38, 0x2, 0x7, 0x3, 0x2, 0x48, 0x54, 0x4, 0x2, 
-    0x6, 0x6, 0xc, 0xc, 0x3, 0x2, 0x61, 0x62, 0x3, 0x2, 0x64, 0x65, 0x5, 
-    0x2, 0x4, 0x8, 0xa, 0xf, 0x12, 0x47, 0x2, 0xdf, 0x2, 0x3a, 0x3, 0x2, 
-    0x2, 0x2, 0x4, 0x4c, 0x3, 0x2, 0x2, 0x2, 0x6, 0x4e, 0x3, 0x2, 0x2, 0x2, 
-    0x8, 0x73, 0x3, 0x2, 0x2, 0x2, 0xa, 0x75, 0x3, 0x2, 0x2, 0x2, 0xc, 0x7f, 
-    0x3, 0x2, 0x2, 0x2, 0xe, 0x84, 0x3, 0x2, 0x2, 0x2, 0x10, 0x88, 0x3, 
-    0x2, 0x2, 0x2, 0x12, 0xa9, 0x3, 0x2, 0x2, 0x2, 0x14, 0xac, 0x3, 0x2, 
-    0x2, 0x2, 0x16, 0xb6, 0x3, 0x2, 0x2, 0x2, 0x18, 0xb8, 0x3, 0x2, 0x2, 
-    0x2, 0x1a, 0xba, 0x3, 0x2, 0x2, 0x2, 0x1c, 0xbc, 0x3, 0x2, 0x2, 0x2, 
-    0x1e, 0xbe, 0x3, 0x2, 0x2, 0x2, 0x20, 0xc0, 0x3, 0x2, 0x2, 0x2, 0x22, 
-    0xc2, 0x3, 0x2, 0x2, 0x2, 0x24, 0xc4, 0x3, 0x2, 0x2, 0x2, 0x26, 0xc6, 
-    0x3, 0x2, 0x2, 0x2, 0x28, 0xc8, 0x3, 0x2, 0x2, 0x2, 0x2a, 0xca, 0x3, 
-    0x2, 0x2, 0x2, 0x2c, 0xcc, 0x3, 0x2, 0x2, 0x2, 0x2e, 0xce, 0x3, 0x2, 
-    0x2, 0x2, 0x30, 0xd0, 0x3, 0x2, 0x2, 0x2, 0x32, 0xd2, 0x3, 0x2, 0x2, 
-    0x2, 0x34, 0xd4, 0x3, 0x2, 0x2, 0x2, 0x36, 0xd9, 0x3, 0x2, 0x2, 0x2, 
-    0x38, 0xdb, 0x3, 0x2, 0x2, 0x2, 0x3a, 0x3c, 0x5, 0xc, 0x7, 0x2, 0x3b, 
-    0x3d, 0x5, 0xe, 0x8, 0x2, 0x3c, 0x3b, 0x3, 0x2, 0x2, 0x2, 0x3c, 0x3d, 
-    0x3, 0x2, 0x2, 0x2, 0x3d, 0x41, 0x3, 0x2, 0x2, 0x2, 0x3e, 0x40, 0x5, 
-    0x10, 0x9, 0x2, 0x3f, 0x3e, 0x3, 0x2, 0x2, 0x2, 0x40, 0x43, 0x3, 0x2, 
-    0x2, 0x2, 0x41, 0x3f, 0x3, 0x2, 0x2, 0x2, 0x41, 0x42, 0x3, 0x2, 0x2, 
-    0x2, 0x42, 0x47, 0x3, 0x2, 0x2, 0x2, 0x43, 0x41, 0x3, 0x2, 0x2, 0x2, 
-    0x44, 0x46, 0x5, 0x4, 0x3, 0x2, 0x45, 0x44, 0x3, 0x2, 0x2, 0x2, 0x46, 
-    0x49, 0x3, 0x2, 0x2, 0x2, 0x47, 0x45, 0x3, 0x2, 0x2, 0x2, 0x47, 0x48, 
-    0x3, 0x2, 0x2, 0x2, 0x48, 0x4a, 0x3, 0x2, 0x2, 0x2, 0x49, 0x47, 0x3, 
-    0x2, 0x2, 0x2, 0x4a, 0x4b, 0x7, 0x2, 0x2, 0x3, 0x4b, 0x3, 0x3, 0x2, 
-    0x2, 0x2, 0x4c, 0x4d, 0x5, 0x6, 0x4, 0x2, 0x4d, 0x5, 0x3, 0x2, 0x2, 
-    0x2, 0x4e, 0x4f, 0x5, 0x36, 0x1c, 0x2, 0x4f, 0x50, 0x7, 0x91, 0x2, 0x2, 
-    0x50, 0x51, 0x5, 0x8, 0x5, 0x2, 0x51, 0x6c, 0x7, 0x83, 0x2, 0x2, 0x52, 
-    0x53, 0x6, 0x4, 0x2, 0x3, 0x53, 0x6d, 0x5, 0x18, 0xd, 0x2, 0x54, 0x55, 
-    0x6, 0x4, 0x3, 0x3, 0x55, 0x6d, 0x5, 0x1c, 0xf, 0x2, 0x56, 0x57, 0x6, 
-    0x4, 0x4, 0x3, 0x57, 0x6d, 0x5, 0x32, 0x1a, 0x2, 0x58, 0x59, 0x6, 0x4, 
-    0x5, 0x3, 0x59, 0x6d, 0x5, 0x1e, 0x10, 0x2, 0x5a, 0x5b, 0x6, 0x4, 0x6, 
-    0x3, 0x5b, 0x6d, 0x5, 0x20, 0x11, 0x2, 0x5c, 0x5d, 0x6, 0x4, 0x7, 0x3, 
-    0x5d, 0x6d, 0x5, 0x22, 0x12, 0x2, 0x5e, 0x5f, 0x6, 0x4, 0x8, 0x3, 0x5f, 
-    0x6d, 0x5, 0x24, 0x13, 0x2, 0x60, 0x61, 0x6, 0x4, 0x9, 0x3, 0x61, 0x6d, 
-    0x5, 0x26, 0x14, 0x2, 0x62, 0x63, 0x6, 0x4, 0xa, 0x3, 0x63, 0x6d, 0x5, 
-    0x28, 0x15, 0x2, 0x64, 0x65, 0x6, 0x4, 0xb, 0x3, 0x65, 0x6d, 0x5, 0x2a, 
-    0x16, 0x2, 0x66, 0x67, 0x6, 0x4, 0xc, 0x3, 0x67, 0x6d, 0x5, 0x2c, 0x17, 
-    0x2, 0x68, 0x69, 0x6, 0x4, 0xd, 0x3, 0x69, 0x6d, 0x5, 0x2e, 0x18, 0x2, 
-    0x6a, 0x6b, 0x6, 0x4, 0xe, 0x3, 0x6b, 0x6d, 0x5, 0x30, 0x19, 0x2, 0x6c, 
-    0x52, 0x3, 0x2, 0x2, 0x2, 0x6c, 0x54, 0x3, 0x2, 0x2, 0x2, 0x6c, 0x56, 
-    0x3, 0x2, 0x2, 0x2, 0x6c, 0x58, 0x3, 0x2, 0x2, 0x2, 0x6c, 0x5a, 0x3, 
-    0x2, 0x2, 0x2, 0x6c, 0x5c, 0x3, 0x2, 0x2, 0x2, 0x6c, 0x5e, 0x3, 0x2, 
-    0x2, 0x2, 0x6c, 0x60, 0x3, 0x2, 0x2, 0x2, 0x6c, 0x62, 0x3, 0x2, 0x2, 
-    0x2, 0x6c, 0x64, 0x3, 0x2, 0x2, 0x2, 0x6c, 0x66, 0x3, 0x2, 0x2, 0x2, 
-    0x6c, 0x68, 0x3, 0x2, 0x2, 0x2, 0x6c, 0x6a, 0x3, 0x2, 0x2, 0x2, 0x6d, 
-    0x6e, 0x3, 0x2, 0x2, 0x2, 0x6e, 0x6f, 0x7, 0x90, 0x2, 0x2, 0x6f, 0x7, 
-    0x3, 0x2, 0x2, 0x2, 0x70, 0x74, 0x5, 0x16, 0xc, 0x2, 0x71, 0x74, 0x5, 
-    0x36, 0x1c, 0x2, 0x72, 0x74, 0x5, 0xa, 0x6, 0x2, 0x73, 0x70, 0x3, 0x2, 
-    0x2, 0x2, 0x73, 0x71, 0x3, 0x2, 0x2, 0x2, 0x73, 0x72, 0x3, 0x2, 0x2, 
-    0x2, 0x74, 0x9, 0x3, 0x2, 0x2, 0x2, 0x75, 0x76, 0x5, 0x36, 0x1c, 0x2, 
-    0x76, 0x79, 0x7, 0x87, 0x2, 0x2, 0x77, 0x7a, 0x5, 0x36, 0x1c, 0x2, 0x78, 
-    0x7a, 0x7, 0x66, 0x2, 0x2, 0x79, 0x77, 0x3, 0x2, 0x2, 0x2, 0x79, 0x78, 
-    0x3, 0x2, 0x2, 0x2, 0x7a, 0x7b, 0x3, 0x2, 0x2, 0x2, 0x7b, 0x79, 0x3, 
-    0x2, 0x2, 0x2, 0x7b, 0x7c, 0x3, 0x2, 0x2, 0x2, 0x7c, 0x7d, 0x3, 0x2, 
-    0x2, 0x2, 0x7d, 0x7e, 0x7, 0x86, 0x2, 0x2, 0x7e, 0xb, 0x3, 0x2, 0x2, 
-    0x2, 0x7f, 0x80, 0x7, 0xe, 0x2, 0x2, 0x80, 0x81, 0x7, 0x83, 0x2, 0x2, 
-    0x81, 0x82, 0x5, 0x36, 0x1c, 0x2, 0x82, 0x83, 0x7, 0x90, 0x2, 0x2, 0x83, 
-    0xd, 0x3, 0x2, 0x2, 0x2, 0x84, 0x85, 0x7, 0xa, 0x2, 0x2, 0x85, 0x86, 
-    0x5, 0x14, 0xb, 0x2, 0x86, 0x87, 0x7, 0x90, 0x2, 0x2, 0x87, 0xf, 0x3, 
-    0x2, 0x2, 0x2, 0x88, 0x89, 0x7, 0xf, 0x2, 0x2, 0x89, 0x8a, 0x5, 0x12, 
-    0xa, 0x2, 0x8a, 0x8b, 0x7, 0x90, 0x2, 0x2, 0x8b, 0x11, 0x3, 0x2, 0x2, 
-    0x2, 0x8c, 0x8e, 0x5, 0x14, 0xb, 0x2, 0x8d, 0x8c, 0x3, 0x2, 0x2, 0x2, 
-    0x8d, 0x8e, 0x3, 0x2, 0x2, 0x2, 0x8e, 0x8f, 0x3, 0x2, 0x2, 0x2, 0x8f, 
-    0x91, 0x7, 0x92, 0x2, 0x2, 0x90, 0x8d, 0x3, 0x2, 0x2, 0x2, 0x90, 0x91, 
-    0x3, 0x2, 0x2, 0x2, 0x91, 0xa2, 0x3, 0x2, 0x2, 0x2, 0x92, 0xa3, 0x7, 
-    0x70, 0x2, 0x2, 0x93, 0x9f, 0x7, 0x98, 0x2, 0x2, 0x94, 0x99, 0x5, 0x12, 
-    0xa, 0x2, 0x95, 0x96, 0x7, 0x8f, 0x2, 0x2, 0x96, 0x98, 0x5, 0x12, 0xa, 
-    0x2, 0x97, 0x95, 0x3, 0x2, 0x2, 0x2, 0x98, 0x9b, 0x3, 0x2, 0x2, 0x2, 
-    0x99, 0x97, 0x3, 0x2, 0x2, 0x2, 0x99, 0x9a, 0x3, 0x2, 0x2, 0x2, 0x9a, 
-    0x9d, 0x3, 0x2, 0x2, 0x2, 0x9b, 0x99, 0x3, 0x2, 0x2, 0x2, 0x9c, 0x9e, 
-    0x7, 0x8f, 0x2, 0x2, 0x9d, 0x9c, 0x3, 0x2, 0x2, 0x2, 0x9d, 0x9e, 0x3, 
-    0x2, 0x2, 0x2, 0x9e, 0xa0, 0x3, 0x2, 0x2, 0x2, 0x9f, 0x94, 0x3, 0x2, 
-    0x2, 0x2, 0x9f, 0xa0, 0x3, 0x2, 0x2, 0x2, 0xa0, 0xa1, 0x3, 0x2, 0x2, 
-    0x2, 0xa1, 0xa3, 0x7, 0x99, 0x2, 0x2, 0xa2, 0x92, 0x3, 0x2, 0x2, 0x2, 
-    0xa2, 0x93, 0x3, 0x2, 0x2, 0x2, 0xa3, 0xaa, 0x3, 0x2, 0x2, 0x2, 0xa4, 
-    0xa7, 0x5, 0x14, 0xb, 0x2, 0xa5, 0xa6, 0x7, 0x4, 0x2, 0x2, 0xa6, 0xa8, 
-    0x5, 0x36, 0x1c, 0x2, 0xa7, 0xa5, 0x3, 0x2, 0x2, 0x2, 0xa7, 0xa8, 0x3, 
-    0x2, 0x2, 0x2, 0xa8, 0xaa, 0x3, 0x2, 0x2, 0x2, 0xa9, 0x90, 0x3, 0x2, 
-    0x2, 0x2, 0xa9, 0xa4, 0x3, 0x2, 0x2, 0x2, 0xaa, 0x13, 0x3, 0x2, 0x2, 
-    0x2, 0xab, 0xad, 0x7, 0x92, 0x2, 0x2, 0xac, 0xab, 0x3, 0x2, 0x2, 0x2, 
-    0xac, 0xad, 0x3, 0x2, 0x2, 0x2, 0xad, 0xae, 0x3, 0x2, 0x2, 0x2, 0xae, 
-    0xb3, 0x5, 0x36, 0x1c, 0x2, 0xaf, 0xb0, 0x7, 0x92, 0x2, 0x2, 0xb0, 0xb2, 
-    0x5, 0x36, 0x1c, 0x2, 0xb1, 0xaf, 0x3, 0x2, 0x2, 0x2, 0xb2, 0xb5, 0x3, 
-    0x2, 0x2, 0x2, 0xb3, 0xb1, 0x3, 0x2, 0x2, 0x2, 0xb3, 0xb4, 0x3, 0x2, 
-    0x2, 0x2, 0xb4, 0x15, 0x3, 0x2, 0x2, 0x2, 0xb5, 0xb3, 0x3, 0x2, 0x2, 
-    0x2, 0xb6, 0xb7, 0x9, 0x2, 0x2, 0x2, 0xb7, 0x17, 0x3, 0x2, 0x2, 0x2, 
-    0xb8, 0xb9, 0x9, 0x3, 0x2, 0x2, 0xb9, 0x19, 0x3, 0x2, 0x2, 0x2, 0xba, 
-    0xbb, 0x7, 0x63, 0x2, 0x2, 0xbb, 0x1b, 0x3, 0x2, 0x2, 0x2, 0xbc, 0xbd, 
-    0x7, 0x60, 0x2, 0x2, 0xbd, 0x1d, 0x3, 0x2, 0x2, 0x2, 0xbe, 0xbf, 0x7, 
-    0x6b, 0x2, 0x2, 0xbf, 0x1f, 0x3, 0x2, 0x2, 0x2, 0xc0, 0xc1, 0x7, 0x6b, 
-    0x2, 0x2, 0xc1, 0x21, 0x3, 0x2, 0x2, 0x2, 0xc2, 0xc3, 0x7, 0x66, 0x2, 
-    0x2, 0xc3, 0x23, 0x3, 0x2, 0x2, 0x2, 0xc4, 0xc5, 0x7, 0x66, 0x2, 0x2, 
-    0xc5, 0x25, 0x3, 0x2, 0x2, 0x2, 0xc6, 0xc7, 0x7, 0x66, 0x2, 0x2, 0xc7, 
-    0x27, 0x3, 0x2, 0x2, 0x2, 0xc8, 0xc9, 0x7, 0x66, 0x2, 0x2, 0xc9, 0x29, 
-    0x3, 0x2, 0x2, 0x2, 0xca, 0xcb, 0x7, 0x66, 0x2, 0x2, 0xcb, 0x2b, 0x3, 
-    0x2, 0x2, 0x2, 0xcc, 0xcd, 0x7, 0x66, 0x2, 0x2, 0xcd, 0x2d, 0x3, 0x2, 
-    0x2, 0x2, 0xce, 0xcf, 0x7, 0x66, 0x2, 0x2, 0xcf, 0x2f, 0x3, 0x2, 0x2, 
-    0x2, 0xd0, 0xd1, 0x7, 0x66, 0x2, 0x2, 0xd1, 0x31, 0x3, 0x2, 0x2, 0x2, 
-    0xd2, 0xd3, 0x9, 0x4, 0x2, 0x2, 0xd3, 0x33, 0x3, 0x2, 0x2, 0x2, 0xd4, 
-    0xd5, 0x9, 0x5, 0x2, 0x2, 0xd5, 0x35, 0x3, 0x2, 0x2, 0x2, 0xd6, 0xda, 
-    0x7, 0x55, 0x2, 0x2, 0xd7, 0xd8, 0x7, 0x6d, 0x2, 0x2, 0xd8, 0xda, 0x7, 
-    0x55, 0x2, 0x2, 0xd9, 0xd6, 0x3, 0x2, 0x2, 0x2, 0xd9, 0xd7, 0x3, 0x2, 
-    0x2, 0x2, 0xda, 0x37, 0x3, 0x2, 0x2, 0x2, 0xdb, 0xdc, 0x9, 0x6, 0x2, 
-    0x2, 0xdc, 0x39, 0x3, 0x2, 0x2, 0x2, 0x14, 0x3c, 0x41, 0x47, 0x6c, 0x73, 
-    0x79, 0x7b, 0x8d, 0x90, 0x99, 0x9d, 0x9f, 0xa2, 0xa7, 0xa9, 0xac, 0xb3, 
-    0xd9, 
+    0x3, 0xa5, 0x2fe, 0x4, 0x2, 0x9, 0x2, 0x4, 0x3, 0x9, 0x3, 0x4, 0x4, 
+    0x9, 0x4, 0x4, 0x5, 0x9, 0x5, 0x4, 0x6, 0x9, 0x6, 0x4, 0x7, 0x9, 0x7, 
+    0x4, 0x8, 0x9, 0x8, 0x4, 0x9, 0x9, 0x9, 0x4, 0xa, 0x9, 0xa, 0x4, 0xb, 
+    0x9, 0xb, 0x4, 0xc, 0x9, 0xc, 0x4, 0xd, 0x9, 0xd, 0x4, 0xe, 0x9, 0xe, 
+    0x4, 0xf, 0x9, 0xf, 0x4, 0x10, 0x9, 0x10, 0x4, 0x11, 0x9, 0x11, 0x4, 
+    0x12, 0x9, 0x12, 0x4, 0x13, 0x9, 0x13, 0x4, 0x14, 0x9, 0x14, 0x4, 0x15, 
+    0x9, 0x15, 0x4, 0x16, 0x9, 0x16, 0x4, 0x17, 0x9, 0x17, 0x4, 0x18, 0x9, 
+    0x18, 0x4, 0x19, 0x9, 0x19, 0x4, 0x1a, 0x9, 0x1a, 0x4, 0x1b, 0x9, 0x1b, 
+    0x4, 0x1c, 0x9, 0x1c, 0x4, 0x1d, 0x9, 0x1d, 0x4, 0x1e, 0x9, 0x1e, 0x4, 
+    0x1f, 0x9, 0x1f, 0x4, 0x20, 0x9, 0x20, 0x4, 0x21, 0x9, 0x21, 0x4, 0x22, 
+    0x9, 0x22, 0x4, 0x23, 0x9, 0x23, 0x4, 0x24, 0x9, 0x24, 0x4, 0x25, 0x9, 
+    0x25, 0x4, 0x26, 0x9, 0x26, 0x4, 0x27, 0x9, 0x27, 0x4, 0x28, 0x9, 0x28, 
+    0x4, 0x29, 0x9, 0x29, 0x4, 0x2a, 0x9, 0x2a, 0x3, 0x2, 0x3, 0x2, 0x7, 
+    0x2, 0x57, 0xa, 0x2, 0xc, 0x2, 0xe, 0x2, 0x5a, 0xb, 0x2, 0x3, 0x2, 0x5, 
+    0x2, 0x5d, 0xa, 0x2, 0x3, 0x2, 0x7, 0x2, 0x60, 0xa, 0x2, 0xc, 0x2, 0xe, 
+    0x2, 0x63, 0xb, 0x2, 0x3, 0x2, 0x7, 0x2, 0x66, 0xa, 0x2, 0xc, 0x2, 0xe, 
+    0x2, 0x69, 0xb, 0x2, 0x3, 0x2, 0x7, 0x2, 0x6c, 0xa, 0x2, 0xc, 0x2, 0xe, 
+    0x2, 0x6f, 0xb, 0x2, 0x3, 0x2, 0x7, 0x2, 0x72, 0xa, 0x2, 0xc, 0x2, 0xe, 
+    0x2, 0x75, 0xb, 0x2, 0x3, 0x2, 0x7, 0x2, 0x78, 0xa, 0x2, 0xc, 0x2, 0xe, 
+    0x2, 0x7b, 0xb, 0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 0x3, 0x3, 0x3, 0x3, 0x4, 
+    0x3, 0x4, 0x7, 0x4, 0x83, 0xa, 0x4, 0xc, 0x4, 0xe, 0x4, 0x86, 0xb, 0x4, 
+    0x3, 0x4, 0x3, 0x4, 0x7, 0x4, 0x8a, 0xa, 0x4, 0xc, 0x4, 0xe, 0x4, 0x8d, 
+    0xb, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 
+    0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 
+    0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 
+    0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 
+    0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 
+    0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 
+    0x3, 0x5, 0x5, 0x5, 0xb9, 0xa, 0x5, 0x3, 0x6, 0x3, 0x6, 0x7, 0x6, 0xbd, 
+    0xa, 0x6, 0xc, 0x6, 0xe, 0x6, 0xc0, 0xb, 0x6, 0x3, 0x6, 0x5, 0x6, 0xc3, 
+    0xa, 0x6, 0x3, 0x6, 0x7, 0x6, 0xc6, 0xa, 0x6, 0xc, 0x6, 0xe, 0x6, 0xc9, 
+    0xb, 0x6, 0x3, 0x6, 0x3, 0x6, 0x7, 0x6, 0xcd, 0xa, 0x6, 0xc, 0x6, 0xe, 
+    0x6, 0xd0, 0xb, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x7, 0x3, 0x7, 0x7, 0x7, 
+    0xd6, 0xa, 0x7, 0xc, 0x7, 0xe, 0x7, 0xd9, 0xb, 0x7, 0x3, 0x7, 0x5, 0x7, 
+    0xdc, 0xa, 0x7, 0x3, 0x7, 0x7, 0x7, 0xdf, 0xa, 0x7, 0xc, 0x7, 0xe, 0x7, 
+    0xe2, 0xb, 0x7, 0x3, 0x7, 0x3, 0x7, 0x7, 0x7, 0xe6, 0xa, 0x7, 0xc, 0x7, 
+    0xe, 0x7, 0xe9, 0xb, 0x7, 0x3, 0x7, 0x3, 0x7, 0x3, 0x8, 0x3, 0x8, 0x7, 
+    0x8, 0xef, 0xa, 0x8, 0xc, 0x8, 0xe, 0x8, 0xf2, 0xb, 0x8, 0x3, 0x8, 0x3, 
+    0x8, 0x7, 0x8, 0xf6, 0xa, 0x8, 0xc, 0x8, 0xe, 0x8, 0xf9, 0xb, 0x8, 0x3, 
+    0x8, 0x3, 0x8, 0x3, 0x9, 0x3, 0x9, 0x7, 0x9, 0xff, 0xa, 0x9, 0xc, 0x9, 
+    0xe, 0x9, 0x102, 0xb, 0x9, 0x3, 0x9, 0x3, 0x9, 0x7, 0x9, 0x106, 0xa, 
+    0x9, 0xc, 0x9, 0xe, 0x9, 0x109, 0xb, 0x9, 0x3, 0x9, 0x3, 0x9, 0x3, 0xa, 
+    0x3, 0xa, 0x7, 0xa, 0x10f, 0xa, 0xa, 0xc, 0xa, 0xe, 0xa, 0x112, 0xb, 
+    0xa, 0x3, 0xa, 0x3, 0xa, 0x7, 0xa, 0x116, 0xa, 0xa, 0xc, 0xa, 0xe, 0xa, 
+    0x119, 0xb, 0xa, 0x3, 0xa, 0x3, 0xa, 0x3, 0xb, 0x3, 0xb, 0x7, 0xb, 0x11f, 
+    0xa, 0xb, 0xc, 0xb, 0xe, 0xb, 0x122, 0xb, 0xb, 0x3, 0xb, 0x3, 0xb, 0x7, 
+    0xb, 0x126, 0xa, 0xb, 0xc, 0xb, 0xe, 0xb, 0x129, 0xb, 0xb, 0x3, 0xb, 
+    0x3, 0xb, 0x7, 0xb, 0x12d, 0xa, 0xb, 0xc, 0xb, 0xe, 0xb, 0x130, 0xb, 
+    0xb, 0x3, 0xb, 0x3, 0xb, 0x5, 0xb, 0x134, 0xa, 0xb, 0x3, 0xb, 0x3, 0xb, 
+    0x7, 0xb, 0x138, 0xa, 0xb, 0xc, 0xb, 0xe, 0xb, 0x13b, 0xb, 0xb, 0x3, 
+    0xb, 0x3, 0xb, 0x3, 0xb, 0x5, 0xb, 0x140, 0xa, 0xb, 0x3, 0xc, 0x3, 0xc, 
+    0x7, 0xc, 0x144, 0xa, 0xc, 0xc, 0xc, 0xe, 0xc, 0x147, 0xb, 0xc, 0x3, 
+    0xc, 0x3, 0xc, 0x7, 0xc, 0x14b, 0xa, 0xc, 0xc, 0xc, 0xe, 0xc, 0x14e, 
+    0xb, 0xc, 0x3, 0xc, 0x3, 0xc, 0x7, 0xc, 0x152, 0xa, 0xc, 0xc, 0xc, 0xe, 
+    0xc, 0x155, 0xb, 0xc, 0x3, 0xc, 0x3, 0xc, 0x5, 0xc, 0x159, 0xa, 0xc, 
+    0x3, 0xc, 0x3, 0xc, 0x7, 0xc, 0x15d, 0xa, 0xc, 0xc, 0xc, 0xe, 0xc, 0x160, 
+    0xb, 0xc, 0x3, 0xc, 0x3, 0xc, 0x3, 0xc, 0x5, 0xc, 0x165, 0xa, 0xc, 0x3, 
+    0xd, 0x3, 0xd, 0x7, 0xd, 0x169, 0xa, 0xd, 0xc, 0xd, 0xe, 0xd, 0x16c, 
+    0xb, 0xd, 0x3, 0xd, 0x3, 0xd, 0x7, 0xd, 0x170, 0xa, 0xd, 0xc, 0xd, 0xe, 
+    0xd, 0x173, 0xb, 0xd, 0x3, 0xd, 0x3, 0xd, 0x7, 0xd, 0x177, 0xa, 0xd, 
+    0xc, 0xd, 0xe, 0xd, 0x17a, 0xb, 0xd, 0x3, 0xd, 0x3, 0xd, 0x5, 0xd, 0x17e, 
+    0xa, 0xd, 0x3, 0xd, 0x3, 0xd, 0x7, 0xd, 0x182, 0xa, 0xd, 0xc, 0xd, 0xe, 
+    0xd, 0x185, 0xb, 0xd, 0x3, 0xd, 0x3, 0xd, 0x3, 0xd, 0x5, 0xd, 0x18a, 
+    0xa, 0xd, 0x3, 0xe, 0x3, 0xe, 0x7, 0xe, 0x18e, 0xa, 0xe, 0xc, 0xe, 0xe, 
+    0xe, 0x191, 0xb, 0xe, 0x3, 0xe, 0x3, 0xe, 0x7, 0xe, 0x195, 0xa, 0xe, 
+    0xc, 0xe, 0xe, 0xe, 0x198, 0xb, 0xe, 0x3, 0xe, 0x3, 0xe, 0x7, 0xe, 0x19c, 
+    0xa, 0xe, 0xc, 0xe, 0xe, 0xe, 0x19f, 0xb, 0xe, 0x3, 0xe, 0x3, 0xe, 0x5, 
+    0xe, 0x1a3, 0xa, 0xe, 0x3, 0xe, 0x3, 0xe, 0x7, 0xe, 0x1a7, 0xa, 0xe, 
+    0xc, 0xe, 0xe, 0xe, 0x1aa, 0xb, 0xe, 0x3, 0xe, 0x3, 0xe, 0x3, 0xe, 0x5, 
+    0xe, 0x1af, 0xa, 0xe, 0x3, 0xf, 0x3, 0xf, 0x7, 0xf, 0x1b3, 0xa, 0xf, 
+    0xc, 0xf, 0xe, 0xf, 0x1b6, 0xb, 0xf, 0x3, 0xf, 0x3, 0xf, 0x7, 0xf, 0x1ba, 
+    0xa, 0xf, 0xc, 0xf, 0xe, 0xf, 0x1bd, 0xb, 0xf, 0x3, 0xf, 0x3, 0xf, 0x7, 
+    0xf, 0x1c1, 0xa, 0xf, 0xc, 0xf, 0xe, 0xf, 0x1c4, 0xb, 0xf, 0x3, 0xf, 
+    0x3, 0xf, 0x5, 0xf, 0x1c8, 0xa, 0xf, 0x3, 0xf, 0x3, 0xf, 0x7, 0xf, 0x1cc, 
+    0xa, 0xf, 0xc, 0xf, 0xe, 0xf, 0x1cf, 0xb, 0xf, 0x3, 0xf, 0x3, 0xf, 0x3, 
+    0xf, 0x5, 0xf, 0x1d4, 0xa, 0xf, 0x3, 0x10, 0x3, 0x10, 0x7, 0x10, 0x1d8, 
+    0xa, 0x10, 0xc, 0x10, 0xe, 0x10, 0x1db, 0xb, 0x10, 0x3, 0x10, 0x3, 0x10, 
+    0x7, 0x10, 0x1df, 0xa, 0x10, 0xc, 0x10, 0xe, 0x10, 0x1e2, 0xb, 0x10, 
+    0x3, 0x10, 0x3, 0x10, 0x7, 0x10, 0x1e6, 0xa, 0x10, 0xc, 0x10, 0xe, 0x10, 
+    0x1e9, 0xb, 0x10, 0x3, 0x10, 0x3, 0x10, 0x5, 0x10, 0x1ed, 0xa, 0x10, 
+    0x3, 0x10, 0x3, 0x10, 0x7, 0x10, 0x1f1, 0xa, 0x10, 0xc, 0x10, 0xe, 0x10, 
+    0x1f4, 0xb, 0x10, 0x3, 0x10, 0x3, 0x10, 0x3, 0x10, 0x5, 0x10, 0x1f9, 
+    0xa, 0x10, 0x3, 0x11, 0x3, 0x11, 0x7, 0x11, 0x1fd, 0xa, 0x11, 0xc, 0x11, 
+    0xe, 0x11, 0x200, 0xb, 0x11, 0x3, 0x11, 0x3, 0x11, 0x7, 0x11, 0x204, 
+    0xa, 0x11, 0xc, 0x11, 0xe, 0x11, 0x207, 0xb, 0x11, 0x3, 0x11, 0x3, 0x11, 
+    0x7, 0x11, 0x20b, 0xa, 0x11, 0xc, 0x11, 0xe, 0x11, 0x20e, 0xb, 0x11, 
+    0x3, 0x11, 0x3, 0x11, 0x5, 0x11, 0x212, 0xa, 0x11, 0x3, 0x11, 0x3, 0x11, 
+    0x7, 0x11, 0x216, 0xa, 0x11, 0xc, 0x11, 0xe, 0x11, 0x219, 0xb, 0x11, 
+    0x3, 0x11, 0x3, 0x11, 0x5, 0x11, 0x21d, 0xa, 0x11, 0x5, 0x11, 0x21f, 
+    0xa, 0x11, 0x3, 0x12, 0x3, 0x12, 0x7, 0x12, 0x223, 0xa, 0x12, 0xc, 0x12, 
+    0xe, 0x12, 0x226, 0xb, 0x12, 0x3, 0x12, 0x3, 0x12, 0x7, 0x12, 0x22a, 
+    0xa, 0x12, 0xc, 0x12, 0xe, 0x12, 0x22d, 0xb, 0x12, 0x3, 0x12, 0x3, 0x12, 
+    0x7, 0x12, 0x231, 0xa, 0x12, 0xc, 0x12, 0xe, 0x12, 0x234, 0xb, 0x12, 
+    0x3, 0x12, 0x3, 0x12, 0x5, 0x12, 0x238, 0xa, 0x12, 0x3, 0x12, 0x3, 0x12, 
+    0x7, 0x12, 0x23c, 0xa, 0x12, 0xc, 0x12, 0xe, 0x12, 0x23f, 0xb, 0x12, 
+    0x3, 0x12, 0x3, 0x12, 0x3, 0x12, 0x5, 0x12, 0x244, 0xa, 0x12, 0x3, 0x13, 
+    0x3, 0x13, 0x5, 0x13, 0x248, 0xa, 0x13, 0x3, 0x14, 0x3, 0x14, 0x3, 0x14, 
+    0x3, 0x14, 0x6, 0x14, 0x24e, 0xa, 0x14, 0xd, 0x14, 0xe, 0x14, 0x24f, 
+    0x3, 0x14, 0x3, 0x14, 0x3, 0x15, 0x3, 0x15, 0x7, 0x15, 0x256, 0xa, 0x15, 
+    0xc, 0x15, 0xe, 0x15, 0x259, 0xb, 0x15, 0x3, 0x15, 0x3, 0x15, 0x7, 0x15, 
+    0x25d, 0xa, 0x15, 0xc, 0x15, 0xe, 0x15, 0x260, 0xb, 0x15, 0x3, 0x15, 
+    0x3, 0x15, 0x7, 0x15, 0x264, 0xa, 0x15, 0xc, 0x15, 0xe, 0x15, 0x267, 
+    0xb, 0x15, 0x3, 0x15, 0x3, 0x15, 0x3, 0x16, 0x3, 0x16, 0x3, 0x16, 0x3, 
+    0x16, 0x3, 0x17, 0x3, 0x17, 0x3, 0x17, 0x3, 0x17, 0x3, 0x18, 0x5, 0x18, 
+    0x274, 0xa, 0x18, 0x3, 0x18, 0x5, 0x18, 0x277, 0xa, 0x18, 0x3, 0x18, 
+    0x3, 0x18, 0x3, 0x18, 0x3, 0x18, 0x3, 0x18, 0x7, 0x18, 0x27e, 0xa, 0x18, 
+    0xc, 0x18, 0xe, 0x18, 0x281, 0xb, 0x18, 0x3, 0x18, 0x5, 0x18, 0x284, 
+    0xa, 0x18, 0x5, 0x18, 0x286, 0xa, 0x18, 0x3, 0x18, 0x5, 0x18, 0x289, 
+    0xa, 0x18, 0x3, 0x18, 0x3, 0x18, 0x3, 0x18, 0x5, 0x18, 0x28e, 0xa, 0x18, 
+    0x5, 0x18, 0x290, 0xa, 0x18, 0x3, 0x19, 0x5, 0x19, 0x293, 0xa, 0x19, 
+    0x3, 0x19, 0x3, 0x19, 0x3, 0x19, 0x7, 0x19, 0x298, 0xa, 0x19, 0xc, 0x19, 
+    0xe, 0x19, 0x29b, 0xb, 0x19, 0x3, 0x1a, 0x3, 0x1a, 0x3, 0x1b, 0x3, 0x1b, 
+    0x3, 0x1c, 0x3, 0x1c, 0x3, 0x1d, 0x3, 0x1d, 0x3, 0x1e, 0x3, 0x1e, 0x3, 
+    0x1f, 0x3, 0x1f, 0x3, 0x1f, 0x3, 0x1f, 0x3, 0x1f, 0x3, 0x1f, 0x3, 0x1f, 
+    0x5, 0x1f, 0x2ae, 0xa, 0x1f, 0x3, 0x20, 0x3, 0x20, 0x3, 0x20, 0x3, 0x20, 
+    0x3, 0x20, 0x3, 0x20, 0x3, 0x20, 0x5, 0x20, 0x2b7, 0xa, 0x20, 0x3, 0x21, 
+    0x3, 0x21, 0x3, 0x21, 0x3, 0x21, 0x3, 0x21, 0x3, 0x21, 0x3, 0x21, 0x5, 
+    0x21, 0x2c0, 0xa, 0x21, 0x3, 0x22, 0x3, 0x22, 0x3, 0x22, 0x3, 0x22, 
+    0x3, 0x22, 0x3, 0x22, 0x3, 0x22, 0x5, 0x22, 0x2c9, 0xa, 0x22, 0x3, 0x23, 
+    0x3, 0x23, 0x3, 0x23, 0x3, 0x23, 0x3, 0x23, 0x3, 0x23, 0x3, 0x23, 0x5, 
+    0x23, 0x2d2, 0xa, 0x23, 0x3, 0x24, 0x3, 0x24, 0x3, 0x24, 0x3, 0x24, 
+    0x3, 0x24, 0x3, 0x24, 0x3, 0x24, 0x5, 0x24, 0x2db, 0xa, 0x24, 0x3, 0x25, 
+    0x3, 0x25, 0x3, 0x25, 0x3, 0x25, 0x3, 0x25, 0x3, 0x25, 0x3, 0x25, 0x5, 
+    0x25, 0x2e4, 0xa, 0x25, 0x3, 0x25, 0x3, 0x25, 0x3, 0x26, 0x3, 0x26, 
+    0x3, 0x26, 0x3, 0x26, 0x3, 0x26, 0x3, 0x26, 0x3, 0x26, 0x5, 0x26, 0x2ef, 
+    0xa, 0x26, 0x3, 0x26, 0x3, 0x26, 0x3, 0x27, 0x3, 0x27, 0x3, 0x28, 0x3, 
+    0x28, 0x3, 0x29, 0x3, 0x29, 0x3, 0x29, 0x5, 0x29, 0x2fa, 0xa, 0x29, 
+    0x3, 0x2a, 0x3, 0x2a, 0x3, 0x2a, 0x2, 0x2, 0x2b, 0x2, 0x4, 0x6, 0x8, 
+    0xa, 0xc, 0xe, 0x10, 0x12, 0x14, 0x16, 0x18, 0x1a, 0x1c, 0x1e, 0x20, 
+    0x22, 0x24, 0x26, 0x28, 0x2a, 0x2c, 0x2e, 0x30, 0x32, 0x34, 0x36, 0x38, 
+    0x3a, 0x3c, 0x3e, 0x40, 0x42, 0x44, 0x46, 0x48, 0x4a, 0x4c, 0x4e, 0x50, 
+    0x52, 0x2, 0xa, 0x4, 0x2, 0x6, 0x6, 0xc, 0xc, 0x3, 0x2, 0x65, 0x66, 
+    0x3, 0x2, 0x67, 0x68, 0x3, 0x2, 0x69, 0x6a, 0x3, 0x2, 0x6b, 0x6c, 0x3, 
+    0x2, 0x60, 0x61, 0x3, 0x2, 0x63, 0x64, 0x5, 0x2, 0x4, 0x8, 0xa, 0xf, 
+    0x12, 0x47, 0x2, 0x351, 0x2, 0x54, 0x3, 0x2, 0x2, 0x2, 0x4, 0x7e, 0x3, 
+    0x2, 0x2, 0x2, 0x6, 0x80, 0x3, 0x2, 0x2, 0x2, 0x8, 0xb8, 0x3, 0x2, 0x2, 
+    0x2, 0xa, 0xc2, 0x3, 0x2, 0x2, 0x2, 0xc, 0xdb, 0x3, 0x2, 0x2, 0x2, 0xe, 
+    0xec, 0x3, 0x2, 0x2, 0x2, 0x10, 0xfc, 0x3, 0x2, 0x2, 0x2, 0x12, 0x10c, 
+    0x3, 0x2, 0x2, 0x2, 0x14, 0x13f, 0x3, 0x2, 0x2, 0x2, 0x16, 0x164, 0x3, 
+    0x2, 0x2, 0x2, 0x18, 0x189, 0x3, 0x2, 0x2, 0x2, 0x1a, 0x1ae, 0x3, 0x2, 
+    0x2, 0x2, 0x1c, 0x1d3, 0x3, 0x2, 0x2, 0x2, 0x1e, 0x1f8, 0x3, 0x2, 0x2, 
+    0x2, 0x20, 0x21e, 0x3, 0x2, 0x2, 0x2, 0x22, 0x243, 0x3, 0x2, 0x2, 0x2, 
+    0x24, 0x247, 0x3, 0x2, 0x2, 0x2, 0x26, 0x249, 0x3, 0x2, 0x2, 0x2, 0x28, 
+    0x253, 0x3, 0x2, 0x2, 0x2, 0x2a, 0x26a, 0x3, 0x2, 0x2, 0x2, 0x2c, 0x26e, 
+    0x3, 0x2, 0x2, 0x2, 0x2e, 0x28f, 0x3, 0x2, 0x2, 0x2, 0x30, 0x292, 0x3, 
+    0x2, 0x2, 0x2, 0x32, 0x29c, 0x3, 0x2, 0x2, 0x2, 0x34, 0x29e, 0x3, 0x2, 
+    0x2, 0x2, 0x36, 0x2a0, 0x3, 0x2, 0x2, 0x2, 0x38, 0x2a2, 0x3, 0x2, 0x2, 
+    0x2, 0x3a, 0x2a4, 0x3, 0x2, 0x2, 0x2, 0x3c, 0x2ad, 0x3, 0x2, 0x2, 0x2, 
+    0x3e, 0x2b6, 0x3, 0x2, 0x2, 0x2, 0x40, 0x2bf, 0x3, 0x2, 0x2, 0x2, 0x42, 
+    0x2c8, 0x3, 0x2, 0x2, 0x2, 0x44, 0x2d1, 0x3, 0x2, 0x2, 0x2, 0x46, 0x2da, 
+    0x3, 0x2, 0x2, 0x2, 0x48, 0x2e3, 0x3, 0x2, 0x2, 0x2, 0x4a, 0x2ee, 0x3, 
+    0x2, 0x2, 0x2, 0x4c, 0x2f2, 0x3, 0x2, 0x2, 0x2, 0x4e, 0x2f4, 0x3, 0x2, 
+    0x2, 0x2, 0x50, 0x2f9, 0x3, 0x2, 0x2, 0x2, 0x52, 0x2fb, 0x3, 0x2, 0x2, 
+    0x2, 0x54, 0x58, 0x5, 0x28, 0x15, 0x2, 0x55, 0x57, 0x7, 0x5e, 0x2, 0x2, 
+    0x56, 0x55, 0x3, 0x2, 0x2, 0x2, 0x57, 0x5a, 0x3, 0x2, 0x2, 0x2, 0x58, 
+    0x56, 0x3, 0x2, 0x2, 0x2, 0x58, 0x59, 0x3, 0x2, 0x2, 0x2, 0x59, 0x5c, 
+    0x3, 0x2, 0x2, 0x2, 0x5a, 0x58, 0x3, 0x2, 0x2, 0x2, 0x5b, 0x5d, 0x5, 
+    0x2a, 0x16, 0x2, 0x5c, 0x5b, 0x3, 0x2, 0x2, 0x2, 0x5c, 0x5d, 0x3, 0x2, 
+    0x2, 0x2, 0x5d, 0x67, 0x3, 0x2, 0x2, 0x2, 0x5e, 0x60, 0x7, 0x5e, 0x2, 
+    0x2, 0x5f, 0x5e, 0x3, 0x2, 0x2, 0x2, 0x60, 0x63, 0x3, 0x2, 0x2, 0x2, 
+    0x61, 0x5f, 0x3, 0x2, 0x2, 0x2, 0x61, 0x62, 0x3, 0x2, 0x2, 0x2, 0x62, 
+    0x64, 0x3, 0x2, 0x2, 0x2, 0x63, 0x61, 0x3, 0x2, 0x2, 0x2, 0x64, 0x66, 
+    0x5, 0x2c, 0x17, 0x2, 0x65, 0x61, 0x3, 0x2, 0x2, 0x2, 0x66, 0x69, 0x3, 
+    0x2, 0x2, 0x2, 0x67, 0x65, 0x3, 0x2, 0x2, 0x2, 0x67, 0x68, 0x3, 0x2, 
+    0x2, 0x2, 0x68, 0x73, 0x3, 0x2, 0x2, 0x2, 0x69, 0x67, 0x3, 0x2, 0x2, 
+    0x2, 0x6a, 0x6c, 0x7, 0x5e, 0x2, 0x2, 0x6b, 0x6a, 0x3, 0x2, 0x2, 0x2, 
+    0x6c, 0x6f, 0x3, 0x2, 0x2, 0x2, 0x6d, 0x6b, 0x3, 0x2, 0x2, 0x2, 0x6d, 
+    0x6e, 0x3, 0x2, 0x2, 0x2, 0x6e, 0x70, 0x3, 0x2, 0x2, 0x2, 0x6f, 0x6d, 
+    0x3, 0x2, 0x2, 0x2, 0x70, 0x72, 0x5, 0x4, 0x3, 0x2, 0x71, 0x6d, 0x3, 
+    0x2, 0x2, 0x2, 0x72, 0x75, 0x3, 0x2, 0x2, 0x2, 0x73, 0x71, 0x3, 0x2, 
+    0x2, 0x2, 0x73, 0x74, 0x3, 0x2, 0x2, 0x2, 0x74, 0x79, 0x3, 0x2, 0x2, 
+    0x2, 0x75, 0x73, 0x3, 0x2, 0x2, 0x2, 0x76, 0x78, 0x7, 0x5e, 0x2, 0x2, 
+    0x77, 0x76, 0x3, 0x2, 0x2, 0x2, 0x78, 0x7b, 0x3, 0x2, 0x2, 0x2, 0x79, 
+    0x77, 0x3, 0x2, 0x2, 0x2, 0x79, 0x7a, 0x3, 0x2, 0x2, 0x2, 0x7a, 0x7c, 
+    0x3, 0x2, 0x2, 0x2, 0x7b, 0x79, 0x3, 0x2, 0x2, 0x2, 0x7c, 0x7d, 0x7, 
+    0x2, 0x2, 0x3, 0x7d, 0x3, 0x3, 0x2, 0x2, 0x2, 0x7e, 0x7f, 0x5, 0x6, 
+    0x4, 0x2, 0x7f, 0x5, 0x3, 0x2, 0x2, 0x2, 0x80, 0x84, 0x5, 0x50, 0x29, 
+    0x2, 0x81, 0x83, 0x7, 0x5e, 0x2, 0x2, 0x82, 0x81, 0x3, 0x2, 0x2, 0x2, 
+    0x83, 0x86, 0x3, 0x2, 0x2, 0x2, 0x84, 0x82, 0x3, 0x2, 0x2, 0x2, 0x84, 
+    0x85, 0x3, 0x2, 0x2, 0x2, 0x85, 0x87, 0x3, 0x2, 0x2, 0x2, 0x86, 0x84, 
+    0x3, 0x2, 0x2, 0x2, 0x87, 0x8b, 0x5, 0x8, 0x5, 0x2, 0x88, 0x8a, 0x7, 
+    0x5e, 0x2, 0x2, 0x89, 0x88, 0x3, 0x2, 0x2, 0x2, 0x8a, 0x8d, 0x3, 0x2, 
+    0x2, 0x2, 0x8b, 0x89, 0x3, 0x2, 0x2, 0x2, 0x8b, 0x8c, 0x3, 0x2, 0x2, 
+    0x2, 0x8c, 0x8e, 0x3, 0x2, 0x2, 0x2, 0x8d, 0x8b, 0x3, 0x2, 0x2, 0x2, 
+    0x8e, 0x8f, 0x7, 0x98, 0x2, 0x2, 0x8f, 0x90, 0x8, 0x4, 0x1, 0x2, 0x90, 
+    0x7, 0x3, 0x2, 0x2, 0x2, 0x91, 0x92, 0x5, 0xa, 0x6, 0x2, 0x92, 0x93, 
+    0x8, 0x5, 0x1, 0x2, 0x93, 0xb9, 0x3, 0x2, 0x2, 0x2, 0x94, 0x95, 0x5, 
+    0xc, 0x7, 0x2, 0x95, 0x96, 0x8, 0x5, 0x1, 0x2, 0x96, 0xb9, 0x3, 0x2, 
+    0x2, 0x2, 0x97, 0x98, 0x5, 0xe, 0x8, 0x2, 0x98, 0x99, 0x8, 0x5, 0x1, 
+    0x2, 0x99, 0xb9, 0x3, 0x2, 0x2, 0x2, 0x9a, 0x9b, 0x5, 0x10, 0x9, 0x2, 
+    0x9b, 0x9c, 0x8, 0x5, 0x1, 0x2, 0x9c, 0xb9, 0x3, 0x2, 0x2, 0x2, 0x9d, 
+    0x9e, 0x5, 0x12, 0xa, 0x2, 0x9e, 0x9f, 0x8, 0x5, 0x1, 0x2, 0x9f, 0xb9, 
+    0x3, 0x2, 0x2, 0x2, 0xa0, 0xa1, 0x5, 0x14, 0xb, 0x2, 0xa1, 0xa2, 0x8, 
+    0x5, 0x1, 0x2, 0xa2, 0xb9, 0x3, 0x2, 0x2, 0x2, 0xa3, 0xa4, 0x5, 0x16, 
+    0xc, 0x2, 0xa4, 0xa5, 0x8, 0x5, 0x1, 0x2, 0xa5, 0xb9, 0x3, 0x2, 0x2, 
+    0x2, 0xa6, 0xa7, 0x5, 0x18, 0xd, 0x2, 0xa7, 0xa8, 0x8, 0x5, 0x1, 0x2, 
+    0xa8, 0xb9, 0x3, 0x2, 0x2, 0x2, 0xa9, 0xaa, 0x5, 0x1a, 0xe, 0x2, 0xaa, 
+    0xab, 0x8, 0x5, 0x1, 0x2, 0xab, 0xb9, 0x3, 0x2, 0x2, 0x2, 0xac, 0xad, 
+    0x5, 0x1c, 0xf, 0x2, 0xad, 0xae, 0x8, 0x5, 0x1, 0x2, 0xae, 0xb9, 0x3, 
+    0x2, 0x2, 0x2, 0xaf, 0xb0, 0x5, 0x1e, 0x10, 0x2, 0xb0, 0xb1, 0x8, 0x5, 
+    0x1, 0x2, 0xb1, 0xb9, 0x3, 0x2, 0x2, 0x2, 0xb2, 0xb3, 0x5, 0x20, 0x11, 
+    0x2, 0xb3, 0xb4, 0x8, 0x5, 0x1, 0x2, 0xb4, 0xb9, 0x3, 0x2, 0x2, 0x2, 
+    0xb5, 0xb6, 0x5, 0x22, 0x12, 0x2, 0xb6, 0xb7, 0x8, 0x5, 0x1, 0x2, 0xb7, 
+    0xb9, 0x3, 0x2, 0x2, 0x2, 0xb8, 0x91, 0x3, 0x2, 0x2, 0x2, 0xb8, 0x94, 
+    0x3, 0x2, 0x2, 0x2, 0xb8, 0x97, 0x3, 0x2, 0x2, 0x2, 0xb8, 0x9a, 0x3, 
+    0x2, 0x2, 0x2, 0xb8, 0x9d, 0x3, 0x2, 0x2, 0x2, 0xb8, 0xa0, 0x3, 0x2, 
+    0x2, 0x2, 0xb8, 0xa3, 0x3, 0x2, 0x2, 0x2, 0xb8, 0xa6, 0x3, 0x2, 0x2, 
+    0x2, 0xb8, 0xa9, 0x3, 0x2, 0x2, 0x2, 0xb8, 0xac, 0x3, 0x2, 0x2, 0x2, 
+    0xb8, 0xaf, 0x3, 0x2, 0x2, 0x2, 0xb8, 0xb2, 0x3, 0x2, 0x2, 0x2, 0xb8, 
+    0xb5, 0x3, 0x2, 0x2, 0x2, 0xb9, 0x9, 0x3, 0x2, 0x2, 0x2, 0xba, 0xbe, 
+    0x7, 0x99, 0x2, 0x2, 0xbb, 0xbd, 0x7, 0x5e, 0x2, 0x2, 0xbc, 0xbb, 0x3, 
+    0x2, 0x2, 0x2, 0xbd, 0xc0, 0x3, 0x2, 0x2, 0x2, 0xbe, 0xbc, 0x3, 0x2, 
+    0x2, 0x2, 0xbe, 0xbf, 0x3, 0x2, 0x2, 0x2, 0xbf, 0xc1, 0x3, 0x2, 0x2, 
+    0x2, 0xc0, 0xbe, 0x3, 0x2, 0x2, 0x2, 0xc1, 0xc3, 0x7, 0x48, 0x2, 0x2, 
+    0xc2, 0xba, 0x3, 0x2, 0x2, 0x2, 0xc2, 0xc3, 0x3, 0x2, 0x2, 0x2, 0xc3, 
+    0xc7, 0x3, 0x2, 0x2, 0x2, 0xc4, 0xc6, 0x7, 0x5e, 0x2, 0x2, 0xc5, 0xc4, 
+    0x3, 0x2, 0x2, 0x2, 0xc6, 0xc9, 0x3, 0x2, 0x2, 0x2, 0xc7, 0xc5, 0x3, 
+    0x2, 0x2, 0x2, 0xc7, 0xc8, 0x3, 0x2, 0x2, 0x2, 0xc8, 0xca, 0x3, 0x2, 
+    0x2, 0x2, 0xc9, 0xc7, 0x3, 0x2, 0x2, 0x2, 0xca, 0xce, 0x7, 0x8b, 0x2, 
+    0x2, 0xcb, 0xcd, 0x7, 0x5e, 0x2, 0x2, 0xcc, 0xcb, 0x3, 0x2, 0x2, 0x2, 
+    0xcd, 0xd0, 0x3, 0x2, 0x2, 0x2, 0xce, 0xcc, 0x3, 0x2, 0x2, 0x2, 0xce, 
+    0xcf, 0x3, 0x2, 0x2, 0x2, 0xcf, 0xd1, 0x3, 0x2, 0x2, 0x2, 0xd0, 0xce, 
+    0x3, 0x2, 0x2, 0x2, 0xd1, 0xd2, 0x5, 0x32, 0x1a, 0x2, 0xd2, 0xb, 0x3, 
+    0x2, 0x2, 0x2, 0xd3, 0xd7, 0x7, 0x99, 0x2, 0x2, 0xd4, 0xd6, 0x7, 0x5e, 
+    0x2, 0x2, 0xd5, 0xd4, 0x3, 0x2, 0x2, 0x2, 0xd6, 0xd9, 0x3, 0x2, 0x2, 
+    0x2, 0xd7, 0xd5, 0x3, 0x2, 0x2, 0x2, 0xd7, 0xd8, 0x3, 0x2, 0x2, 0x2, 
+    0xd8, 0xda, 0x3, 0x2, 0x2, 0x2, 0xd9, 0xd7, 0x3, 0x2, 0x2, 0x2, 0xda, 
+    0xdc, 0x7, 0x49, 0x2, 0x2, 0xdb, 0xd3, 0x3, 0x2, 0x2, 0x2, 0xdb, 0xdc, 
+    0x3, 0x2, 0x2, 0x2, 0xdc, 0xe0, 0x3, 0x2, 0x2, 0x2, 0xdd, 0xdf, 0x7, 
+    0x5e, 0x2, 0x2, 0xde, 0xdd, 0x3, 0x2, 0x2, 0x2, 0xdf, 0xe2, 0x3, 0x2, 
+    0x2, 0x2, 0xe0, 0xde, 0x3, 0x2, 0x2, 0x2, 0xe0, 0xe1, 0x3, 0x2, 0x2, 
+    0x2, 0xe1, 0xe3, 0x3, 0x2, 0x2, 0x2, 0xe2, 0xe0, 0x3, 0x2, 0x2, 0x2, 
+    0xe3, 0xe7, 0x7, 0x8b, 0x2, 0x2, 0xe4, 0xe6, 0x7, 0x5e, 0x2, 0x2, 0xe5, 
+    0xe4, 0x3, 0x2, 0x2, 0x2, 0xe6, 0xe9, 0x3, 0x2, 0x2, 0x2, 0xe7, 0xe5, 
+    0x3, 0x2, 0x2, 0x2, 0xe7, 0xe8, 0x3, 0x2, 0x2, 0x2, 0xe8, 0xea, 0x3, 
+    0x2, 0x2, 0x2, 0xe9, 0xe7, 0x3, 0x2, 0x2, 0x2, 0xea, 0xeb, 0x5, 0x36, 
+    0x1c, 0x2, 0xeb, 0xd, 0x3, 0x2, 0x2, 0x2, 0xec, 0xf0, 0x7, 0x4a, 0x2, 
+    0x2, 0xed, 0xef, 0x7, 0x5e, 0x2, 0x2, 0xee, 0xed, 0x3, 0x2, 0x2, 0x2, 
+    0xef, 0xf2, 0x3, 0x2, 0x2, 0x2, 0xf0, 0xee, 0x3, 0x2, 0x2, 0x2, 0xf0, 
+    0xf1, 0x3, 0x2, 0x2, 0x2, 0xf1, 0xf3, 0x3, 0x2, 0x2, 0x2, 0xf2, 0xf0, 
+    0x3, 0x2, 0x2, 0x2, 0xf3, 0xf7, 0x7, 0x8b, 0x2, 0x2, 0xf4, 0xf6, 0x7, 
+    0x5e, 0x2, 0x2, 0xf5, 0xf4, 0x3, 0x2, 0x2, 0x2, 0xf6, 0xf9, 0x3, 0x2, 
+    0x2, 0x2, 0xf7, 0xf5, 0x3, 0x2, 0x2, 0x2, 0xf7, 0xf8, 0x3, 0x2, 0x2, 
+    0x2, 0xf8, 0xfa, 0x3, 0x2, 0x2, 0x2, 0xf9, 0xf7, 0x3, 0x2, 0x2, 0x2, 
+    0xfa, 0xfb, 0x5, 0x4c, 0x27, 0x2, 0xfb, 0xf, 0x3, 0x2, 0x2, 0x2, 0xfc, 
+    0x100, 0x7, 0x4b, 0x2, 0x2, 0xfd, 0xff, 0x7, 0x5e, 0x2, 0x2, 0xfe, 0xfd, 
+    0x3, 0x2, 0x2, 0x2, 0xff, 0x102, 0x3, 0x2, 0x2, 0x2, 0x100, 0xfe, 0x3, 
+    0x2, 0x2, 0x2, 0x100, 0x101, 0x3, 0x2, 0x2, 0x2, 0x101, 0x103, 0x3, 
+    0x2, 0x2, 0x2, 0x102, 0x100, 0x3, 0x2, 0x2, 0x2, 0x103, 0x107, 0x7, 
+    0x8b, 0x2, 0x2, 0x104, 0x106, 0x7, 0x5e, 0x2, 0x2, 0x105, 0x104, 0x3, 
+    0x2, 0x2, 0x2, 0x106, 0x109, 0x3, 0x2, 0x2, 0x2, 0x107, 0x105, 0x3, 
+    0x2, 0x2, 0x2, 0x107, 0x108, 0x3, 0x2, 0x2, 0x2, 0x108, 0x10a, 0x3, 
+    0x2, 0x2, 0x2, 0x109, 0x107, 0x3, 0x2, 0x2, 0x2, 0x10a, 0x10b, 0x5, 
+    0x38, 0x1d, 0x2, 0x10b, 0x11, 0x3, 0x2, 0x2, 0x2, 0x10c, 0x110, 0x7, 
+    0x4c, 0x2, 0x2, 0x10d, 0x10f, 0x7, 0x5e, 0x2, 0x2, 0x10e, 0x10d, 0x3, 
+    0x2, 0x2, 0x2, 0x10f, 0x112, 0x3, 0x2, 0x2, 0x2, 0x110, 0x10e, 0x3, 
+    0x2, 0x2, 0x2, 0x110, 0x111, 0x3, 0x2, 0x2, 0x2, 0x111, 0x113, 0x3, 
+    0x2, 0x2, 0x2, 0x112, 0x110, 0x3, 0x2, 0x2, 0x2, 0x113, 0x117, 0x7, 
+    0x8b, 0x2, 0x2, 0x114, 0x116, 0x7, 0x5e, 0x2, 0x2, 0x115, 0x114, 0x3, 
+    0x2, 0x2, 0x2, 0x116, 0x119, 0x3, 0x2, 0x2, 0x2, 0x117, 0x115, 0x3, 
+    0x2, 0x2, 0x2, 0x117, 0x118, 0x3, 0x2, 0x2, 0x2, 0x118, 0x11a, 0x3, 
+    0x2, 0x2, 0x2, 0x119, 0x117, 0x3, 0x2, 0x2, 0x2, 0x11a, 0x11b, 0x5, 
+    0x3a, 0x1e, 0x2, 0x11b, 0x13, 0x3, 0x2, 0x2, 0x2, 0x11c, 0x120, 0x7, 
+    0x99, 0x2, 0x2, 0x11d, 0x11f, 0x7, 0x5e, 0x2, 0x2, 0x11e, 0x11d, 0x3, 
+    0x2, 0x2, 0x2, 0x11f, 0x122, 0x3, 0x2, 0x2, 0x2, 0x120, 0x11e, 0x3, 
+    0x2, 0x2, 0x2, 0x120, 0x121, 0x3, 0x2, 0x2, 0x2, 0x121, 0x123, 0x3, 
+    0x2, 0x2, 0x2, 0x122, 0x120, 0x3, 0x2, 0x2, 0x2, 0x123, 0x127, 0x7, 
+    0x4d, 0x2, 0x2, 0x124, 0x126, 0x7, 0x5e, 0x2, 0x2, 0x125, 0x124, 0x3, 
+    0x2, 0x2, 0x2, 0x126, 0x129, 0x3, 0x2, 0x2, 0x2, 0x127, 0x125, 0x3, 
+    0x2, 0x2, 0x2, 0x127, 0x128, 0x3, 0x2, 0x2, 0x2, 0x128, 0x12a, 0x3, 
+    0x2, 0x2, 0x2, 0x129, 0x127, 0x3, 0x2, 0x2, 0x2, 0x12a, 0x12e, 0x7, 
+    0x8b, 0x2, 0x2, 0x12b, 0x12d, 0x7, 0x5e, 0x2, 0x2, 0x12c, 0x12b, 0x3, 
+    0x2, 0x2, 0x2, 0x12d, 0x130, 0x3, 0x2, 0x2, 0x2, 0x12e, 0x12c, 0x3, 
+    0x2, 0x2, 0x2, 0x12e, 0x12f, 0x3, 0x2, 0x2, 0x2, 0x12f, 0x131, 0x3, 
+    0x2, 0x2, 0x2, 0x130, 0x12e, 0x3, 0x2, 0x2, 0x2, 0x131, 0x133, 0x5, 
+    0x3c, 0x1f, 0x2, 0x132, 0x134, 0x7, 0x4d, 0x2, 0x2, 0x133, 0x132, 0x3, 
+    0x2, 0x2, 0x2, 0x133, 0x134, 0x3, 0x2, 0x2, 0x2, 0x134, 0x140, 0x3, 
+    0x2, 0x2, 0x2, 0x135, 0x139, 0x7, 0x8b, 0x2, 0x2, 0x136, 0x138, 0x7, 
+    0x5e, 0x2, 0x2, 0x137, 0x136, 0x3, 0x2, 0x2, 0x2, 0x138, 0x13b, 0x3, 
+    0x2, 0x2, 0x2, 0x139, 0x137, 0x3, 0x2, 0x2, 0x2, 0x139, 0x13a, 0x3, 
+    0x2, 0x2, 0x2, 0x13a, 0x13c, 0x3, 0x2, 0x2, 0x2, 0x13b, 0x139, 0x3, 
+    0x2, 0x2, 0x2, 0x13c, 0x13d, 0x5, 0x3c, 0x1f, 0x2, 0x13d, 0x13e, 0x7, 
+    0x4d, 0x2, 0x2, 0x13e, 0x140, 0x3, 0x2, 0x2, 0x2, 0x13f, 0x11c, 0x3, 
+    0x2, 0x2, 0x2, 0x13f, 0x135, 0x3, 0x2, 0x2, 0x2, 0x140, 0x15, 0x3, 0x2, 
+    0x2, 0x2, 0x141, 0x145, 0x7, 0x99, 0x2, 0x2, 0x142, 0x144, 0x7, 0x5e, 
+    0x2, 0x2, 0x143, 0x142, 0x3, 0x2, 0x2, 0x2, 0x144, 0x147, 0x3, 0x2, 
+    0x2, 0x2, 0x145, 0x143, 0x3, 0x2, 0x2, 0x2, 0x145, 0x146, 0x3, 0x2, 
+    0x2, 0x2, 0x146, 0x148, 0x3, 0x2, 0x2, 0x2, 0x147, 0x145, 0x3, 0x2, 
+    0x2, 0x2, 0x148, 0x14c, 0x7, 0x4e, 0x2, 0x2, 0x149, 0x14b, 0x7, 0x5e, 
+    0x2, 0x2, 0x14a, 0x149, 0x3, 0x2, 0x2, 0x2, 0x14b, 0x14e, 0x3, 0x2, 
+    0x2, 0x2, 0x14c, 0x14a, 0x3, 0x2, 0x2, 0x2, 0x14c, 0x14d, 0x3, 0x2, 
+    0x2, 0x2, 0x14d, 0x14f, 0x3, 0x2, 0x2, 0x2, 0x14e, 0x14c, 0x3, 0x2, 
+    0x2, 0x2, 0x14f, 0x153, 0x7, 0x8b, 0x2, 0x2, 0x150, 0x152, 0x7, 0x5e, 
+    0x2, 0x2, 0x151, 0x150, 0x3, 0x2, 0x2, 0x2, 0x152, 0x155, 0x3, 0x2, 
+    0x2, 0x2, 0x153, 0x151, 0x3, 0x2, 0x2, 0x2, 0x153, 0x154, 0x3, 0x2, 
+    0x2, 0x2, 0x154, 0x156, 0x3, 0x2, 0x2, 0x2, 0x155, 0x153, 0x3, 0x2, 
+    0x2, 0x2, 0x156, 0x158, 0x5, 0x3e, 0x20, 0x2, 0x157, 0x159, 0x7, 0x4e, 
+    0x2, 0x2, 0x158, 0x157, 0x3, 0x2, 0x2, 0x2, 0x158, 0x159, 0x3, 0x2, 
+    0x2, 0x2, 0x159, 0x165, 0x3, 0x2, 0x2, 0x2, 0x15a, 0x15e, 0x7, 0x8b, 
+    0x2, 0x2, 0x15b, 0x15d, 0x7, 0x5e, 0x2, 0x2, 0x15c, 0x15b, 0x3, 0x2, 
+    0x2, 0x2, 0x15d, 0x160, 0x3, 0x2, 0x2, 0x2, 0x15e, 0x15c, 0x3, 0x2, 
+    0x2, 0x2, 0x15e, 0x15f, 0x3, 0x2, 0x2, 0x2, 0x15f, 0x161, 0x3, 0x2, 
+    0x2, 0x2, 0x160, 0x15e, 0x3, 0x2, 0x2, 0x2, 0x161, 0x162, 0x5, 0x3e, 
+    0x20, 0x2, 0x162, 0x163, 0x7, 0x4e, 0x2, 0x2, 0x163, 0x165, 0x3, 0x2, 
+    0x2, 0x2, 0x164, 0x141, 0x3, 0x2, 0x2, 0x2, 0x164, 0x15a, 0x3, 0x2, 
+    0x2, 0x2, 0x165, 0x17, 0x3, 0x2, 0x2, 0x2, 0x166, 0x16a, 0x7, 0x99, 
+    0x2, 0x2, 0x167, 0x169, 0x7, 0x5e, 0x2, 0x2, 0x168, 0x167, 0x3, 0x2, 
+    0x2, 0x2, 0x169, 0x16c, 0x3, 0x2, 0x2, 0x2, 0x16a, 0x168, 0x3, 0x2, 
+    0x2, 0x2, 0x16a, 0x16b, 0x3, 0x2, 0x2, 0x2, 0x16b, 0x16d, 0x3, 0x2, 
+    0x2, 0x2, 0x16c, 0x16a, 0x3, 0x2, 0x2, 0x2, 0x16d, 0x171, 0x7, 0x4f, 
+    0x2, 0x2, 0x16e, 0x170, 0x7, 0x5e, 0x2, 0x2, 0x16f, 0x16e, 0x3, 0x2, 
+    0x2, 0x2, 0x170, 0x173, 0x3, 0x2, 0x2, 0x2, 0x171, 0x16f, 0x3, 0x2, 
+    0x2, 0x2, 0x171, 0x172, 0x3, 0x2, 0x2, 0x2, 0x172, 0x174, 0x3, 0x2, 
+    0x2, 0x2, 0x173, 0x171, 0x3, 0x2, 0x2, 0x2, 0x174, 0x178, 0x7, 0x8b, 
+    0x2, 0x2, 0x175, 0x177, 0x7, 0x5e, 0x2, 0x2, 0x176, 0x175, 0x3, 0x2, 
+    0x2, 0x2, 0x177, 0x17a, 0x3, 0x2, 0x2, 0x2, 0x178, 0x176, 0x3, 0x2, 
+    0x2, 0x2, 0x178, 0x179, 0x3, 0x2, 0x2, 0x2, 0x179, 0x17b, 0x3, 0x2, 
+    0x2, 0x2, 0x17a, 0x178, 0x3, 0x2, 0x2, 0x2, 0x17b, 0x17d, 0x5, 0x40, 
+    0x21, 0x2, 0x17c, 0x17e, 0x7, 0x4f, 0x2, 0x2, 0x17d, 0x17c, 0x3, 0x2, 
+    0x2, 0x2, 0x17d, 0x17e, 0x3, 0x2, 0x2, 0x2, 0x17e, 0x18a, 0x3, 0x2, 
+    0x2, 0x2, 0x17f, 0x183, 0x7, 0x8b, 0x2, 0x2, 0x180, 0x182, 0x7, 0x5e, 
+    0x2, 0x2, 0x181, 0x180, 0x3, 0x2, 0x2, 0x2, 0x182, 0x185, 0x3, 0x2, 
+    0x2, 0x2, 0x183, 0x181, 0x3, 0x2, 0x2, 0x2, 0x183, 0x184, 0x3, 0x2, 
+    0x2, 0x2, 0x184, 0x186, 0x3, 0x2, 0x2, 0x2, 0x185, 0x183, 0x3, 0x2, 
+    0x2, 0x2, 0x186, 0x187, 0x5, 0x40, 0x21, 0x2, 0x187, 0x188, 0x7, 0x4f, 
+    0x2, 0x2, 0x188, 0x18a, 0x3, 0x2, 0x2, 0x2, 0x189, 0x166, 0x3, 0x2, 
+    0x2, 0x2, 0x189, 0x17f, 0x3, 0x2, 0x2, 0x2, 0x18a, 0x19, 0x3, 0x2, 0x2, 
+    0x2, 0x18b, 0x18f, 0x7, 0x99, 0x2, 0x2, 0x18c, 0x18e, 0x7, 0x5e, 0x2, 
+    0x2, 0x18d, 0x18c, 0x3, 0x2, 0x2, 0x2, 0x18e, 0x191, 0x3, 0x2, 0x2, 
+    0x2, 0x18f, 0x18d, 0x3, 0x2, 0x2, 0x2, 0x18f, 0x190, 0x3, 0x2, 0x2, 
+    0x2, 0x190, 0x192, 0x3, 0x2, 0x2, 0x2, 0x191, 0x18f, 0x3, 0x2, 0x2, 
+    0x2, 0x192, 0x196, 0x7, 0x50, 0x2, 0x2, 0x193, 0x195, 0x7, 0x5e, 0x2, 
+    0x2, 0x194, 0x193, 0x3, 0x2, 0x2, 0x2, 0x195, 0x198, 0x3, 0x2, 0x2, 
+    0x2, 0x196, 0x194, 0x3, 0x2, 0x2, 0x2, 0x196, 0x197, 0x3, 0x2, 0x2, 
+    0x2, 0x197, 0x199, 0x3, 0x2, 0x2, 0x2, 0x198, 0x196, 0x3, 0x2, 0x2, 
+    0x2, 0x199, 0x19d, 0x7, 0x8b, 0x2, 0x2, 0x19a, 0x19c, 0x7, 0x5e, 0x2, 
+    0x2, 0x19b, 0x19a, 0x3, 0x2, 0x2, 0x2, 0x19c, 0x19f, 0x3, 0x2, 0x2, 
+    0x2, 0x19d, 0x19b, 0x3, 0x2, 0x2, 0x2, 0x19d, 0x19e, 0x3, 0x2, 0x2, 
+    0x2, 0x19e, 0x1a0, 0x3, 0x2, 0x2, 0x2, 0x19f, 0x19d, 0x3, 0x2, 0x2, 
+    0x2, 0x1a0, 0x1a2, 0x5, 0x42, 0x22, 0x2, 0x1a1, 0x1a3, 0x7, 0x50, 0x2, 
+    0x2, 0x1a2, 0x1a1, 0x3, 0x2, 0x2, 0x2, 0x1a2, 0x1a3, 0x3, 0x2, 0x2, 
+    0x2, 0x1a3, 0x1af, 0x3, 0x2, 0x2, 0x2, 0x1a4, 0x1a8, 0x7, 0x8b, 0x2, 
+    0x2, 0x1a5, 0x1a7, 0x7, 0x5e, 0x2, 0x2, 0x1a6, 0x1a5, 0x3, 0x2, 0x2, 
+    0x2, 0x1a7, 0x1aa, 0x3, 0x2, 0x2, 0x2, 0x1a8, 0x1a6, 0x3, 0x2, 0x2, 
+    0x2, 0x1a8, 0x1a9, 0x3, 0x2, 0x2, 0x2, 0x1a9, 0x1ab, 0x3, 0x2, 0x2, 
+    0x2, 0x1aa, 0x1a8, 0x3, 0x2, 0x2, 0x2, 0x1ab, 0x1ac, 0x5, 0x42, 0x22, 
+    0x2, 0x1ac, 0x1ad, 0x7, 0x50, 0x2, 0x2, 0x1ad, 0x1af, 0x3, 0x2, 0x2, 
+    0x2, 0x1ae, 0x18b, 0x3, 0x2, 0x2, 0x2, 0x1ae, 0x1a4, 0x3, 0x2, 0x2, 
+    0x2, 0x1af, 0x1b, 0x3, 0x2, 0x2, 0x2, 0x1b0, 0x1b4, 0x7, 0x99, 0x2, 
+    0x2, 0x1b1, 0x1b3, 0x7, 0x5e, 0x2, 0x2, 0x1b2, 0x1b1, 0x3, 0x2, 0x2, 
+    0x2, 0x1b3, 0x1b6, 0x3, 0x2, 0x2, 0x2, 0x1b4, 0x1b2, 0x3, 0x2, 0x2, 
+    0x2, 0x1b4, 0x1b5, 0x3, 0x2, 0x2, 0x2, 0x1b5, 0x1b7, 0x3, 0x2, 0x2, 
+    0x2, 0x1b6, 0x1b4, 0x3, 0x2, 0x2, 0x2, 0x1b7, 0x1bb, 0x7, 0x51, 0x2, 
+    0x2, 0x1b8, 0x1ba, 0x7, 0x5e, 0x2, 0x2, 0x1b9, 0x1b8, 0x3, 0x2, 0x2, 
+    0x2, 0x1ba, 0x1bd, 0x3, 0x2, 0x2, 0x2, 0x1bb, 0x1b9, 0x3, 0x2, 0x2, 
+    0x2, 0x1bb, 0x1bc, 0x3, 0x2, 0x2, 0x2, 0x1bc, 0x1be, 0x3, 0x2, 0x2, 
+    0x2, 0x1bd, 0x1bb, 0x3, 0x2, 0x2, 0x2, 0x1be, 0x1c2, 0x7, 0x8b, 0x2, 
+    0x2, 0x1bf, 0x1c1, 0x7, 0x5e, 0x2, 0x2, 0x1c0, 0x1bf, 0x3, 0x2, 0x2, 
+    0x2, 0x1c1, 0x1c4, 0x3, 0x2, 0x2, 0x2, 0x1c2, 0x1c0, 0x3, 0x2, 0x2, 
+    0x2, 0x1c2, 0x1c3, 0x3, 0x2, 0x2, 0x2, 0x1c3, 0x1c5, 0x3, 0x2, 0x2, 
+    0x2, 0x1c4, 0x1c2, 0x3, 0x2, 0x2, 0x2, 0x1c5, 0x1c7, 0x5, 0x44, 0x23, 
+    0x2, 0x1c6, 0x1c8, 0x7, 0x51, 0x2, 0x2, 0x1c7, 0x1c6, 0x3, 0x2, 0x2, 
+    0x2, 0x1c7, 0x1c8, 0x3, 0x2, 0x2, 0x2, 0x1c8, 0x1d4, 0x3, 0x2, 0x2, 
+    0x2, 0x1c9, 0x1cd, 0x7, 0x8b, 0x2, 0x2, 0x1ca, 0x1cc, 0x7, 0x5e, 0x2, 
+    0x2, 0x1cb, 0x1ca, 0x3, 0x2, 0x2, 0x2, 0x1cc, 0x1cf, 0x3, 0x2, 0x2, 
+    0x2, 0x1cd, 0x1cb, 0x3, 0x2, 0x2, 0x2, 0x1cd, 0x1ce, 0x3, 0x2, 0x2, 
+    0x2, 0x1ce, 0x1d0, 0x3, 0x2, 0x2, 0x2, 0x1cf, 0x1cd, 0x3, 0x2, 0x2, 
+    0x2, 0x1d0, 0x1d1, 0x5, 0x44, 0x23, 0x2, 0x1d1, 0x1d2, 0x7, 0x51, 0x2, 
+    0x2, 0x1d2, 0x1d4, 0x3, 0x2, 0x2, 0x2, 0x1d3, 0x1b0, 0x3, 0x2, 0x2, 
+    0x2, 0x1d3, 0x1c9, 0x3, 0x2, 0x2, 0x2, 0x1d4, 0x1d, 0x3, 0x2, 0x2, 0x2, 
+    0x1d5, 0x1d9, 0x7, 0x99, 0x2, 0x2, 0x1d6, 0x1d8, 0x7, 0x5e, 0x2, 0x2, 
+    0x1d7, 0x1d6, 0x3, 0x2, 0x2, 0x2, 0x1d8, 0x1db, 0x3, 0x2, 0x2, 0x2, 
+    0x1d9, 0x1d7, 0x3, 0x2, 0x2, 0x2, 0x1d9, 0x1da, 0x3, 0x2, 0x2, 0x2, 
+    0x1da, 0x1dc, 0x3, 0x2, 0x2, 0x2, 0x1db, 0x1d9, 0x3, 0x2, 0x2, 0x2, 
+    0x1dc, 0x1e0, 0x7, 0x52, 0x2, 0x2, 0x1dd, 0x1df, 0x7, 0x5e, 0x2, 0x2, 
+    0x1de, 0x1dd, 0x3, 0x2, 0x2, 0x2, 0x1df, 0x1e2, 0x3, 0x2, 0x2, 0x2, 
+    0x1e0, 0x1de, 0x3, 0x2, 0x2, 0x2, 0x1e0, 0x1e1, 0x3, 0x2, 0x2, 0x2, 
+    0x1e1, 0x1e3, 0x3, 0x2, 0x2, 0x2, 0x1e2, 0x1e0, 0x3, 0x2, 0x2, 0x2, 
+    0x1e3, 0x1e7, 0x7, 0x8b, 0x2, 0x2, 0x1e4, 0x1e6, 0x7, 0x5e, 0x2, 0x2, 
+    0x1e5, 0x1e4, 0x3, 0x2, 0x2, 0x2, 0x1e6, 0x1e9, 0x3, 0x2, 0x2, 0x2, 
+    0x1e7, 0x1e5, 0x3, 0x2, 0x2, 0x2, 0x1e7, 0x1e8, 0x3, 0x2, 0x2, 0x2, 
+    0x1e8, 0x1ea, 0x3, 0x2, 0x2, 0x2, 0x1e9, 0x1e7, 0x3, 0x2, 0x2, 0x2, 
+    0x1ea, 0x1ec, 0x5, 0x46, 0x24, 0x2, 0x1eb, 0x1ed, 0x7, 0x52, 0x2, 0x2, 
+    0x1ec, 0x1eb, 0x3, 0x2, 0x2, 0x2, 0x1ec, 0x1ed, 0x3, 0x2, 0x2, 0x2, 
+    0x1ed, 0x1f9, 0x3, 0x2, 0x2, 0x2, 0x1ee, 0x1f2, 0x7, 0x8b, 0x2, 0x2, 
+    0x1ef, 0x1f1, 0x7, 0x5e, 0x2, 0x2, 0x1f0, 0x1ef, 0x3, 0x2, 0x2, 0x2, 
+    0x1f1, 0x1f4, 0x3, 0x2, 0x2, 0x2, 0x1f2, 0x1f0, 0x3, 0x2, 0x2, 0x2, 
+    0x1f2, 0x1f3, 0x3, 0x2, 0x2, 0x2, 0x1f3, 0x1f5, 0x3, 0x2, 0x2, 0x2, 
+    0x1f4, 0x1f2, 0x3, 0x2, 0x2, 0x2, 0x1f5, 0x1f6, 0x5, 0x46, 0x24, 0x2, 
+    0x1f6, 0x1f7, 0x7, 0x52, 0x2, 0x2, 0x1f7, 0x1f9, 0x3, 0x2, 0x2, 0x2, 
+    0x1f8, 0x1d5, 0x3, 0x2, 0x2, 0x2, 0x1f8, 0x1ee, 0x3, 0x2, 0x2, 0x2, 
+    0x1f9, 0x1f, 0x3, 0x2, 0x2, 0x2, 0x1fa, 0x1fe, 0x7, 0x99, 0x2, 0x2, 
+    0x1fb, 0x1fd, 0x7, 0x5e, 0x2, 0x2, 0x1fc, 0x1fb, 0x3, 0x2, 0x2, 0x2, 
+    0x1fd, 0x200, 0x3, 0x2, 0x2, 0x2, 0x1fe, 0x1fc, 0x3, 0x2, 0x2, 0x2, 
+    0x1fe, 0x1ff, 0x3, 0x2, 0x2, 0x2, 0x1ff, 0x201, 0x3, 0x2, 0x2, 0x2, 
+    0x200, 0x1fe, 0x3, 0x2, 0x2, 0x2, 0x201, 0x205, 0x7, 0x53, 0x2, 0x2, 
+    0x202, 0x204, 0x7, 0x5e, 0x2, 0x2, 0x203, 0x202, 0x3, 0x2, 0x2, 0x2, 
+    0x204, 0x207, 0x3, 0x2, 0x2, 0x2, 0x205, 0x203, 0x3, 0x2, 0x2, 0x2, 
+    0x205, 0x206, 0x3, 0x2, 0x2, 0x2, 0x206, 0x208, 0x3, 0x2, 0x2, 0x2, 
+    0x207, 0x205, 0x3, 0x2, 0x2, 0x2, 0x208, 0x20c, 0x7, 0x8b, 0x2, 0x2, 
+    0x209, 0x20b, 0x7, 0x5e, 0x2, 0x2, 0x20a, 0x209, 0x3, 0x2, 0x2, 0x2, 
+    0x20b, 0x20e, 0x3, 0x2, 0x2, 0x2, 0x20c, 0x20a, 0x3, 0x2, 0x2, 0x2, 
+    0x20c, 0x20d, 0x3, 0x2, 0x2, 0x2, 0x20d, 0x20f, 0x3, 0x2, 0x2, 0x2, 
+    0x20e, 0x20c, 0x3, 0x2, 0x2, 0x2, 0x20f, 0x211, 0x5, 0x48, 0x25, 0x2, 
+    0x210, 0x212, 0x7, 0x53, 0x2, 0x2, 0x211, 0x210, 0x3, 0x2, 0x2, 0x2, 
+    0x211, 0x212, 0x3, 0x2, 0x2, 0x2, 0x212, 0x21f, 0x3, 0x2, 0x2, 0x2, 
+    0x213, 0x217, 0x7, 0x8b, 0x2, 0x2, 0x214, 0x216, 0x7, 0x5e, 0x2, 0x2, 
+    0x215, 0x214, 0x3, 0x2, 0x2, 0x2, 0x216, 0x219, 0x3, 0x2, 0x2, 0x2, 
+    0x217, 0x215, 0x3, 0x2, 0x2, 0x2, 0x217, 0x218, 0x3, 0x2, 0x2, 0x2, 
+    0x218, 0x21a, 0x3, 0x2, 0x2, 0x2, 0x219, 0x217, 0x3, 0x2, 0x2, 0x2, 
+    0x21a, 0x21c, 0x5, 0x48, 0x25, 0x2, 0x21b, 0x21d, 0x7, 0x53, 0x2, 0x2, 
+    0x21c, 0x21b, 0x3, 0x2, 0x2, 0x2, 0x21c, 0x21d, 0x3, 0x2, 0x2, 0x2, 
+    0x21d, 0x21f, 0x3, 0x2, 0x2, 0x2, 0x21e, 0x1fa, 0x3, 0x2, 0x2, 0x2, 
+    0x21e, 0x213, 0x3, 0x2, 0x2, 0x2, 0x21f, 0x21, 0x3, 0x2, 0x2, 0x2, 0x220, 
+    0x224, 0x7, 0x99, 0x2, 0x2, 0x221, 0x223, 0x7, 0x5e, 0x2, 0x2, 0x222, 
+    0x221, 0x3, 0x2, 0x2, 0x2, 0x223, 0x226, 0x3, 0x2, 0x2, 0x2, 0x224, 
+    0x222, 0x3, 0x2, 0x2, 0x2, 0x224, 0x225, 0x3, 0x2, 0x2, 0x2, 0x225, 
+    0x227, 0x3, 0x2, 0x2, 0x2, 0x226, 0x224, 0x3, 0x2, 0x2, 0x2, 0x227, 
+    0x22b, 0x7, 0x54, 0x2, 0x2, 0x228, 0x22a, 0x7, 0x5e, 0x2, 0x2, 0x229, 
+    0x228, 0x3, 0x2, 0x2, 0x2, 0x22a, 0x22d, 0x3, 0x2, 0x2, 0x2, 0x22b, 
+    0x229, 0x3, 0x2, 0x2, 0x2, 0x22b, 0x22c, 0x3, 0x2, 0x2, 0x2, 0x22c, 
+    0x22e, 0x3, 0x2, 0x2, 0x2, 0x22d, 0x22b, 0x3, 0x2, 0x2, 0x2, 0x22e, 
+    0x232, 0x7, 0x8b, 0x2, 0x2, 0x22f, 0x231, 0x7, 0x5e, 0x2, 0x2, 0x230, 
+    0x22f, 0x3, 0x2, 0x2, 0x2, 0x231, 0x234, 0x3, 0x2, 0x2, 0x2, 0x232, 
+    0x230, 0x3, 0x2, 0x2, 0x2, 0x232, 0x233, 0x3, 0x2, 0x2, 0x2, 0x233, 
+    0x235, 0x3, 0x2, 0x2, 0x2, 0x234, 0x232, 0x3, 0x2, 0x2, 0x2, 0x235, 
+    0x237, 0x5, 0x4a, 0x26, 0x2, 0x236, 0x238, 0x7, 0x54, 0x2, 0x2, 0x237, 
+    0x236, 0x3, 0x2, 0x2, 0x2, 0x237, 0x238, 0x3, 0x2, 0x2, 0x2, 0x238, 
+    0x244, 0x3, 0x2, 0x2, 0x2, 0x239, 0x23d, 0x7, 0x8b, 0x2, 0x2, 0x23a, 
+    0x23c, 0x7, 0x5e, 0x2, 0x2, 0x23b, 0x23a, 0x3, 0x2, 0x2, 0x2, 0x23c, 
+    0x23f, 0x3, 0x2, 0x2, 0x2, 0x23d, 0x23b, 0x3, 0x2, 0x2, 0x2, 0x23d, 
+    0x23e, 0x3, 0x2, 0x2, 0x2, 0x23e, 0x240, 0x3, 0x2, 0x2, 0x2, 0x23f, 
+    0x23d, 0x3, 0x2, 0x2, 0x2, 0x240, 0x241, 0x5, 0x4a, 0x26, 0x2, 0x241, 
+    0x242, 0x7, 0x54, 0x2, 0x2, 0x242, 0x244, 0x3, 0x2, 0x2, 0x2, 0x243, 
+    0x220, 0x3, 0x2, 0x2, 0x2, 0x243, 0x239, 0x3, 0x2, 0x2, 0x2, 0x244, 
+    0x23, 0x3, 0x2, 0x2, 0x2, 0x245, 0x248, 0x5, 0x50, 0x29, 0x2, 0x246, 
+    0x248, 0x5, 0x26, 0x14, 0x2, 0x247, 0x245, 0x3, 0x2, 0x2, 0x2, 0x247, 
+    0x246, 0x3, 0x2, 0x2, 0x2, 0x248, 0x25, 0x3, 0x2, 0x2, 0x2, 0x249, 0x24a, 
+    0x5, 0x50, 0x29, 0x2, 0x24a, 0x24d, 0x7, 0x8f, 0x2, 0x2, 0x24b, 0x24e, 
+    0x5, 0x50, 0x29, 0x2, 0x24c, 0x24e, 0x5, 0x42, 0x22, 0x2, 0x24d, 0x24b, 
+    0x3, 0x2, 0x2, 0x2, 0x24d, 0x24c, 0x3, 0x2, 0x2, 0x2, 0x24e, 0x24f, 
+    0x3, 0x2, 0x2, 0x2, 0x24f, 0x24d, 0x3, 0x2, 0x2, 0x2, 0x24f, 0x250, 
+    0x3, 0x2, 0x2, 0x2, 0x250, 0x251, 0x3, 0x2, 0x2, 0x2, 0x251, 0x252, 
+    0x7, 0x8e, 0x2, 0x2, 0x252, 0x27, 0x3, 0x2, 0x2, 0x2, 0x253, 0x257, 
+    0x7, 0xe, 0x2, 0x2, 0x254, 0x256, 0x7, 0x5e, 0x2, 0x2, 0x255, 0x254, 
+    0x3, 0x2, 0x2, 0x2, 0x256, 0x259, 0x3, 0x2, 0x2, 0x2, 0x257, 0x255, 
+    0x3, 0x2, 0x2, 0x2, 0x257, 0x258, 0x3, 0x2, 0x2, 0x2, 0x258, 0x25a, 
+    0x3, 0x2, 0x2, 0x2, 0x259, 0x257, 0x3, 0x2, 0x2, 0x2, 0x25a, 0x25e, 
+    0x7, 0x8b, 0x2, 0x2, 0x25b, 0x25d, 0x7, 0x5e, 0x2, 0x2, 0x25c, 0x25b, 
+    0x3, 0x2, 0x2, 0x2, 0x25d, 0x260, 0x3, 0x2, 0x2, 0x2, 0x25e, 0x25c, 
+    0x3, 0x2, 0x2, 0x2, 0x25e, 0x25f, 0x3, 0x2, 0x2, 0x2, 0x25f, 0x261, 
+    0x3, 0x2, 0x2, 0x2, 0x260, 0x25e, 0x3, 0x2, 0x2, 0x2, 0x261, 0x265, 
+    0x5, 0x50, 0x29, 0x2, 0x262, 0x264, 0x7, 0x5e, 0x2, 0x2, 0x263, 0x262, 
+    0x3, 0x2, 0x2, 0x2, 0x264, 0x267, 0x3, 0x2, 0x2, 0x2, 0x265, 0x263, 
+    0x3, 0x2, 0x2, 0x2, 0x265, 0x266, 0x3, 0x2, 0x2, 0x2, 0x266, 0x268, 
+    0x3, 0x2, 0x2, 0x2, 0x267, 0x265, 0x3, 0x2, 0x2, 0x2, 0x268, 0x269, 
+    0x7, 0x98, 0x2, 0x2, 0x269, 0x29, 0x3, 0x2, 0x2, 0x2, 0x26a, 0x26b, 
+    0x7, 0xa, 0x2, 0x2, 0x26b, 0x26c, 0x5, 0x30, 0x19, 0x2, 0x26c, 0x26d, 
+    0x7, 0x98, 0x2, 0x2, 0x26d, 0x2b, 0x3, 0x2, 0x2, 0x2, 0x26e, 0x26f, 
+    0x7, 0xf, 0x2, 0x2, 0x26f, 0x270, 0x5, 0x2e, 0x18, 0x2, 0x270, 0x271, 
+    0x7, 0x98, 0x2, 0x2, 0x271, 0x2d, 0x3, 0x2, 0x2, 0x2, 0x272, 0x274, 
+    0x5, 0x30, 0x19, 0x2, 0x273, 0x272, 0x3, 0x2, 0x2, 0x2, 0x273, 0x274, 
+    0x3, 0x2, 0x2, 0x2, 0x274, 0x275, 0x3, 0x2, 0x2, 0x2, 0x275, 0x277, 
+    0x7, 0x9a, 0x2, 0x2, 0x276, 0x273, 0x3, 0x2, 0x2, 0x2, 0x276, 0x277, 
+    0x3, 0x2, 0x2, 0x2, 0x277, 0x288, 0x3, 0x2, 0x2, 0x2, 0x278, 0x289, 
+    0x7, 0x78, 0x2, 0x2, 0x279, 0x285, 0x7, 0xa0, 0x2, 0x2, 0x27a, 0x27f, 
+    0x5, 0x2e, 0x18, 0x2, 0x27b, 0x27c, 0x7, 0x97, 0x2, 0x2, 0x27c, 0x27e, 
+    0x5, 0x2e, 0x18, 0x2, 0x27d, 0x27b, 0x3, 0x2, 0x2, 0x2, 0x27e, 0x281, 
+    0x3, 0x2, 0x2, 0x2, 0x27f, 0x27d, 0x3, 0x2, 0x2, 0x2, 0x27f, 0x280, 
+    0x3, 0x2, 0x2, 0x2, 0x280, 0x283, 0x3, 0x2, 0x2, 0x2, 0x281, 0x27f, 
+    0x3, 0x2, 0x2, 0x2, 0x282, 0x284, 0x7, 0x97, 0x2, 0x2, 0x283, 0x282, 
+    0x3, 0x2, 0x2, 0x2, 0x283, 0x284, 0x3, 0x2, 0x2, 0x2, 0x284, 0x286, 
+    0x3, 0x2, 0x2, 0x2, 0x285, 0x27a, 0x3, 0x2, 0x2, 0x2, 0x285, 0x286, 
+    0x3, 0x2, 0x2, 0x2, 0x286, 0x287, 0x3, 0x2, 0x2, 0x2, 0x287, 0x289, 
+    0x7, 0xa1, 0x2, 0x2, 0x288, 0x278, 0x3, 0x2, 0x2, 0x2, 0x288, 0x279, 
+    0x3, 0x2, 0x2, 0x2, 0x289, 0x290, 0x3, 0x2, 0x2, 0x2, 0x28a, 0x28d, 
+    0x5, 0x30, 0x19, 0x2, 0x28b, 0x28c, 0x7, 0x4, 0x2, 0x2, 0x28c, 0x28e, 
+    0x5, 0x50, 0x29, 0x2, 0x28d, 0x28b, 0x3, 0x2, 0x2, 0x2, 0x28d, 0x28e, 
+    0x3, 0x2, 0x2, 0x2, 0x28e, 0x290, 0x3, 0x2, 0x2, 0x2, 0x28f, 0x276, 
+    0x3, 0x2, 0x2, 0x2, 0x28f, 0x28a, 0x3, 0x2, 0x2, 0x2, 0x290, 0x2f, 0x3, 
+    0x2, 0x2, 0x2, 0x291, 0x293, 0x7, 0x9a, 0x2, 0x2, 0x292, 0x291, 0x3, 
+    0x2, 0x2, 0x2, 0x292, 0x293, 0x3, 0x2, 0x2, 0x2, 0x293, 0x294, 0x3, 
+    0x2, 0x2, 0x2, 0x294, 0x299, 0x5, 0x50, 0x29, 0x2, 0x295, 0x296, 0x7, 
+    0x9a, 0x2, 0x2, 0x296, 0x298, 0x5, 0x50, 0x29, 0x2, 0x297, 0x295, 0x3, 
+    0x2, 0x2, 0x2, 0x298, 0x29b, 0x3, 0x2, 0x2, 0x2, 0x299, 0x297, 0x3, 
+    0x2, 0x2, 0x2, 0x299, 0x29a, 0x3, 0x2, 0x2, 0x2, 0x29a, 0x31, 0x3, 0x2, 
+    0x2, 0x2, 0x29b, 0x299, 0x3, 0x2, 0x2, 0x2, 0x29c, 0x29d, 0x9, 0x2, 
+    0x2, 0x2, 0x29d, 0x33, 0x3, 0x2, 0x2, 0x2, 0x29e, 0x29f, 0x7, 0x62, 
+    0x2, 0x2, 0x29f, 0x35, 0x3, 0x2, 0x2, 0x2, 0x2a0, 0x2a1, 0x7, 0x5f, 
+    0x2, 0x2, 0x2a1, 0x37, 0x3, 0x2, 0x2, 0x2, 0x2a2, 0x2a3, 0x7, 0x6d, 
+    0x2, 0x2, 0x2a3, 0x39, 0x3, 0x2, 0x2, 0x2, 0x2a4, 0x2a5, 0x7, 0x6d, 
+    0x2, 0x2, 0x2a5, 0x3b, 0x3, 0x2, 0x2, 0x2, 0x2a6, 0x2ae, 0x9, 0x3, 0x2, 
+    0x2, 0x2a7, 0x2a8, 0x7, 0x71, 0x2, 0x2, 0x2a8, 0x2ae, 0x9, 0x4, 0x2, 
+    0x2, 0x2a9, 0x2aa, 0x7, 0x72, 0x2, 0x2, 0x2aa, 0x2ae, 0x9, 0x5, 0x2, 
+    0x2, 0x2ab, 0x2ac, 0x7, 0x73, 0x2, 0x2, 0x2ac, 0x2ae, 0x9, 0x6, 0x2, 
+    0x2, 0x2ad, 0x2a6, 0x3, 0x2, 0x2, 0x2, 0x2ad, 0x2a7, 0x3, 0x2, 0x2, 
+    0x2, 0x2ad, 0x2a9, 0x3, 0x2, 0x2, 0x2, 0x2ad, 0x2ab, 0x3, 0x2, 0x2, 
+    0x2, 0x2ae, 0x3d, 0x3, 0x2, 0x2, 0x2, 0x2af, 0x2b7, 0x9, 0x3, 0x2, 0x2, 
+    0x2b0, 0x2b1, 0x7, 0x71, 0x2, 0x2, 0x2b1, 0x2b7, 0x9, 0x4, 0x2, 0x2, 
+    0x2b2, 0x2b3, 0x7, 0x72, 0x2, 0x2, 0x2b3, 0x2b7, 0x9, 0x5, 0x2, 0x2, 
+    0x2b4, 0x2b5, 0x7, 0x73, 0x2, 0x2, 0x2b5, 0x2b7, 0x9, 0x6, 0x2, 0x2, 
+    0x2b6, 0x2af, 0x3, 0x2, 0x2, 0x2, 0x2b6, 0x2b0, 0x3, 0x2, 0x2, 0x2, 
+    0x2b6, 0x2b2, 0x3, 0x2, 0x2, 0x2, 0x2b6, 0x2b4, 0x3, 0x2, 0x2, 0x2, 
+    0x2b7, 0x3f, 0x3, 0x2, 0x2, 0x2, 0x2b8, 0x2c0, 0x9, 0x3, 0x2, 0x2, 0x2b9, 
+    0x2ba, 0x7, 0x71, 0x2, 0x2, 0x2ba, 0x2c0, 0x9, 0x4, 0x2, 0x2, 0x2bb, 
+    0x2bc, 0x7, 0x72, 0x2, 0x2, 0x2bc, 0x2c0, 0x9, 0x5, 0x2, 0x2, 0x2bd, 
+    0x2be, 0x7, 0x73, 0x2, 0x2, 0x2be, 0x2c0, 0x9, 0x6, 0x2, 0x2, 0x2bf, 
+    0x2b8, 0x3, 0x2, 0x2, 0x2, 0x2bf, 0x2b9, 0x3, 0x2, 0x2, 0x2, 0x2bf, 
+    0x2bb, 0x3, 0x2, 0x2, 0x2, 0x2bf, 0x2bd, 0x3, 0x2, 0x2, 0x2, 0x2c0, 
+    0x41, 0x3, 0x2, 0x2, 0x2, 0x2c1, 0x2c9, 0x9, 0x3, 0x2, 0x2, 0x2c2, 0x2c3, 
+    0x7, 0x71, 0x2, 0x2, 0x2c3, 0x2c9, 0x9, 0x4, 0x2, 0x2, 0x2c4, 0x2c5, 
+    0x7, 0x72, 0x2, 0x2, 0x2c5, 0x2c9, 0x9, 0x5, 0x2, 0x2, 0x2c6, 0x2c7, 
+    0x7, 0x73, 0x2, 0x2, 0x2c7, 0x2c9, 0x9, 0x6, 0x2, 0x2, 0x2c8, 0x2c1, 
+    0x3, 0x2, 0x2, 0x2, 0x2c8, 0x2c2, 0x3, 0x2, 0x2, 0x2, 0x2c8, 0x2c4, 
+    0x3, 0x2, 0x2, 0x2, 0x2c8, 0x2c6, 0x3, 0x2, 0x2, 0x2, 0x2c9, 0x43, 0x3, 
+    0x2, 0x2, 0x2, 0x2ca, 0x2d2, 0x9, 0x3, 0x2, 0x2, 0x2cb, 0x2cc, 0x7, 
+    0x71, 0x2, 0x2, 0x2cc, 0x2d2, 0x9, 0x4, 0x2, 0x2, 0x2cd, 0x2ce, 0x7, 
+    0x72, 0x2, 0x2, 0x2ce, 0x2d2, 0x9, 0x5, 0x2, 0x2, 0x2cf, 0x2d0, 0x7, 
+    0x73, 0x2, 0x2, 0x2d0, 0x2d2, 0x9, 0x6, 0x2, 0x2, 0x2d1, 0x2ca, 0x3, 
+    0x2, 0x2, 0x2, 0x2d1, 0x2cb, 0x3, 0x2, 0x2, 0x2, 0x2d1, 0x2cd, 0x3, 
+    0x2, 0x2, 0x2, 0x2d1, 0x2cf, 0x3, 0x2, 0x2, 0x2, 0x2d2, 0x45, 0x3, 0x2, 
+    0x2, 0x2, 0x2d3, 0x2db, 0x9, 0x3, 0x2, 0x2, 0x2d4, 0x2d5, 0x7, 0x71, 
+    0x2, 0x2, 0x2d5, 0x2db, 0x9, 0x4, 0x2, 0x2, 0x2d6, 0x2d7, 0x7, 0x72, 
+    0x2, 0x2, 0x2d7, 0x2db, 0x9, 0x5, 0x2, 0x2, 0x2d8, 0x2d9, 0x7, 0x73, 
+    0x2, 0x2, 0x2d9, 0x2db, 0x9, 0x6, 0x2, 0x2, 0x2da, 0x2d3, 0x3, 0x2, 
+    0x2, 0x2, 0x2da, 0x2d4, 0x3, 0x2, 0x2, 0x2, 0x2da, 0x2d6, 0x3, 0x2, 
+    0x2, 0x2, 0x2da, 0x2d8, 0x3, 0x2, 0x2, 0x2, 0x2db, 0x47, 0x3, 0x2, 0x2, 
+    0x2, 0x2dc, 0x2e4, 0x9, 0x3, 0x2, 0x2, 0x2dd, 0x2de, 0x7, 0x71, 0x2, 
+    0x2, 0x2de, 0x2e4, 0x9, 0x4, 0x2, 0x2, 0x2df, 0x2e0, 0x7, 0x72, 0x2, 
+    0x2, 0x2e0, 0x2e4, 0x9, 0x5, 0x2, 0x2, 0x2e1, 0x2e2, 0x7, 0x73, 0x2, 
+    0x2, 0x2e2, 0x2e4, 0x9, 0x6, 0x2, 0x2, 0x2e3, 0x2dc, 0x3, 0x2, 0x2, 
+    0x2, 0x2e3, 0x2dd, 0x3, 0x2, 0x2, 0x2, 0x2e3, 0x2df, 0x3, 0x2, 0x2, 
+    0x2, 0x2e3, 0x2e1, 0x3, 0x2, 0x2, 0x2, 0x2e4, 0x2e5, 0x3, 0x2, 0x2, 
+    0x2, 0x2e5, 0x2e6, 0x8, 0x25, 0x1, 0x2, 0x2e6, 0x49, 0x3, 0x2, 0x2, 
+    0x2, 0x2e7, 0x2ef, 0x9, 0x3, 0x2, 0x2, 0x2e8, 0x2e9, 0x7, 0x71, 0x2, 
+    0x2, 0x2e9, 0x2ef, 0x9, 0x4, 0x2, 0x2, 0x2ea, 0x2eb, 0x7, 0x72, 0x2, 
+    0x2, 0x2eb, 0x2ef, 0x9, 0x5, 0x2, 0x2, 0x2ec, 0x2ed, 0x7, 0x73, 0x2, 
+    0x2, 0x2ed, 0x2ef, 0x9, 0x6, 0x2, 0x2, 0x2ee, 0x2e7, 0x3, 0x2, 0x2, 
+    0x2, 0x2ee, 0x2e8, 0x3, 0x2, 0x2, 0x2, 0x2ee, 0x2ea, 0x3, 0x2, 0x2, 
+    0x2, 0x2ee, 0x2ec, 0x3, 0x2, 0x2, 0x2, 0x2ef, 0x2f0, 0x3, 0x2, 0x2, 
+    0x2, 0x2f0, 0x2f1, 0x8, 0x26, 0x1, 0x2, 0x2f1, 0x4b, 0x3, 0x2, 0x2, 
+    0x2, 0x2f2, 0x2f3, 0x9, 0x7, 0x2, 0x2, 0x2f3, 0x4d, 0x3, 0x2, 0x2, 0x2, 
+    0x2f4, 0x2f5, 0x9, 0x8, 0x2, 0x2, 0x2f5, 0x4f, 0x3, 0x2, 0x2, 0x2, 0x2f6, 
+    0x2fa, 0x7, 0x55, 0x2, 0x2, 0x2f7, 0x2f8, 0x7, 0x75, 0x2, 0x2, 0x2f8, 
+    0x2fa, 0x7, 0x55, 0x2, 0x2, 0x2f9, 0x2f6, 0x3, 0x2, 0x2, 0x2, 0x2f9, 
+    0x2f7, 0x3, 0x2, 0x2, 0x2, 0x2fa, 0x51, 0x3, 0x2, 0x2, 0x2, 0x2fb, 0x2fc, 
+    0x9, 0x9, 0x2, 0x2, 0x2fc, 0x53, 0x3, 0x2, 0x2, 0x2, 0x64, 0x58, 0x5c, 
+    0x61, 0x67, 0x6d, 0x73, 0x79, 0x84, 0x8b, 0xb8, 0xbe, 0xc2, 0xc7, 0xce, 
+    0xd7, 0xdb, 0xe0, 0xe7, 0xf0, 0xf7, 0x100, 0x107, 0x110, 0x117, 0x120, 
+    0x127, 0x12e, 0x133, 0x139, 0x13f, 0x145, 0x14c, 0x153, 0x158, 0x15e, 
+    0x164, 0x16a, 0x171, 0x178, 0x17d, 0x183, 0x189, 0x18f, 0x196, 0x19d, 
+    0x1a2, 0x1a8, 0x1ae, 0x1b4, 0x1bb, 0x1c2, 0x1c7, 0x1cd, 0x1d3, 0x1d9, 
+    0x1e0, 0x1e7, 0x1ec, 0x1f2, 0x1f8, 0x1fe, 0x205, 0x20c, 0x211, 0x217, 
+    0x21c, 0x21e, 0x224, 0x22b, 0x232, 0x237, 0x23d, 0x243, 0x247, 0x24d, 
+    0x24f, 0x257, 0x25e, 0x265, 0x273, 0x276, 0x27f, 0x283, 0x285, 0x288, 
+    0x28d, 0x28f, 0x292, 0x299, 0x2ad, 0x2b6, 0x2bf, 0x2c8, 0x2d1, 0x2da, 
+    0x2e3, 0x2ee, 0x2f9, 
   };
 
   atn::ATNDeserializer deserializer;
