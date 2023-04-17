@@ -53,10 +53,17 @@ primitiveFragment
 boolFragment: (COLON WS* KW_BOOL)? WS* EQ WS* literal = boolLiteral;
 charFragment: (COLON WS* KW_CHAR)? WS* EQ WS* literal = charLiteral;
 
-stringFragment: KW_STRING WS* EQ WS* literal = stringLiteral;
-f32Fragment: KW_F32 WS* EQ WS* literal = f32Literal;
-f64Fragment: KW_F64 WS* EQ WS* literal = f64Literal;
+stringFragment:
+	(COLON WS* KW_STRING)? WS* EQ WS* literal = stringLiteral;
 
+f32Fragment: (
+		COLON WS* KW_F32 WS* EQ WS* literal = f32Literal 'f32'?
+	)
+	| (EQ WS* literal = f32Literal 'f32'?);
+f64Fragment: (
+		COLON WS* KW_F64 WS* EQ WS* literal = f64Literal 'f64'?
+	)
+	| (EQ WS* literal = f64Literal 'f64');
 u8Fragment: (
 		COLON WS* KW_U8 WS* EQ WS* literal = u8Literal 'u8'?
 	)
@@ -130,89 +137,78 @@ boolLiteral
 			$maybe_val = true;
 		} else {
 			throw InputMismatchException(this);
-		}	
+		}
 		// End from boolLiteral grammar.
   }: KW_TRUE | KW_FALSE;
-byteLiteral
-	returns[std::optional<uint8_t> maybe_val]: BYTE_LITERAL;
 charLiteral
-	returns[std::optional<char32_t> maybe_val]: CHAR_LITERAL;
+	returns[std::optional<char32_t> maybe_val]:
+	CHAR_LITERAL {
+		$maybe_val = GetCharValue(this, $ctx);
+  };
 f32Literal
-	returns[std::optional<float> maybe_val]: FLOAT_LITERAL;
+	returns[std::optional<float> maybe_val]:
+	FLOAT_LITERAL {
+		$maybe_val = GetFloatValue<float>(this, $ctx);
+  };
 f64Literal
-	returns[std::optional<double> maybe_val]: FLOAT_LITERAL;
+	returns[std::optional<double> maybe_val]:
+	FLOAT_LITERAL {
+		$maybe_val = GetFloatValue<double>(this, $ctx);
+  };
 u8Literal
-	returns[std::optional<uint8_t> maybe_val]
-	@after {
+	returns[std::optional<uint8_t> maybe_val]: (
+		(DEC_DIGITS | DEC_DIGITS_UNDERSCORE)
+		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
+		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
+		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
+	) {
 		$maybe_val = GetIntValue<uint8_t>(this, $ctx);
-  }: (
-		(
-			(DEC_DIGITS | DEC_DIGITS_UNDERSCORE)
-			| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-			| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-			| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-		)
-	);
+  };
 u16Literal
-	returns[std::optional<uint16_t> maybe_val]
-	@after {
+	returns[std::optional<uint16_t> maybe_val]: (
+		(DEC_DIGITS | DEC_DIGITS_UNDERSCORE)
+		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
+		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
+		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
+	) {
 		$maybe_val = GetIntValue<uint16_t>(this, $ctx);
-  }: (
-		(
-			(DEC_DIGITS | DEC_DIGITS_UNDERSCORE)
-			| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-			| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-			| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-		)
-	);
+  };
 u32Literal
-	returns[std::optional<uint32_t> maybe_val]
-	@after {
+	returns[std::optional<uint32_t> maybe_val]: (
+		(DEC_DIGITS | DEC_DIGITS_UNDERSCORE)
+		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
+		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
+		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
+	) {
 		$maybe_val = GetIntValue<uint32_t>(this, $ctx);
-  }: (
-		(
-			(DEC_DIGITS | DEC_DIGITS_UNDERSCORE)
-			| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-			| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-			| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-		)
-	);
+  };
 u64Literal
-	returns[std::optional<uint64_t> maybe_val]
-	@after {
+	returns[std::optional<uint64_t> maybe_val]: (
+		(DEC_DIGITS | DEC_DIGITS_UNDERSCORE)
+		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
+		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
+		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
+	) {
 		$maybe_val = GetIntValue<uint64_t>(this, $ctx);
-  }: (
-		(
-			(DEC_DIGITS | DEC_DIGITS_UNDERSCORE)
-			| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-			| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-			| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-		)
-	);
+  };
 i8Literal
-	returns[std::optional<int8_t> maybe_val]
-	@after {
+	returns[std::optional<int8_t> maybe_val]: (
+		(DEC_DIGITS | DEC_DIGITS_UNDERSCORE)
+		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
+		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
+		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
+	) {
 		$maybe_val = GetIntValue<int8_t>(this, $ctx);
-  }: (
-		(
-			(DEC_DIGITS | DEC_DIGITS_UNDERSCORE)
-			| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-			| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-			| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-		)
-	);
+  };
 i16Literal
-	returns[std::optional<int16_t> maybe_val]
-	@after {
+	returns[std::optional<int16_t> maybe_val]: (
+		(DEC_DIGITS | DEC_DIGITS_UNDERSCORE)
+		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
+		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
+		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
+	) {
 		$maybe_val = GetIntValue<int16_t>(this, $ctx);
-  }: (
-		(
-			(DEC_DIGITS | DEC_DIGITS_UNDERSCORE)
-			| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-			| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-			| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-		)
-	);
+  };
 i32Literal
 	returns[std::optional<int32_t> maybe_val]:
 	(
@@ -236,12 +232,12 @@ i64Literal
 
 stringLiteral
 	returns[std::optional<std::string> maybe_val]:
-	STRING_LITERAL
-	| RAW_STRING_LITERAL;
-byteStringLiteral
-	returns[std::optional<std::string> maybe_val]:
-	BYTE_STRING_LITERAL
-	| RAW_BYTE_STRING_LITERAL;
+	STRING_LITERAL {
+		$maybe_val = GetStringValue(this, $STRING_LITERAL);
+	}
+	| RAW_STRING_LITERAL {
+		$maybe_val = GetRawString(this, $RAW_STRING_LITERAL);
+	};
 
 identifier
 	returns[std::string id]
@@ -250,6 +246,7 @@ identifier
   }:
 	nki = NON_KEYWORD_IDENTIFIER
 	| RAW_ESCAPE nki = NON_KEYWORD_IDENTIFIER;
+
 keyword:
 	KW_AS
 	| KW_ENUM

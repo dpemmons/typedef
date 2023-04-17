@@ -97,9 +97,6 @@ public:
   virtual void enterBoolLiteral(TypedefParser::BoolLiteralContext *ctx) = 0;
   virtual void exitBoolLiteral(TypedefParser::BoolLiteralContext *ctx) = 0;
 
-  virtual void enterByteLiteral(TypedefParser::ByteLiteralContext *ctx) = 0;
-  virtual void exitByteLiteral(TypedefParser::ByteLiteralContext *ctx) = 0;
-
   virtual void enterCharLiteral(TypedefParser::CharLiteralContext *ctx) = 0;
   virtual void exitCharLiteral(TypedefParser::CharLiteralContext *ctx) = 0;
 
@@ -135,9 +132,6 @@ public:
 
   virtual void enterStringLiteral(TypedefParser::StringLiteralContext *ctx) = 0;
   virtual void exitStringLiteral(TypedefParser::StringLiteralContext *ctx) = 0;
-
-  virtual void enterByteStringLiteral(TypedefParser::ByteStringLiteralContext *ctx) = 0;
-  virtual void exitByteStringLiteral(TypedefParser::ByteStringLiteralContext *ctx) = 0;
 
   virtual void enterIdentifier(TypedefParser::IdentifierContext *ctx) = 0;
   virtual void exitIdentifier(TypedefParser::IdentifierContext *ctx) = 0;

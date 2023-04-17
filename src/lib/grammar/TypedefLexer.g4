@@ -108,7 +108,7 @@ KW_VOLATILE: 'volatile';
 // Built-in types
 KW_BOOL: 'bool';
 KW_CHAR: 'char';
-KW_STRING: 'string';
+KW_STRING: 'str';
 KW_F32: 'f32';
 KW_F64: 'f64';
 KW_U8: 'u8';
@@ -146,8 +146,6 @@ fragment UNICODE_OIDC:
 	| '\u1369' ..'\u1371'
 	| '\u19da';
 
-// RAW_IDENTIFIER: 'r#' NON_KEYWORD_IDENTIFIER;
-// comments https://doc.rust-lang.org/reference/comments.html
 LINE_COMMENT: ('//' (~[/!] | '//') ~[\r\n]* | '//') -> channel (HIDDEN);
 
 BLOCK_COMMENT:
@@ -184,8 +182,7 @@ SHEBANG:
 //ISOLATED_CR
 // : '\r' {_input.LA(1)!='\n'}// not followed with \n ;
 
-// whitespace https://doc.rust-lang.org/reference/whitespace.html
-// WS: [\p{Zs}] -> channel(HIDDEN);
+// whitespace https://doc.rust-lang.org/reference/whitespace.html WS: [\p{Zs}] -> channel(HIDDEN);
 // NEWLINE: ('\r\n' | [\r\n]) -> channel(HIDDEN);
 WS: [\p{Zs}] | ('\r\n' | [\r\n]);
 
@@ -213,12 +210,11 @@ fragment RAW_STRING_CONTENT:
 	'#' RAW_STRING_CONTENT '#'
 	| '"' .*? '"';
 
-BYTE_LITERAL: 'b\'' (. | QUOTE_ESCAPE | BYTE_ESCAPE) '\'';
-
-BYTE_STRING_LITERAL:
-	'b"' (~["] | QUOTE_ESCAPE | BYTE_ESCAPE)* '"';
-
-RAW_BYTE_STRING_LITERAL: 'br' RAW_STRING_CONTENT;
+// TODO(dpemmons) byte literals.
+// BYTE_LITERAL: 'b\'' (. | QUOTE_ESCAPE | BYTE_ESCAPE) '\'';
+// BYTE_STRING_LITERAL:
+// 	'b"' (~["] | QUOTE_ESCAPE | BYTE_ESCAPE)* '"';
+// RAW_BYTE_STRING_LITERAL: 'br' RAW_STRING_CONTENT;
 
 fragment ASCII_ESCAPE:
 	'\\x' OCT_DIGIT HEX_DIGIT
@@ -237,21 +233,10 @@ fragment ESC_NEWLINE: '\\' '\n';
 
 // number
 
-// INTEGER_LITERAL:
-// 	(DEC_LITERAL | BIN_LITERAL | OCT_LITERAL | HEX_LITERAL) INTEGER_SUFFIX?;
-
-// DEC_LITERAL: DEC_DIGIT (DEC_DIGIT | '_')*;
-
-// HEX_LITERAL: '0x' '_'* HEX_DIGIT (HEX_DIGIT | '_')*;
-
-// OCT_LITERAL: '0o' '_'* OCT_DIGIT (OCT_DIGIT | '_')*;
-
-// BIN_LITERAL: '0b' '_'* [01] [01_]*;
-
 DEC_DIGITS: DEC_DIGIT+;
 DEC_DIGITS_UNDERSCORE: DEC_DIGIT (DEC_DIGIT | '_')*;
 HEX_DIGITS: HEX_DIGIT+;
-HEX_DIGITS_UNDERSCORE:  '_'* HEX_DIGIT (HEX_DIGIT | '_')*;
+HEX_DIGITS_UNDERSCORE: '_'* HEX_DIGIT (HEX_DIGIT | '_')*;
 OCT_DIGITS: OCT_DIGIT+;
 OCT_DIGITS_UNDERSCORE: '_'* OCT_DIGIT (OCT_DIGIT | '_')*;
 BIN_DIGITS: [01]+;
@@ -259,13 +244,14 @@ BIN_DIGITS_UNDERSCORE: '_'* [01] [01_]*;
 
 FLOAT_LITERAL:
 	{this->floatLiteralPossible()}? (
-		DEC_DIGITS '.' {this->floatDotPossible()}?
-		| DEC_DIGITS ('.' DEC_DIGITS)? FLOAT_EXPONENT? FLOAT_SUFFIX?
+		(DEC_DIGITS | DEC_DIGITS_UNDERSCORE) '.' {this->floatDotPossible()}?
+		| (DEC_DIGITS | DEC_DIGITS_UNDERSCORE) (
+			'.' (DEC_DIGITS | DEC_DIGITS_UNDERSCORE)
+		)? FLOAT_EXPONENT?
 	);
 
-fragment FLOAT_SUFFIX: 'f32' | 'f64';
-
-fragment FLOAT_EXPONENT: [eE] [+-]? '_'* DEC_DIGITS;
+fragment FLOAT_EXPONENT:
+	[eE] [+-]? '_'* (DEC_DIGITS | DEC_DIGITS_UNDERSCORE);
 
 OCT_DIGIT: [0-7];
 DEC_DIGIT: [0-9];
@@ -273,10 +259,6 @@ HEX_DIGIT: [0-9a-fA-F];
 HEX_PREFIX: '0x';
 OCT_PREFIX: '0o';
 BIN_PREFIX: '0b';
-
-// LIFETIME_TOKEN: '\'' IDENTIFIER_OR_KEYWORD | '\'_';
-
-LIFETIME_OR_LABEL: '\'' NON_KEYWORD_IDENTIFIER;
 
 RAW_ESCAPE: 'r#';
 PLUS: '+';

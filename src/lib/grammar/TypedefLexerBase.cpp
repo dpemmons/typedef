@@ -56,9 +56,9 @@ bool TypedefLexerBase::floatLiteralPossible() {
     case TypedefLexer::CHAR_LITERAL:
     case TypedefLexer::STRING_LITERAL:
     case TypedefLexer::RAW_STRING_LITERAL:
-    case TypedefLexer::BYTE_LITERAL:
-    case TypedefLexer::BYTE_STRING_LITERAL:
-    case TypedefLexer::RAW_BYTE_STRING_LITERAL:
+    // case TypedefLexer::BYTE_LITERAL:
+    // case TypedefLexer::BYTE_STRING_LITERAL:
+    // case TypedefLexer::RAW_BYTE_STRING_LITERAL:
 
     case TypedefLexer::KW_SUPER:
     case TypedefLexer::KW_SELFVALUE:

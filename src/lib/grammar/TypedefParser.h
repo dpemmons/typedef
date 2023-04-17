@@ -39,20 +39,19 @@ public:
     LINE_COMMENT = 84, BLOCK_COMMENT = 85, INNER_LINE_DOC = 86, INNER_BLOCK_DOC = 87, 
     OUTER_LINE_DOC = 88, OUTER_BLOCK_DOC = 89, BLOCK_COMMENT_OR_DOC = 90, 
     SHEBANG = 91, WS = 92, CHAR_LITERAL = 93, STRING_LITERAL = 94, RAW_STRING_LITERAL = 95, 
-    BYTE_LITERAL = 96, BYTE_STRING_LITERAL = 97, RAW_BYTE_STRING_LITERAL = 98, 
-    DEC_DIGITS = 99, DEC_DIGITS_UNDERSCORE = 100, HEX_DIGITS = 101, HEX_DIGITS_UNDERSCORE = 102, 
-    OCT_DIGITS = 103, OCT_DIGITS_UNDERSCORE = 104, BIN_DIGITS = 105, BIN_DIGITS_UNDERSCORE = 106, 
-    FLOAT_LITERAL = 107, OCT_DIGIT = 108, DEC_DIGIT = 109, HEX_DIGIT = 110, 
-    HEX_PREFIX = 111, OCT_PREFIX = 112, BIN_PREFIX = 113, LIFETIME_OR_LABEL = 114, 
-    RAW_ESCAPE = 115, PLUS = 116, MINUS = 117, STAR = 118, SLASH = 119, 
-    PERCENT = 120, CARET = 121, NOT = 122, AND = 123, OR = 124, ANDAND = 125, 
-    OROR = 126, PLUSEQ = 127, MINUSEQ = 128, STAREQ = 129, SLASHEQ = 130, 
-    PERCENTEQ = 131, CARETEQ = 132, ANDEQ = 133, OREQ = 134, SHLEQ = 135, 
-    SHREQ = 136, EQ = 137, EQEQ = 138, NE = 139, GT = 140, LT = 141, GE = 142, 
-    LE = 143, AT = 144, UNDERSCORE = 145, DOT = 146, DOTDOT = 147, DOTDOTDOT = 148, 
-    COMMA = 149, SEMI = 150, COLON = 151, PATHSEP = 152, RARROW = 153, FATARROW = 154, 
-    POUND = 155, DOLLAR = 156, QUESTION = 157, LBRACE = 158, RBRACE = 159, 
-    LBRACK = 160, RBRACK = 161, LPAREN = 162, RPAREN = 163
+    DEC_DIGITS = 96, DEC_DIGITS_UNDERSCORE = 97, HEX_DIGITS = 98, HEX_DIGITS_UNDERSCORE = 99, 
+    OCT_DIGITS = 100, OCT_DIGITS_UNDERSCORE = 101, BIN_DIGITS = 102, BIN_DIGITS_UNDERSCORE = 103, 
+    FLOAT_LITERAL = 104, OCT_DIGIT = 105, DEC_DIGIT = 106, HEX_DIGIT = 107, 
+    HEX_PREFIX = 108, OCT_PREFIX = 109, BIN_PREFIX = 110, RAW_ESCAPE = 111, 
+    PLUS = 112, MINUS = 113, STAR = 114, SLASH = 115, PERCENT = 116, CARET = 117, 
+    NOT = 118, AND = 119, OR = 120, ANDAND = 121, OROR = 122, PLUSEQ = 123, 
+    MINUSEQ = 124, STAREQ = 125, SLASHEQ = 126, PERCENTEQ = 127, CARETEQ = 128, 
+    ANDEQ = 129, OREQ = 130, SHLEQ = 131, SHREQ = 132, EQ = 133, EQEQ = 134, 
+    NE = 135, GT = 136, LT = 137, GE = 138, LE = 139, AT = 140, UNDERSCORE = 141, 
+    DOT = 142, DOTDOT = 143, DOTDOTDOT = 144, COMMA = 145, SEMI = 146, COLON = 147, 
+    PATHSEP = 148, RARROW = 149, FATARROW = 150, POUND = 151, DOLLAR = 152, 
+    QUESTION = 153, LBRACE = 154, RBRACE = 155, LBRACK = 156, RBRACK = 157, 
+    LPAREN = 158, RPAREN = 159
   };
 
   enum {
@@ -62,11 +61,11 @@ public:
     RuleU32Fragment = 11, RuleU64Fragment = 12, RuleI8Fragment = 13, RuleI16Fragment = 14, 
     RuleI32Fragment = 15, RuleI64Fragment = 16, RuleType_ = 17, RuleParameterizedType = 18, 
     RuleTypedefVersionDeclaration = 19, RuleModuleDeclaration = 20, RuleUseDeclaration = 21, 
-    RuleUseTree = 22, RuleSimplePath = 23, RuleBoolLiteral = 24, RuleByteLiteral = 25, 
-    RuleCharLiteral = 26, RuleF32Literal = 27, RuleF64Literal = 28, RuleU8Literal = 29, 
-    RuleU16Literal = 30, RuleU32Literal = 31, RuleU64Literal = 32, RuleI8Literal = 33, 
-    RuleI16Literal = 34, RuleI32Literal = 35, RuleI64Literal = 36, RuleStringLiteral = 37, 
-    RuleByteStringLiteral = 38, RuleIdentifier = 39, RuleKeyword = 40
+    RuleUseTree = 22, RuleSimplePath = 23, RuleBoolLiteral = 24, RuleCharLiteral = 25, 
+    RuleF32Literal = 26, RuleF64Literal = 27, RuleU8Literal = 28, RuleU16Literal = 29, 
+    RuleU32Literal = 30, RuleU64Literal = 31, RuleI8Literal = 32, RuleI16Literal = 33, 
+    RuleI32Literal = 34, RuleI64Literal = 35, RuleStringLiteral = 36, RuleIdentifier = 37, 
+    RuleKeyword = 38
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -107,7 +106,6 @@ public:
   class UseTreeContext;
   class SimplePathContext;
   class BoolLiteralContext;
-  class ByteLiteralContext;
   class CharLiteralContext;
   class F32LiteralContext;
   class F64LiteralContext;
@@ -120,7 +118,6 @@ public:
   class I32LiteralContext;
   class I64LiteralContext;
   class StringLiteralContext;
-  class ByteStringLiteralContext;
   class IdentifierContext;
   class KeywordContext; 
 
@@ -271,9 +268,10 @@ public:
     TypedefParser::StringLiteralContext *literal = nullptr;;
     StringFragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *KW_STRING();
     antlr4::tree::TerminalNode *EQ();
     StringLiteralContext *stringLiteral();
+    antlr4::tree::TerminalNode *COLON();
+    antlr4::tree::TerminalNode *KW_STRING();
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
 
@@ -291,7 +289,9 @@ public:
     TypedefParser::F32LiteralContext *literal = nullptr;;
     F32FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *KW_F32();
+    antlr4::tree::TerminalNode *COLON();
+    std::vector<antlr4::tree::TerminalNode *> KW_F32();
+    antlr4::tree::TerminalNode* KW_F32(size_t i);
     antlr4::tree::TerminalNode *EQ();
     F32LiteralContext *f32Literal();
     std::vector<antlr4::tree::TerminalNode *> WS();
@@ -311,7 +311,9 @@ public:
     TypedefParser::F64LiteralContext *literal = nullptr;;
     F64FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *KW_F64();
+    antlr4::tree::TerminalNode *COLON();
+    std::vector<antlr4::tree::TerminalNode *> KW_F64();
+    antlr4::tree::TerminalNode* KW_F64(size_t i);
     antlr4::tree::TerminalNode *EQ();
     F64LiteralContext *f64Literal();
     std::vector<antlr4::tree::TerminalNode *> WS();
@@ -652,22 +654,6 @@ public:
 
   BoolLiteralContext* boolLiteral();
 
-  class  ByteLiteralContext : public antlr4::ParserRuleContext {
-  public:
-    std::optional<uint8_t> maybe_val;
-    ByteLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *BYTE_LITERAL();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  ByteLiteralContext* byteLiteral();
-
   class  CharLiteralContext : public antlr4::ParserRuleContext {
   public:
     std::optional<char32_t> maybe_val;
@@ -927,6 +913,8 @@ public:
   class  StringLiteralContext : public antlr4::ParserRuleContext {
   public:
     std::optional<std::string> maybe_val;
+    antlr4::Token *string_literalToken = nullptr;;
+    antlr4::Token *raw_string_literalToken = nullptr;;
     StringLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *STRING_LITERAL();
@@ -940,23 +928,6 @@ public:
   };
 
   StringLiteralContext* stringLiteral();
-
-  class  ByteStringLiteralContext : public antlr4::ParserRuleContext {
-  public:
-    std::optional<std::string> maybe_val;
-    ByteStringLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *BYTE_STRING_LITERAL();
-    antlr4::tree::TerminalNode *RAW_BYTE_STRING_LITERAL();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  ByteStringLiteralContext* byteStringLiteral();
 
   class  IdentifierContext : public antlr4::ParserRuleContext {
   public:

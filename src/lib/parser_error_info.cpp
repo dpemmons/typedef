@@ -178,12 +178,12 @@ const char *TokenToString(size_t token) {
       return "STRING_LITERAL";
     case TypedefParser::RAW_STRING_LITERAL:
       return "RAW_STRING_LITERAL";
-    case TypedefParser::BYTE_LITERAL:
-      return "BYTE_LITERAL";
-    case TypedefParser::BYTE_STRING_LITERAL:
-      return "BYTE_STRING_LITERAL";
-    case TypedefParser::RAW_BYTE_STRING_LITERAL:
-      return "RAW_BYTE_STRING_LITERAL";
+    // case TypedefParser::BYTE_LITERAL:
+    //   return "BYTE_LITERAL";
+    // case TypedefParser::BYTE_STRING_LITERAL:
+    //   return "BYTE_STRING_LITERAL";
+    // case TypedefParser::RAW_BYTE_STRING_LITERAL:
+    //   return "RAW_BYTE_STRING_LITERAL";
     // case TypedefParser::INTEGER_LITERAL:
     //   return "INTEGER_LITERAL";
     // case TypedefParser::DEC_LITERAL:
@@ -196,8 +196,8 @@ const char *TokenToString(size_t token) {
     //   return "BIN_LITERAL";
     case TypedefParser::FLOAT_LITERAL:
       return "FLOAT_LITERAL";
-    case TypedefParser::LIFETIME_OR_LABEL:
-      return "LIFETIME_OR_LABEL";
+    // case TypedefParser::LIFETIME_OR_LABEL:
+    //   return "LIFETIME_OR_LABEL";
     case TypedefParser::PLUS:
       return "PLUS";
     case TypedefParser::MINUS:

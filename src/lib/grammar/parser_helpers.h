@@ -17,58 +17,50 @@ class DuplicateSymbol : public antlr4::RecognitionException {
  public:
   DuplicateSymbol(antlr4::Parser *recognizer, antlr4::ParserRuleContext *ctx,
                   antlr4::Token *offendingToken)
-      : DuplicateSymbol(recognizer, recognizer->getTokenStream(), ctx,
-                        offendingToken) {}
-  DuplicateSymbol(antlr4::Parser *recognizer, antlr4::TokenStream *input,
-                  antlr4::ParserRuleContext *ctx, antlr4::Token *offendingToken)
-      : antlr4::RecognitionException("Duplicate symbol", recognizer, input, ctx,
+      : antlr4::RecognitionException("Duplicate symbol", recognizer,
+                                     recognizer->getTokenStream(), ctx,
                                      offendingToken) {}
   ~DuplicateSymbol() {}
-
- private:
 };
 
-class InvalidIntegerException : public antlr4::RecognitionException {
+class InvalidLiteralException : public antlr4::RecognitionException {
  public:
-  InvalidIntegerException(antlr4::Parser *recognizer)
-      : InvalidIntegerException(recognizer, recognizer->getTokenStream(),
-                                recognizer->getCurrentToken(),
-                                recognizer->getCurrentToken(), nullptr,
-                                recognizer->getContext(), false) {}
-  InvalidIntegerException(antlr4::Parser *recognizer,
-                          antlr4::TokenStream *input, antlr4::Token *startToken,
-                          antlr4::Token *offendingToken,
-                          antlr4::atn::ATNConfigSet *deadEndConfigs,
-                          antlr4::ParserRuleContext *ctx, bool deleteConfigs)
-      : antlr4::RecognitionException("Invalid integer", recognizer, input, ctx,
-                                     offendingToken),
-        _deadEndConfigs(deadEndConfigs),
-        _startToken(startToken),
-        _deleteConfigs(deleteConfigs) {}
-  ~InvalidIntegerException() {
-    if (_deleteConfigs) delete _deadEndConfigs;
-  }
-
-  virtual antlr4::Token *getStartToken() const { return _startToken; }
-  virtual antlr4::atn::ATNConfigSet *getDeadEndConfigs() const {
-    return _deadEndConfigs;
-  }
-
- private:
-  /// Which configurations did we try at input.index() that couldn't match
-  /// input.LT(1)?
-  antlr4::atn::ATNConfigSet *_deadEndConfigs;
-
-  // Flag that indicates if we own the dead end config set and have to delete it
-  // on destruction.
-  bool _deleteConfigs;
-
-  /// The token object at the start index; the input stream might
-  /// not be buffering tokens so get a reference to it. (At the
-  /// time the error occurred, of course the stream needs to keep a
-  /// buffer all of the tokens but later we might not have access to those.)
-  antlr4::Token *_startToken;
+  InvalidLiteralException(std::string msg, antlr4::Parser *recognizer)
+      : antlr4::RecognitionException(
+            std::move(msg), recognizer, recognizer->getTokenStream(),
+            recognizer->getContext(), recognizer->getCurrentToken()) {}
+  ~InvalidLiteralException() {}
 };
+
+template <typename T, class CTX>
+T GetFloatValue(TypedefParser *parser, CTX *ctx) {
+  std::string digits = ctx->FLOAT_LITERAL()->getText();
+  std::string underscored_digits;
+  T value;
+
+  std::string_view digits_view;
+
+  if (digits.find("_") != std::string_view::npos) {
+    underscored_digits.reserve(digits.size());
+    for (auto c : digits) {
+      if (c != '_') {
+        underscored_digits += c;
+      }
+    }
+    digits_view = underscored_digits;
+  } else {
+    digits_view = digits;
+  }
+
+  auto result = std::from_chars(digits_view.begin(), digits_view.end(), value);
+  bool ended_early = result.ptr != digits_view.end();
+
+  if (result.ec == std::errc() && !ended_early) {
+    return value;
+  } else {
+    throw InvalidLiteralException("Invalid floating point literal", parser);
+  }
+}
 
 template <typename T, class CTX>
 T GetIntValue(TypedefParser *parser, CTX *ctx) {
@@ -107,7 +99,8 @@ T GetIntValue(TypedefParser *parser, CTX *ctx) {
     base = 2;
     remove_underscores = true;
   } else {
-    throw antlr4::NoViableAltException(parser);
+    // Grammar shouldn't let us get here...
+    abort();
   }
 
   if (remove_underscores) {
@@ -126,6 +119,177 @@ T GetIntValue(TypedefParser *parser, CTX *ctx) {
   if (result.ec == std::errc() && !ended_early) {
     return value;
   } else {
-    throw InvalidIntegerException(parser);
+    throw InvalidLiteralException("Invalid integer literal", parser);
   }
+}
+
+template <class CTX>
+char32_t GetCharValue(TypedefParser *parser, CTX *ctx) {
+  std::string literal = ctx->CHAR_LITERAL()->getText();
+  if (literal.size() < 2 || literal.front() != '\'' || literal.back() != '\'') {
+    throw InvalidLiteralException("Invalid char literal", parser);
+  }
+
+  std::string_view inner = literal.substr(1, literal.size() - 2);
+
+  if (inner.size() == 2 && inner[0] == '\\') {
+    switch (inner[1]) {
+      case 'n':
+        return U'\n';
+      case 'r':
+        return U'\r';
+      case 't':
+        return U'\t';
+      case '\\':
+        return U'\\';
+      case '0':
+        return U'\0';
+      case '\'':
+        return U'\'';
+      case '\"':
+        return U'\"';
+    }
+  }
+
+  if (inner.size() == 4 && inner[0] == '\\' && inner[1] == 'x') {
+    // TODO this is very inefficient, do something better.
+    std::istringstream ss(std::string(inner.substr(2)));
+    int value;
+    ss >> std::hex >> value;
+    return static_cast<char32_t>(value);
+  }
+
+  if (inner.size() >= 3 && inner.size() <= 10 && inner[0] == '\\' &&
+      inner[1] == 'u' && inner[2] == '{' && inner.back() == '}') {
+    // TODO this is very inefficient, do something better.
+    std::istringstream ss(std::string(inner.substr(3, inner.size() - 4)));
+    int value;
+    ss >> std::hex >> value;
+    return static_cast<char32_t>(value);
+  }
+
+  if (inner.size() > 0) {
+    std::string inner_str(inner);
+    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+    std::u32string str32 = converter.from_bytes(inner_str);
+    if (str32.size() == 1) {
+      return str32[0];
+    }
+  }
+
+  throw InvalidLiteralException("Invalid char literal", parser);
+}
+
+template <typename T>
+std::string GetStringValue(TypedefParser *parser, T *token) {
+  std::string text = token->getText();
+  std::string_view literal(text);
+  if (literal.size() < 2) {
+    throw InvalidLiteralException("Invalid string literal", parser);
+  }
+  if (literal.front() == '"' && literal.back() == '"') {
+    literal.remove_prefix(1);
+    literal.remove_suffix(1);
+  } else {
+    throw InvalidLiteralException("Invalid string literal", parser);
+  }
+  std::ostringstream result;
+  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+  for (size_t i = 0; i < literal.size(); ++i) {
+    if (literal[i] == '\\') {
+      ++i;
+      switch (literal[i]) {
+        case 'n':
+          result << '\n';
+          break;
+        case 'r':
+          result << '\r';
+          break;
+        case 't':
+          result << '\t';
+          break;
+        case '\\':
+          result << '\\';
+          break;
+        case '0':
+          result << '\0';
+          break;
+        case '"':
+          result << '"';
+          break;
+        case '\'':
+          result << '\'';
+          break;
+        case 'x': {
+          if (i + 2 >= literal.size()) {
+            // TODO: we should probably make a useful error message for this.
+            // Invalid ASCII escape sequence
+            throw InvalidLiteralException("Invalid string literal", parser);
+          }
+          int hexValue = 0;
+          std::from_chars(literal.data() + i + 1, literal.data() + i + 3,
+                          hexValue, 16);
+          result << static_cast<char>(hexValue);
+          i += 2;
+          break;
+        }
+        case 'u': {
+          size_t start = i + 2;
+          if (start >= literal.size()) {
+            // TODO: we should probably make useful error messages for these.
+            // Invalid Unicode escape sequence.
+            throw InvalidLiteralException("Invalid string literal", parser);
+          }
+          size_t end = literal.find('}', start);
+          if (end == std::string_view::npos || end >= literal.size() ||
+              end - start > 6) {
+            // Invalid Unicode escape sequence.
+            throw InvalidLiteralException("Invalid string literal", parser);
+          }
+          uint32_t unicodeValue = 0;
+          auto [ptr, ec] = std::from_chars(
+              literal.data() + start, literal.data() + end, unicodeValue, 16);
+          if (ec != std::errc()) {
+            // Invalid Unicode escape sequence.
+            throw InvalidLiteralException("Invalid string literal", parser);
+          }
+          result << converter.to_bytes(static_cast<char32_t>(unicodeValue));
+          i = end;
+          break;
+        }
+      }
+    } else {
+      result << literal[i];
+    }
+  }
+  return result.str();
+}
+
+template <typename T>
+std::string GetRawString(TypedefParser *parser, T *token) {
+  std::string text = token->getText();
+  std::string_view literal(text);
+  if (literal.empty() || literal.front() != 'r') {
+    throw InvalidLiteralException("Invalid raw string literal", parser);
+  }
+
+  // Resize the string_view to skip the initial 'r'
+  literal.remove_prefix(1);
+
+  // Remove matching '#'s from the prefix and suffix
+  while (!literal.empty() && literal.front() == '#' && literal.back() == '#') {
+    literal.remove_prefix(1);
+    literal.remove_suffix(1);
+  }
+
+  // Check for matching '"'s and resize the string_view accordingly
+  if (literal.empty() || literal.front() != '"' || literal.back() != '"') {
+    throw InvalidLiteralException("Invalid raw string literal", parser);
+  }
+
+  literal.remove_prefix(1);
+  literal.remove_suffix(1);
+
+  // Create a new Str instance with the remaining raw string content
+  return std::string(literal);
 }
