@@ -27,24 +27,15 @@ compilationUnit:
 
 item:
 	maybeValuedSymbolDeclaration {
-		if ($maybeValuedSymbolDeclaration.ctx->maybeValuedSymbol()->maybe_field) {
-			if (!symbol_table.TryInsert(*$maybeValuedSymbol.ctx->maybe_field)) {
-				throw DuplicateSymbolException(this, $maybeValuedSymbol.ctx->identifier(), $maybeValuedSymbol.ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
-			}
-		}
+		InsertField(symbol_table, this, $maybeValuedSymbolDeclaration.ctx);
 }
 	| structDeclaration {
-		if ($structDeclaration.ctx->maybe_field) {
-			if (!symbol_table.TryInsert(*$structDeclaration.ctx->maybe_field)) {
-				throw DuplicateSymbolException(this, $structDeclaration.ctx->identifier(), $structDeclaration.ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
-			}
-		}
+		InsertField(symbol_table, this, $structDeclaration.ctx);
 };
 
 maybeValuedSymbolDeclaration: maybeValuedSymbol WS* SEMI;
 
-// TODO: move more of this code into helpers
-// TODO: symbol tables at each level.
+// TODO: move more of this code into helpers TODO: symbol tables at each level.
 structDeclaration
 	returns[
 		std::optional<td::SymbolTable::Field> maybe_field]:
@@ -107,8 +98,10 @@ valuedPrimitiveType
 		| valuedI32Fragment {$maybe_val = $valuedI32Fragment.ctx->literal->maybe_val;}
 		| valuedI64Fragment {$maybe_val = $valuedI64Fragment.ctx->literal->maybe_val;}
 	);
-valuedBoolFragment: (COLON WS* KW_BOOL)? WS* EQ WS* literal = boolLiteral;
-valuedCharFragment: (COLON WS* KW_CHAR)? WS* EQ WS* literal = charLiteral;
+valuedBoolFragment:
+	(COLON WS* KW_BOOL)? WS* EQ WS* literal = boolLiteral;
+valuedCharFragment:
+	(COLON WS* KW_CHAR)? WS* EQ WS* literal = charLiteral;
 
 valuedStringFragment:
 	(COLON WS* KW_STRING)? WS* EQ WS* literal = stringLiteral;

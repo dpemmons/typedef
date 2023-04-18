@@ -341,10 +341,10 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class ItemContext extends ParserRuleContext {
-		public MaybeValuedSymbolContext maybeValuedSymbol;
+		public MaybeValuedSymbolDeclarationContext maybeValuedSymbolDeclaration;
 		public StructDeclarationContext structDeclaration;
-		public MaybeValuedSymbolContext maybeValuedSymbol() {
-			return getRuleContext(MaybeValuedSymbolContext.class,0);
+		public MaybeValuedSymbolDeclarationContext maybeValuedSymbolDeclaration() {
+			return getRuleContext(MaybeValuedSymbolDeclarationContext.class,0);
 		}
 		public StructDeclarationContext structDeclaration() {
 			return getRuleContext(StructDeclarationContext.class,0);
@@ -366,13 +366,9 @@ public class TypedefParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(124);
-				((ItemContext)_localctx).maybeValuedSymbol = maybeValuedSymbol();
+				((ItemContext)_localctx).maybeValuedSymbolDeclaration = maybeValuedSymbolDeclaration();
 
-						if (((ItemContext)_localctx).maybeValuedSymbol->maybe_field) {
-							if (!symbol_table.TryInsert(*((ItemContext)_localctx).maybeValuedSymbol->maybe_field)) {
-								throw DuplicateSymbolException(this, ((ItemContext)_localctx).maybeValuedSymbol->identifier(), ((ItemContext)_localctx).maybeValuedSymbol->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
-							}
-						}
+						InsertField(symbol_table, this, ((ItemContext)_localctx).maybeValuedSymbolDeclaration);
 
 				}
 				break;
@@ -382,11 +378,7 @@ public class TypedefParser extends Parser {
 				setState(127);
 				((ItemContext)_localctx).structDeclaration = structDeclaration();
 
-						if (((ItemContext)_localctx).structDeclaration->maybe_field) {
-							if (!symbol_table.TryInsert(*((ItemContext)_localctx).structDeclaration->maybe_field)) {
-								throw DuplicateSymbolException(this, ((ItemContext)_localctx).structDeclaration->identifier(), ((ItemContext)_localctx).structDeclaration->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
-							}
-						}
+						InsertField(symbol_table, this, ((ItemContext)_localctx).structDeclaration);
 
 				}
 				break;
@@ -4477,7 +4469,7 @@ public class TypedefParser extends Parser {
 		"\2\2gh\3\2\2\2hs\3\2\2\2ig\3\2\2\2jl\7^\2\2kj\3\2\2\2lo\3\2\2\2mk\3\2"+
 		"\2\2mn\3\2\2\2np\3\2\2\2om\3\2\2\2pr\5\4\3\2qm\3\2\2\2ru\3\2\2\2sq\3\2"+
 		"\2\2st\3\2\2\2ty\3\2\2\2us\3\2\2\2vx\7^\2\2wv\3\2\2\2x{\3\2\2\2yw\3\2"+
-		"\2\2yz\3\2\2\2z|\3\2\2\2{y\3\2\2\2|}\7\2\2\3}\3\3\2\2\2~\177\5\n\6\2\177"+
+		"\2\2yz\3\2\2\2z|\3\2\2\2{y\3\2\2\2|}\7\2\2\3}\3\3\2\2\2~\177\5\6\4\2\177"+
 		"\u0080\b\3\1\2\u0080\u0085\3\2\2\2\u0081\u0082\5\b\5\2\u0082\u0083\b\3"+
 		"\1\2\u0083\u0085\3\2\2\2\u0084~\3\2\2\2\u0084\u0081\3\2\2\2\u0085\5\3"+
 		"\2\2\2\u0086\u008a\5\n\6\2\u0087\u0089\7^\2\2\u0088\u0087\3\2\2\2\u0089"+

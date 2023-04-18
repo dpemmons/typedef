@@ -215,8 +215,8 @@ TypedefParser::ItemContext::ItemContext(ParserRuleContext *parent, size_t invoki
   : ParserRuleContext(parent, invokingState) {
 }
 
-TypedefParser::MaybeValuedSymbolContext* TypedefParser::ItemContext::maybeValuedSymbol() {
-  return getRuleContext<TypedefParser::MaybeValuedSymbolContext>(0);
+TypedefParser::MaybeValuedSymbolDeclarationContext* TypedefParser::ItemContext::maybeValuedSymbolDeclaration() {
+  return getRuleContext<TypedefParser::MaybeValuedSymbolDeclarationContext>(0);
 }
 
 TypedefParser::StructDeclarationContext* TypedefParser::ItemContext::structDeclaration() {
@@ -262,13 +262,9 @@ TypedefParser::ItemContext* TypedefParser::item() {
     case 1: {
       enterOuterAlt(_localctx, 1);
       setState(124);
-      dynamic_cast<ItemContext *>(_localctx)->maybeValuedSymbolContext = maybeValuedSymbol();
+      dynamic_cast<ItemContext *>(_localctx)->maybeValuedSymbolDeclarationContext = maybeValuedSymbolDeclaration();
 
-      		if (dynamic_cast<ItemContext *>(_localctx)->maybeValuedSymbolContext->maybe_field) {
-      			if (!symbol_table.TryInsert(*dynamic_cast<ItemContext *>(_localctx)->maybeValuedSymbolContext->maybe_field)) {
-      				throw DuplicateSymbolException(this, dynamic_cast<ItemContext *>(_localctx)->maybeValuedSymbolContext->identifier(), dynamic_cast<ItemContext *>(_localctx)->maybeValuedSymbolContext->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
-      			}
-      		}
+      		InsertField(symbol_table, this, dynamic_cast<ItemContext *>(_localctx)->maybeValuedSymbolDeclarationContext);
 
       break;
     }
@@ -278,11 +274,7 @@ TypedefParser::ItemContext* TypedefParser::item() {
       setState(127);
       dynamic_cast<ItemContext *>(_localctx)->structDeclarationContext = structDeclaration();
 
-      		if (dynamic_cast<ItemContext *>(_localctx)->structDeclarationContext->maybe_field) {
-      			if (!symbol_table.TryInsert(*dynamic_cast<ItemContext *>(_localctx)->structDeclarationContext->maybe_field)) {
-      				throw DuplicateSymbolException(this, dynamic_cast<ItemContext *>(_localctx)->structDeclarationContext->identifier(), dynamic_cast<ItemContext *>(_localctx)->structDeclarationContext->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
-      			}
-      		}
+      		InsertField(symbol_table, this, dynamic_cast<ItemContext *>(_localctx)->structDeclarationContext);
 
       break;
     }
@@ -6079,7 +6071,7 @@ TypedefParser::Initializer::Initializer() {
     0x2, 0x2, 0x79, 0x77, 0x3, 0x2, 0x2, 0x2, 0x79, 0x7a, 0x3, 0x2, 0x2, 
     0x2, 0x7a, 0x7c, 0x3, 0x2, 0x2, 0x2, 0x7b, 0x79, 0x3, 0x2, 0x2, 0x2, 
     0x7c, 0x7d, 0x7, 0x2, 0x2, 0x3, 0x7d, 0x3, 0x3, 0x2, 0x2, 0x2, 0x7e, 
-    0x7f, 0x5, 0xa, 0x6, 0x2, 0x7f, 0x80, 0x8, 0x3, 0x1, 0x2, 0x80, 0x85, 
+    0x7f, 0x5, 0x6, 0x4, 0x2, 0x7f, 0x80, 0x8, 0x3, 0x1, 0x2, 0x80, 0x85, 
     0x3, 0x2, 0x2, 0x2, 0x81, 0x82, 0x5, 0x8, 0x5, 0x2, 0x82, 0x83, 0x8, 
     0x3, 0x1, 0x2, 0x83, 0x85, 0x3, 0x2, 0x2, 0x2, 0x84, 0x7e, 0x3, 0x2, 
     0x2, 0x2, 0x84, 0x81, 0x3, 0x2, 0x2, 0x2, 0x85, 0x5, 0x3, 0x2, 0x2, 

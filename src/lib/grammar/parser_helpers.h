@@ -2,6 +2,7 @@
 #define TYPEDEF_PARSER_HELPERS_
 
 #include <stdlib.h>
+
 #include <charconv>
 #include <optional>
 #include <string>
@@ -14,10 +15,10 @@
 #include "ParserRuleContext.h"
 #include "RecognitionException.h"
 #include "Token.h"
+#include "TokenStream.h"
 #include "TypedefParser.h"
 #include "atn/ATNConfigSet.h"
 #include "symbol_table.h"
-#include "TokenStream.h"
 
 class TypedefParser;
 namespace antlr4 {
@@ -145,5 +146,10 @@ std::string GetRawString(TypedefParser *parser, antlr4::Token *token);
 
 std::optional<td::SymbolTable::Field> MakeField(
     std::string &id, TypedefParser::Type_Context *type_);
+
+void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
+                 TypedefParser::MaybeValuedSymbolDeclarationContext *ctx);
+void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
+                 TypedefParser::StructDeclarationContext *ctx);
 
 #endif  // TYPEDEF_PARSER_HELPERS_

@@ -221,3 +221,27 @@ std::optional<td::SymbolTable::Field> MakeField(
   }
   return std::nullopt;
 }
+
+void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,
+                 TypedefParser::MaybeValuedSymbolDeclarationContext* ctx) {
+  if (ctx->maybeValuedSymbol()->maybe_field) {
+    if (!dstTable.TryInsert(*ctx->maybeValuedSymbol()->maybe_field)) {
+      throw DuplicateSymbolException(recognizer, ctx,
+                                     ctx->maybeValuedSymbol()
+                                         ->identifier()
+                                         ->NON_KEYWORD_IDENTIFIER()
+                                         ->getSymbol());
+    }
+  }
+}
+
+void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,
+                 TypedefParser::StructDeclarationContext* ctx) {
+  if (ctx->maybe_field) {
+    if (!dstTable.TryInsert(*ctx->maybe_field)) {
+      throw DuplicateSymbolException(
+          recognizer, ctx,
+          ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
+    }
+  }
+}

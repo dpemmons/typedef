@@ -145,11 +145,11 @@ public:
 
   class  ItemContext : public antlr4::ParserRuleContext {
   public:
-    TypedefParser::MaybeValuedSymbolContext *maybeValuedSymbolContext = nullptr;;
+    TypedefParser::MaybeValuedSymbolDeclarationContext *maybeValuedSymbolDeclarationContext = nullptr;;
     TypedefParser::StructDeclarationContext *structDeclarationContext = nullptr;;
     ItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    MaybeValuedSymbolContext *maybeValuedSymbol();
+    MaybeValuedSymbolDeclarationContext *maybeValuedSymbolDeclaration();
     StructDeclarationContext *structDeclaration();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
