@@ -1,9 +1,4 @@
 
-#include <cstdint>
-#include <memory>
-#include <optional>
-#include <string>
-#include "parser_helpers.h"
 #include "symbol_table.h"
 
 
@@ -27,6 +22,12 @@ public:
 
   virtual void enterItem(TypedefParser::ItemContext *ctx) = 0;
   virtual void exitItem(TypedefParser::ItemContext *ctx) = 0;
+
+  virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
+  virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
+
+  virtual void enterStructField(TypedefParser::StructFieldContext *ctx) = 0;
+  virtual void exitStructField(TypedefParser::StructFieldContext *ctx) = 0;
 
   virtual void enterValueDefinition(TypedefParser::ValueDefinitionContext *ctx) = 0;
   virtual void exitValueDefinition(TypedefParser::ValueDefinitionContext *ctx) = 0;
@@ -76,8 +77,8 @@ public:
   virtual void enterType_(TypedefParser::Type_Context *ctx) = 0;
   virtual void exitType_(TypedefParser::Type_Context *ctx) = 0;
 
-  virtual void enterParameterizedType(TypedefParser::ParameterizedTypeContext *ctx) = 0;
-  virtual void exitParameterizedType(TypedefParser::ParameterizedTypeContext *ctx) = 0;
+  virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
+  virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
 
   virtual void enterTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;
   virtual void exitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;

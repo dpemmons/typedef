@@ -1,9 +1,4 @@
 
-#include <cstdint>
-#include <memory>
-#include <optional>
-#include <string>
-#include "parser_helpers.h"
 #include "symbol_table.h"
 
 
@@ -28,6 +23,14 @@ public:
   }
 
   virtual antlrcpp::Any visitItem(TypedefParser::ItemContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitStructField(TypedefParser::StructFieldContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -95,7 +98,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitParameterizedType(TypedefParser::ParameterizedTypeContext *ctx) override {
+  virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) override {
     return visitChildren(ctx);
   }
 

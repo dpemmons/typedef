@@ -1,9 +1,4 @@
 
-#include <cstdint>
-#include <memory>
-#include <optional>
-#include <string>
-#include "parser_helpers.h"
 #include "symbol_table.h"
 
 
@@ -30,6 +25,10 @@ public:
     virtual antlrcpp::Any visitCompilationUnit(TypedefParser::CompilationUnitContext *context) = 0;
 
     virtual antlrcpp::Any visitItem(TypedefParser::ItemContext *context) = 0;
+
+    virtual antlrcpp::Any visitStructDeclaration(TypedefParser::StructDeclarationContext *context) = 0;
+
+    virtual antlrcpp::Any visitStructField(TypedefParser::StructFieldContext *context) = 0;
 
     virtual antlrcpp::Any visitValueDefinition(TypedefParser::ValueDefinitionContext *context) = 0;
 
@@ -63,7 +62,7 @@ public:
 
     virtual antlrcpp::Any visitType_(TypedefParser::Type_Context *context) = 0;
 
-    virtual antlrcpp::Any visitParameterizedType(TypedefParser::ParameterizedTypeContext *context) = 0;
+    virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *context) = 0;
 
     virtual antlrcpp::Any visitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *context) = 0;
 

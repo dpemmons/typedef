@@ -1,9 +1,4 @@
 
-#include <cstdint>
-#include <memory>
-#include <optional>
-#include <string>
-#include "parser_helpers.h"
 #include "symbol_table.h"
 
 
@@ -29,6 +24,12 @@ public:
 
   virtual void enterItem(TypedefParser::ItemContext * /*ctx*/) override { }
   virtual void exitItem(TypedefParser::ItemContext * /*ctx*/) override { }
+
+  virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
+  virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
+
+  virtual void enterStructField(TypedefParser::StructFieldContext * /*ctx*/) override { }
+  virtual void exitStructField(TypedefParser::StructFieldContext * /*ctx*/) override { }
 
   virtual void enterValueDefinition(TypedefParser::ValueDefinitionContext * /*ctx*/) override { }
   virtual void exitValueDefinition(TypedefParser::ValueDefinitionContext * /*ctx*/) override { }
@@ -78,8 +79,8 @@ public:
   virtual void enterType_(TypedefParser::Type_Context * /*ctx*/) override { }
   virtual void exitType_(TypedefParser::Type_Context * /*ctx*/) override { }
 
-  virtual void enterParameterizedType(TypedefParser::ParameterizedTypeContext * /*ctx*/) override { }
-  virtual void exitParameterizedType(TypedefParser::ParameterizedTypeContext * /*ctx*/) override { }
+  virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
+  virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
 
   virtual void enterTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext * /*ctx*/) override { }
   virtual void exitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext * /*ctx*/) override { }

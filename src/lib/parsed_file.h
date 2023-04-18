@@ -7,9 +7,7 @@
 #include "identifier.h"
 #include "language_version.h"
 #include "parser_error_info.h"
-#include "symbol.h"
 #include "symbol_table.h"
-#include "type.h"
 #include "use_declaration.h"
 
 namespace td {
@@ -30,8 +28,8 @@ class ParsedFile {
     return use_declarations_[i];
   }
 
-  size_t GetSymbols() const { return symbols_.size(); }
-  std::shared_ptr<Symbol> GetSymbol(size_t i) { return symbols_[i]; }
+  // size_t GetSymbols() const { return symbols_.size(); }
+  // std::shared_ptr<Symbol> GetSymbol(size_t i) { return symbols_[i]; }
 
   SymbolTable symbols2_;
 
@@ -42,7 +40,7 @@ class ParsedFile {
   LanguageVersion langauge_version_;
   std::optional<Identifier> module_;
   std::vector<std::shared_ptr<UseDeclaration>> use_declarations_;
-  std::vector<std::shared_ptr<Symbol>> symbols_;
+  // std::vector<std::shared_ptr<Symbol>> symbols_;
 };
 
 class ParsedFileBuilder {
@@ -61,10 +59,10 @@ class ParsedFileBuilder {
     file_.use_declarations_.emplace_back(std::move(use_declaration));
     return *this;
   }
-  ParsedFileBuilder& AddSymbol(std::unique_ptr<Symbol> value_definition) {
-    file_.symbols_.emplace_back(std::move(value_definition));
-    return *this;
-  }
+  // ParsedFileBuilder& AddSymbol(std::unique_ptr<Symbol> value_definition) {
+  //   file_.symbols_.emplace_back(std::move(value_definition));
+  //   return *this;
+  // }
   ParsedFileBuilder& AddError(ParserErrorInfo error) {
     file_.errors_.push_back(error);
     return *this;

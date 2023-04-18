@@ -5,12 +5,15 @@ options {
 }
 
 @header {
+#include "symbol_table.h"
+}
+
+@parser::definitions {
 #include <cstdint>
 #include <memory>
 #include <optional>
 #include <string>
 #include "parser_helpers.h"
-#include "symbol_table.h"
 }
 
 @parser::members {
@@ -22,18 +25,54 @@ compilationUnit:
 		WS* useDeclaration
 	)* (WS* item)* WS* EOF;
 
-item: valueDefinition;
-
-// ValA: i32 = 42;
-valueDefinition:
-	identifier WS* primitiveFragment WS* SEMI {
-	if ($primitiveFragment.ctx->maybe_val) {
-		if (!symbol_table.TryInsert($identifier.ctx->id, $primitiveFragment.ctx->maybe_val.value())) {
-			throw DuplicateSymbol(this, $identifier.ctx, $identifier.ctx->NON_KEYWORD_IDENTIFIER()->getSymbol());
+item:
+	valueDefinition {
+		if ($valueDefinition.ctx->maybe_field) {
+			if (!symbol_table.TryInsert(*$valueDefinition.ctx->maybe_field)) {
+				throw DuplicateSymbolException(this, $valueDefinition.ctx->identifier(), $valueDefinition.ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
+			}
 		}
-	}
+}
+	| structDeclaration {
+		if ($structDeclaration.ctx->maybe_field) {
+			if (!symbol_table.TryInsert(*$structDeclaration.ctx->maybe_field)) {
+				throw DuplicateSymbolException(this, $structDeclaration.ctx->identifier(), $structDeclaration.ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
+			}
+		}
 };
 
+structDeclaration
+	returns[
+		std::optional<td::SymbolTable::Field> maybe_field]:
+	(
+		identifier WS* COLON WS* KW_STRUCT WS* LBRACE WS* (
+			fields += structField
+		)* WS* RBRACE WS* SEMI
+	) {
+		auto s = std::make_shared<td::SymbolTable::Struct>();
+		for (auto field : $fields) {
+			if (field->maybe_field) {
+				s->table.insert(*field->maybe_field);
+			}
+		}
+		$maybe_field = std::make_pair($identifier.ctx->id, s);
+	};
+
+structField
+	returns[std::optional<td::SymbolTable::Field> maybe_field]:
+	identifier WS* COLON WS* type_ WS* SEMI {
+		$maybe_field = MakeStructField($identifier.ctx->id, $type_.ctx);
+};
+
+// ValA: i32 = 42;
+valueDefinition
+	returns[std::optional<td::SymbolTable::Field> maybe_field]:
+	identifier WS* primitiveFragment WS* SEMI {
+		$maybe_field = MakeValueField($identifier.ctx->id, $primitiveFragment.ctx);
+};
+
+// TODO(dpemmons) rename to valued type?
+// then type_ (used by struct) can be either primitiveType or valued(primitive?)Type
 primitiveFragment
 	returns[std::optional<td::SymbolTable::Value> maybe_val]: (
 		boolFragment {$maybe_val = $boolFragment.ctx->literal->maybe_val;}
@@ -97,10 +136,23 @@ i64Fragment: (
 	)
 	| (EQ WS* literal = i64Literal 'i64');
 
-type_: identifier | parameterizedType;
+type_: primitiveType;
+primitiveType:
+	KW_BOOL
+	| KW_CHAR
+	| KW_STRING
+	| KW_F32
+	| KW_F64
+	| KW_U8
+	| KW_U16
+	| KW_U32
+	| KW_U64
+	| KW_I8
+	| KW_I16
+	| KW_I32
+	| KW_I64;
 
-// thing < arg2, 42 >
-parameterizedType: identifier LT (identifier | u64Literal)+ GT;
+// thing < arg2, 42 > parameterizedType: identifier LT (identifier | u64Literal)+ GT;
 
 typedefVersionDeclaration:
 	KW_TYPEDEF WS* EQ WS* identifier WS* SEMI;
