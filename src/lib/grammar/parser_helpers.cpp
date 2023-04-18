@@ -1,12 +1,13 @@
 #include "parser_helpers.h"
 
 #include <stddef.h>
-#include <optional>
-#include <utility>
+
 #include <codecvt>
 #include <cstdint>
 #include <istream>
 #include <locale>
+#include <optional>
+#include <utility>
 #include <variant>
 
 #include "TerminalNode.h"
@@ -182,9 +183,14 @@ std::string GetRawString(TypedefParser* parser, antlr4::Token* token) {
   return std::string(literal);
 }
 
-std::optional<td::SymbolTable::Field> MakeStructField(
+std::optional<td::SymbolTable::Field> MakeField(
     std::string& id, TypedefParser::Type_Context* ctx) {
-  if (ctx->primitiveType()) {
+  if (ctx->valuedPrimitiveType()) {
+    if (ctx->valuedPrimitiveType()->maybe_val) {
+      return std::make_pair(id, ctx->valuedPrimitiveType()->maybe_val.value());
+    }
+    return std::nullopt;
+  } else if (ctx->primitiveType()) {
     if (ctx->primitiveType()->KW_BOOL()) {
       return std::make_pair(id, std::optional<bool>());
     } else if (ctx->primitiveType()->KW_CHAR()) {
@@ -214,11 +220,4 @@ std::optional<td::SymbolTable::Field> MakeStructField(
     }
   }
   return std::nullopt;
-}
-
-std::optional<td::SymbolTable::Field> MakeValueField(
-    std::string& id, TypedefParser::PrimitiveFragmentContext* fragment) {
-  if (fragment->maybe_val) {
-    return std::make_pair(id, fragment->maybe_val.value());
-  }
 }

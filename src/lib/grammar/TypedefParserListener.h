@@ -23,62 +23,62 @@ public:
   virtual void enterItem(TypedefParser::ItemContext *ctx) = 0;
   virtual void exitItem(TypedefParser::ItemContext *ctx) = 0;
 
+  virtual void enterMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext *ctx) = 0;
+  virtual void exitMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext *ctx) = 0;
+
   virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
   virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
 
-  virtual void enterStructField(TypedefParser::StructFieldContext *ctx) = 0;
-  virtual void exitStructField(TypedefParser::StructFieldContext *ctx) = 0;
-
-  virtual void enterValueDefinition(TypedefParser::ValueDefinitionContext *ctx) = 0;
-  virtual void exitValueDefinition(TypedefParser::ValueDefinitionContext *ctx) = 0;
-
-  virtual void enterPrimitiveFragment(TypedefParser::PrimitiveFragmentContext *ctx) = 0;
-  virtual void exitPrimitiveFragment(TypedefParser::PrimitiveFragmentContext *ctx) = 0;
-
-  virtual void enterBoolFragment(TypedefParser::BoolFragmentContext *ctx) = 0;
-  virtual void exitBoolFragment(TypedefParser::BoolFragmentContext *ctx) = 0;
-
-  virtual void enterCharFragment(TypedefParser::CharFragmentContext *ctx) = 0;
-  virtual void exitCharFragment(TypedefParser::CharFragmentContext *ctx) = 0;
-
-  virtual void enterStringFragment(TypedefParser::StringFragmentContext *ctx) = 0;
-  virtual void exitStringFragment(TypedefParser::StringFragmentContext *ctx) = 0;
-
-  virtual void enterF32Fragment(TypedefParser::F32FragmentContext *ctx) = 0;
-  virtual void exitF32Fragment(TypedefParser::F32FragmentContext *ctx) = 0;
-
-  virtual void enterF64Fragment(TypedefParser::F64FragmentContext *ctx) = 0;
-  virtual void exitF64Fragment(TypedefParser::F64FragmentContext *ctx) = 0;
-
-  virtual void enterU8Fragment(TypedefParser::U8FragmentContext *ctx) = 0;
-  virtual void exitU8Fragment(TypedefParser::U8FragmentContext *ctx) = 0;
-
-  virtual void enterU16Fragment(TypedefParser::U16FragmentContext *ctx) = 0;
-  virtual void exitU16Fragment(TypedefParser::U16FragmentContext *ctx) = 0;
-
-  virtual void enterU32Fragment(TypedefParser::U32FragmentContext *ctx) = 0;
-  virtual void exitU32Fragment(TypedefParser::U32FragmentContext *ctx) = 0;
-
-  virtual void enterU64Fragment(TypedefParser::U64FragmentContext *ctx) = 0;
-  virtual void exitU64Fragment(TypedefParser::U64FragmentContext *ctx) = 0;
-
-  virtual void enterI8Fragment(TypedefParser::I8FragmentContext *ctx) = 0;
-  virtual void exitI8Fragment(TypedefParser::I8FragmentContext *ctx) = 0;
-
-  virtual void enterI16Fragment(TypedefParser::I16FragmentContext *ctx) = 0;
-  virtual void exitI16Fragment(TypedefParser::I16FragmentContext *ctx) = 0;
-
-  virtual void enterI32Fragment(TypedefParser::I32FragmentContext *ctx) = 0;
-  virtual void exitI32Fragment(TypedefParser::I32FragmentContext *ctx) = 0;
-
-  virtual void enterI64Fragment(TypedefParser::I64FragmentContext *ctx) = 0;
-  virtual void exitI64Fragment(TypedefParser::I64FragmentContext *ctx) = 0;
+  virtual void enterMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext *ctx) = 0;
+  virtual void exitMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext *ctx) = 0;
 
   virtual void enterType_(TypedefParser::Type_Context *ctx) = 0;
   virtual void exitType_(TypedefParser::Type_Context *ctx) = 0;
 
   virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
   virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
+
+  virtual void enterValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext *ctx) = 0;
+  virtual void exitValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext *ctx) = 0;
+
+  virtual void enterValuedBoolFragment(TypedefParser::ValuedBoolFragmentContext *ctx) = 0;
+  virtual void exitValuedBoolFragment(TypedefParser::ValuedBoolFragmentContext *ctx) = 0;
+
+  virtual void enterValuedCharFragment(TypedefParser::ValuedCharFragmentContext *ctx) = 0;
+  virtual void exitValuedCharFragment(TypedefParser::ValuedCharFragmentContext *ctx) = 0;
+
+  virtual void enterValuedStringFragment(TypedefParser::ValuedStringFragmentContext *ctx) = 0;
+  virtual void exitValuedStringFragment(TypedefParser::ValuedStringFragmentContext *ctx) = 0;
+
+  virtual void enterValuedF32Fragment(TypedefParser::ValuedF32FragmentContext *ctx) = 0;
+  virtual void exitValuedF32Fragment(TypedefParser::ValuedF32FragmentContext *ctx) = 0;
+
+  virtual void enterValuedF64Fragment(TypedefParser::ValuedF64FragmentContext *ctx) = 0;
+  virtual void exitValuedF64Fragment(TypedefParser::ValuedF64FragmentContext *ctx) = 0;
+
+  virtual void enterValuedU8Fragment(TypedefParser::ValuedU8FragmentContext *ctx) = 0;
+  virtual void exitValuedU8Fragment(TypedefParser::ValuedU8FragmentContext *ctx) = 0;
+
+  virtual void enterValuedU16Fragment(TypedefParser::ValuedU16FragmentContext *ctx) = 0;
+  virtual void exitValuedU16Fragment(TypedefParser::ValuedU16FragmentContext *ctx) = 0;
+
+  virtual void enterValuedU32Fragment(TypedefParser::ValuedU32FragmentContext *ctx) = 0;
+  virtual void exitValuedU32Fragment(TypedefParser::ValuedU32FragmentContext *ctx) = 0;
+
+  virtual void enterValuedU64Fragment(TypedefParser::ValuedU64FragmentContext *ctx) = 0;
+  virtual void exitValuedU64Fragment(TypedefParser::ValuedU64FragmentContext *ctx) = 0;
+
+  virtual void enterValuedI8Fragment(TypedefParser::ValuedI8FragmentContext *ctx) = 0;
+  virtual void exitValuedI8Fragment(TypedefParser::ValuedI8FragmentContext *ctx) = 0;
+
+  virtual void enterValuedI16Fragment(TypedefParser::ValuedI16FragmentContext *ctx) = 0;
+  virtual void exitValuedI16Fragment(TypedefParser::ValuedI16FragmentContext *ctx) = 0;
+
+  virtual void enterValuedI32Fragment(TypedefParser::ValuedI32FragmentContext *ctx) = 0;
+  virtual void exitValuedI32Fragment(TypedefParser::ValuedI32FragmentContext *ctx) = 0;
+
+  virtual void enterValuedI64Fragment(TypedefParser::ValuedI64FragmentContext *ctx) = 0;
+  virtual void exitValuedI64Fragment(TypedefParser::ValuedI64FragmentContext *ctx) = 0;
 
   virtual void enterTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;
   virtual void exitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;

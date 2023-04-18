@@ -143,7 +143,7 @@ void PrintField(ostream& os, const SymbolTable::Field& f) {
               if (ptr) {
                 std::stringstream ss;
                 ss << *ptr;
-                fmt::print(os, "{} : struct {{ {} }}", kv.first, ss.str());
+                fmt::print(os, "{} : struct {{ {} }}\n", kv.first, ss.str());
               }
             }},
         kv.second);

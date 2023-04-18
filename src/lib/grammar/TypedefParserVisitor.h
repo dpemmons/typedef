@@ -26,43 +26,43 @@ public:
 
     virtual antlrcpp::Any visitItem(TypedefParser::ItemContext *context) = 0;
 
+    virtual antlrcpp::Any visitMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext *context) = 0;
+
     virtual antlrcpp::Any visitStructDeclaration(TypedefParser::StructDeclarationContext *context) = 0;
 
-    virtual antlrcpp::Any visitStructField(TypedefParser::StructFieldContext *context) = 0;
-
-    virtual antlrcpp::Any visitValueDefinition(TypedefParser::ValueDefinitionContext *context) = 0;
-
-    virtual antlrcpp::Any visitPrimitiveFragment(TypedefParser::PrimitiveFragmentContext *context) = 0;
-
-    virtual antlrcpp::Any visitBoolFragment(TypedefParser::BoolFragmentContext *context) = 0;
-
-    virtual antlrcpp::Any visitCharFragment(TypedefParser::CharFragmentContext *context) = 0;
-
-    virtual antlrcpp::Any visitStringFragment(TypedefParser::StringFragmentContext *context) = 0;
-
-    virtual antlrcpp::Any visitF32Fragment(TypedefParser::F32FragmentContext *context) = 0;
-
-    virtual antlrcpp::Any visitF64Fragment(TypedefParser::F64FragmentContext *context) = 0;
-
-    virtual antlrcpp::Any visitU8Fragment(TypedefParser::U8FragmentContext *context) = 0;
-
-    virtual antlrcpp::Any visitU16Fragment(TypedefParser::U16FragmentContext *context) = 0;
-
-    virtual antlrcpp::Any visitU32Fragment(TypedefParser::U32FragmentContext *context) = 0;
-
-    virtual antlrcpp::Any visitU64Fragment(TypedefParser::U64FragmentContext *context) = 0;
-
-    virtual antlrcpp::Any visitI8Fragment(TypedefParser::I8FragmentContext *context) = 0;
-
-    virtual antlrcpp::Any visitI16Fragment(TypedefParser::I16FragmentContext *context) = 0;
-
-    virtual antlrcpp::Any visitI32Fragment(TypedefParser::I32FragmentContext *context) = 0;
-
-    virtual antlrcpp::Any visitI64Fragment(TypedefParser::I64FragmentContext *context) = 0;
+    virtual antlrcpp::Any visitMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext *context) = 0;
 
     virtual antlrcpp::Any visitType_(TypedefParser::Type_Context *context) = 0;
 
     virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedBoolFragment(TypedefParser::ValuedBoolFragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedCharFragment(TypedefParser::ValuedCharFragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedStringFragment(TypedefParser::ValuedStringFragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedF32Fragment(TypedefParser::ValuedF32FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedF64Fragment(TypedefParser::ValuedF64FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedU8Fragment(TypedefParser::ValuedU8FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedU16Fragment(TypedefParser::ValuedU16FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedU32Fragment(TypedefParser::ValuedU32FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedU64Fragment(TypedefParser::ValuedU64FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedI8Fragment(TypedefParser::ValuedI8FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedI16Fragment(TypedefParser::ValuedI16FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedI32Fragment(TypedefParser::ValuedI32FragmentContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedI64Fragment(TypedefParser::ValuedI64FragmentContext *context) = 0;
 
     virtual antlrcpp::Any visitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *context) = 0;
 

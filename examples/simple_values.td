@@ -23,7 +23,7 @@ typedef=alpha;
 // val_f64 : f64 = 3.141592653589793;
 // val_f64_suffix = 3.141592653589793_f64;
 // 
-// val_f32_bare = 3.14;
+val_f32_bare = 3.14;
 // 
 // ValB : char = '\u{1F600}'; // Smiling Face with Smiling Eyes
 // ValC : char = '🔥';
@@ -39,7 +39,8 @@ typedef=alpha;
 // "#;
 
 Struct: struct {
-  sm : i32;
+  sm:i32;
+  sm2:i32;
 };
 
 //ValArr: array<i32, 3> = "";

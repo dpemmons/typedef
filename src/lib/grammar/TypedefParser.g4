@@ -26,10 +26,10 @@ compilationUnit:
 	)* (WS* item)* WS* EOF;
 
 item:
-	valueDefinition {
-		if ($valueDefinition.ctx->maybe_field) {
-			if (!symbol_table.TryInsert(*$valueDefinition.ctx->maybe_field)) {
-				throw DuplicateSymbolException(this, $valueDefinition.ctx->identifier(), $valueDefinition.ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
+	maybeValuedSymbolDeclaration {
+		if ($maybeValuedSymbolDeclaration.ctx->maybeValuedSymbol()->maybe_field) {
+			if (!symbol_table.TryInsert(*$maybeValuedSymbol.ctx->maybe_field)) {
+				throw DuplicateSymbolException(this, $maybeValuedSymbol.ctx->identifier(), $maybeValuedSymbol.ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
 			}
 		}
 }
@@ -41,13 +41,17 @@ item:
 		}
 };
 
+maybeValuedSymbolDeclaration: maybeValuedSymbol WS* SEMI;
+
+// TODO: move more of this code into helpers
+// TODO: symbol tables at each level.
 structDeclaration
 	returns[
 		std::optional<td::SymbolTable::Field> maybe_field]:
 	(
-		identifier WS* COLON WS* KW_STRUCT WS* LBRACE WS* (
-			fields += structField
-		)* WS* RBRACE WS* SEMI
+		identifier WS* COLON WS* KW_STRUCT WS* LBRACE (
+			WS* (fields += maybeValuedSymbol) WS* SEMI WS*
+		)* RBRACE WS* SEMI
 	) {
 		auto s = std::make_shared<td::SymbolTable::Struct>();
 		for (auto field : $fields) {
@@ -58,99 +62,97 @@ structDeclaration
 		$maybe_field = std::make_pair($identifier.ctx->id, s);
 	};
 
-structField
-	returns[std::optional<td::SymbolTable::Field> maybe_field]:
-	identifier WS* COLON WS* type_ WS* SEMI {
-		$maybe_field = MakeStructField($identifier.ctx->id, $type_.ctx);
-};
-
 // ValA: i32 = 42;
-valueDefinition
+maybeValuedSymbol
 	returns[std::optional<td::SymbolTable::Field> maybe_field]:
-	identifier WS* primitiveFragment WS* SEMI {
-		$maybe_field = MakeValueField($identifier.ctx->id, $primitiveFragment.ctx);
+	identifier WS* type_ WS* {
+		$maybe_field = MakeField($identifier.ctx->id, $type_.ctx);
 };
 
-// TODO(dpemmons) rename to valued type?
-// then type_ (used by struct) can be either primitiveType or valued(primitive?)Type
-primitiveFragment
-	returns[std::optional<td::SymbolTable::Value> maybe_val]: (
-		boolFragment {$maybe_val = $boolFragment.ctx->literal->maybe_val;}
-		| charFragment {$maybe_val = $charFragment.ctx->literal->maybe_val;}
-		| stringFragment {$maybe_val = $stringFragment.ctx->literal->maybe_val;}
-		| f32Fragment {$maybe_val = $f32Fragment.ctx->literal->maybe_val;}
-		| f64Fragment {$maybe_val = $f64Fragment.ctx->literal->maybe_val;}
-		| u8Fragment {$maybe_val = $u8Fragment.ctx->literal->maybe_val;}
-		| u16Fragment {$maybe_val = $u16Fragment.ctx->literal->maybe_val;}
-		| u32Fragment {$maybe_val = $u32Fragment.ctx->literal->maybe_val;}
-		| u64Fragment {$maybe_val = $u64Fragment.ctx->literal->maybe_val;}
-		| i8Fragment {$maybe_val = $i8Fragment.ctx->literal->maybe_val;}
-		| i16Fragment {$maybe_val = $i16Fragment.ctx->literal->maybe_val;}
-		| i32Fragment {$maybe_val = $i32Fragment.ctx->literal->maybe_val;}
-		| i64Fragment {$maybe_val = $i64Fragment.ctx->literal->maybe_val;}
+type_: primitiveType | valuedPrimitiveType;
+primitiveType:
+	COLON WS* (
+		KW_BOOL
+		| KW_CHAR
+		| KW_STRING
+		| KW_F32
+		| KW_F64
+		| KW_U8
+		| KW_U16
+		| KW_U32
+		| KW_U64
+		| KW_I8
+		| KW_I16
+		| KW_I32
+		| KW_I64
 	);
-boolFragment: (COLON WS* KW_BOOL)? WS* EQ WS* literal = boolLiteral;
-charFragment: (COLON WS* KW_CHAR)? WS* EQ WS* literal = charLiteral;
 
-stringFragment:
+// TODO(dpemmons) rename to valued type? then type_ (used by struct) can be either primitiveType or
+// valued(primitive?)Type
+
+// Matches " : bool = literal ;"
+valuedPrimitiveType
+	returns[std::optional<td::SymbolTable::Value> maybe_val]: (
+		valuedBoolFragment {$maybe_val = $valuedBoolFragment.ctx->literal->maybe_val;}
+		| valuedCharFragment {$maybe_val = $valuedCharFragment.ctx->literal->maybe_val;}
+		| valuedStringFragment {$maybe_val = $valuedStringFragment.ctx->literal->maybe_val;}
+		| valuedF32Fragment {$maybe_val = $valuedF32Fragment.ctx->literal->maybe_val;}
+		| valuedF64Fragment {$maybe_val = $valuedF64Fragment.ctx->literal->maybe_val;}
+		| valuedU8Fragment {$maybe_val = $valuedU8Fragment.ctx->literal->maybe_val;}
+		| valuedU16Fragment {$maybe_val = $valuedU16Fragment.ctx->literal->maybe_val;}
+		| valuedU32Fragment {$maybe_val = $valuedU32Fragment.ctx->literal->maybe_val;}
+		| valuedU64Fragment {$maybe_val = $valuedU64Fragment.ctx->literal->maybe_val;}
+		| valuedI8Fragment {$maybe_val = $valuedI8Fragment.ctx->literal->maybe_val;}
+		| valuedI16Fragment {$maybe_val = $valuedI16Fragment.ctx->literal->maybe_val;}
+		| valuedI32Fragment {$maybe_val = $valuedI32Fragment.ctx->literal->maybe_val;}
+		| valuedI64Fragment {$maybe_val = $valuedI64Fragment.ctx->literal->maybe_val;}
+	);
+valuedBoolFragment: (COLON WS* KW_BOOL)? WS* EQ WS* literal = boolLiteral;
+valuedCharFragment: (COLON WS* KW_CHAR)? WS* EQ WS* literal = charLiteral;
+
+valuedStringFragment:
 	(COLON WS* KW_STRING)? WS* EQ WS* literal = stringLiteral;
 
-f32Fragment: (
+valuedF32Fragment: (
 		COLON WS* KW_F32 WS* EQ WS* literal = f32Literal 'f32'?
 	)
 	| (EQ WS* literal = f32Literal 'f32'?);
-f64Fragment: (
+valuedF64Fragment: (
 		COLON WS* KW_F64 WS* EQ WS* literal = f64Literal 'f64'?
 	)
 	| (EQ WS* literal = f64Literal 'f64');
-u8Fragment: (
+valuedU8Fragment: (
 		COLON WS* KW_U8 WS* EQ WS* literal = u8Literal 'u8'?
 	)
 	| (EQ WS* literal = u8Literal 'u8');
-u16Fragment: (
+valuedU16Fragment: (
 		COLON WS* KW_U16 WS* EQ WS* literal = u16Literal 'u16'?
 	)
 	| (EQ WS* literal = u16Literal 'u16');
-u32Fragment: (
+valuedU32Fragment: (
 		COLON WS* KW_U32 WS* EQ WS* literal = u32Literal 'u32'?
 	)
 	| (EQ WS* literal = u32Literal 'u32');
-u64Fragment: (
+valuedU64Fragment: (
 		COLON WS* KW_U64 WS* EQ WS* literal = u64Literal 'u64'?
 	)
 	| (EQ WS* literal = u64Literal 'u64');
-i8Fragment: (
+valuedI8Fragment: (
 		COLON WS* KW_I8 WS* EQ WS* literal = i8Literal 'i8'?
 	)
 	| (EQ WS* literal = i8Literal 'i8');
-i16Fragment: (
+valuedI16Fragment: (
 		COLON WS* KW_I16 WS* EQ WS* literal = i16Literal 'i16'?
 	)
 	| (EQ WS* literal = i16Literal 'i16');
-i32Fragment: (
+valuedI32Fragment: (
 		COLON WS* KW_I32 WS* EQ WS* literal = i32Literal 'i32'?
 	)
 	| (EQ WS* literal = i32Literal 'i32'?);
-i64Fragment: (
+valuedI64Fragment: (
 		COLON WS* KW_I64 WS* EQ WS* literal = i64Literal 'i64'?
 	)
 	| (EQ WS* literal = i64Literal 'i64');
-
-type_: primitiveType;
-primitiveType:
-	KW_BOOL
-	| KW_CHAR
-	| KW_STRING
-	| KW_F32
-	| KW_F64
-	| KW_U8
-	| KW_U16
-	| KW_U32
-	| KW_U64
-	| KW_I8
-	| KW_I16
-	| KW_I32
-	| KW_I64;
 
 // thing < arg2, 42 > parameterizedType: identifier LT (identifier | u64Literal)+ GT;
 

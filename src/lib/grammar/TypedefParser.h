@@ -50,17 +50,19 @@ public:
   };
 
   enum {
-    RuleCompilationUnit = 0, RuleItem = 1, RuleStructDeclaration = 2, RuleStructField = 3, 
-    RuleValueDefinition = 4, RulePrimitiveFragment = 5, RuleBoolFragment = 6, 
-    RuleCharFragment = 7, RuleStringFragment = 8, RuleF32Fragment = 9, RuleF64Fragment = 10, 
-    RuleU8Fragment = 11, RuleU16Fragment = 12, RuleU32Fragment = 13, RuleU64Fragment = 14, 
-    RuleI8Fragment = 15, RuleI16Fragment = 16, RuleI32Fragment = 17, RuleI64Fragment = 18, 
-    RuleType_ = 19, RulePrimitiveType = 20, RuleTypedefVersionDeclaration = 21, 
-    RuleModuleDeclaration = 22, RuleUseDeclaration = 23, RuleUseTree = 24, 
-    RuleSimplePath = 25, RuleBoolLiteral = 26, RuleCharLiteral = 27, RuleF32Literal = 28, 
-    RuleF64Literal = 29, RuleU8Literal = 30, RuleU16Literal = 31, RuleU32Literal = 32, 
-    RuleU64Literal = 33, RuleI8Literal = 34, RuleI16Literal = 35, RuleI32Literal = 36, 
-    RuleI64Literal = 37, RuleStringLiteral = 38, RuleIdentifier = 39, RuleKeyword = 40
+    RuleCompilationUnit = 0, RuleItem = 1, RuleMaybeValuedSymbolDeclaration = 2, 
+    RuleStructDeclaration = 3, RuleMaybeValuedSymbol = 4, RuleType_ = 5, 
+    RulePrimitiveType = 6, RuleValuedPrimitiveType = 7, RuleValuedBoolFragment = 8, 
+    RuleValuedCharFragment = 9, RuleValuedStringFragment = 10, RuleValuedF32Fragment = 11, 
+    RuleValuedF64Fragment = 12, RuleValuedU8Fragment = 13, RuleValuedU16Fragment = 14, 
+    RuleValuedU32Fragment = 15, RuleValuedU64Fragment = 16, RuleValuedI8Fragment = 17, 
+    RuleValuedI16Fragment = 18, RuleValuedI32Fragment = 19, RuleValuedI64Fragment = 20, 
+    RuleTypedefVersionDeclaration = 21, RuleModuleDeclaration = 22, RuleUseDeclaration = 23, 
+    RuleUseTree = 24, RuleSimplePath = 25, RuleBoolLiteral = 26, RuleCharLiteral = 27, 
+    RuleF32Literal = 28, RuleF64Literal = 29, RuleU8Literal = 30, RuleU16Literal = 31, 
+    RuleU32Literal = 32, RuleU64Literal = 33, RuleI8Literal = 34, RuleI16Literal = 35, 
+    RuleI32Literal = 36, RuleI64Literal = 37, RuleStringLiteral = 38, RuleIdentifier = 39, 
+    RuleKeyword = 40
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -78,25 +80,25 @@ public:
 
   class CompilationUnitContext;
   class ItemContext;
+  class MaybeValuedSymbolDeclarationContext;
   class StructDeclarationContext;
-  class StructFieldContext;
-  class ValueDefinitionContext;
-  class PrimitiveFragmentContext;
-  class BoolFragmentContext;
-  class CharFragmentContext;
-  class StringFragmentContext;
-  class F32FragmentContext;
-  class F64FragmentContext;
-  class U8FragmentContext;
-  class U16FragmentContext;
-  class U32FragmentContext;
-  class U64FragmentContext;
-  class I8FragmentContext;
-  class I16FragmentContext;
-  class I32FragmentContext;
-  class I64FragmentContext;
+  class MaybeValuedSymbolContext;
   class Type_Context;
   class PrimitiveTypeContext;
+  class ValuedPrimitiveTypeContext;
+  class ValuedBoolFragmentContext;
+  class ValuedCharFragmentContext;
+  class ValuedStringFragmentContext;
+  class ValuedF32FragmentContext;
+  class ValuedF64FragmentContext;
+  class ValuedU8FragmentContext;
+  class ValuedU16FragmentContext;
+  class ValuedU32FragmentContext;
+  class ValuedU64FragmentContext;
+  class ValuedI8FragmentContext;
+  class ValuedI16FragmentContext;
+  class ValuedI32FragmentContext;
+  class ValuedI64FragmentContext;
   class TypedefVersionDeclarationContext;
   class ModuleDeclarationContext;
   class UseDeclarationContext;
@@ -143,11 +145,11 @@ public:
 
   class  ItemContext : public antlr4::ParserRuleContext {
   public:
-    TypedefParser::ValueDefinitionContext *valueDefinitionContext = nullptr;;
+    TypedefParser::MaybeValuedSymbolContext *maybeValuedSymbolContext = nullptr;;
     TypedefParser::StructDeclarationContext *structDeclarationContext = nullptr;;
     ItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    ValueDefinitionContext *valueDefinition();
+    MaybeValuedSymbolContext *maybeValuedSymbol();
     StructDeclarationContext *structDeclaration();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -159,12 +161,30 @@ public:
 
   ItemContext* item();
 
+  class  MaybeValuedSymbolDeclarationContext : public antlr4::ParserRuleContext {
+  public:
+    MaybeValuedSymbolDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    MaybeValuedSymbolContext *maybeValuedSymbol();
+    antlr4::tree::TerminalNode *SEMI();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  MaybeValuedSymbolDeclarationContext* maybeValuedSymbolDeclaration();
+
   class  StructDeclarationContext : public antlr4::ParserRuleContext {
   public:
     std::optional<td::SymbolTable::Field> maybe_field;
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
-    TypedefParser::StructFieldContext *structFieldContext = nullptr;;
-    std::vector<StructFieldContext *> fields;;
+    TypedefParser::MaybeValuedSymbolContext *maybeValuedSymbolContext = nullptr;;
+    std::vector<MaybeValuedSymbolContext *> fields;;
     StructDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     IdentifierContext *identifier();
@@ -172,11 +192,12 @@ public:
     antlr4::tree::TerminalNode *KW_STRUCT();
     antlr4::tree::TerminalNode *LBRACE();
     antlr4::tree::TerminalNode *RBRACE();
-    antlr4::tree::TerminalNode *SEMI();
+    std::vector<antlr4::tree::TerminalNode *> SEMI();
+    antlr4::tree::TerminalNode* SEMI(size_t i);
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
-    std::vector<StructFieldContext *> structField();
-    StructFieldContext* structField(size_t i);
+    std::vector<MaybeValuedSymbolContext *> maybeValuedSymbol();
+    MaybeValuedSymbolContext* maybeValuedSymbol(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -187,17 +208,15 @@ public:
 
   StructDeclarationContext* structDeclaration();
 
-  class  StructFieldContext : public antlr4::ParserRuleContext {
+  class  MaybeValuedSymbolContext : public antlr4::ParserRuleContext {
   public:
     std::optional<td::SymbolTable::Field> maybe_field;
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
     TypedefParser::Type_Context *type_Context = nullptr;;
-    StructFieldContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    MaybeValuedSymbolContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     IdentifierContext *identifier();
-    antlr4::tree::TerminalNode *COLON();
     Type_Context *type_();
-    antlr4::tree::TerminalNode *SEMI();
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
 
@@ -208,18 +227,42 @@ public:
    
   };
 
-  StructFieldContext* structField();
+  MaybeValuedSymbolContext* maybeValuedSymbol();
 
-  class  ValueDefinitionContext : public antlr4::ParserRuleContext {
+  class  Type_Context : public antlr4::ParserRuleContext {
   public:
-    std::optional<td::SymbolTable::Field> maybe_field;
-    TypedefParser::IdentifierContext *identifierContext = nullptr;;
-    TypedefParser::PrimitiveFragmentContext *primitiveFragmentContext = nullptr;;
-    ValueDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    Type_Context(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    IdentifierContext *identifier();
-    PrimitiveFragmentContext *primitiveFragment();
-    antlr4::tree::TerminalNode *SEMI();
+    PrimitiveTypeContext *primitiveType();
+    ValuedPrimitiveTypeContext *valuedPrimitiveType();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  Type_Context* type_();
+
+  class  PrimitiveTypeContext : public antlr4::ParserRuleContext {
+  public:
+    PrimitiveTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *COLON();
+    antlr4::tree::TerminalNode *KW_BOOL();
+    antlr4::tree::TerminalNode *KW_CHAR();
+    antlr4::tree::TerminalNode *KW_STRING();
+    antlr4::tree::TerminalNode *KW_F32();
+    antlr4::tree::TerminalNode *KW_F64();
+    antlr4::tree::TerminalNode *KW_U8();
+    antlr4::tree::TerminalNode *KW_U16();
+    antlr4::tree::TerminalNode *KW_U32();
+    antlr4::tree::TerminalNode *KW_U64();
+    antlr4::tree::TerminalNode *KW_I8();
+    antlr4::tree::TerminalNode *KW_I16();
+    antlr4::tree::TerminalNode *KW_I32();
+    antlr4::tree::TerminalNode *KW_I64();
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
 
@@ -230,39 +273,39 @@ public:
    
   };
 
-  ValueDefinitionContext* valueDefinition();
+  PrimitiveTypeContext* primitiveType();
 
-  class  PrimitiveFragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedPrimitiveTypeContext : public antlr4::ParserRuleContext {
   public:
     std::optional<td::SymbolTable::Value> maybe_val;
-    TypedefParser::BoolFragmentContext *boolFragmentContext = nullptr;;
-    TypedefParser::CharFragmentContext *charFragmentContext = nullptr;;
-    TypedefParser::StringFragmentContext *stringFragmentContext = nullptr;;
-    TypedefParser::F32FragmentContext *f32FragmentContext = nullptr;;
-    TypedefParser::F64FragmentContext *f64FragmentContext = nullptr;;
-    TypedefParser::U8FragmentContext *u8FragmentContext = nullptr;;
-    TypedefParser::U16FragmentContext *u16FragmentContext = nullptr;;
-    TypedefParser::U32FragmentContext *u32FragmentContext = nullptr;;
-    TypedefParser::U64FragmentContext *u64FragmentContext = nullptr;;
-    TypedefParser::I8FragmentContext *i8FragmentContext = nullptr;;
-    TypedefParser::I16FragmentContext *i16FragmentContext = nullptr;;
-    TypedefParser::I32FragmentContext *i32FragmentContext = nullptr;;
-    TypedefParser::I64FragmentContext *i64FragmentContext = nullptr;;
-    PrimitiveFragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    TypedefParser::ValuedBoolFragmentContext *valuedBoolFragmentContext = nullptr;;
+    TypedefParser::ValuedCharFragmentContext *valuedCharFragmentContext = nullptr;;
+    TypedefParser::ValuedStringFragmentContext *valuedStringFragmentContext = nullptr;;
+    TypedefParser::ValuedF32FragmentContext *valuedF32FragmentContext = nullptr;;
+    TypedefParser::ValuedF64FragmentContext *valuedF64FragmentContext = nullptr;;
+    TypedefParser::ValuedU8FragmentContext *valuedU8FragmentContext = nullptr;;
+    TypedefParser::ValuedU16FragmentContext *valuedU16FragmentContext = nullptr;;
+    TypedefParser::ValuedU32FragmentContext *valuedU32FragmentContext = nullptr;;
+    TypedefParser::ValuedU64FragmentContext *valuedU64FragmentContext = nullptr;;
+    TypedefParser::ValuedI8FragmentContext *valuedI8FragmentContext = nullptr;;
+    TypedefParser::ValuedI16FragmentContext *valuedI16FragmentContext = nullptr;;
+    TypedefParser::ValuedI32FragmentContext *valuedI32FragmentContext = nullptr;;
+    TypedefParser::ValuedI64FragmentContext *valuedI64FragmentContext = nullptr;;
+    ValuedPrimitiveTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    BoolFragmentContext *boolFragment();
-    CharFragmentContext *charFragment();
-    StringFragmentContext *stringFragment();
-    F32FragmentContext *f32Fragment();
-    F64FragmentContext *f64Fragment();
-    U8FragmentContext *u8Fragment();
-    U16FragmentContext *u16Fragment();
-    U32FragmentContext *u32Fragment();
-    U64FragmentContext *u64Fragment();
-    I8FragmentContext *i8Fragment();
-    I16FragmentContext *i16Fragment();
-    I32FragmentContext *i32Fragment();
-    I64FragmentContext *i64Fragment();
+    ValuedBoolFragmentContext *valuedBoolFragment();
+    ValuedCharFragmentContext *valuedCharFragment();
+    ValuedStringFragmentContext *valuedStringFragment();
+    ValuedF32FragmentContext *valuedF32Fragment();
+    ValuedF64FragmentContext *valuedF64Fragment();
+    ValuedU8FragmentContext *valuedU8Fragment();
+    ValuedU16FragmentContext *valuedU16Fragment();
+    ValuedU32FragmentContext *valuedU32Fragment();
+    ValuedU64FragmentContext *valuedU64Fragment();
+    ValuedI8FragmentContext *valuedI8Fragment();
+    ValuedI16FragmentContext *valuedI16Fragment();
+    ValuedI32FragmentContext *valuedI32Fragment();
+    ValuedI64FragmentContext *valuedI64Fragment();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -271,12 +314,12 @@ public:
    
   };
 
-  PrimitiveFragmentContext* primitiveFragment();
+  ValuedPrimitiveTypeContext* valuedPrimitiveType();
 
-  class  BoolFragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedBoolFragmentContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::BoolLiteralContext *literal = nullptr;;
-    BoolFragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedBoolFragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *EQ();
     BoolLiteralContext *boolLiteral();
@@ -292,12 +335,12 @@ public:
    
   };
 
-  BoolFragmentContext* boolFragment();
+  ValuedBoolFragmentContext* valuedBoolFragment();
 
-  class  CharFragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedCharFragmentContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::CharLiteralContext *literal = nullptr;;
-    CharFragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedCharFragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *EQ();
     CharLiteralContext *charLiteral();
@@ -313,12 +356,12 @@ public:
    
   };
 
-  CharFragmentContext* charFragment();
+  ValuedCharFragmentContext* valuedCharFragment();
 
-  class  StringFragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedStringFragmentContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::StringLiteralContext *literal = nullptr;;
-    StringFragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedStringFragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *EQ();
     StringLiteralContext *stringLiteral();
@@ -334,12 +377,12 @@ public:
    
   };
 
-  StringFragmentContext* stringFragment();
+  ValuedStringFragmentContext* valuedStringFragment();
 
-  class  F32FragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedF32FragmentContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::F32LiteralContext *literal = nullptr;;
-    F32FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedF32FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
     std::vector<antlr4::tree::TerminalNode *> KW_F32();
@@ -356,12 +399,12 @@ public:
    
   };
 
-  F32FragmentContext* f32Fragment();
+  ValuedF32FragmentContext* valuedF32Fragment();
 
-  class  F64FragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedF64FragmentContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::F64LiteralContext *literal = nullptr;;
-    F64FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedF64FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
     std::vector<antlr4::tree::TerminalNode *> KW_F64();
@@ -378,12 +421,12 @@ public:
    
   };
 
-  F64FragmentContext* f64Fragment();
+  ValuedF64FragmentContext* valuedF64Fragment();
 
-  class  U8FragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedU8FragmentContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::U8LiteralContext *literal = nullptr;;
-    U8FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedU8FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
     std::vector<antlr4::tree::TerminalNode *> KW_U8();
@@ -400,12 +443,12 @@ public:
    
   };
 
-  U8FragmentContext* u8Fragment();
+  ValuedU8FragmentContext* valuedU8Fragment();
 
-  class  U16FragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedU16FragmentContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::U16LiteralContext *literal = nullptr;;
-    U16FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedU16FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
     std::vector<antlr4::tree::TerminalNode *> KW_U16();
@@ -422,12 +465,12 @@ public:
    
   };
 
-  U16FragmentContext* u16Fragment();
+  ValuedU16FragmentContext* valuedU16Fragment();
 
-  class  U32FragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedU32FragmentContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::U32LiteralContext *literal = nullptr;;
-    U32FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedU32FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
     std::vector<antlr4::tree::TerminalNode *> KW_U32();
@@ -444,12 +487,12 @@ public:
    
   };
 
-  U32FragmentContext* u32Fragment();
+  ValuedU32FragmentContext* valuedU32Fragment();
 
-  class  U64FragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedU64FragmentContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::U64LiteralContext *literal = nullptr;;
-    U64FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedU64FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
     std::vector<antlr4::tree::TerminalNode *> KW_U64();
@@ -466,12 +509,12 @@ public:
    
   };
 
-  U64FragmentContext* u64Fragment();
+  ValuedU64FragmentContext* valuedU64Fragment();
 
-  class  I8FragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedI8FragmentContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::I8LiteralContext *literal = nullptr;;
-    I8FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedI8FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
     std::vector<antlr4::tree::TerminalNode *> KW_I8();
@@ -488,12 +531,12 @@ public:
    
   };
 
-  I8FragmentContext* i8Fragment();
+  ValuedI8FragmentContext* valuedI8Fragment();
 
-  class  I16FragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedI16FragmentContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::I16LiteralContext *literal = nullptr;;
-    I16FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedI16FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
     std::vector<antlr4::tree::TerminalNode *> KW_I16();
@@ -510,12 +553,12 @@ public:
    
   };
 
-  I16FragmentContext* i16Fragment();
+  ValuedI16FragmentContext* valuedI16Fragment();
 
-  class  I32FragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedI32FragmentContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::I32LiteralContext *literal = nullptr;;
-    I32FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedI32FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
     std::vector<antlr4::tree::TerminalNode *> KW_I32();
@@ -532,12 +575,12 @@ public:
    
   };
 
-  I32FragmentContext* i32Fragment();
+  ValuedI32FragmentContext* valuedI32Fragment();
 
-  class  I64FragmentContext : public antlr4::ParserRuleContext {
+  class  ValuedI64FragmentContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::I64LiteralContext *literal = nullptr;;
-    I64FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedI64FragmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
     std::vector<antlr4::tree::TerminalNode *> KW_I64();
@@ -554,49 +597,7 @@ public:
    
   };
 
-  I64FragmentContext* i64Fragment();
-
-  class  Type_Context : public antlr4::ParserRuleContext {
-  public:
-    Type_Context(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    PrimitiveTypeContext *primitiveType();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  Type_Context* type_();
-
-  class  PrimitiveTypeContext : public antlr4::ParserRuleContext {
-  public:
-    PrimitiveTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *KW_BOOL();
-    antlr4::tree::TerminalNode *KW_CHAR();
-    antlr4::tree::TerminalNode *KW_STRING();
-    antlr4::tree::TerminalNode *KW_F32();
-    antlr4::tree::TerminalNode *KW_F64();
-    antlr4::tree::TerminalNode *KW_U8();
-    antlr4::tree::TerminalNode *KW_U16();
-    antlr4::tree::TerminalNode *KW_U32();
-    antlr4::tree::TerminalNode *KW_U64();
-    antlr4::tree::TerminalNode *KW_I8();
-    antlr4::tree::TerminalNode *KW_I16();
-    antlr4::tree::TerminalNode *KW_I32();
-    antlr4::tree::TerminalNode *KW_I64();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  PrimitiveTypeContext* primitiveType();
+  ValuedI64FragmentContext* valuedI64Fragment();
 
   class  TypedefVersionDeclarationContext : public antlr4::ParserRuleContext {
   public:

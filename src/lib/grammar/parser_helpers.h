@@ -143,10 +143,7 @@ std::string GetStringValue(TypedefParser *parser, antlr4::Token *token);
 
 std::string GetRawString(TypedefParser *parser, antlr4::Token *token);
 
-std::optional<td::SymbolTable::Field> MakeStructField(
+std::optional<td::SymbolTable::Field> MakeField(
     std::string &id, TypedefParser::Type_Context *type_);
-
-std::optional<td::SymbolTable::Field> MakeValueField(
-    std::string &id, TypedefParser::PrimitiveFragmentContext *fragment);
 
 #endif  // TYPEDEF_PARSER_HELPERS_
