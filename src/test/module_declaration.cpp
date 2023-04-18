@@ -1,9 +1,11 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_all.hpp>
-#include <sstream>
-#include <string>
+#include <memory>
+#include <vector>
 
 #include "typedef_parser.h"
+#include "parsed_file.h"
+#include "parser_error_info.h"
 
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;

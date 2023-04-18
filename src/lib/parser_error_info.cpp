@@ -1,5 +1,8 @@
 #include "parser_error_info.h"
 
+#include <stdlib.h>
+#include <algorithm>
+
 #include "antlr4/antlr4-runtime.h"
 #include "grammar/TypedefLexer.h"
 #include "grammar/TypedefParser.h"

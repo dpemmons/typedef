@@ -2,11 +2,17 @@
 #include <catch2/matchers/catch_matchers_all.hpp>
 #include <sstream>
 #include <string>
+#include <algorithm>
+#include <memory>
+#include <vector>
 
 #include "antlr4/antlr4-runtime.h"
 #include "grammar/TypedefLexer.h"
 #include "grammar/TypedefParser.h"
 #include "typedef_parser.h"
+#include "language_version.h"
+#include "parsed_file.h"
+#include "parser_error_info.h"
 
 using Catch::Matchers::Equals;
 

@@ -1,5 +1,8 @@
 #include "language_version.h"
 
+#include <map>
+#include <utility>
+
 namespace td {
 
 namespace {

@@ -1,17 +1,21 @@
 #include "typedef_parser.h"
 
+#include <stddef.h>
+#include <algorithm>
+#include <exception>
+#include <vector>
+
 #include "antlr4/antlr4-runtime.h"
 #include "grammar/TypedefLexer.h"
 #include "grammar/TypedefParser.h"
-#include "grammar/TypedefParserBaseListener.h"
+
+#include "symbol_table.h"
+
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"
-#include "identifier.h"
 #include "language_version.h"
 #include "parsed_file.h"
 #include "parser_error_info.h"
-#include "use_declaration.h"
-#include "values.h"
 
 namespace td {
 

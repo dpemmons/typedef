@@ -1,9 +1,16 @@
+#include <stdio.h>
 #include <fstream>
-#include <iostream>
 #include <string>
+#include <map>
+#include <memory>
+#include <variant>
+#include <vector>
 
 #include "args.h"
 #include "typedef_parser.h"
+#include "parsed_file.h"
+#include "parser_error_info.h"
+#include "symbol_table.h"
 
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"

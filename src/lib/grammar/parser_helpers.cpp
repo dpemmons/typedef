@@ -1,7 +1,16 @@
 #include "parser_helpers.h"
 
+#include <stddef.h>
 #include <optional>
 #include <utility>
+#include <codecvt>
+#include <cstdint>
+#include <istream>
+#include <locale>
+#include <variant>
+
+#include "TerminalNode.h"
+#include "Token.h"
 
 char32_t GetCharValue(TypedefParser* parser,
                       TypedefParser::CharLiteralContext* ctx) {

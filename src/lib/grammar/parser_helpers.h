@@ -1,9 +1,13 @@
 #ifndef TYPEDEF_PARSER_HELPERS_
 #define TYPEDEF_PARSER_HELPERS_
 
+#include <stdlib.h>
 #include <charconv>
 #include <optional>
 #include <string>
+#include <string_view>
+#include <system_error>
+#include <utility>
 
 #include "InputMismatchException.h"
 #include "Parser.h"
@@ -13,8 +17,13 @@
 #include "TypedefParser.h"
 #include "atn/ATNConfigSet.h"
 #include "symbol_table.h"
+#include "TokenStream.h"
 
 class TypedefParser;
+namespace antlr4 {
+class ParserRuleContext;
+class Token;
+}  // namespace antlr4
 
 class DuplicateSymbolException : public antlr4::RecognitionException {
  public:

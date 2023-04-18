@@ -1,11 +1,14 @@
 #pragma once
 
+#include <stdint.h>
 #include <map>
 #include <memory>
 #include <optional>
 #include <ostream>
 #include <string>
 #include <variant>
+#include <type_traits>
+#include <utility>
 
 namespace td {
 
@@ -16,6 +19,7 @@ class SymbolTable {
   SymbolTable() {}
 
   struct Struct;
+
   typedef variant<optional<bool>,      // bool
                   optional<char32_t>,  // char
                   optional<string>,    // str
