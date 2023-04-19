@@ -1,0 +1,57 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+name: Typedef
+file_extensions:
+  - td
+scope: source.typedef
+contexts:
+  main:
+    - include: comments
+    - include: expressions
+
+  comments:
+    - meta_include_prototype: false
+    - match: '//'
+      scope: punctuation.definition.comment.typedef
+      push:
+        - meta_scope: comment.line.typedef
+        - match: $\n?
+          pop: true
+    - match: '/\*'
+      scope: punctuation.definition.comment.typedef
+      push:
+        - meta_scope: comment.block.typedef
+        - match: '\*/'
+          scope: punctuation.definition.comment.typedef
+          pop: true
+
+  expressions:
+    - match: '\b(array|as|enum|false|fn|impl|message|module|struct|true|type|typedef|use|variant|vector)\b'
+      scope: keyword.control.typedef
+    - match: '\b(bool|char|str|f32|f64|u8|u16|u32|u64|i8|i16|i32|i64)\b'
+      scope: storage.type.typedef
+    - match: '\b([a-zA-Z_][a-zA-Z0-9_]*)\b'
+      scope: variable.other.typedef
+
+  numbers:
+    - match: '\b-?[0-9]+\b'
+      scope: constant.numeric.integer.typedef
+    - match: '\b-?[0-9]*\.[0-9]+(?:[eE][+-]?[0-9]+)?\b'
+      scope: constant.numeric.float.typedef
+
+  strings:
+    - match: '"'
+      scope: punctuation.definition.string.begin.typedef
+      push:
+        - meta_scope: string.quoted.double.typedef
+        - match: '"'
+          scope: punctuation.definition.string.end.typedef
+          pop: true
+    - match: "'"
+      scope: punctuation.definition.string.begin.typedef
+      push:
+        - meta_scope: string.quoted.single.typedef
+        - match: "'"
+          scope: punctuation.definition.string.end.typedef
+          pop: true
