@@ -144,12 +144,17 @@ std::string GetStringValue(TypedefParser *parser, antlr4::Token *token);
 
 std::string GetRawString(TypedefParser *parser, antlr4::Token *token);
 
-std::optional<td::SymbolTable::Field> MakeField(
+std::optional<td::SymbolTable::Symbol> MakeSymbol(
     std::string &id, TypedefParser::Type_Context *type_);
 
+// Insert fields into symbol tables.
 void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
                  TypedefParser::MaybeValuedSymbolDeclarationContext *ctx);
+
 void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
                  TypedefParser::StructDeclarationContext *ctx);
+
+void TryInsertSymbol(std::shared_ptr<td::Struct> &s, antlr4::Parser *recognizer,
+                     TypedefParser::MaybeValuedSymbolContext *ctx);
 
 #endif  // TYPEDEF_PARSER_HELPERS_

@@ -75,7 +75,7 @@ public:
   virtual antlr4::dfa::Vocabulary& getVocabulary() const override;
 
 
-  	td::SymbolTable symbol_table;
+  	td::SymbolTable global_symbol_table;
 
 
   class CompilationUnitContext;
@@ -181,10 +181,10 @@ public:
 
   class  StructDeclarationContext : public antlr4::ParserRuleContext {
   public:
-    std::optional<td::SymbolTable::Field> maybe_field;
+    std::optional<td::SymbolTable::Symbol> maybe_symbol;
+    std::shared_ptr<td::Struct> s;
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
     TypedefParser::MaybeValuedSymbolContext *maybeValuedSymbolContext = nullptr;;
-    std::vector<MaybeValuedSymbolContext *> fields;;
     StructDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     IdentifierContext *identifier();
@@ -210,7 +210,7 @@ public:
 
   class  MaybeValuedSymbolContext : public antlr4::ParserRuleContext {
   public:
-    std::optional<td::SymbolTable::Field> maybe_field;
+    std::optional<td::SymbolTable::Symbol> maybe_symbol;
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
     TypedefParser::Type_Context *type_Context = nullptr;;
     MaybeValuedSymbolContext(antlr4::ParserRuleContext *parent, size_t invokingState);

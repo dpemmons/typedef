@@ -146,7 +146,7 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
       tokens.reset();
       parser.reset();
       errors.clear();
-      parser.symbol_table.Clear();
+      parser.global_symbol_table.Clear();
       parser.setErrorHandler(std::make_shared<antlr4::DefaultErrorStrategy>());
       parser.getInterpreter<antlr4::atn::ParserATNSimulator>()
           ->setPredictionMode(antlr4::atn::PredictionMode::LL);
@@ -164,7 +164,7 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
   if (errors.empty()) {
     builder.SetLanguageVersion(LangaugeVersionFromString(
         compilation_unit->typedefVersionDeclaration()->identifier()->id));
-    builder.AddSymbols2(parser.symbol_table);
+    builder.AddSymbols2(parser.global_symbol_table);
   }
   builder.AddErrors(errors);
 

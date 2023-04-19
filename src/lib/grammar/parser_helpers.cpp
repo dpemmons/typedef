@@ -183,7 +183,7 @@ std::string GetRawString(TypedefParser* parser, antlr4::Token* token) {
   return std::string(literal);
 }
 
-std::optional<td::SymbolTable::Field> MakeField(
+std::optional<td::SymbolTable::Symbol> MakeSymbol(
     std::string& id, TypedefParser::Type_Context* ctx) {
   if (ctx->valuedPrimitiveType()) {
     if (ctx->valuedPrimitiveType()->maybe_val) {
@@ -224,8 +224,8 @@ std::optional<td::SymbolTable::Field> MakeField(
 
 void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,
                  TypedefParser::MaybeValuedSymbolDeclarationContext* ctx) {
-  if (ctx->maybeValuedSymbol()->maybe_field) {
-    if (!dstTable.TryInsert(*ctx->maybeValuedSymbol()->maybe_field)) {
+  if (ctx->maybeValuedSymbol()->maybe_symbol) {
+    if (!dstTable.TryInsert(*ctx->maybeValuedSymbol()->maybe_symbol)) {
       throw DuplicateSymbolException(recognizer, ctx,
                                      ctx->maybeValuedSymbol()
                                          ->identifier()
@@ -237,8 +237,19 @@ void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,
 
 void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,
                  TypedefParser::StructDeclarationContext* ctx) {
-  if (ctx->maybe_field) {
-    if (!dstTable.TryInsert(*ctx->maybe_field)) {
+  if (ctx->maybe_symbol) {
+    if (!dstTable.TryInsert(*ctx->maybe_symbol)) {
+      throw DuplicateSymbolException(
+          recognizer, ctx,
+          ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
+    }
+  }
+}
+
+void TryInsertSymbol(std::shared_ptr<td::Struct>& s, antlr4::Parser* recognizer,
+                     TypedefParser::MaybeValuedSymbolContext* ctx) {
+  if (ctx->maybe_symbol) {
+    if (!s->TryInsert(*ctx->maybe_symbol)) {
       throw DuplicateSymbolException(
           recognizer, ctx,
           ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());

@@ -41,9 +41,17 @@ ValRaw : str = r#"
 impliedStr = "string";
 impliedChar = 'c';
 
-Struct: struct {
+structA: struct {
+  sm:i32;
+  sm2:i32;
+  impliedChar : char = 'c';
+};
+
+structB: struct {
   sm:i32;
   sm2:i32;
 };
+
+
 
 //ValArr: array<i32, 3> = "";

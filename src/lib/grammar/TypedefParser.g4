@@ -17,7 +17,7 @@ options {
 }
 
 @parser::members {
-	td::SymbolTable symbol_table;
+	td::SymbolTable global_symbol_table;
 }
 
 compilationUnit:
@@ -27,10 +27,10 @@ compilationUnit:
 
 item:
 	maybeValuedSymbolDeclaration {
-		InsertField(symbol_table, this, $maybeValuedSymbolDeclaration.ctx);
+		InsertField(global_symbol_table, this, $maybeValuedSymbolDeclaration.ctx);
 }
 	| structDeclaration {
-		InsertField(symbol_table, this, $structDeclaration.ctx);
+		InsertField(global_symbol_table, this, $structDeclaration.ctx);
 };
 
 maybeValuedSymbolDeclaration: maybeValuedSymbol WS* SEMI;
@@ -38,26 +38,27 @@ maybeValuedSymbolDeclaration: maybeValuedSymbol WS* SEMI;
 // TODO: move more of this code into helpers TODO: symbol tables at each level.
 structDeclaration
 	returns[
-		std::optional<td::SymbolTable::Field> maybe_field]:
+		std::optional<td::SymbolTable::Symbol> maybe_symbol,
+		std::shared_ptr<td::Struct> s
+	]
+	@init {
+		$s = std::make_shared<td::Struct>();
+	}:
 	(
 		identifier WS* COLON WS* KW_STRUCT WS* LBRACE (
-			WS* (fields += maybeValuedSymbol) WS* SEMI WS*
+			WS* maybeValuedSymbol {
+				TryInsertSymbol($s, this, $maybeValuedSymbol.ctx);
+			} WS* SEMI WS*
 		)* RBRACE WS* SEMI
 	) {
-		auto s = std::make_shared<td::SymbolTable::Struct>();
-		for (auto field : $fields) {
-			if (field->maybe_field) {
-				s->table.insert(*field->maybe_field);
-			}
-		}
-		$maybe_field = std::make_pair($identifier.ctx->id, s);
+		$maybe_symbol = std::make_pair($identifier.ctx->id, $s);
 	};
 
 // ValA: i32 = 42;
 maybeValuedSymbol
-	returns[std::optional<td::SymbolTable::Field> maybe_field]:
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
 	identifier WS* type_ WS* {
-		$maybe_field = MakeField($identifier.ctx->id, $type_.ctx);
+		$maybe_symbol = MakeSymbol($identifier.ctx->id, $type_.ctx);
 };
 
 type_: primitiveType | valuedPrimitiveType;

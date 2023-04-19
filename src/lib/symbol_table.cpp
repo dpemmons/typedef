@@ -26,8 +26,8 @@ struct overloaded : Ts... {
 template <class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
-void PrintField(ostream& os, const SymbolTable::Field& f) {
-  auto kv = f;
+void PrintField(ostream& os, const SymbolTable::Symbol& s) {
+  auto kv = s;
   visit(overloaded{
             [&os, &kv](monostate&) { fmt::print(os, "{}", kv.first); },
             [&os, &kv](optional<bool>&) {
@@ -138,8 +138,8 @@ void PrintField(ostream& os, const SymbolTable::Field& f) {
                 fmt::print(os, "{} : u64;\n", kv.first);
               }
             },
-            [&os, &kv](shared_ptr<SymbolTable::Struct>&) {
-              auto ptr = get<shared_ptr<SymbolTable::Struct>>(kv.second);
+            [&os, &kv](shared_ptr<Struct>&) {
+              auto ptr = get<shared_ptr<Struct>>(kv.second);
               if (ptr) {
                 std::stringstream ss;
                 ss << *ptr;
@@ -149,8 +149,8 @@ void PrintField(ostream& os, const SymbolTable::Field& f) {
         kv.second);
 }
 
-ostream& operator<<(ostream& os, const SymbolTable::Struct& s) {
-  for (auto kv : s.table) {
+ostream& operator<<(ostream& os, const Struct& s) {
+  for (auto kv : s.table.table_) {
     PrintField(os, kv);
   }
   return os;

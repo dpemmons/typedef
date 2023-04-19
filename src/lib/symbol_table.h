@@ -1,25 +1,24 @@
 #pragma once
 
 #include <stdint.h>
+
 #include <map>
 #include <memory>
 #include <optional>
 #include <ostream>
 #include <string>
-#include <variant>
 #include <type_traits>
 #include <utility>
+#include <variant>
 
 namespace td {
 
 using namespace std;
 
+struct Struct;
+
 class SymbolTable {
  public:
-  SymbolTable() {}
-
-  struct Struct;
-
   typedef variant<optional<bool>,      // bool
                   optional<char32_t>,  // char
                   optional<string>,    // str
@@ -36,24 +35,32 @@ class SymbolTable {
                   shared_ptr<Struct>   // struct
                   >
       Value;
-  typedef pair<string, Value> Field;
+  typedef pair<string, Value> Symbol;
 
-  struct Struct {
-    map<string, Value> table;
-    friend ostream& operator<<(ostream& os, const Struct& s);
-  };
+  SymbolTable() {}
+  ~SymbolTable() {}
 
   bool TryInsert(string name, Value &value) {
     return table_.try_emplace(name, value).second;
   }
-  bool TryInsert(Field &field) { return table_.insert(field).second; }
-  bool TryInsert(string &name, shared_ptr<Struct> value) {
-    return table_.try_emplace(name, value).second;
-  }
+  bool TryInsert(Symbol &symbol) { return table_.insert(symbol).second; }
+  // bool TryInsert(string &name, shared_ptr<Struct> value) {
+  //   return table_.try_emplace(name, value).second;
+  // }
   void Clear() { table_.clear(); }
-  map<string, Value> table_;
 
   friend ostream &operator<<(ostream &os, const SymbolTable &value);
+
+  map<string, Value> table_;
+};
+
+class Struct {
+ public:
+  bool TryInsert(SymbolTable::Symbol &symbol) { return table.TryInsert(symbol); }
+
+  friend ostream &operator<<(ostream &os, const Struct &s);
+
+  SymbolTable table;
 };
 
 }  // namespace td

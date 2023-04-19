@@ -24,7 +24,8 @@ Items in ***bold*** are in-progress.
         - [ ] arrays (which are fixed length)
         - [ ] vectors
     - [ ] product types
-      - [ ] struct
+      - [x] basic struct
+      - [ ] complex struct
       - [ ] message
     - [ ] sum types
       - [ ] enum
