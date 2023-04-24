@@ -235,6 +235,10 @@ public:
     virtual size_t getRuleIndex() const override;
     PrimitiveTypeContext *primitiveType();
     ValuedPrimitiveTypeContext *valuedPrimitiveType();
+    antlr4::tree::TerminalNode *COLON();
+    IdentifierContext *identifier();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

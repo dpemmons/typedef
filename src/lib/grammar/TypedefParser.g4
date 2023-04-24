@@ -58,10 +58,11 @@ structDeclaration
 maybeValuedSymbol
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
 	identifier WS* type_ WS* {
-		$maybe_symbol = MakeSymbol($identifier.ctx->id, $type_.ctx);
+		$maybe_symbol = MakeSymbol(this, global_symbol_table,
+			$identifier.ctx->id, $type_.ctx);
 };
 
-type_: primitiveType | valuedPrimitiveType;
+type_: primitiveType | valuedPrimitiveType | (COLON WS* identifier);
 primitiveType:
 	COLON WS* (
 		KW_BOOL
@@ -82,7 +83,7 @@ primitiveType:
 // TODO(dpemmons) rename to valued type? then type_ (used by struct) can be either primitiveType or
 // valued(primitive?)Type
 
-// Matches " : bool = literal ;"
+// Matches " : bool = literal"
 valuedPrimitiveType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]: (
 		valuedBoolFragment {$maybe_val = $valuedBoolFragment.ctx->literal->maybe_val;}

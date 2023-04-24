@@ -94,5 +94,11 @@
     "C_Cpp.autocompleteAddParentheses": true,
     "C_Cpp.clang_format_style": "Google",
     "C_Cpp.debugShortcut": true,
-    "mesonbuild.configureOnOpen": false
+    "mesonbuild.configureOnOpen": false,
+    "C/C++ Include Guard.Comment Style": "Line",
+    "C/C++ Include Guard.Macro Type": "Filepath",
+    "C/C++ Include Guard.Path Depth": 0,
+    "C/C++ Include Guard.Path Skip": 1,
+    "C/C++ Include Guard.Suffix": "_H__",
+    "C/C++ Include Guard.Spaces After Endif": 2
 }

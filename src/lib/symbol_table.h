@@ -50,6 +50,15 @@ class SymbolTable {
   void Clear() { table_.clear(); }
 
   friend ostream &operator<<(ostream &os, const SymbolTable &value);
+  bool HasSymbol(string& id) {
+    return table_.count(id) > 0;
+  }
+  optional<Value> Get(string& id) {
+    if (HasSymbol(id)) {
+      return table_.find(id)->second;
+    }
+    return nullopt;
+  } 
 
   map<string, Value> table_;
 };

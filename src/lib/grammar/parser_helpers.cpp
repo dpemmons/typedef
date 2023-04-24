@@ -184,11 +184,13 @@ std::string GetRawString(TypedefParser* parser, antlr4::Token* token) {
 }
 
 std::optional<td::SymbolTable::Symbol> MakeSymbol(
+    antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
     std::string& id, TypedefParser::Type_Context* ctx) {
   if (ctx->valuedPrimitiveType()) {
     if (ctx->valuedPrimitiveType()->maybe_val) {
       return std::make_pair(id, ctx->valuedPrimitiveType()->maybe_val.value());
     }
+    // pretty sure we would have already thrown an error.
     return std::nullopt;
   } else if (ctx->primitiveType()) {
     if (ctx->primitiveType()->KW_BOOL()) {
@@ -217,9 +219,24 @@ std::optional<td::SymbolTable::Symbol> MakeSymbol(
       return std::make_pair(id, std::optional<int32_t>());
     } else if (ctx->primitiveType()->KW_I64()) {
       return std::make_pair(id, std::optional<int64_t>());
+    } else {
+      // all possible primitive types need to be handled.
+      abort();
+    }
+  } else if (ctx->identifier()) {
+    std::string referencedSymbol =
+        ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol()->getText();
+    auto maybe_symbol = global_symbol_table.Get(referencedSymbol);
+    if (maybe_symbol) {
+      return std::make_pair(id, *maybe_symbol);
+    } else {
+      throw SymbolNotFoundException(
+          recognizer, ctx,
+          ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
     }
   }
-  return std::nullopt;
+  // the grammar only provides 3 options, so crash if we get here.
+  abort();
 }
 
 void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,

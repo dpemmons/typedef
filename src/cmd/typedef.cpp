@@ -11,6 +11,8 @@
 #include "parsed_file.h"
 #include "parser_error_info.h"
 #include "symbol_table.h"
+#include "codegen/codegen_cpp.h"
+#include "codegen/file_printer.h"
 
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"
@@ -57,8 +59,15 @@ int main(int argc, const char** argv) {
     return 1;  // error.
   }
 
-  fmt::print("File contains {} symbols:\n", parser->symbols2_.table_.size());
-  fmt::print("{}\n", fmt::streamed(parser->symbols2_));
+  if (args.getPrint()) {
+    fmt::print("File contains {} symbols:\n", parser->symbols2_.table_.size());
+    fmt::print("{}\n", fmt::streamed(parser->symbols2_));
+  }
+  if (!args.GetCppOut().empty()) {
+    auto outpath = std::make_shared<td::OutPath>(args.GetCppOut());
+    td::CodegenCpp codegen(args.getInpuFilename(), parser, outpath);
+    codegen.Generate();
+  }
 
   // fmt::print("File contains {} symbols:\n", parser->GetSymbols());
   // for (int i = 0; i < parser->GetSymbols(); i++) {

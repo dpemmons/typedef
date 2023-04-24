@@ -37,6 +37,17 @@ class DuplicateSymbolException : public antlr4::RecognitionException {
   ~DuplicateSymbolException() {}
 };
 
+class SymbolNotFoundException : public antlr4::RecognitionException {
+ public:
+  SymbolNotFoundException(antlr4::Parser *recognizer,
+                          antlr4::ParserRuleContext *ctx,
+                          antlr4::Token *offendingToken)
+      : antlr4::RecognitionException("Symbol not found.", recognizer,
+                                     recognizer->getTokenStream(), ctx,
+                                     offendingToken) {}
+  ~SymbolNotFoundException() {}
+};
+
 class InvalidLiteralException : public antlr4::RecognitionException {
  public:
   InvalidLiteralException(std::string msg, antlr4::Parser *recognizer)
@@ -145,6 +156,7 @@ std::string GetStringValue(TypedefParser *parser, antlr4::Token *token);
 std::string GetRawString(TypedefParser *parser, antlr4::Token *token);
 
 std::optional<td::SymbolTable::Symbol> MakeSymbol(
+    antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
     std::string &id, TypedefParser::Type_Context *type_);
 
 // Insert fields into symbol tables.

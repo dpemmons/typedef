@@ -15,8 +15,10 @@ Val_u32_suffix : u32 = 88u32;
 Val_u64 : u64 = 88;
 Val_u64_suffix : u64 = 88u64;
 
-val_i32_bare = 2_147_483_647;
+val_i32_bare_℘ = 2_147_483_647;
 val_i32_bare2 = 2_147_483_64;
+
+русский_идентификатор = 2;
 
 val_f32 : f32 = 3.14159265;
 val_f32_suffix = 3.14_f32;
@@ -42,14 +44,20 @@ impliedStr = "string";
 impliedChar = 'c';
 
 structA: struct {
-  sm:i32;
-  sm2:i32;
-  impliedChar : char = 'c';
+  sasm:i32;
+  sasm2:i32;
+  saimpliedChar : char = 'c';
 };
 
 structB: struct {
-  sm:i32;
-  sm2:i32;
+  sbsm:i32;
+  sbsm2:i32;
+  // sm3: structA;
+};
+
+structC: struct {
+  scsm:i32;
+  scsm2:i32;
 };
 
 

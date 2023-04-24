@@ -29,7 +29,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceRoot}/build/cmd/typedef",
-      "args": ["./examples/simple_values.td"],
+      "args": ["--cpp_out=examples", "./examples/simple_values.td"],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",
       "environment": [],
