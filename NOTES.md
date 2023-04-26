@@ -34,7 +34,7 @@ Items in ***bold*** are in-progress.
     - [ ] byte strings
     - [ ] raw byte strings
   - [ ] handle raw identifiers
-  - [ ] parse a very basic struct statement
+  - [x] parse a very basic struct statement
 
 - [ ] Command line util basics
   - [x] write basic errors
@@ -43,6 +43,18 @@ Items in ***bold*** are in-progress.
   - [ ] write and read a baisc serialized blob, and print to stdout
   - [ ] print a basic struct ito json stdout
   - [ ] input json to basic struct
+  - [ ] Codegen basics
+    - [ ] cpp: mutable classes
+    - [ ] serialize
+    - [ ] deserialize
+    - [ ] views?
+
+- [ ] Self hosting
+  - [x] generate basic mutable classes
+  - [ ] generate views
+  - [ ] variants
+  - [ ] collections
+  - [ ] use those in cpp generation
 
 Command line utility should, by default print out all the parts of the parsed file.
 Modes:

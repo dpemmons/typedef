@@ -770,17 +770,18 @@ public:
     std::optional<uint8_t> maybe_val;
     U8LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *DEC_DIGITS();
-    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_PREFIX();
     antlr4::tree::TerminalNode *OCT_PREFIX();
     antlr4::tree::TerminalNode *BIN_PREFIX();
+    antlr4::tree::TerminalNode *DEC_DIGITS();
+    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_DIGITS();
     antlr4::tree::TerminalNode *HEX_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *OCT_DIGITS();
     antlr4::tree::TerminalNode *OCT_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *BIN_DIGITS();
     antlr4::tree::TerminalNode *BIN_DIGITS_UNDERSCORE();
+    antlr4::tree::TerminalNode *MINUS();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -796,17 +797,18 @@ public:
     std::optional<uint16_t> maybe_val;
     U16LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *DEC_DIGITS();
-    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_PREFIX();
     antlr4::tree::TerminalNode *OCT_PREFIX();
     antlr4::tree::TerminalNode *BIN_PREFIX();
+    antlr4::tree::TerminalNode *DEC_DIGITS();
+    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_DIGITS();
     antlr4::tree::TerminalNode *HEX_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *OCT_DIGITS();
     antlr4::tree::TerminalNode *OCT_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *BIN_DIGITS();
     antlr4::tree::TerminalNode *BIN_DIGITS_UNDERSCORE();
+    antlr4::tree::TerminalNode *MINUS();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -822,17 +824,18 @@ public:
     std::optional<uint32_t> maybe_val;
     U32LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *DEC_DIGITS();
-    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_PREFIX();
     antlr4::tree::TerminalNode *OCT_PREFIX();
     antlr4::tree::TerminalNode *BIN_PREFIX();
+    antlr4::tree::TerminalNode *DEC_DIGITS();
+    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_DIGITS();
     antlr4::tree::TerminalNode *HEX_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *OCT_DIGITS();
     antlr4::tree::TerminalNode *OCT_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *BIN_DIGITS();
     antlr4::tree::TerminalNode *BIN_DIGITS_UNDERSCORE();
+    antlr4::tree::TerminalNode *MINUS();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -848,17 +851,18 @@ public:
     std::optional<uint64_t> maybe_val;
     U64LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *DEC_DIGITS();
-    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_PREFIX();
     antlr4::tree::TerminalNode *OCT_PREFIX();
     antlr4::tree::TerminalNode *BIN_PREFIX();
+    antlr4::tree::TerminalNode *DEC_DIGITS();
+    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_DIGITS();
     antlr4::tree::TerminalNode *HEX_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *OCT_DIGITS();
     antlr4::tree::TerminalNode *OCT_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *BIN_DIGITS();
     antlr4::tree::TerminalNode *BIN_DIGITS_UNDERSCORE();
+    antlr4::tree::TerminalNode *MINUS();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -874,17 +878,18 @@ public:
     std::optional<int8_t> maybe_val;
     I8LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *DEC_DIGITS();
-    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_PREFIX();
     antlr4::tree::TerminalNode *OCT_PREFIX();
     antlr4::tree::TerminalNode *BIN_PREFIX();
+    antlr4::tree::TerminalNode *DEC_DIGITS();
+    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_DIGITS();
     antlr4::tree::TerminalNode *HEX_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *OCT_DIGITS();
     antlr4::tree::TerminalNode *OCT_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *BIN_DIGITS();
     antlr4::tree::TerminalNode *BIN_DIGITS_UNDERSCORE();
+    antlr4::tree::TerminalNode *MINUS();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -900,17 +905,18 @@ public:
     std::optional<int16_t> maybe_val;
     I16LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *DEC_DIGITS();
-    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_PREFIX();
     antlr4::tree::TerminalNode *OCT_PREFIX();
     antlr4::tree::TerminalNode *BIN_PREFIX();
+    antlr4::tree::TerminalNode *DEC_DIGITS();
+    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_DIGITS();
     antlr4::tree::TerminalNode *HEX_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *OCT_DIGITS();
     antlr4::tree::TerminalNode *OCT_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *BIN_DIGITS();
     antlr4::tree::TerminalNode *BIN_DIGITS_UNDERSCORE();
+    antlr4::tree::TerminalNode *MINUS();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -926,17 +932,18 @@ public:
     std::optional<int32_t> maybe_val;
     I32LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *DEC_DIGITS();
-    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_PREFIX();
     antlr4::tree::TerminalNode *OCT_PREFIX();
     antlr4::tree::TerminalNode *BIN_PREFIX();
+    antlr4::tree::TerminalNode *DEC_DIGITS();
+    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_DIGITS();
     antlr4::tree::TerminalNode *HEX_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *OCT_DIGITS();
     antlr4::tree::TerminalNode *OCT_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *BIN_DIGITS();
     antlr4::tree::TerminalNode *BIN_DIGITS_UNDERSCORE();
+    antlr4::tree::TerminalNode *MINUS();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -952,17 +959,18 @@ public:
     std::optional<int64_t> maybe_val;
     I64LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *DEC_DIGITS();
-    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_PREFIX();
     antlr4::tree::TerminalNode *OCT_PREFIX();
     antlr4::tree::TerminalNode *BIN_PREFIX();
+    antlr4::tree::TerminalNode *DEC_DIGITS();
+    antlr4::tree::TerminalNode *DEC_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *HEX_DIGITS();
     antlr4::tree::TerminalNode *HEX_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *OCT_DIGITS();
     antlr4::tree::TerminalNode *OCT_DIGITS_UNDERSCORE();
     antlr4::tree::TerminalNode *BIN_DIGITS();
     antlr4::tree::TerminalNode *BIN_DIGITS_UNDERSCORE();
+    antlr4::tree::TerminalNode *MINUS();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

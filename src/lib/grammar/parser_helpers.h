@@ -96,7 +96,11 @@ T GetIntValue(TypedefParser *parser, CTX *ctx) {
   T value;
 
   if (ctx->DEC_DIGITS()) {
-    digits = ctx->DEC_DIGITS()->getText();
+    if (ctx->MINUS()) {
+      digits = ctx->MINUS()->getText() + ctx->DEC_DIGITS()->getText();
+    } else {
+      digits = ctx->DEC_DIGITS()->getText();
+    }
     base = 10;
   } else if (ctx->HEX_DIGITS()) {
     digits = ctx->HEX_DIGITS()->getText();
@@ -108,7 +112,12 @@ T GetIntValue(TypedefParser *parser, CTX *ctx) {
     digits = ctx->BIN_DIGITS()->getText();
     base = 2;
   } else if (ctx->DEC_DIGITS_UNDERSCORE()) {
-    underscored_digits = ctx->DEC_DIGITS_UNDERSCORE()->getText();
+    if (ctx->MINUS()) {
+      underscored_digits =
+          ctx->MINUS()->getText() + ctx->DEC_DIGITS_UNDERSCORE()->getText();
+    } else {
+      underscored_digits = ctx->DEC_DIGITS_UNDERSCORE()->getText();
+    }
     base = 10;
     remove_underscores = true;
   } else if (ctx->HEX_DIGITS_UNDERSCORE()) {

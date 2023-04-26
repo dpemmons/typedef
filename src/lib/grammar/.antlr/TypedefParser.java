@@ -3264,17 +3264,18 @@ public class TypedefParser extends Parser {
 
 	public static class U8LiteralContext extends ParserRuleContext {
 		public std::optional<uint8_t> maybe_val;
-		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
-		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_PREFIX() { return getToken(TypedefParser.HEX_PREFIX, 0); }
 		public TerminalNode OCT_PREFIX() { return getToken(TypedefParser.OCT_PREFIX, 0); }
 		public TerminalNode BIN_PREFIX() { return getToken(TypedefParser.BIN_PREFIX, 0); }
+		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
+		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_DIGITS() { return getToken(TypedefParser.HEX_DIGITS, 0); }
 		public TerminalNode HEX_DIGITS_UNDERSCORE() { return getToken(TypedefParser.HEX_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode OCT_DIGITS() { return getToken(TypedefParser.OCT_DIGITS, 0); }
 		public TerminalNode OCT_DIGITS_UNDERSCORE() { return getToken(TypedefParser.OCT_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode BIN_DIGITS() { return getToken(TypedefParser.BIN_DIGITS, 0); }
 		public TerminalNode BIN_DIGITS_UNDERSCORE() { return getToken(TypedefParser.BIN_DIGITS_UNDERSCORE, 0); }
+		public TerminalNode MINUS() { return getToken(TypedefParser.MINUS, 0); }
 		public U8LiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3288,13 +3289,25 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(816);
+			setState(819);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case DEC_DIGITS:
 			case DEC_DIGITS_UNDERSCORE:
+			case MINUS:
 				{
-				setState(809);
+				{
+				setState(810);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==MINUS) {
+					{
+					setState(809);
+					match(MINUS);
+					}
+				}
+
+				setState(812);
 				_la = _input.LA(1);
 				if ( !(_la==DEC_DIGITS || _la==DEC_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3305,13 +3318,14 @@ public class TypedefParser extends Parser {
 					consume();
 				}
 				}
+				}
 				break;
 			case HEX_PREFIX:
 				{
 				{
-				setState(810);
+				setState(813);
 				match(HEX_PREFIX);
-				setState(811);
+				setState(814);
 				_la = _input.LA(1);
 				if ( !(_la==HEX_DIGITS || _la==HEX_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3327,9 +3341,9 @@ public class TypedefParser extends Parser {
 			case OCT_PREFIX:
 				{
 				{
-				setState(812);
+				setState(815);
 				match(OCT_PREFIX);
-				setState(813);
+				setState(816);
 				_la = _input.LA(1);
 				if ( !(_la==OCT_DIGITS || _la==OCT_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3345,9 +3359,9 @@ public class TypedefParser extends Parser {
 			case BIN_PREFIX:
 				{
 				{
-				setState(814);
+				setState(817);
 				match(BIN_PREFIX);
-				setState(815);
+				setState(818);
 				_la = _input.LA(1);
 				if ( !(_la==BIN_DIGITS || _la==BIN_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3381,17 +3395,18 @@ public class TypedefParser extends Parser {
 
 	public static class U16LiteralContext extends ParserRuleContext {
 		public std::optional<uint16_t> maybe_val;
-		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
-		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_PREFIX() { return getToken(TypedefParser.HEX_PREFIX, 0); }
 		public TerminalNode OCT_PREFIX() { return getToken(TypedefParser.OCT_PREFIX, 0); }
 		public TerminalNode BIN_PREFIX() { return getToken(TypedefParser.BIN_PREFIX, 0); }
+		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
+		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_DIGITS() { return getToken(TypedefParser.HEX_DIGITS, 0); }
 		public TerminalNode HEX_DIGITS_UNDERSCORE() { return getToken(TypedefParser.HEX_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode OCT_DIGITS() { return getToken(TypedefParser.OCT_DIGITS, 0); }
 		public TerminalNode OCT_DIGITS_UNDERSCORE() { return getToken(TypedefParser.OCT_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode BIN_DIGITS() { return getToken(TypedefParser.BIN_DIGITS, 0); }
 		public TerminalNode BIN_DIGITS_UNDERSCORE() { return getToken(TypedefParser.BIN_DIGITS_UNDERSCORE, 0); }
+		public TerminalNode MINUS() { return getToken(TypedefParser.MINUS, 0); }
 		public U16LiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3405,13 +3420,25 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(827);
+			setState(833);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case DEC_DIGITS:
 			case DEC_DIGITS_UNDERSCORE:
+			case MINUS:
 				{
-				setState(820);
+				{
+				setState(824);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==MINUS) {
+					{
+					setState(823);
+					match(MINUS);
+					}
+				}
+
+				setState(826);
 				_la = _input.LA(1);
 				if ( !(_la==DEC_DIGITS || _la==DEC_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3422,13 +3449,14 @@ public class TypedefParser extends Parser {
 					consume();
 				}
 				}
+				}
 				break;
 			case HEX_PREFIX:
 				{
 				{
-				setState(821);
+				setState(827);
 				match(HEX_PREFIX);
-				setState(822);
+				setState(828);
 				_la = _input.LA(1);
 				if ( !(_la==HEX_DIGITS || _la==HEX_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3444,9 +3472,9 @@ public class TypedefParser extends Parser {
 			case OCT_PREFIX:
 				{
 				{
-				setState(823);
+				setState(829);
 				match(OCT_PREFIX);
-				setState(824);
+				setState(830);
 				_la = _input.LA(1);
 				if ( !(_la==OCT_DIGITS || _la==OCT_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3462,9 +3490,9 @@ public class TypedefParser extends Parser {
 			case BIN_PREFIX:
 				{
 				{
-				setState(825);
+				setState(831);
 				match(BIN_PREFIX);
-				setState(826);
+				setState(832);
 				_la = _input.LA(1);
 				if ( !(_la==BIN_DIGITS || _la==BIN_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3498,17 +3526,18 @@ public class TypedefParser extends Parser {
 
 	public static class U32LiteralContext extends ParserRuleContext {
 		public std::optional<uint32_t> maybe_val;
-		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
-		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_PREFIX() { return getToken(TypedefParser.HEX_PREFIX, 0); }
 		public TerminalNode OCT_PREFIX() { return getToken(TypedefParser.OCT_PREFIX, 0); }
 		public TerminalNode BIN_PREFIX() { return getToken(TypedefParser.BIN_PREFIX, 0); }
+		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
+		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_DIGITS() { return getToken(TypedefParser.HEX_DIGITS, 0); }
 		public TerminalNode HEX_DIGITS_UNDERSCORE() { return getToken(TypedefParser.HEX_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode OCT_DIGITS() { return getToken(TypedefParser.OCT_DIGITS, 0); }
 		public TerminalNode OCT_DIGITS_UNDERSCORE() { return getToken(TypedefParser.OCT_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode BIN_DIGITS() { return getToken(TypedefParser.BIN_DIGITS, 0); }
 		public TerminalNode BIN_DIGITS_UNDERSCORE() { return getToken(TypedefParser.BIN_DIGITS_UNDERSCORE, 0); }
+		public TerminalNode MINUS() { return getToken(TypedefParser.MINUS, 0); }
 		public U32LiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3522,13 +3551,25 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(838);
+			setState(847);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case DEC_DIGITS:
 			case DEC_DIGITS_UNDERSCORE:
+			case MINUS:
 				{
-				setState(831);
+				{
+				setState(838);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==MINUS) {
+					{
+					setState(837);
+					match(MINUS);
+					}
+				}
+
+				setState(840);
 				_la = _input.LA(1);
 				if ( !(_la==DEC_DIGITS || _la==DEC_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3539,13 +3580,14 @@ public class TypedefParser extends Parser {
 					consume();
 				}
 				}
+				}
 				break;
 			case HEX_PREFIX:
 				{
 				{
-				setState(832);
+				setState(841);
 				match(HEX_PREFIX);
-				setState(833);
+				setState(842);
 				_la = _input.LA(1);
 				if ( !(_la==HEX_DIGITS || _la==HEX_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3561,9 +3603,9 @@ public class TypedefParser extends Parser {
 			case OCT_PREFIX:
 				{
 				{
-				setState(834);
+				setState(843);
 				match(OCT_PREFIX);
-				setState(835);
+				setState(844);
 				_la = _input.LA(1);
 				if ( !(_la==OCT_DIGITS || _la==OCT_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3579,9 +3621,9 @@ public class TypedefParser extends Parser {
 			case BIN_PREFIX:
 				{
 				{
-				setState(836);
+				setState(845);
 				match(BIN_PREFIX);
-				setState(837);
+				setState(846);
 				_la = _input.LA(1);
 				if ( !(_la==BIN_DIGITS || _la==BIN_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3615,17 +3657,18 @@ public class TypedefParser extends Parser {
 
 	public static class U64LiteralContext extends ParserRuleContext {
 		public std::optional<uint64_t> maybe_val;
-		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
-		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_PREFIX() { return getToken(TypedefParser.HEX_PREFIX, 0); }
 		public TerminalNode OCT_PREFIX() { return getToken(TypedefParser.OCT_PREFIX, 0); }
 		public TerminalNode BIN_PREFIX() { return getToken(TypedefParser.BIN_PREFIX, 0); }
+		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
+		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_DIGITS() { return getToken(TypedefParser.HEX_DIGITS, 0); }
 		public TerminalNode HEX_DIGITS_UNDERSCORE() { return getToken(TypedefParser.HEX_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode OCT_DIGITS() { return getToken(TypedefParser.OCT_DIGITS, 0); }
 		public TerminalNode OCT_DIGITS_UNDERSCORE() { return getToken(TypedefParser.OCT_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode BIN_DIGITS() { return getToken(TypedefParser.BIN_DIGITS, 0); }
 		public TerminalNode BIN_DIGITS_UNDERSCORE() { return getToken(TypedefParser.BIN_DIGITS_UNDERSCORE, 0); }
+		public TerminalNode MINUS() { return getToken(TypedefParser.MINUS, 0); }
 		public U64LiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3639,13 +3682,25 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(849);
+			setState(861);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case DEC_DIGITS:
 			case DEC_DIGITS_UNDERSCORE:
+			case MINUS:
 				{
-				setState(842);
+				{
+				setState(852);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==MINUS) {
+					{
+					setState(851);
+					match(MINUS);
+					}
+				}
+
+				setState(854);
 				_la = _input.LA(1);
 				if ( !(_la==DEC_DIGITS || _la==DEC_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3656,13 +3711,14 @@ public class TypedefParser extends Parser {
 					consume();
 				}
 				}
+				}
 				break;
 			case HEX_PREFIX:
 				{
 				{
-				setState(843);
+				setState(855);
 				match(HEX_PREFIX);
-				setState(844);
+				setState(856);
 				_la = _input.LA(1);
 				if ( !(_la==HEX_DIGITS || _la==HEX_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3678,9 +3734,9 @@ public class TypedefParser extends Parser {
 			case OCT_PREFIX:
 				{
 				{
-				setState(845);
+				setState(857);
 				match(OCT_PREFIX);
-				setState(846);
+				setState(858);
 				_la = _input.LA(1);
 				if ( !(_la==OCT_DIGITS || _la==OCT_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3696,9 +3752,9 @@ public class TypedefParser extends Parser {
 			case BIN_PREFIX:
 				{
 				{
-				setState(847);
+				setState(859);
 				match(BIN_PREFIX);
-				setState(848);
+				setState(860);
 				_la = _input.LA(1);
 				if ( !(_la==BIN_DIGITS || _la==BIN_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3732,17 +3788,18 @@ public class TypedefParser extends Parser {
 
 	public static class I8LiteralContext extends ParserRuleContext {
 		public std::optional<int8_t> maybe_val;
-		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
-		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_PREFIX() { return getToken(TypedefParser.HEX_PREFIX, 0); }
 		public TerminalNode OCT_PREFIX() { return getToken(TypedefParser.OCT_PREFIX, 0); }
 		public TerminalNode BIN_PREFIX() { return getToken(TypedefParser.BIN_PREFIX, 0); }
+		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
+		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_DIGITS() { return getToken(TypedefParser.HEX_DIGITS, 0); }
 		public TerminalNode HEX_DIGITS_UNDERSCORE() { return getToken(TypedefParser.HEX_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode OCT_DIGITS() { return getToken(TypedefParser.OCT_DIGITS, 0); }
 		public TerminalNode OCT_DIGITS_UNDERSCORE() { return getToken(TypedefParser.OCT_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode BIN_DIGITS() { return getToken(TypedefParser.BIN_DIGITS, 0); }
 		public TerminalNode BIN_DIGITS_UNDERSCORE() { return getToken(TypedefParser.BIN_DIGITS_UNDERSCORE, 0); }
+		public TerminalNode MINUS() { return getToken(TypedefParser.MINUS, 0); }
 		public I8LiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3756,13 +3813,25 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(860);
+			setState(875);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case DEC_DIGITS:
 			case DEC_DIGITS_UNDERSCORE:
+			case MINUS:
 				{
-				setState(853);
+				{
+				setState(866);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==MINUS) {
+					{
+					setState(865);
+					match(MINUS);
+					}
+				}
+
+				setState(868);
 				_la = _input.LA(1);
 				if ( !(_la==DEC_DIGITS || _la==DEC_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3773,13 +3842,14 @@ public class TypedefParser extends Parser {
 					consume();
 				}
 				}
+				}
 				break;
 			case HEX_PREFIX:
 				{
 				{
-				setState(854);
+				setState(869);
 				match(HEX_PREFIX);
-				setState(855);
+				setState(870);
 				_la = _input.LA(1);
 				if ( !(_la==HEX_DIGITS || _la==HEX_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3795,9 +3865,9 @@ public class TypedefParser extends Parser {
 			case OCT_PREFIX:
 				{
 				{
-				setState(856);
+				setState(871);
 				match(OCT_PREFIX);
-				setState(857);
+				setState(872);
 				_la = _input.LA(1);
 				if ( !(_la==OCT_DIGITS || _la==OCT_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3813,9 +3883,9 @@ public class TypedefParser extends Parser {
 			case BIN_PREFIX:
 				{
 				{
-				setState(858);
+				setState(873);
 				match(BIN_PREFIX);
-				setState(859);
+				setState(874);
 				_la = _input.LA(1);
 				if ( !(_la==BIN_DIGITS || _la==BIN_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3849,17 +3919,18 @@ public class TypedefParser extends Parser {
 
 	public static class I16LiteralContext extends ParserRuleContext {
 		public std::optional<int16_t> maybe_val;
-		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
-		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_PREFIX() { return getToken(TypedefParser.HEX_PREFIX, 0); }
 		public TerminalNode OCT_PREFIX() { return getToken(TypedefParser.OCT_PREFIX, 0); }
 		public TerminalNode BIN_PREFIX() { return getToken(TypedefParser.BIN_PREFIX, 0); }
+		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
+		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_DIGITS() { return getToken(TypedefParser.HEX_DIGITS, 0); }
 		public TerminalNode HEX_DIGITS_UNDERSCORE() { return getToken(TypedefParser.HEX_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode OCT_DIGITS() { return getToken(TypedefParser.OCT_DIGITS, 0); }
 		public TerminalNode OCT_DIGITS_UNDERSCORE() { return getToken(TypedefParser.OCT_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode BIN_DIGITS() { return getToken(TypedefParser.BIN_DIGITS, 0); }
 		public TerminalNode BIN_DIGITS_UNDERSCORE() { return getToken(TypedefParser.BIN_DIGITS_UNDERSCORE, 0); }
+		public TerminalNode MINUS() { return getToken(TypedefParser.MINUS, 0); }
 		public I16LiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3873,13 +3944,25 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(871);
+			setState(889);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case DEC_DIGITS:
 			case DEC_DIGITS_UNDERSCORE:
+			case MINUS:
 				{
-				setState(864);
+				{
+				setState(880);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==MINUS) {
+					{
+					setState(879);
+					match(MINUS);
+					}
+				}
+
+				setState(882);
 				_la = _input.LA(1);
 				if ( !(_la==DEC_DIGITS || _la==DEC_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3890,13 +3973,14 @@ public class TypedefParser extends Parser {
 					consume();
 				}
 				}
+				}
 				break;
 			case HEX_PREFIX:
 				{
 				{
-				setState(865);
+				setState(883);
 				match(HEX_PREFIX);
-				setState(866);
+				setState(884);
 				_la = _input.LA(1);
 				if ( !(_la==HEX_DIGITS || _la==HEX_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3912,9 +3996,9 @@ public class TypedefParser extends Parser {
 			case OCT_PREFIX:
 				{
 				{
-				setState(867);
+				setState(885);
 				match(OCT_PREFIX);
-				setState(868);
+				setState(886);
 				_la = _input.LA(1);
 				if ( !(_la==OCT_DIGITS || _la==OCT_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3930,9 +4014,9 @@ public class TypedefParser extends Parser {
 			case BIN_PREFIX:
 				{
 				{
-				setState(869);
+				setState(887);
 				match(BIN_PREFIX);
-				setState(870);
+				setState(888);
 				_la = _input.LA(1);
 				if ( !(_la==BIN_DIGITS || _la==BIN_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -3966,17 +4050,18 @@ public class TypedefParser extends Parser {
 
 	public static class I32LiteralContext extends ParserRuleContext {
 		public std::optional<int32_t> maybe_val;
-		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
-		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_PREFIX() { return getToken(TypedefParser.HEX_PREFIX, 0); }
 		public TerminalNode OCT_PREFIX() { return getToken(TypedefParser.OCT_PREFIX, 0); }
 		public TerminalNode BIN_PREFIX() { return getToken(TypedefParser.BIN_PREFIX, 0); }
+		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
+		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_DIGITS() { return getToken(TypedefParser.HEX_DIGITS, 0); }
 		public TerminalNode HEX_DIGITS_UNDERSCORE() { return getToken(TypedefParser.HEX_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode OCT_DIGITS() { return getToken(TypedefParser.OCT_DIGITS, 0); }
 		public TerminalNode OCT_DIGITS_UNDERSCORE() { return getToken(TypedefParser.OCT_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode BIN_DIGITS() { return getToken(TypedefParser.BIN_DIGITS, 0); }
 		public TerminalNode BIN_DIGITS_UNDERSCORE() { return getToken(TypedefParser.BIN_DIGITS_UNDERSCORE, 0); }
+		public TerminalNode MINUS() { return getToken(TypedefParser.MINUS, 0); }
 		public I32LiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3990,13 +4075,25 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(882);
+			setState(903);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case DEC_DIGITS:
 			case DEC_DIGITS_UNDERSCORE:
+			case MINUS:
 				{
-				setState(875);
+				{
+				setState(894);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==MINUS) {
+					{
+					setState(893);
+					match(MINUS);
+					}
+				}
+
+				setState(896);
 				_la = _input.LA(1);
 				if ( !(_la==DEC_DIGITS || _la==DEC_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -4007,13 +4104,14 @@ public class TypedefParser extends Parser {
 					consume();
 				}
 				}
+				}
 				break;
 			case HEX_PREFIX:
 				{
 				{
-				setState(876);
+				setState(897);
 				match(HEX_PREFIX);
-				setState(877);
+				setState(898);
 				_la = _input.LA(1);
 				if ( !(_la==HEX_DIGITS || _la==HEX_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -4029,9 +4127,9 @@ public class TypedefParser extends Parser {
 			case OCT_PREFIX:
 				{
 				{
-				setState(878);
+				setState(899);
 				match(OCT_PREFIX);
-				setState(879);
+				setState(900);
 				_la = _input.LA(1);
 				if ( !(_la==OCT_DIGITS || _la==OCT_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -4047,9 +4145,9 @@ public class TypedefParser extends Parser {
 			case BIN_PREFIX:
 				{
 				{
-				setState(880);
+				setState(901);
 				match(BIN_PREFIX);
-				setState(881);
+				setState(902);
 				_la = _input.LA(1);
 				if ( !(_la==BIN_DIGITS || _la==BIN_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -4083,17 +4181,18 @@ public class TypedefParser extends Parser {
 
 	public static class I64LiteralContext extends ParserRuleContext {
 		public std::optional<int64_t> maybe_val;
-		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
-		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_PREFIX() { return getToken(TypedefParser.HEX_PREFIX, 0); }
 		public TerminalNode OCT_PREFIX() { return getToken(TypedefParser.OCT_PREFIX, 0); }
 		public TerminalNode BIN_PREFIX() { return getToken(TypedefParser.BIN_PREFIX, 0); }
+		public TerminalNode DEC_DIGITS() { return getToken(TypedefParser.DEC_DIGITS, 0); }
+		public TerminalNode DEC_DIGITS_UNDERSCORE() { return getToken(TypedefParser.DEC_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode HEX_DIGITS() { return getToken(TypedefParser.HEX_DIGITS, 0); }
 		public TerminalNode HEX_DIGITS_UNDERSCORE() { return getToken(TypedefParser.HEX_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode OCT_DIGITS() { return getToken(TypedefParser.OCT_DIGITS, 0); }
 		public TerminalNode OCT_DIGITS_UNDERSCORE() { return getToken(TypedefParser.OCT_DIGITS_UNDERSCORE, 0); }
 		public TerminalNode BIN_DIGITS() { return getToken(TypedefParser.BIN_DIGITS, 0); }
 		public TerminalNode BIN_DIGITS_UNDERSCORE() { return getToken(TypedefParser.BIN_DIGITS_UNDERSCORE, 0); }
+		public TerminalNode MINUS() { return getToken(TypedefParser.MINUS, 0); }
 		public I64LiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -4107,13 +4206,25 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(893);
+			setState(917);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case DEC_DIGITS:
 			case DEC_DIGITS_UNDERSCORE:
+			case MINUS:
 				{
-				setState(886);
+				{
+				setState(908);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if (_la==MINUS) {
+					{
+					setState(907);
+					match(MINUS);
+					}
+				}
+
+				setState(910);
 				_la = _input.LA(1);
 				if ( !(_la==DEC_DIGITS || _la==DEC_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -4124,13 +4235,14 @@ public class TypedefParser extends Parser {
 					consume();
 				}
 				}
+				}
 				break;
 			case HEX_PREFIX:
 				{
 				{
-				setState(887);
+				setState(911);
 				match(HEX_PREFIX);
-				setState(888);
+				setState(912);
 				_la = _input.LA(1);
 				if ( !(_la==HEX_DIGITS || _la==HEX_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -4146,9 +4258,9 @@ public class TypedefParser extends Parser {
 			case OCT_PREFIX:
 				{
 				{
-				setState(889);
+				setState(913);
 				match(OCT_PREFIX);
-				setState(890);
+				setState(914);
 				_la = _input.LA(1);
 				if ( !(_la==OCT_DIGITS || _la==OCT_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -4164,9 +4276,9 @@ public class TypedefParser extends Parser {
 			case BIN_PREFIX:
 				{
 				{
-				setState(891);
+				setState(915);
 				match(BIN_PREFIX);
-				setState(892);
+				setState(916);
 				_la = _input.LA(1);
 				if ( !(_la==BIN_DIGITS || _la==BIN_DIGITS_UNDERSCORE) ) {
 				_errHandler.recoverInline(this);
@@ -4214,13 +4326,13 @@ public class TypedefParser extends Parser {
 		StringLiteralContext _localctx = new StringLiteralContext(_ctx, getState());
 		enterRule(_localctx, 76, RULE_stringLiteral);
 		try {
-			setState(901);
+			setState(925);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case STRING_LITERAL:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(897);
+				setState(921);
 				((StringLiteralContext)_localctx).STRING_LITERAL = match(STRING_LITERAL);
 
 						((StringLiteralContext)_localctx).maybe_val =  GetStringValue(this, ((StringLiteralContext)_localctx).STRING_LITERAL);
@@ -4230,7 +4342,7 @@ public class TypedefParser extends Parser {
 			case RAW_STRING_LITERAL:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(899);
+				setState(923);
 				((StringLiteralContext)_localctx).RAW_STRING_LITERAL = match(RAW_STRING_LITERAL);
 
 						((StringLiteralContext)_localctx).maybe_val =  GetRawString(this, ((StringLiteralContext)_localctx).RAW_STRING_LITERAL);
@@ -4267,22 +4379,22 @@ public class TypedefParser extends Parser {
 		IdentifierContext _localctx = new IdentifierContext(_ctx, getState());
 		enterRule(_localctx, 78, RULE_identifier);
 		try {
-			setState(906);
+			setState(930);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case NON_KEYWORD_IDENTIFIER:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(903);
+				setState(927);
 				((IdentifierContext)_localctx).nki = match(NON_KEYWORD_IDENTIFIER);
 				}
 				break;
 			case RAW_ESCAPE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(904);
+				setState(928);
 				match(RAW_ESCAPE);
-				setState(905);
+				setState(929);
 				((IdentifierContext)_localctx).nki = match(NON_KEYWORD_IDENTIFIER);
 				}
 				break;
@@ -4384,7 +4496,7 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(908);
+			setState(932);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << KW_AS) | (1L << KW_ENUM) | (1L << KW_FALSE) | (1L << KW_FN) | (1L << KW_IMPL) | (1L << KW_MODULE) | (1L << KW_STRUCT) | (1L << KW_TRUE) | (1L << KW_TYPE) | (1L << KW_TYPEDEF) | (1L << KW_USE) | (1L << KW_AND) | (1L << KW_IN) | (1L << KW_LET) | (1L << KW_NOT) | (1L << KW_OR) | (1L << KW_SIZEOF) | (1L << KW_THIS) | (1L << KW_TRAIT) | (1L << KW_WHERE) | (1L << KW_XOR) | (1L << KW_BREAK) | (1L << KW_CONTINUE) | (1L << KW_DEFAULT) | (1L << KW_DO) | (1L << KW_ELSE) | (1L << KW_FOR) | (1L << KW_GOTO) | (1L << KW_IF) | (1L << KW_LOOP) | (1L << KW_MATCH) | (1L << KW_MOVE) | (1L << KW_RETURN) | (1L << KW_TRY) | (1L << KW_WHILE) | (1L << KW_YIELD) | (1L << KW_ABSTRACT) | (1L << KW_AUTO) | (1L << KW_CONST) | (1L << KW_DOUBLE) | (1L << KW_EXTERN) | (1L << KW_FINAL) | (1L << KW_FLOAT) | (1L << KW_INT) | (1L << KW_LONG) | (1L << KW_MACRO) | (1L << KW_MUT) | (1L << KW_OVERRIDE) | (1L << KW_PRIVATE) | (1L << KW_PUB) | (1L << KW_REF) | (1L << KW_SELFTYPE) | (1L << KW_SELFVALUE) | (1L << KW_SIGNED) | (1L << KW_STATIC) | (1L << KW_SUPER) | (1L << KW_SWITCH) | (1L << KW_TYPEOF) | (1L << KW_UNION))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (KW_UNSAFE - 64)) | (1L << (KW_UNSIGNED - 64)) | (1L << (KW_UNSIZED - 64)) | (1L << (KW_VIRTUAL - 64)) | (1L << (KW_VOID - 64)) | (1L << (KW_VOLATILE - 64)))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -4408,7 +4520,7 @@ public class TypedefParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u00a1\u0391\4\2\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u00a1\u03a9\4\2\t"+
 		"\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -4478,109 +4590,111 @@ public class TypedefParser extends Parser {
 		"\32\u0305\13\32\3\32\5\32\u0308\n\32\5\32\u030a\n\32\3\32\5\32\u030d\n"+
 		"\32\3\32\3\32\3\32\5\32\u0312\n\32\5\32\u0314\n\32\3\33\5\33\u0317\n\33"+
 		"\3\33\3\33\3\33\7\33\u031c\n\33\f\33\16\33\u031f\13\33\3\34\3\34\3\35"+
-		"\3\35\3\35\3\36\3\36\3\36\3\37\3\37\3\37\3 \3 \3 \3 \3 \3 \3 \5 \u0333"+
-		"\n \3 \3 \3!\3!\3!\3!\3!\3!\3!\5!\u033e\n!\3!\3!\3\"\3\"\3\"\3\"\3\"\3"+
-		"\"\3\"\5\"\u0349\n\"\3\"\3\"\3#\3#\3#\3#\3#\3#\3#\5#\u0354\n#\3#\3#\3"+
-		"$\3$\3$\3$\3$\3$\3$\5$\u035f\n$\3$\3$\3%\3%\3%\3%\3%\3%\3%\5%\u036a\n"+
-		"%\3%\3%\3&\3&\3&\3&\3&\3&\3&\5&\u0375\n&\3&\3&\3\'\3\'\3\'\3\'\3\'\3\'"+
-		"\3\'\5\'\u0380\n\'\3\'\3\'\3(\3(\3(\3(\5(\u0388\n(\3)\3)\3)\5)\u038d\n"+
-		")\3*\3*\3*\2\2+\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62"+
-		"\64\668:<>@BDFHJLNPR\2\t\3\2HT\4\2\6\6\f\f\3\2bc\3\2de\3\2fg\3\2hi\5\2"+
-		"\4\b\n\17\22G\2\u03fb\2T\3\2\2\2\4\u0084\3\2\2\2\6\u0086\3\2\2\2\b\u008f"+
-		"\3\2\2\2\n\u00ca\3\2\2\2\f\u00e4\3\2\2\2\16\u00e6\3\2\2\2\20\u0116\3\2"+
-		"\2\2\22\u0120\3\2\2\2\24\u0139\3\2\2\2\26\u0152\3\2\2\2\30\u0187\3\2\2"+
-		"\2\32\u01ac\3\2\2\2\34\u01d1\3\2\2\2\36\u01f6\3\2\2\2 \u021b\3\2\2\2\""+
-		"\u0240\3\2\2\2$\u0265\3\2\2\2&\u028a\3\2\2\2(\u02b0\3\2\2\2*\u02d5\3\2"+
-		"\2\2,\u02d7\3\2\2\2.\u02ee\3\2\2\2\60\u02f2\3\2\2\2\62\u0313\3\2\2\2\64"+
-		"\u0316\3\2\2\2\66\u0320\3\2\2\28\u0322\3\2\2\2:\u0325\3\2\2\2<\u0328\3"+
-		"\2\2\2>\u0332\3\2\2\2@\u033d\3\2\2\2B\u0348\3\2\2\2D\u0353\3\2\2\2F\u035e"+
-		"\3\2\2\2H\u0369\3\2\2\2J\u0374\3\2\2\2L\u037f\3\2\2\2N\u0387\3\2\2\2P"+
-		"\u038c\3\2\2\2R\u038e\3\2\2\2TX\5,\27\2UW\7^\2\2VU\3\2\2\2WZ\3\2\2\2X"+
-		"V\3\2\2\2XY\3\2\2\2Y\\\3\2\2\2ZX\3\2\2\2[]\5.\30\2\\[\3\2\2\2\\]\3\2\2"+
-		"\2]g\3\2\2\2^`\7^\2\2_^\3\2\2\2`c\3\2\2\2a_\3\2\2\2ab\3\2\2\2bd\3\2\2"+
-		"\2ca\3\2\2\2df\5\60\31\2ea\3\2\2\2fi\3\2\2\2ge\3\2\2\2gh\3\2\2\2hs\3\2"+
-		"\2\2ig\3\2\2\2jl\7^\2\2kj\3\2\2\2lo\3\2\2\2mk\3\2\2\2mn\3\2\2\2np\3\2"+
-		"\2\2om\3\2\2\2pr\5\4\3\2qm\3\2\2\2ru\3\2\2\2sq\3\2\2\2st\3\2\2\2ty\3\2"+
-		"\2\2us\3\2\2\2vx\7^\2\2wv\3\2\2\2x{\3\2\2\2yw\3\2\2\2yz\3\2\2\2z|\3\2"+
-		"\2\2{y\3\2\2\2|}\7\2\2\3}\3\3\2\2\2~\177\5\6\4\2\177\u0080\b\3\1\2\u0080"+
-		"\u0085\3\2\2\2\u0081\u0082\5\b\5\2\u0082\u0083\b\3\1\2\u0083\u0085\3\2"+
-		"\2\2\u0084~\3\2\2\2\u0084\u0081\3\2\2\2\u0085\5\3\2\2\2\u0086\u008a\5"+
-		"\n\6\2\u0087\u0089\7^\2\2\u0088\u0087\3\2\2\2\u0089\u008c\3\2\2\2\u008a"+
-		"\u0088\3\2\2\2\u008a\u008b\3\2\2\2\u008b\u008d\3\2\2\2\u008c\u008a\3\2"+
-		"\2\2\u008d\u008e\7\u0094\2\2\u008e\7\3\2\2\2\u008f\u0093\5P)\2\u0090\u0092"+
-		"\7^\2\2\u0091\u0090\3\2\2\2\u0092\u0095\3\2\2\2\u0093\u0091\3\2\2\2\u0093"+
-		"\u0094\3\2\2\2\u0094\u0096\3\2\2\2\u0095\u0093\3\2\2\2\u0096\u009a\7\u0095"+
-		"\2\2\u0097\u0099\7^\2\2\u0098\u0097\3\2\2\2\u0099\u009c\3\2\2\2\u009a"+
-		"\u0098\3\2\2\2\u009a\u009b\3\2\2\2\u009b\u009d\3\2\2\2\u009c\u009a\3\2"+
-		"\2\2\u009d\u00a1\7\13\2\2\u009e\u00a0\7^\2\2\u009f\u009e\3\2\2\2\u00a0"+
-		"\u00a3\3\2\2\2\u00a1\u009f\3\2\2\2\u00a1\u00a2\3\2\2\2\u00a2\u00a4\3\2"+
-		"\2\2\u00a3\u00a1\3\2\2\2\u00a4\u00bc\7\u009c\2\2\u00a5\u00a7\7^\2\2\u00a6"+
-		"\u00a5\3\2\2\2\u00a7\u00aa\3\2\2\2\u00a8\u00a6\3\2\2\2\u00a8\u00a9\3\2"+
-		"\2\2\u00a9\u00ab\3\2\2\2\u00aa\u00a8\3\2\2\2\u00ab\u00ac\5\n\6\2\u00ac"+
-		"\u00b0\b\5\1\2\u00ad\u00af\7^\2\2\u00ae\u00ad\3\2\2\2\u00af\u00b2\3\2"+
-		"\2\2\u00b0\u00ae\3\2\2\2\u00b0\u00b1\3\2\2\2\u00b1\u00b3\3\2\2\2\u00b2"+
-		"\u00b0\3\2\2\2\u00b3\u00b7\7\u0094\2\2\u00b4\u00b6\7^\2\2\u00b5\u00b4"+
-		"\3\2\2\2\u00b6\u00b9\3\2\2\2\u00b7\u00b5\3\2\2\2\u00b7\u00b8\3\2\2\2\u00b8"+
-		"\u00bb\3\2\2\2\u00b9\u00b7\3\2\2\2\u00ba\u00a8\3\2\2\2\u00bb\u00be\3\2"+
-		"\2\2\u00bc\u00ba\3\2\2\2\u00bc\u00bd\3\2\2\2\u00bd\u00bf\3\2\2\2\u00be"+
-		"\u00bc\3\2\2\2\u00bf\u00c3\7\u009d\2\2\u00c0\u00c2\7^\2\2\u00c1\u00c0"+
-		"\3\2\2\2\u00c2\u00c5\3\2\2\2\u00c3\u00c1\3\2\2\2\u00c3\u00c4\3\2\2\2\u00c4"+
-		"\u00c6\3\2\2\2\u00c5\u00c3\3\2\2\2\u00c6\u00c7\7\u0094\2\2\u00c7\u00c8"+
-		"\3\2\2\2\u00c8\u00c9\b\5\1\2\u00c9\t\3\2\2\2\u00ca\u00ce\5P)\2\u00cb\u00cd"+
-		"\7^\2\2\u00cc\u00cb\3\2\2\2\u00cd\u00d0\3\2\2\2\u00ce\u00cc\3\2\2\2\u00ce"+
-		"\u00cf\3\2\2\2\u00cf\u00d1\3\2\2\2\u00d0\u00ce\3\2\2\2\u00d1\u00d5\5\f"+
-		"\7\2\u00d2\u00d4\7^\2\2\u00d3\u00d2\3\2\2\2\u00d4\u00d7\3\2\2\2\u00d5"+
-		"\u00d3\3\2\2\2\u00d5\u00d6\3\2\2\2\u00d6\u00d8\3\2\2\2\u00d7\u00d5\3\2"+
-		"\2\2\u00d8\u00d9\b\6\1\2\u00d9\13\3\2\2\2\u00da\u00e5\5\16\b\2\u00db\u00e5"+
-		"\5\20\t\2\u00dc\u00e0\7\u0095\2\2\u00dd\u00df\7^\2\2\u00de\u00dd\3\2\2"+
-		"\2\u00df\u00e2\3\2\2\2\u00e0\u00de\3\2\2\2\u00e0\u00e1\3\2\2\2\u00e1\u00e3"+
-		"\3\2\2\2\u00e2\u00e0\3\2\2\2\u00e3\u00e5\5P)\2\u00e4\u00da\3\2\2\2\u00e4"+
-		"\u00db\3\2\2\2\u00e4\u00dc\3\2\2\2\u00e5\r\3\2\2\2\u00e6\u00ea\7\u0095"+
-		"\2\2\u00e7\u00e9\7^\2\2\u00e8\u00e7\3\2\2\2\u00e9\u00ec\3\2\2\2\u00ea"+
-		"\u00e8\3\2\2\2\u00ea\u00eb\3\2\2\2\u00eb\u00ed\3\2\2\2\u00ec\u00ea\3\2"+
-		"\2\2\u00ed\u00ee\t\2\2\2\u00ee\17\3\2\2\2\u00ef\u00f0\5\22\n\2\u00f0\u00f1"+
-		"\b\t\1\2\u00f1\u0117\3\2\2\2\u00f2\u00f3\5\24\13\2\u00f3\u00f4\b\t\1\2"+
-		"\u00f4\u0117\3\2\2\2\u00f5\u00f6\5\26\f\2\u00f6\u00f7\b\t\1\2\u00f7\u0117"+
-		"\3\2\2\2\u00f8\u00f9\5\30\r\2\u00f9\u00fa\b\t\1\2\u00fa\u0117\3\2\2\2"+
-		"\u00fb\u00fc\5\32\16\2\u00fc\u00fd\b\t\1\2\u00fd\u0117\3\2\2\2\u00fe\u00ff"+
-		"\5\34\17\2\u00ff\u0100\b\t\1\2\u0100\u0117\3\2\2\2\u0101\u0102\5\36\20"+
-		"\2\u0102\u0103\b\t\1\2\u0103\u0117\3\2\2\2\u0104\u0105\5 \21\2\u0105\u0106"+
-		"\b\t\1\2\u0106\u0117\3\2\2\2\u0107\u0108\5\"\22\2\u0108\u0109\b\t\1\2"+
-		"\u0109\u0117\3\2\2\2\u010a\u010b\5$\23\2\u010b\u010c\b\t\1\2\u010c\u0117"+
-		"\3\2\2\2\u010d\u010e\5&\24\2\u010e\u010f\b\t\1\2\u010f\u0117\3\2\2\2\u0110"+
-		"\u0111\5(\25\2\u0111\u0112\b\t\1\2\u0112\u0117\3\2\2\2\u0113\u0114\5*"+
-		"\26\2\u0114\u0115\b\t\1\2\u0115\u0117\3\2\2\2\u0116\u00ef\3\2\2\2\u0116"+
-		"\u00f2\3\2\2\2\u0116\u00f5\3\2\2\2\u0116\u00f8\3\2\2\2\u0116\u00fb\3\2"+
-		"\2\2\u0116\u00fe\3\2\2\2\u0116\u0101\3\2\2\2\u0116\u0104\3\2\2\2\u0116"+
-		"\u0107\3\2\2\2\u0116\u010a\3\2\2\2\u0116\u010d\3\2\2\2\u0116\u0110\3\2"+
-		"\2\2\u0116\u0113\3\2\2\2\u0117\21\3\2\2\2\u0118\u011c\7\u0095\2\2\u0119"+
-		"\u011b\7^\2\2\u011a\u0119\3\2\2\2\u011b\u011e\3\2\2\2\u011c\u011a\3\2"+
-		"\2\2\u011c\u011d\3\2\2\2\u011d\u011f\3\2\2\2\u011e\u011c\3\2\2\2\u011f"+
-		"\u0121\7H\2\2\u0120\u0118\3\2\2\2\u0120\u0121\3\2\2\2\u0121\u0125\3\2"+
-		"\2\2\u0122\u0124\7^\2\2\u0123\u0122\3\2\2\2\u0124\u0127\3\2\2\2\u0125"+
-		"\u0123\3\2\2\2\u0125\u0126\3\2\2\2\u0126\u0128\3\2\2\2\u0127\u0125\3\2"+
-		"\2\2\u0128\u012c\7\u0087\2\2\u0129\u012b\7^\2\2\u012a\u0129\3\2\2\2\u012b"+
-		"\u012e\3\2\2\2\u012c\u012a\3\2\2\2\u012c\u012d\3\2\2\2\u012d\u012f\3\2"+
-		"\2\2\u012e\u012c\3\2\2\2\u012f\u0130\5\66\34\2\u0130\23\3\2\2\2\u0131"+
-		"\u0135\7\u0095\2\2\u0132\u0134\7^\2\2\u0133\u0132\3\2\2\2\u0134\u0137"+
-		"\3\2\2\2\u0135\u0133\3\2\2\2\u0135\u0136\3\2\2\2\u0136\u0138\3\2\2\2\u0137"+
-		"\u0135\3\2\2\2\u0138\u013a\7I\2\2\u0139\u0131\3\2\2\2\u0139\u013a\3\2"+
-		"\2\2\u013a\u013e\3\2\2\2\u013b\u013d\7^\2\2\u013c\u013b\3\2\2\2\u013d"+
-		"\u0140\3\2\2\2\u013e\u013c\3\2\2\2\u013e\u013f\3\2\2\2\u013f\u0141\3\2"+
-		"\2\2\u0140\u013e\3\2\2\2\u0141\u0145\7\u0087\2\2\u0142\u0144\7^\2\2\u0143"+
-		"\u0142\3\2\2\2\u0144\u0147\3\2\2\2\u0145\u0143\3\2\2\2\u0145\u0146\3\2"+
-		"\2\2\u0146\u0148\3\2\2\2\u0147\u0145\3\2\2\2\u0148\u0149\58\35\2\u0149"+
-		"\25\3\2\2\2\u014a\u014e\7\u0095\2\2\u014b\u014d\7^\2\2\u014c\u014b\3\2"+
-		"\2\2\u014d\u0150\3\2\2\2\u014e\u014c\3\2\2\2\u014e\u014f\3\2\2\2\u014f"+
-		"\u0151\3\2\2\2\u0150\u014e\3\2\2\2\u0151\u0153\7J\2\2\u0152\u014a\3\2"+
-		"\2\2\u0152\u0153\3\2\2\2\u0153\u0157\3\2\2\2\u0154\u0156\7^\2\2\u0155"+
-		"\u0154\3\2\2\2\u0156\u0159\3\2\2\2\u0157\u0155\3\2\2\2\u0157\u0158\3\2"+
-		"\2\2\u0158\u015a\3\2\2\2\u0159\u0157\3\2\2\2\u015a\u015e\7\u0087\2\2\u015b"+
-		"\u015d\7^\2\2\u015c\u015b\3\2\2\2\u015d\u0160\3\2\2\2\u015e\u015c\3\2"+
-		"\2\2\u015e\u015f\3\2\2\2\u015f\u0161\3\2\2\2\u0160\u015e\3\2\2\2\u0161"+
-		"\u0162\5N(\2\u0162\27\3\2\2\2\u0163\u0167\7\u0095\2\2\u0164\u0166\7^\2"+
-		"\2\u0165\u0164\3\2\2\2\u0166\u0169\3\2\2\2\u0167\u0165\3\2\2\2\u0167\u0168"+
-		"\3\2\2\2\u0168\u016a\3\2\2\2\u0169\u0167\3\2\2\2\u016a\u016e\7K\2\2\u016b"+
+		"\3\35\3\35\3\36\3\36\3\36\3\37\3\37\3\37\3 \5 \u032d\n \3 \3 \3 \3 \3"+
+		" \3 \3 \5 \u0336\n \3 \3 \3!\5!\u033b\n!\3!\3!\3!\3!\3!\3!\3!\5!\u0344"+
+		"\n!\3!\3!\3\"\5\"\u0349\n\"\3\"\3\"\3\"\3\"\3\"\3\"\3\"\5\"\u0352\n\""+
+		"\3\"\3\"\3#\5#\u0357\n#\3#\3#\3#\3#\3#\3#\3#\5#\u0360\n#\3#\3#\3$\5$\u0365"+
+		"\n$\3$\3$\3$\3$\3$\3$\3$\5$\u036e\n$\3$\3$\3%\5%\u0373\n%\3%\3%\3%\3%"+
+		"\3%\3%\3%\5%\u037c\n%\3%\3%\3&\5&\u0381\n&\3&\3&\3&\3&\3&\3&\3&\5&\u038a"+
+		"\n&\3&\3&\3\'\5\'\u038f\n\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\5\'\u0398\n\'"+
+		"\3\'\3\'\3(\3(\3(\3(\5(\u03a0\n(\3)\3)\3)\5)\u03a5\n)\3*\3*\3*\2\2+\2"+
+		"\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJL"+
+		"NPR\2\t\3\2HT\4\2\6\6\f\f\3\2bc\3\2de\3\2fg\3\2hi\5\2\4\b\n\17\22G\2\u041b"+
+		"\2T\3\2\2\2\4\u0084\3\2\2\2\6\u0086\3\2\2\2\b\u008f\3\2\2\2\n\u00ca\3"+
+		"\2\2\2\f\u00e4\3\2\2\2\16\u00e6\3\2\2\2\20\u0116\3\2\2\2\22\u0120\3\2"+
+		"\2\2\24\u0139\3\2\2\2\26\u0152\3\2\2\2\30\u0187\3\2\2\2\32\u01ac\3\2\2"+
+		"\2\34\u01d1\3\2\2\2\36\u01f6\3\2\2\2 \u021b\3\2\2\2\"\u0240\3\2\2\2$\u0265"+
+		"\3\2\2\2&\u028a\3\2\2\2(\u02b0\3\2\2\2*\u02d5\3\2\2\2,\u02d7\3\2\2\2."+
+		"\u02ee\3\2\2\2\60\u02f2\3\2\2\2\62\u0313\3\2\2\2\64\u0316\3\2\2\2\66\u0320"+
+		"\3\2\2\28\u0322\3\2\2\2:\u0325\3\2\2\2<\u0328\3\2\2\2>\u0335\3\2\2\2@"+
+		"\u0343\3\2\2\2B\u0351\3\2\2\2D\u035f\3\2\2\2F\u036d\3\2\2\2H\u037b\3\2"+
+		"\2\2J\u0389\3\2\2\2L\u0397\3\2\2\2N\u039f\3\2\2\2P\u03a4\3\2\2\2R\u03a6"+
+		"\3\2\2\2TX\5,\27\2UW\7^\2\2VU\3\2\2\2WZ\3\2\2\2XV\3\2\2\2XY\3\2\2\2Y\\"+
+		"\3\2\2\2ZX\3\2\2\2[]\5.\30\2\\[\3\2\2\2\\]\3\2\2\2]g\3\2\2\2^`\7^\2\2"+
+		"_^\3\2\2\2`c\3\2\2\2a_\3\2\2\2ab\3\2\2\2bd\3\2\2\2ca\3\2\2\2df\5\60\31"+
+		"\2ea\3\2\2\2fi\3\2\2\2ge\3\2\2\2gh\3\2\2\2hs\3\2\2\2ig\3\2\2\2jl\7^\2"+
+		"\2kj\3\2\2\2lo\3\2\2\2mk\3\2\2\2mn\3\2\2\2np\3\2\2\2om\3\2\2\2pr\5\4\3"+
+		"\2qm\3\2\2\2ru\3\2\2\2sq\3\2\2\2st\3\2\2\2ty\3\2\2\2us\3\2\2\2vx\7^\2"+
+		"\2wv\3\2\2\2x{\3\2\2\2yw\3\2\2\2yz\3\2\2\2z|\3\2\2\2{y\3\2\2\2|}\7\2\2"+
+		"\3}\3\3\2\2\2~\177\5\6\4\2\177\u0080\b\3\1\2\u0080\u0085\3\2\2\2\u0081"+
+		"\u0082\5\b\5\2\u0082\u0083\b\3\1\2\u0083\u0085\3\2\2\2\u0084~\3\2\2\2"+
+		"\u0084\u0081\3\2\2\2\u0085\5\3\2\2\2\u0086\u008a\5\n\6\2\u0087\u0089\7"+
+		"^\2\2\u0088\u0087\3\2\2\2\u0089\u008c\3\2\2\2\u008a\u0088\3\2\2\2\u008a"+
+		"\u008b\3\2\2\2\u008b\u008d\3\2\2\2\u008c\u008a\3\2\2\2\u008d\u008e\7\u0094"+
+		"\2\2\u008e\7\3\2\2\2\u008f\u0093\5P)\2\u0090\u0092\7^\2\2\u0091\u0090"+
+		"\3\2\2\2\u0092\u0095\3\2\2\2\u0093\u0091\3\2\2\2\u0093\u0094\3\2\2\2\u0094"+
+		"\u0096\3\2\2\2\u0095\u0093\3\2\2\2\u0096\u009a\7\u0095\2\2\u0097\u0099"+
+		"\7^\2\2\u0098\u0097\3\2\2\2\u0099\u009c\3\2\2\2\u009a\u0098\3\2\2\2\u009a"+
+		"\u009b\3\2\2\2\u009b\u009d\3\2\2\2\u009c\u009a\3\2\2\2\u009d\u00a1\7\13"+
+		"\2\2\u009e\u00a0\7^\2\2\u009f\u009e\3\2\2\2\u00a0\u00a3\3\2\2\2\u00a1"+
+		"\u009f\3\2\2\2\u00a1\u00a2\3\2\2\2\u00a2\u00a4\3\2\2\2\u00a3\u00a1\3\2"+
+		"\2\2\u00a4\u00bc\7\u009c\2\2\u00a5\u00a7\7^\2\2\u00a6\u00a5\3\2\2\2\u00a7"+
+		"\u00aa\3\2\2\2\u00a8\u00a6\3\2\2\2\u00a8\u00a9\3\2\2\2\u00a9\u00ab\3\2"+
+		"\2\2\u00aa\u00a8\3\2\2\2\u00ab\u00ac\5\n\6\2\u00ac\u00b0\b\5\1\2\u00ad"+
+		"\u00af\7^\2\2\u00ae\u00ad\3\2\2\2\u00af\u00b2\3\2\2\2\u00b0\u00ae\3\2"+
+		"\2\2\u00b0\u00b1\3\2\2\2\u00b1\u00b3\3\2\2\2\u00b2\u00b0\3\2\2\2\u00b3"+
+		"\u00b7\7\u0094\2\2\u00b4\u00b6\7^\2\2\u00b5\u00b4\3\2\2\2\u00b6\u00b9"+
+		"\3\2\2\2\u00b7\u00b5\3\2\2\2\u00b7\u00b8\3\2\2\2\u00b8\u00bb\3\2\2\2\u00b9"+
+		"\u00b7\3\2\2\2\u00ba\u00a8\3\2\2\2\u00bb\u00be\3\2\2\2\u00bc\u00ba\3\2"+
+		"\2\2\u00bc\u00bd\3\2\2\2\u00bd\u00bf\3\2\2\2\u00be\u00bc\3\2\2\2\u00bf"+
+		"\u00c3\7\u009d\2\2\u00c0\u00c2\7^\2\2\u00c1\u00c0\3\2\2\2\u00c2\u00c5"+
+		"\3\2\2\2\u00c3\u00c1\3\2\2\2\u00c3\u00c4\3\2\2\2\u00c4\u00c6\3\2\2\2\u00c5"+
+		"\u00c3\3\2\2\2\u00c6\u00c7\7\u0094\2\2\u00c7\u00c8\3\2\2\2\u00c8\u00c9"+
+		"\b\5\1\2\u00c9\t\3\2\2\2\u00ca\u00ce\5P)\2\u00cb\u00cd\7^\2\2\u00cc\u00cb"+
+		"\3\2\2\2\u00cd\u00d0\3\2\2\2\u00ce\u00cc\3\2\2\2\u00ce\u00cf\3\2\2\2\u00cf"+
+		"\u00d1\3\2\2\2\u00d0\u00ce\3\2\2\2\u00d1\u00d5\5\f\7\2\u00d2\u00d4\7^"+
+		"\2\2\u00d3\u00d2\3\2\2\2\u00d4\u00d7\3\2\2\2\u00d5\u00d3\3\2\2\2\u00d5"+
+		"\u00d6\3\2\2\2\u00d6\u00d8\3\2\2\2\u00d7\u00d5\3\2\2\2\u00d8\u00d9\b\6"+
+		"\1\2\u00d9\13\3\2\2\2\u00da\u00e5\5\16\b\2\u00db\u00e5\5\20\t\2\u00dc"+
+		"\u00e0\7\u0095\2\2\u00dd\u00df\7^\2\2\u00de\u00dd\3\2\2\2\u00df\u00e2"+
+		"\3\2\2\2\u00e0\u00de\3\2\2\2\u00e0\u00e1\3\2\2\2\u00e1\u00e3\3\2\2\2\u00e2"+
+		"\u00e0\3\2\2\2\u00e3\u00e5\5P)\2\u00e4\u00da\3\2\2\2\u00e4\u00db\3\2\2"+
+		"\2\u00e4\u00dc\3\2\2\2\u00e5\r\3\2\2\2\u00e6\u00ea\7\u0095\2\2\u00e7\u00e9"+
+		"\7^\2\2\u00e8\u00e7\3\2\2\2\u00e9\u00ec\3\2\2\2\u00ea\u00e8\3\2\2\2\u00ea"+
+		"\u00eb\3\2\2\2\u00eb\u00ed\3\2\2\2\u00ec\u00ea\3\2\2\2\u00ed\u00ee\t\2"+
+		"\2\2\u00ee\17\3\2\2\2\u00ef\u00f0\5\22\n\2\u00f0\u00f1\b\t\1\2\u00f1\u0117"+
+		"\3\2\2\2\u00f2\u00f3\5\24\13\2\u00f3\u00f4\b\t\1\2\u00f4\u0117\3\2\2\2"+
+		"\u00f5\u00f6\5\26\f\2\u00f6\u00f7\b\t\1\2\u00f7\u0117\3\2\2\2\u00f8\u00f9"+
+		"\5\30\r\2\u00f9\u00fa\b\t\1\2\u00fa\u0117\3\2\2\2\u00fb\u00fc\5\32\16"+
+		"\2\u00fc\u00fd\b\t\1\2\u00fd\u0117\3\2\2\2\u00fe\u00ff\5\34\17\2\u00ff"+
+		"\u0100\b\t\1\2\u0100\u0117\3\2\2\2\u0101\u0102\5\36\20\2\u0102\u0103\b"+
+		"\t\1\2\u0103\u0117\3\2\2\2\u0104\u0105\5 \21\2\u0105\u0106\b\t\1\2\u0106"+
+		"\u0117\3\2\2\2\u0107\u0108\5\"\22\2\u0108\u0109\b\t\1\2\u0109\u0117\3"+
+		"\2\2\2\u010a\u010b\5$\23\2\u010b\u010c\b\t\1\2\u010c\u0117\3\2\2\2\u010d"+
+		"\u010e\5&\24\2\u010e\u010f\b\t\1\2\u010f\u0117\3\2\2\2\u0110\u0111\5("+
+		"\25\2\u0111\u0112\b\t\1\2\u0112\u0117\3\2\2\2\u0113\u0114\5*\26\2\u0114"+
+		"\u0115\b\t\1\2\u0115\u0117\3\2\2\2\u0116\u00ef\3\2\2\2\u0116\u00f2\3\2"+
+		"\2\2\u0116\u00f5\3\2\2\2\u0116\u00f8\3\2\2\2\u0116\u00fb\3\2\2\2\u0116"+
+		"\u00fe\3\2\2\2\u0116\u0101\3\2\2\2\u0116\u0104\3\2\2\2\u0116\u0107\3\2"+
+		"\2\2\u0116\u010a\3\2\2\2\u0116\u010d\3\2\2\2\u0116\u0110\3\2\2\2\u0116"+
+		"\u0113\3\2\2\2\u0117\21\3\2\2\2\u0118\u011c\7\u0095\2\2\u0119\u011b\7"+
+		"^\2\2\u011a\u0119\3\2\2\2\u011b\u011e\3\2\2\2\u011c\u011a\3\2\2\2\u011c"+
+		"\u011d\3\2\2\2\u011d\u011f\3\2\2\2\u011e\u011c\3\2\2\2\u011f\u0121\7H"+
+		"\2\2\u0120\u0118\3\2\2\2\u0120\u0121\3\2\2\2\u0121\u0125\3\2\2\2\u0122"+
+		"\u0124\7^\2\2\u0123\u0122\3\2\2\2\u0124\u0127\3\2\2\2\u0125\u0123\3\2"+
+		"\2\2\u0125\u0126\3\2\2\2\u0126\u0128\3\2\2\2\u0127\u0125\3\2\2\2\u0128"+
+		"\u012c\7\u0087\2\2\u0129\u012b\7^\2\2\u012a\u0129\3\2\2\2\u012b\u012e"+
+		"\3\2\2\2\u012c\u012a\3\2\2\2\u012c\u012d\3\2\2\2\u012d\u012f\3\2\2\2\u012e"+
+		"\u012c\3\2\2\2\u012f\u0130\5\66\34\2\u0130\23\3\2\2\2\u0131\u0135\7\u0095"+
+		"\2\2\u0132\u0134\7^\2\2\u0133\u0132\3\2\2\2\u0134\u0137\3\2\2\2\u0135"+
+		"\u0133\3\2\2\2\u0135\u0136\3\2\2\2\u0136\u0138\3\2\2\2\u0137\u0135\3\2"+
+		"\2\2\u0138\u013a\7I\2\2\u0139\u0131\3\2\2\2\u0139\u013a\3\2\2\2\u013a"+
+		"\u013e\3\2\2\2\u013b\u013d\7^\2\2\u013c\u013b\3\2\2\2\u013d\u0140\3\2"+
+		"\2\2\u013e\u013c\3\2\2\2\u013e\u013f\3\2\2\2\u013f\u0141\3\2\2\2\u0140"+
+		"\u013e\3\2\2\2\u0141\u0145\7\u0087\2\2\u0142\u0144\7^\2\2\u0143\u0142"+
+		"\3\2\2\2\u0144\u0147\3\2\2\2\u0145\u0143\3\2\2\2\u0145\u0146\3\2\2\2\u0146"+
+		"\u0148\3\2\2\2\u0147\u0145\3\2\2\2\u0148\u0149\58\35\2\u0149\25\3\2\2"+
+		"\2\u014a\u014e\7\u0095\2\2\u014b\u014d\7^\2\2\u014c\u014b\3\2\2\2\u014d"+
+		"\u0150\3\2\2\2\u014e\u014c\3\2\2\2\u014e\u014f\3\2\2\2\u014f\u0151\3\2"+
+		"\2\2\u0150\u014e\3\2\2\2\u0151\u0153\7J\2\2\u0152\u014a\3\2\2\2\u0152"+
+		"\u0153\3\2\2\2\u0153\u0157\3\2\2\2\u0154\u0156\7^\2\2\u0155\u0154\3\2"+
+		"\2\2\u0156\u0159\3\2\2\2\u0157\u0155\3\2\2\2\u0157\u0158\3\2\2\2\u0158"+
+		"\u015a\3\2\2\2\u0159\u0157\3\2\2\2\u015a\u015e\7\u0087\2\2\u015b\u015d"+
+		"\7^\2\2\u015c\u015b\3\2\2\2\u015d\u0160\3\2\2\2\u015e\u015c\3\2\2\2\u015e"+
+		"\u015f\3\2\2\2\u015f\u0161\3\2\2\2\u0160\u015e\3\2\2\2\u0161\u0162\5N"+
+		"(\2\u0162\27\3\2\2\2\u0163\u0167\7\u0095\2\2\u0164\u0166\7^\2\2\u0165"+
+		"\u0164\3\2\2\2\u0166\u0169\3\2\2\2\u0167\u0165\3\2\2\2\u0167\u0168\3\2"+
+		"\2\2\u0168\u016a\3\2\2\2\u0169\u0167\3\2\2\2\u016a\u016e\7K\2\2\u016b"+
 		"\u016d\7^\2\2\u016c\u016b\3\2\2\2\u016d\u0170\3\2\2\2\u016e\u016c\3\2"+
 		"\2\2\u016e\u016f\3\2\2\2\u016f\u0171\3\2\2\2\u0170\u016e\3\2\2\2\u0171"+
 		"\u0175\7\u0087\2\2\u0172\u0174\7^\2\2\u0173\u0172\3\2\2\2\u0174\u0177"+
@@ -4727,51 +4841,61 @@ public class TypedefParser extends Parser {
 		"\2\u031d\u031e\3\2\2\2\u031e\65\3\2\2\2\u031f\u031d\3\2\2\2\u0320\u0321"+
 		"\t\3\2\2\u0321\67\3\2\2\2\u0322\u0323\7_\2\2\u0323\u0324\b\35\1\2\u0324"+
 		"9\3\2\2\2\u0325\u0326\7j\2\2\u0326\u0327\b\36\1\2\u0327;\3\2\2\2\u0328"+
-		"\u0329\7j\2\2\u0329\u032a\b\37\1\2\u032a=\3\2\2\2\u032b\u0333\t\4\2\2"+
-		"\u032c\u032d\7n\2\2\u032d\u0333\t\5\2\2\u032e\u032f\7o\2\2\u032f\u0333"+
-		"\t\6\2\2\u0330\u0331\7p\2\2\u0331\u0333\t\7\2\2\u0332\u032b\3\2\2\2\u0332"+
-		"\u032c\3\2\2\2\u0332\u032e\3\2\2\2\u0332\u0330\3\2\2\2\u0333\u0334\3\2"+
-		"\2\2\u0334\u0335\b \1\2\u0335?\3\2\2\2\u0336\u033e\t\4\2\2\u0337\u0338"+
-		"\7n\2\2\u0338\u033e\t\5\2\2\u0339\u033a\7o\2\2\u033a\u033e\t\6\2\2\u033b"+
-		"\u033c\7p\2\2\u033c\u033e\t\7\2\2\u033d\u0336\3\2\2\2\u033d\u0337\3\2"+
-		"\2\2\u033d\u0339\3\2\2\2\u033d\u033b\3\2\2\2\u033e\u033f\3\2\2\2\u033f"+
-		"\u0340\b!\1\2\u0340A\3\2\2\2\u0341\u0349\t\4\2\2\u0342\u0343\7n\2\2\u0343"+
-		"\u0349\t\5\2\2\u0344\u0345\7o\2\2\u0345\u0349\t\6\2\2\u0346\u0347\7p\2"+
-		"\2\u0347\u0349\t\7\2\2\u0348\u0341\3\2\2\2\u0348\u0342\3\2\2\2\u0348\u0344"+
-		"\3\2\2\2\u0348\u0346\3\2\2\2\u0349\u034a\3\2\2\2\u034a\u034b\b\"\1\2\u034b"+
-		"C\3\2\2\2\u034c\u0354\t\4\2\2\u034d\u034e\7n\2\2\u034e\u0354\t\5\2\2\u034f"+
-		"\u0350\7o\2\2\u0350\u0354\t\6\2\2\u0351\u0352\7p\2\2\u0352\u0354\t\7\2"+
-		"\2\u0353\u034c\3\2\2\2\u0353\u034d\3\2\2\2\u0353\u034f\3\2\2\2\u0353\u0351"+
-		"\3\2\2\2\u0354\u0355\3\2\2\2\u0355\u0356\b#\1\2\u0356E\3\2\2\2\u0357\u035f"+
-		"\t\4\2\2\u0358\u0359\7n\2\2\u0359\u035f\t\5\2\2\u035a\u035b\7o\2\2\u035b"+
-		"\u035f\t\6\2\2\u035c\u035d\7p\2\2\u035d\u035f\t\7\2\2\u035e\u0357\3\2"+
-		"\2\2\u035e\u0358\3\2\2\2\u035e\u035a\3\2\2\2\u035e\u035c\3\2\2\2\u035f"+
-		"\u0360\3\2\2\2\u0360\u0361\b$\1\2\u0361G\3\2\2\2\u0362\u036a\t\4\2\2\u0363"+
-		"\u0364\7n\2\2\u0364\u036a\t\5\2\2\u0365\u0366\7o\2\2\u0366\u036a\t\6\2"+
-		"\2\u0367\u0368\7p\2\2\u0368\u036a\t\7\2\2\u0369\u0362\3\2\2\2\u0369\u0363"+
-		"\3\2\2\2\u0369\u0365\3\2\2\2\u0369\u0367\3\2\2\2\u036a\u036b\3\2\2\2\u036b"+
-		"\u036c\b%\1\2\u036cI\3\2\2\2\u036d\u0375\t\4\2\2\u036e\u036f\7n\2\2\u036f"+
-		"\u0375\t\5\2\2\u0370\u0371\7o\2\2\u0371\u0375\t\6\2\2\u0372\u0373\7p\2"+
-		"\2\u0373\u0375\t\7\2\2\u0374\u036d\3\2\2\2\u0374\u036e\3\2\2\2\u0374\u0370"+
-		"\3\2\2\2\u0374\u0372\3\2\2\2\u0375\u0376\3\2\2\2\u0376\u0377\b&\1\2\u0377"+
-		"K\3\2\2\2\u0378\u0380\t\4\2\2\u0379\u037a\7n\2\2\u037a\u0380\t\5\2\2\u037b"+
-		"\u037c\7o\2\2\u037c\u0380\t\6\2\2\u037d\u037e\7p\2\2\u037e\u0380\t\7\2"+
-		"\2\u037f\u0378\3\2\2\2\u037f\u0379\3\2\2\2\u037f\u037b\3\2\2\2\u037f\u037d"+
-		"\3\2\2\2\u0380\u0381\3\2\2\2\u0381\u0382\b\'\1\2\u0382M\3\2\2\2\u0383"+
-		"\u0384\7`\2\2\u0384\u0388\b(\1\2\u0385\u0386\7a\2\2\u0386\u0388\b(\1\2"+
-		"\u0387\u0383\3\2\2\2\u0387\u0385\3\2\2\2\u0388O\3\2\2\2\u0389\u038d\7"+
-		"U\2\2\u038a\u038b\7q\2\2\u038b\u038d\7U\2\2\u038c\u0389\3\2\2\2\u038c"+
-		"\u038a\3\2\2\2\u038dQ\3\2\2\2\u038e\u038f\t\b\2\2\u038fS\3\2\2\2zX\\a"+
-		"gmsy\u0084\u008a\u0093\u009a\u00a1\u00a8\u00b0\u00b7\u00bc\u00c3\u00ce"+
-		"\u00d5\u00e0\u00e4\u00ea\u0116\u011c\u0120\u0125\u012c\u0135\u0139\u013e"+
-		"\u0145\u014e\u0152\u0157\u015e\u0167\u016e\u0175\u017a\u0180\u0185\u0187"+
-		"\u018d\u0194\u019b\u01a0\u01a6\u01ac\u01b2\u01b9\u01c0\u01c5\u01cb\u01d1"+
-		"\u01d7\u01de\u01e5\u01ea\u01f0\u01f6\u01fc\u0203\u020a\u020f\u0215\u021b"+
-		"\u0221\u0228\u022f\u0234\u023a\u0240\u0246\u024d\u0254\u0259\u025f\u0265"+
-		"\u026b\u0272\u0279\u027e\u0284\u028a\u0290\u0297\u029e\u02a3\u02a9\u02ae"+
-		"\u02b0\u02b6\u02bd\u02c4\u02c9\u02cf\u02d5\u02db\u02e2\u02e9\u02f7\u02fa"+
-		"\u0303\u0307\u0309\u030c\u0311\u0313\u0316\u031d\u0332\u033d\u0348\u0353"+
-		"\u035e\u0369\u0374\u037f\u0387\u038c";
+		"\u0329\7j\2\2\u0329\u032a\b\37\1\2\u032a=\3\2\2\2\u032b\u032d\7s\2\2\u032c"+
+		"\u032b\3\2\2\2\u032c\u032d\3\2\2\2\u032d\u032e\3\2\2\2\u032e\u0336\t\4"+
+		"\2\2\u032f\u0330\7n\2\2\u0330\u0336\t\5\2\2\u0331\u0332\7o\2\2\u0332\u0336"+
+		"\t\6\2\2\u0333\u0334\7p\2\2\u0334\u0336\t\7\2\2\u0335\u032c\3\2\2\2\u0335"+
+		"\u032f\3\2\2\2\u0335\u0331\3\2\2\2\u0335\u0333\3\2\2\2\u0336\u0337\3\2"+
+		"\2\2\u0337\u0338\b \1\2\u0338?\3\2\2\2\u0339\u033b\7s\2\2\u033a\u0339"+
+		"\3\2\2\2\u033a\u033b\3\2\2\2\u033b\u033c\3\2\2\2\u033c\u0344\t\4\2\2\u033d"+
+		"\u033e\7n\2\2\u033e\u0344\t\5\2\2\u033f\u0340\7o\2\2\u0340\u0344\t\6\2"+
+		"\2\u0341\u0342\7p\2\2\u0342\u0344\t\7\2\2\u0343\u033a\3\2\2\2\u0343\u033d"+
+		"\3\2\2\2\u0343\u033f\3\2\2\2\u0343\u0341\3\2\2\2\u0344\u0345\3\2\2\2\u0345"+
+		"\u0346\b!\1\2\u0346A\3\2\2\2\u0347\u0349\7s\2\2\u0348\u0347\3\2\2\2\u0348"+
+		"\u0349\3\2\2\2\u0349\u034a\3\2\2\2\u034a\u0352\t\4\2\2\u034b\u034c\7n"+
+		"\2\2\u034c\u0352\t\5\2\2\u034d\u034e\7o\2\2\u034e\u0352\t\6\2\2\u034f"+
+		"\u0350\7p\2\2\u0350\u0352\t\7\2\2\u0351\u0348\3\2\2\2\u0351\u034b\3\2"+
+		"\2\2\u0351\u034d\3\2\2\2\u0351\u034f\3\2\2\2\u0352\u0353\3\2\2\2\u0353"+
+		"\u0354\b\"\1\2\u0354C\3\2\2\2\u0355\u0357\7s\2\2\u0356\u0355\3\2\2\2\u0356"+
+		"\u0357\3\2\2\2\u0357\u0358\3\2\2\2\u0358\u0360\t\4\2\2\u0359\u035a\7n"+
+		"\2\2\u035a\u0360\t\5\2\2\u035b\u035c\7o\2\2\u035c\u0360\t\6\2\2\u035d"+
+		"\u035e\7p\2\2\u035e\u0360\t\7\2\2\u035f\u0356\3\2\2\2\u035f\u0359\3\2"+
+		"\2\2\u035f\u035b\3\2\2\2\u035f\u035d\3\2\2\2\u0360\u0361\3\2\2\2\u0361"+
+		"\u0362\b#\1\2\u0362E\3\2\2\2\u0363\u0365\7s\2\2\u0364\u0363\3\2\2\2\u0364"+
+		"\u0365\3\2\2\2\u0365\u0366\3\2\2\2\u0366\u036e\t\4\2\2\u0367\u0368\7n"+
+		"\2\2\u0368\u036e\t\5\2\2\u0369\u036a\7o\2\2\u036a\u036e\t\6\2\2\u036b"+
+		"\u036c\7p\2\2\u036c\u036e\t\7\2\2\u036d\u0364\3\2\2\2\u036d\u0367\3\2"+
+		"\2\2\u036d\u0369\3\2\2\2\u036d\u036b\3\2\2\2\u036e\u036f\3\2\2\2\u036f"+
+		"\u0370\b$\1\2\u0370G\3\2\2\2\u0371\u0373\7s\2\2\u0372\u0371\3\2\2\2\u0372"+
+		"\u0373\3\2\2\2\u0373\u0374\3\2\2\2\u0374\u037c\t\4\2\2\u0375\u0376\7n"+
+		"\2\2\u0376\u037c\t\5\2\2\u0377\u0378\7o\2\2\u0378\u037c\t\6\2\2\u0379"+
+		"\u037a\7p\2\2\u037a\u037c\t\7\2\2\u037b\u0372\3\2\2\2\u037b\u0375\3\2"+
+		"\2\2\u037b\u0377\3\2\2\2\u037b\u0379\3\2\2\2\u037c\u037d\3\2\2\2\u037d"+
+		"\u037e\b%\1\2\u037eI\3\2\2\2\u037f\u0381\7s\2\2\u0380\u037f\3\2\2\2\u0380"+
+		"\u0381\3\2\2\2\u0381\u0382\3\2\2\2\u0382\u038a\t\4\2\2\u0383\u0384\7n"+
+		"\2\2\u0384\u038a\t\5\2\2\u0385\u0386\7o\2\2\u0386\u038a\t\6\2\2\u0387"+
+		"\u0388\7p\2\2\u0388\u038a\t\7\2\2\u0389\u0380\3\2\2\2\u0389\u0383\3\2"+
+		"\2\2\u0389\u0385\3\2\2\2\u0389\u0387\3\2\2\2\u038a\u038b\3\2\2\2\u038b"+
+		"\u038c\b&\1\2\u038cK\3\2\2\2\u038d\u038f\7s\2\2\u038e\u038d\3\2\2\2\u038e"+
+		"\u038f\3\2\2\2\u038f\u0390\3\2\2\2\u0390\u0398\t\4\2\2\u0391\u0392\7n"+
+		"\2\2\u0392\u0398\t\5\2\2\u0393\u0394\7o\2\2\u0394\u0398\t\6\2\2\u0395"+
+		"\u0396\7p\2\2\u0396\u0398\t\7\2\2\u0397\u038e\3\2\2\2\u0397\u0391\3\2"+
+		"\2\2\u0397\u0393\3\2\2\2\u0397\u0395\3\2\2\2\u0398\u0399\3\2\2\2\u0399"+
+		"\u039a\b\'\1\2\u039aM\3\2\2\2\u039b\u039c\7`\2\2\u039c\u03a0\b(\1\2\u039d"+
+		"\u039e\7a\2\2\u039e\u03a0\b(\1\2\u039f\u039b\3\2\2\2\u039f\u039d\3\2\2"+
+		"\2\u03a0O\3\2\2\2\u03a1\u03a5\7U\2\2\u03a2\u03a3\7q\2\2\u03a3\u03a5\7"+
+		"U\2\2\u03a4\u03a1\3\2\2\2\u03a4\u03a2\3\2\2\2\u03a5Q\3\2\2\2\u03a6\u03a7"+
+		"\t\b\2\2\u03a7S\3\2\2\2\u0082X\\agmsy\u0084\u008a\u0093\u009a\u00a1\u00a8"+
+		"\u00b0\u00b7\u00bc\u00c3\u00ce\u00d5\u00e0\u00e4\u00ea\u0116\u011c\u0120"+
+		"\u0125\u012c\u0135\u0139\u013e\u0145\u014e\u0152\u0157\u015e\u0167\u016e"+
+		"\u0175\u017a\u0180\u0185\u0187\u018d\u0194\u019b\u01a0\u01a6\u01ac\u01b2"+
+		"\u01b9\u01c0\u01c5\u01cb\u01d1\u01d7\u01de\u01e5\u01ea\u01f0\u01f6\u01fc"+
+		"\u0203\u020a\u020f\u0215\u021b\u0221\u0228\u022f\u0234\u023a\u0240\u0246"+
+		"\u024d\u0254\u0259\u025f\u0265\u026b\u0272\u0279\u027e\u0284\u028a\u0290"+
+		"\u0297\u029e\u02a3\u02a9\u02ae\u02b0\u02b6\u02bd\u02c4\u02c9\u02cf\u02d5"+
+		"\u02db\u02e2\u02e9\u02f7\u02fa\u0303\u0307\u0309\u030c\u0311\u0313\u0316"+
+		"\u031d\u032c\u0335\u033a\u0343\u0348\u0351\u0356\u035f\u0364\u036d\u0372"+
+		"\u037b\u0380\u0389\u038e\u0397\u039f\u03a4";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

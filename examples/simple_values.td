@@ -15,6 +15,8 @@ Val_u32_suffix : u32 = 88u32;
 Val_u64 : u64 = 88;
 Val_u64_suffix : u64 = 88u64;
 
+val_i32 : i32 = -32;
+
 val_i32_bare_℘ = 2_147_483_647;
 val_i32_bare2 = 2_147_483_64;
 
@@ -43,21 +45,51 @@ ValRaw : str = r#"
 impliedStr = "string";
 impliedChar = 'c';
 
-structA: struct {
-  sasm:i32;
-  sasm2:i32;
-  saimpliedChar : char = 'c';
+StructA: struct {
+  example_bool: bool;
+
+  example_char: char;
+
+  example_str: str;
+
+  example_f32: f32;
+  example_f64: f64;
+
+  example_u8: u8;
+  example_u16: u16;
+  example_u32: u32;
+  example_u64: u64;
+
+  example_i8: i8;
+  example_i16: i16;
+  example_i32: i32;
+  example_i64: i64;
 };
 
-structB: struct {
-  sbsm:i32;
-  sbsm2:i32;
-  // sm3: structA;
+StructB: struct {
+  example_bool = true;
+
+  example_char = '🔥';
+
+  example_str = "hello world";
+
+  example_f32: f32 = 3.14;
+  example_f64: f64 = 5.16;
+
+  example_u8: u8 = 8;
+  example_u16: u16 = 16;
+  example_u32: u32 = 32;
+  example_u64: u64 = 64;
+
+  example_i8: i8 = -8;
+  example_i16: i16 = -16;
+  example_i32: i32 = -32;
+  example_i64: i64 = -64;
 };
 
-structC: struct {
-  scsm:i32;
-  scsm2:i32;
+StructC: struct {
+  zxcv: i32;
+  jkl: i32;
 };
 
 
