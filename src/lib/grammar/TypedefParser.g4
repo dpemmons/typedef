@@ -35,7 +35,6 @@ item:
 
 maybeValuedSymbolDeclaration: maybeValuedSymbol WS* SEMI;
 
-// TODO: move more of this code into helpers TODO: symbol tables at each level.
 structDeclaration
 	returns[
 		std::optional<td::SymbolTable::Symbol> maybe_symbol,
