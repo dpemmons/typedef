@@ -33,8 +33,8 @@ class SymbolTable {
                   optional<uint16_t>,  // u16
                   optional<uint32_t>,  // u32
                   optional<uint64_t>,  // u64
-                  shared_ptr<Struct>,   // struct
-                  shared_ptr<Variant>   // variant
+                  shared_ptr<Struct>,  // struct
+                  shared_ptr<Variant>  // variant
                   >
       Value;
   typedef pair<string, Value> Symbol;
@@ -49,34 +49,44 @@ class SymbolTable {
   void Clear() { table_.clear(); }
 
   friend ostream &operator<<(ostream &os, const SymbolTable &value);
-  bool HasSymbol(string& id) {
-    return table_.count(id) > 0;
-  }
-  optional<Value> Get(string& id) {
+  bool HasSymbol(string &id) { return table_.count(id) > 0; }
+  optional<Value> Get(string &id) {
     if (HasSymbol(id)) {
       return table_.find(id)->second;
     }
     return nullopt;
-  } 
+  }
 
   map<string, Value> table_;
 };
 
 class Struct {
  public:
-  bool TryInsert(SymbolTable::Symbol &symbol) { return table.TryInsert(symbol); }
+  bool TryInsert(SymbolTable::Symbol &symbol) {
+    return table.TryInsert(symbol);
+  }
 
   friend ostream &operator<<(ostream &os, const Struct &s);
 
+  // TODO not sure this is the right way to handle this;
+  // probably symbol table should point to other symbols rather
+  // than the underlying struct, and derive the name that way?
+  string identifier;
   SymbolTable table;
 };
 
 class Variant {
  public:
-  bool TryInsert(SymbolTable::Symbol &symbol) { return table.TryInsert(symbol); }
+  bool TryInsert(SymbolTable::Symbol &symbol) {
+    return table.TryInsert(symbol);
+  }
 
   friend ostream &operator<<(ostream &os, const Variant &s);
 
+  // TODO not sure this is the right way to handle this;
+  // probably symbol table should point to other symbols rather
+  // than the underlying struct, and derive the name that way?
+  string identifier;
   SymbolTable table;
 };
 

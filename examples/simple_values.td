@@ -88,6 +88,7 @@ StructB: struct {
 };
 
 StructC: struct {
+  asdf: StructA;
   zxcv: i32;
   jkl: i32;
 };

@@ -29,7 +29,7 @@ Items in ***bold*** are in-progress.
       - [ ] message
     - [ ] sum types
       - [ ] enum
-      - [ ] variant
+      - [x] variant
     - [ ] byte literals
     - [ ] byte strings
     - [ ] raw byte strings
@@ -51,7 +51,7 @@ Items in ***bold*** are in-progress.
 
 - [ ] ***Self hosting***
   - [x] generate basic mutable classes
-    - [ ] struct members
+    - [x] struct members
   - [ ] generate views
   - [ ] ***variants***
     - [x] parse

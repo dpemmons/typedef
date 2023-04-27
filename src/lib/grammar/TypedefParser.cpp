@@ -579,6 +579,7 @@ TypedefParser::VariantDeclarationContext* TypedefParser::variantDeclaration() {
     setState(207);
     match(TypedefParser::SEMI);
 
+    		_localctx->v->identifier = dynamic_cast<VariantDeclarationContext *>(_localctx)->identifierContext->id;
     		dynamic_cast<VariantDeclarationContext *>(_localctx)->maybe_symbol =  std::make_pair(dynamic_cast<VariantDeclarationContext *>(_localctx)->identifierContext->id, _localctx->v);
     	
    
@@ -784,6 +785,7 @@ TypedefParser::StructDeclarationContext* TypedefParser::structDeclaration() {
     setState(266);
     match(TypedefParser::SEMI);
 
+    		_localctx->s->identifier = dynamic_cast<StructDeclarationContext *>(_localctx)->identifierContext->id;
     		dynamic_cast<StructDeclarationContext *>(_localctx)->maybe_symbol =  std::make_pair(dynamic_cast<StructDeclarationContext *>(_localctx)->identifierContext->id, _localctx->s);
     	
    

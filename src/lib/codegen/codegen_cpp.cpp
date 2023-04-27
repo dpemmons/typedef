@@ -171,31 +171,43 @@ void DefineStruct(ostream& hdr, ostream& src,
   for (auto s : ptr->table.table_) {
     std::string member_id = escape_utf8_to_cpp_identifier(s.first);
     if (holds_alternative<optional<bool>>(s.second)) {
-      fmt::print(hdr, "      bool {},\n", member_id);
+      fmt::print(hdr, "      bool _{},\n", member_id);
     } else if (holds_alternative<optional<char32_t>>(s.second)) {
-      fmt::print(hdr, "      char32_t {},\n", member_id);
+      fmt::print(hdr, "      char32_t _{},\n", member_id);
     } else if (holds_alternative<optional<string>>(s.second)) {
-      fmt::print(hdr, "      std::string const& {},\n", member_id);
+      fmt::print(hdr, "      std::string const& _{},\n", member_id);
     } else if (holds_alternative<optional<float>>(s.second)) {
-      fmt::print(hdr, "      float {},\n", member_id);
+      fmt::print(hdr, "      float _{},\n", member_id);
     } else if (holds_alternative<optional<double>>(s.second)) {
-      fmt::print(hdr, "      double {},\n", member_id);
+      fmt::print(hdr, "      double _{},\n", member_id);
     } else if (holds_alternative<optional<int8_t>>(s.second)) {
-      fmt::print(hdr, "      int8_t {},\n", member_id);
+      fmt::print(hdr, "      int8_t _{},\n", member_id);
     } else if (holds_alternative<optional<int16_t>>(s.second)) {
-      fmt::print(hdr, "      int16_t {},\n", member_id);
+      fmt::print(hdr, "      int16_t _{},\n", member_id);
     } else if (holds_alternative<optional<int32_t>>(s.second)) {
-      fmt::print(hdr, "      int32_t {},\n", member_id);
+      fmt::print(hdr, "      int32_t _{},\n", member_id);
     } else if (holds_alternative<optional<int64_t>>(s.second)) {
-      fmt::print(hdr, "      int64_t {},\n", member_id);
+      fmt::print(hdr, "      int64_t _{},\n", member_id);
     } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-      fmt::print(hdr, "      uint8_t {},\n", member_id);
+      fmt::print(hdr, "      uint8_t _{},\n", member_id);
     } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-      fmt::print(hdr, "      uint16_t {},\n", member_id);
+      fmt::print(hdr, "      uint16_t _{},\n", member_id);
     } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-      fmt::print(hdr, "      uint32_t {},\n", member_id);
+      fmt::print(hdr, "      uint32_t _{},\n", member_id);
     } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-      fmt::print(hdr, "      uint64_t {},\n", member_id);
+      fmt::print(hdr, "      uint64_t _{},\n", member_id);
+    } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
+      auto def = get<shared_ptr<Struct>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n", escaped_def_id,
+                 member_id);
+    } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
+      auto def = get<shared_ptr<Variant>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n", escaped_def_id,
+                 member_id);
     } else {
       abort();
     }
@@ -203,11 +215,9 @@ void DefineStruct(ostream& hdr, ostream& src,
   fmt::print(hdr, "      bool __foo = false) :\n");
   for (auto s : ptr->table.table_) {
     std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    std::string suffixed_member_id =
-        escape_utf8_to_cpp_identifier(s.first) + "_";
-    fmt::print(hdr, "      {}({}),\n", suffixed_member_id, member_id);
-    // TODO(dpemmons) build out the constructor.
+    fmt::print(hdr, "      {}_(_{}),\n", member_id, member_id);
   }
+  // TODO remove this dirty hack
   fmt::print(hdr, "      __foo(false) {{}}\n");
 
   fmt::print(hdr, "\n");
@@ -217,99 +227,120 @@ void DefineStruct(ostream& hdr, ostream& src,
   // -------------------------------------------------
   for (auto s : ptr->table.table_) {
     std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    std::string suffixed_member_id =
-        escape_utf8_to_cpp_identifier(s.first) + "_";
     if (holds_alternative<optional<bool>>(s.second)) {
-      fmt::print(hdr, "    bool {}() const {{ return {}; }}\n", member_id,
-                 suffixed_member_id);
-      fmt::print(hdr, "    void {}(bool val) {{ {} = val; }}\n", member_id,
-                 suffixed_member_id);
+      fmt::print(hdr, "    bool {}() const {{ return {}_; }}\n", member_id,
+                 member_id);
+      fmt::print(hdr, "    void {}(bool val) {{ {}_ = val; }}\n", member_id,
+                 member_id);
       fmt::print(hdr, "\n");
     } else if (holds_alternative<optional<char32_t>>(s.second)) {
-      fmt::print(hdr, "    char32_t {}() const {{ return {}; }}\n", member_id,
-                 suffixed_member_id);
-      fmt::print(hdr, "    void {}(char32_t val) {{ {} = val; }}\n", member_id,
-                 suffixed_member_id);
+      fmt::print(hdr, "    char32_t {}() const {{ return {}_; }}\n", member_id,
+                 member_id);
+      fmt::print(hdr, "    void {}(char32_t val) {{ {}_ = val; }}\n", member_id,
+                 member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<string>>(s.second)) {
-      fmt::print(hdr, "    std::string_view {}() const {{ return {}; }}\n",
-                 member_id, suffixed_member_id);
+      fmt::print(hdr, "    std::string_view {}() const {{ return {}_; }}\n",
+                 member_id, member_id);
       fmt::print(hdr,
-                 "    void {}(std::string_view const& val) {{ {} = val; }}\n",
-                 member_id, suffixed_member_id);
+                 "    void {}(std::string_view const& val) {{ {}_ = val; }}\n",
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<float>>(s.second)) {
-      fmt::print(hdr, "    float {}() const {{ return {}; }}\n", member_id,
-                 suffixed_member_id);
-      fmt::print(hdr, "    void {}(float val) {{ {} = val; }}\n", member_id,
-                 suffixed_member_id);
+      fmt::print(hdr, "    float {}() const {{ return {}_; }}\n", member_id,
+                 member_id);
+      fmt::print(hdr, "    void {}(float val) {{ {}_ = val; }}\n", member_id,
+                 member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<double>>(s.second)) {
-      fmt::print(hdr, "    double {}() const {{ return {}; }}\n", member_id,
-                 suffixed_member_id);
-      fmt::print(hdr, "    void {}(double val) {{ {} = val; }}\n", member_id,
-                 suffixed_member_id);
+      fmt::print(hdr, "    double {}() const {{ return {}_; }}\n", member_id,
+                 member_id);
+      fmt::print(hdr, "    void {}(double val) {{ {}_ = val; }}\n", member_id,
+                 member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<int8_t>>(s.second)) {
-      fmt::print(hdr, "    int8_t {}() const {{ return {}; }}\n", member_id,
-                 suffixed_member_id);
-      fmt::print(hdr, "    void {}(int8_t val) {{ {} = val; }}\n", member_id,
-                 suffixed_member_id);
+      fmt::print(hdr, "    int8_t {}() const {{ return {}_; }}\n", member_id,
+                 member_id);
+      fmt::print(hdr, "    void {}(int8_t val) {{ {}_ = val; }}\n", member_id,
+                 member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<int16_t>>(s.second)) {
-      fmt::print(hdr, "    int16_t {}() const {{ return {}; }}\n", member_id,
-                 suffixed_member_id);
-      fmt::print(hdr, "    void {}(int16_t val) {{ {} = val; }}\n", member_id,
-                 suffixed_member_id);
+      fmt::print(hdr, "    int16_t {}() const {{ return {}_; }}\n", member_id,
+                 member_id);
+      fmt::print(hdr, "    void {}(int16_t val) {{ {}_ = val; }}\n", member_id,
+                 member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<int32_t>>(s.second)) {
-      fmt::print(hdr, "    int32_t {}() const {{ return {}; }}\n", member_id,
-                 suffixed_member_id);
-      fmt::print(hdr, "    void {}(int32_t val) {{ {} = val; }}\n", member_id,
-                 suffixed_member_id);
+      fmt::print(hdr, "    int32_t {}() const {{ return {}_; }}\n", member_id,
+                 member_id);
+      fmt::print(hdr, "    void {}(int32_t val) {{ {}_ = val; }}\n", member_id,
+                 member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<int64_t>>(s.second)) {
-      fmt::print(hdr, "    int64_t {}() const {{ return {}; }}\n", member_id,
-                 suffixed_member_id);
-      fmt::print(hdr, "    void {}(int64_t val) {{ {} = val; }}\n", member_id,
-                 suffixed_member_id);
+      fmt::print(hdr, "    int64_t {}() const {{ return {}_; }}\n", member_id,
+                 member_id);
+      fmt::print(hdr, "    void {}(int64_t val) {{ {}_ = val; }}\n", member_id,
+                 member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-      fmt::print(hdr, "    uint8_t {}() const {{ return {}; }}\n", member_id,
-                 suffixed_member_id);
-      fmt::print(hdr, "    void {}(uint8_t val) {{ {} = val; }}\n", member_id,
-                 suffixed_member_id);
+      fmt::print(hdr, "    uint8_t {}() const {{ return {}_; }}\n", member_id,
+                 member_id);
+      fmt::print(hdr, "    void {}(uint8_t val) {{ {}_ = val; }}\n", member_id,
+                 member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-      fmt::print(hdr, "    uint16_t {}() const {{ return {}; }}\n", member_id,
-                 suffixed_member_id);
-      fmt::print(hdr, "    void {}(uint16_t val) {{ {} = val; }}\n", member_id,
-                 suffixed_member_id);
+      fmt::print(hdr, "    uint16_t {}() const {{ return {}_; }}\n", member_id,
+                 member_id);
+      fmt::print(hdr, "    void {}(uint16_t val) {{ {}_ = val; }}\n", member_id,
+                 member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-      fmt::print(hdr, "    uint32_t {}() const {{ return {}; }}\n", member_id,
-                 suffixed_member_id);
-      fmt::print(hdr, "    void {}(uint32_t val) {{ {} = val; }}\n", member_id,
-                 suffixed_member_id);
+      fmt::print(hdr, "    uint32_t {}() const {{ return {}_; }}\n", member_id,
+                 member_id);
+      fmt::print(hdr, "    void {}(uint32_t val) {{ {}_ = val; }}\n", member_id,
+                 member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-      fmt::print(hdr, "    uint64_t {}() const {{ return {}; }}\n", member_id,
-                 suffixed_member_id);
-      fmt::print(hdr, "    void {}(uint64_t val) {{ {} = val; }}\n", member_id,
-                 suffixed_member_id);
+      fmt::print(hdr, "    uint64_t {}() const {{ return {}_; }}\n", member_id,
+                 member_id);
+      fmt::print(hdr, "    void {}(uint64_t val) {{ {}_ = val; }}\n", member_id,
+                 member_id);
       fmt::print(hdr, "\n");
 
+    } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
+      auto def = get<shared_ptr<Struct>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(
+          hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_; }}\n",
+          escaped_def_id, member_id, member_id);
+      fmt::print(
+          hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val; }}\n",
+          member_id, escaped_def_id, member_id);
+      fmt::print(hdr, "\n");
+
+    } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
+      auto def = get<shared_ptr<Variant>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(
+          hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_; }}\n",
+          escaped_def_id, member_id, member_id);
+      fmt::print(
+          hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val; }}\n",
+          member_id, escaped_def_id, member_id);
+      fmt::print(hdr, "\n");
     } else {
       abort();
     }
@@ -328,106 +359,117 @@ void DefineStruct(ostream& hdr, ostream& src,
   // private member declarations.
   // -------------------------------------------------
   for (auto s : ptr->table.table_) {
-    std::string suffixed_member_id =
-        escape_utf8_to_cpp_identifier(s.first) + "_";
+    std::string member_id = escape_utf8_to_cpp_identifier(s.first);
     if (holds_alternative<optional<bool>>(s.second)) {
       auto maybe_val = get<optional<bool>>(s.second);
       if (!maybe_val) {
         maybe_val = false;
       }
-      fmt::print(hdr, "    bool {} = {};\n", suffixed_member_id, *maybe_val);
+      fmt::print(hdr, "    bool {}_ = {};\n", member_id, *maybe_val);
       total_size += sizeof(bool);
     } else if (holds_alternative<optional<char32_t>>(s.second)) {
       auto maybe_val = get<optional<char32_t>>(s.second);
       if (maybe_val) {
         wstring_convert<codecvt_utf8<char32_t>, char32_t> converter;
-        fmt::print(hdr, "    char32_t {} = *(char32_t*)\"{}\";\n",
-                   suffixed_member_id, converter.to_bytes(*maybe_val));
+        fmt::print(hdr, "    char32_t {}_ = *(char32_t*)\"{}\";\n", member_id,
+                   converter.to_bytes(*maybe_val));
       } else {
-        fmt::print(hdr, "    char32_t {} = 0;\n", suffixed_member_id);
+        fmt::print(hdr, "    char32_t {}_ = 0;\n", member_id);
       }
       total_size += sizeof(char32_t);
     } else if (holds_alternative<optional<string>>(s.second)) {
       auto maybe_val = get<optional<std::string>>(s.second);
       if (maybe_val && maybe_val->size() > 0) {
-        fmt::print(hdr, "    std::string {} = R\"LITERAL({})LITERAL\";\n",
-                   suffixed_member_id, *maybe_val);
+        fmt::print(hdr, "    std::string {}_ = R\"LITERAL({})LITERAL\";\n",
+                   member_id, *maybe_val);
       } else {
-        fmt::print(hdr, "    std::string {};\n", suffixed_member_id);
+        fmt::print(hdr, "    std::string {}_;\n", member_id);
       }
     } else if (holds_alternative<optional<float>>(s.second)) {
       auto maybe_val = get<optional<float>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
-      fmt::print(hdr, "    float {} = {};\n", suffixed_member_id, *maybe_val);
+      fmt::print(hdr, "    float {}_ = {};\n", member_id, *maybe_val);
       total_size += sizeof(float);
     } else if (holds_alternative<optional<double>>(s.second)) {
       auto maybe_val = get<optional<double>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
-      fmt::print(hdr, "    double {} = {};\n", suffixed_member_id, *maybe_val);
+      fmt::print(hdr, "    double {}_ = {};\n", member_id, *maybe_val);
       total_size += sizeof(double);
     } else if (holds_alternative<optional<int8_t>>(s.second)) {
       auto maybe_val = get<optional<int8_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
-      fmt::print(hdr, "    int8_t {} = {};\n", suffixed_member_id, *maybe_val);
+      fmt::print(hdr, "    int8_t {}_ = {};\n", member_id, *maybe_val);
       total_size += sizeof(int8_t);
     } else if (holds_alternative<optional<int16_t>>(s.second)) {
       auto maybe_val = get<optional<int16_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
-      fmt::print(hdr, "    int16_t {} = {};\n", suffixed_member_id, *maybe_val);
+      fmt::print(hdr, "    int16_t {}_ = {};\n", member_id, *maybe_val);
       total_size += sizeof(int16_t);
     } else if (holds_alternative<optional<int32_t>>(s.second)) {
       auto maybe_val = get<optional<int32_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
-      fmt::print(hdr, "    int32_t {} = {};\n", suffixed_member_id, *maybe_val);
+      fmt::print(hdr, "    int32_t {}_ = {};\n", member_id, *maybe_val);
       total_size += sizeof(int32_t);
     } else if (holds_alternative<optional<int64_t>>(s.second)) {
       auto maybe_val = get<optional<int64_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
-      fmt::print(hdr, "    int64_t {} = {};\n", suffixed_member_id, *maybe_val);
+      fmt::print(hdr, "    int64_t {}_ = {};\n", member_id, *maybe_val);
       total_size += sizeof(int64_t);
     } else if (holds_alternative<optional<uint8_t>>(s.second)) {
       auto maybe_val = get<optional<uint8_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
-      fmt::print(hdr, "    uint8_t {} = {};\n", suffixed_member_id, *maybe_val);
+      fmt::print(hdr, "    uint8_t {}_ = {};\n", member_id, *maybe_val);
       total_size += sizeof(uint8_t);
     } else if (holds_alternative<optional<uint16_t>>(s.second)) {
       auto maybe_val = get<optional<uint16_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
-      fmt::print(hdr, "    uint16_t {} = {};\n", suffixed_member_id,
-                 *maybe_val);
+      fmt::print(hdr, "    uint16_t {}_ = {};\n", member_id, *maybe_val);
       total_size += sizeof(uint16_t);
     } else if (holds_alternative<optional<uint32_t>>(s.second)) {
       auto maybe_val = get<optional<uint32_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
-      fmt::print(hdr, "    uint32_t {} = {};\n", suffixed_member_id,
-                 *maybe_val);
+      fmt::print(hdr, "    uint32_t {}_ = {};\n", member_id, *maybe_val);
       total_size += sizeof(uint32_t);
     } else if (holds_alternative<optional<uint64_t>>(s.second)) {
       auto maybe_val = get<optional<uint64_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
-      fmt::print(hdr, "    uint64_t {} = {};\n", suffixed_member_id,
-                 *maybe_val);
+      fmt::print(hdr, "    uint64_t {}_ = {};\n", member_id, *maybe_val);
       total_size += sizeof(uint64_t);
+
+    } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
+      auto def = get<shared_ptr<Struct>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n", escaped_def_id,
+                 member_id);
+      // TODO total size
+    } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
+      auto def = get<shared_ptr<Variant>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n", escaped_def_id,
+                 member_id);
+      // TODO total size
     } else {
       abort();
     }
@@ -474,6 +516,26 @@ void DefineStruct(ostream& hdr, ostream& src,
   fmt::print(src, "\n");
 }
 
+void DefineVariant(ostream& hdr, ostream& src,
+                   SymbolTable::Symbol const& struct_symbol) {
+  auto ptr = get<shared_ptr<Variant>>(struct_symbol.second);
+  std::string escaped_struct_id =
+      escape_utf8_to_cpp_identifier(struct_symbol.first);
+
+  fmt::print(hdr, "class {} TD_FINAL_CLASS {{\n", escaped_struct_id);
+
+  size_t total_size = 0;
+
+  fmt::print(hdr, "  public:\n");
+
+  fmt::print(hdr, "\n");
+  fmt::print(hdr, "  private:\n");
+
+  // End class declaration.
+  fmt::print(hdr, "}};\n");
+  fmt::print(hdr, "\n");
+}
+
 string HeaderGuard(filesystem::path source_filename) {
   string hdr_guard = source_filename.string() + "_H__";
   replace(hdr_guard.begin(), hdr_guard.end(), '.', '_');
@@ -499,6 +561,7 @@ void CodegenCpp::Generate() {
 
   // hdr includes
   fmt::print(hdr_file->OStream(), "#include <cstdint>\n");
+  fmt::print(hdr_file->OStream(), "#include <memory>\n");
   fmt::print(hdr_file->OStream(), "#include <ostream>\n");
   fmt::print(hdr_file->OStream(), "#include <string>\n");
 
@@ -512,13 +575,14 @@ void CodegenCpp::Generate() {
 
   // forward declare everything first.
 
-  // struct forward declarations
+  // forward declare structs and variants
   fmt::print(hdr_file->OStream(), "// struct forward declarations\n");
   for (auto symbol : parser_->symbols2_.table_) {
     // declare everything first.
-    if (holds_alternative<shared_ptr<td::Struct>>(symbol.second)) {
+    if (holds_alternative<shared_ptr<td::Struct>>(symbol.second) ||
+        holds_alternative<shared_ptr<td::Variant>>(symbol.second)) {
       std::string escaped_id = escape_utf8_to_cpp_identifier(symbol.first);
-      fmt::print(hdr_file->OStream(), "struct {};\n", escaped_id);
+      fmt::print(hdr_file->OStream(), "class {};\n", escaped_id);
     }
   }
 
@@ -543,6 +607,9 @@ void CodegenCpp::Generate() {
   for (auto symbol : parser_->symbols2_.table_) {
     if (holds_alternative<shared_ptr<td::Struct>>(symbol.second)) {
       DefineStruct(hdr_file->OStream(), src_file->OStream(), symbol);
+      fmt::print(hdr_file->OStream(), "\n");
+    } else if (holds_alternative<shared_ptr<td::Variant>>(symbol.second)) {
+      DefineVariant(hdr_file->OStream(), src_file->OStream(), symbol);
       fmt::print(hdr_file->OStream(), "\n");
     }
   }

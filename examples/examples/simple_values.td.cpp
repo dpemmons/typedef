@@ -108,6 +108,7 @@ std::ostream& operator<<(std::ostream& os, const MutableStructB& obj) {
 
 bool operator==(const MutableStructC &lhs, const MutableStructC &rhs) {
   return
+    (lhs.asdf() == rhs.asdf()) &&
     (lhs.jkl() == rhs.jkl()) &&
     (lhs.zxcv() == rhs.zxcv()) &&
     true;
@@ -115,6 +116,7 @@ bool operator==(const MutableStructC &lhs, const MutableStructC &rhs) {
 
 std::ostream& operator<<(std::ostream& os, const MutableStructC& obj) {
   os << "struct MutableStructC :\n";
+  os << "  asdf = " << obj.asdf() << "\n";
   os << "  jkl = " << obj.jkl() << "\n";
   os << "  zxcv = " << obj.zxcv() << "\n";
   return os;

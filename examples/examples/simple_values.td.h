@@ -2,6 +2,7 @@
 #define __EXAMPLES_SIMPLE_VALUES_TD_CPP_H__
 
 #include <cstdint>
+#include <memory>
 #include <ostream>
 #include <string>
 
@@ -54,9 +55,10 @@
 
 
 // struct forward declarations
-struct StructA;
-struct StructB;
-struct StructC;
+class StructA;
+class StructB;
+class StructC;
+class VariantA;
 
 // value declarations
 extern std::string VAL;
@@ -91,33 +93,33 @@ class MutableStructA TD_FINAL_CLASS {
   public:
     MutableStructA() {};
     MutableStructA(
-      bool example_bool,
-      char32_t example_char,
-      float example_f32,
-      double example_f64,
-      int16_t example_i16,
-      int32_t example_i32,
-      int64_t example_i64,
-      int8_t example_i8,
-      std::string const& example_str,
-      uint16_t example_u16,
-      uint32_t example_u32,
-      uint64_t example_u64,
-      uint8_t example_u8,
+      bool _example_bool,
+      char32_t _example_char,
+      float _example_f32,
+      double _example_f64,
+      int16_t _example_i16,
+      int32_t _example_i32,
+      int64_t _example_i64,
+      int8_t _example_i8,
+      std::string const& _example_str,
+      uint16_t _example_u16,
+      uint32_t _example_u32,
+      uint64_t _example_u64,
+      uint8_t _example_u8,
       bool __foo = false) :
-      example_bool_(example_bool),
-      example_char_(example_char),
-      example_f32_(example_f32),
-      example_f64_(example_f64),
-      example_i16_(example_i16),
-      example_i32_(example_i32),
-      example_i64_(example_i64),
-      example_i8_(example_i8),
-      example_str_(example_str),
-      example_u16_(example_u16),
-      example_u32_(example_u32),
-      example_u64_(example_u64),
-      example_u8_(example_u8),
+      example_bool_(_example_bool),
+      example_char_(_example_char),
+      example_f32_(_example_f32),
+      example_f64_(_example_f64),
+      example_i16_(_example_i16),
+      example_i32_(_example_i32),
+      example_i64_(_example_i64),
+      example_i8_(_example_i8),
+      example_str_(_example_str),
+      example_u16_(_example_u16),
+      example_u32_(_example_u32),
+      example_u64_(_example_u64),
+      example_u8_(_example_u8),
       __foo(false) {}
 
     bool example_bool() const { return example_bool_; }
@@ -186,33 +188,33 @@ class MutableStructB TD_FINAL_CLASS {
   public:
     MutableStructB() {};
     MutableStructB(
-      bool example_bool,
-      char32_t example_char,
-      float example_f32,
-      double example_f64,
-      int16_t example_i16,
-      int32_t example_i32,
-      int64_t example_i64,
-      int8_t example_i8,
-      std::string const& example_str,
-      uint16_t example_u16,
-      uint32_t example_u32,
-      uint64_t example_u64,
-      uint8_t example_u8,
+      bool _example_bool,
+      char32_t _example_char,
+      float _example_f32,
+      double _example_f64,
+      int16_t _example_i16,
+      int32_t _example_i32,
+      int64_t _example_i64,
+      int8_t _example_i8,
+      std::string const& _example_str,
+      uint16_t _example_u16,
+      uint32_t _example_u32,
+      uint64_t _example_u64,
+      uint8_t _example_u8,
       bool __foo = false) :
-      example_bool_(example_bool),
-      example_char_(example_char),
-      example_f32_(example_f32),
-      example_f64_(example_f64),
-      example_i16_(example_i16),
-      example_i32_(example_i32),
-      example_i64_(example_i64),
-      example_i8_(example_i8),
-      example_str_(example_str),
-      example_u16_(example_u16),
-      example_u32_(example_u32),
-      example_u64_(example_u64),
-      example_u8_(example_u8),
+      example_bool_(_example_bool),
+      example_char_(_example_char),
+      example_f32_(_example_f32),
+      example_f64_(_example_f64),
+      example_i16_(_example_i16),
+      example_i32_(_example_i32),
+      example_i64_(_example_i64),
+      example_i8_(_example_i8),
+      example_str_(_example_str),
+      example_u16_(_example_u16),
+      example_u32_(_example_u32),
+      example_u64_(_example_u64),
+      example_u8_(_example_u8),
       __foo(false) {}
 
     bool example_bool() const { return example_bool_; }
@@ -281,12 +283,17 @@ class MutableStructC TD_FINAL_CLASS {
   public:
     MutableStructC() {};
     MutableStructC(
-      int32_t jkl,
-      int32_t zxcv,
+      std::shared_ptr<MutableStructA> _asdf,
+      int32_t _jkl,
+      int32_t _zxcv,
       bool __foo = false) :
-      jkl_(jkl),
-      zxcv_(zxcv),
+      asdf_(_asdf),
+      jkl_(_jkl),
+      zxcv_(_zxcv),
       __foo(false) {}
+
+    std::shared_ptr<MutableStructA> asdf() const { return asdf_; }
+    void asdf(std::shared_ptr<MutableStructA> val) { asdf_ = val; }
 
     int32_t jkl() const { return jkl_; }
     void jkl(int32_t val) { jkl_ = val; }
@@ -297,6 +304,7 @@ class MutableStructC TD_FINAL_CLASS {
     friend std::ostream& operator<<(std::ostream& os, const MutableStructC& obj);
 
   private:
+    std::shared_ptr<MutableStructA> asdf_;
     int32_t jkl_ = 0;
     int32_t zxcv_ = 0;
     bool __foo; // to simplify codegen. will remove in future versions...
@@ -304,6 +312,13 @@ class MutableStructC TD_FINAL_CLASS {
 
 bool operator==(const MutableStructC &lhs, const MutableStructC &rhs);
 inline bool operator!=(const MutableStructC &lhs, const MutableStructC &rhs) { return !(lhs == rhs); };
+
+
+class VariantA TD_FINAL_CLASS {
+  public:
+
+  private:
+};
 
 
 
