@@ -185,58 +185,79 @@ std::string GetRawString(TypedefParser* parser, antlr4::Token* token) {
 
 std::optional<td::SymbolTable::Symbol> MakeSymbol(
     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
-    std::string& id, TypedefParser::Type_Context* ctx) {
+    std::string& id, TypedefParser::MaybeValuedTypeContext* ctx) {
+  if (ctx->valuedType()) {
+    return MakeSymbol(recognizer, global_symbol_table, id, ctx->valuedType());
+  } else if (ctx->unvaluedType()) {
+    return MakeSymbol(recognizer, global_symbol_table, id, ctx->unvaluedType());
+  }
+  // pretty sure we would have already thrown an error.
+  return std::nullopt;
+}
+
+std::optional<td::SymbolTable::Symbol> MakeSymbol(
+    antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
+    std::string& id, TypedefParser::ValuedTypeContext* ctx) {
   if (ctx->valuedPrimitiveType()) {
-    if (ctx->valuedPrimitiveType()->maybe_val) {
-      return std::make_pair(id, ctx->valuedPrimitiveType()->maybe_val.value());
+    auto valuedPrimitiveType = ctx->valuedPrimitiveType();
+    if (valuedPrimitiveType->maybe_val) {
+      return std::make_pair(id, valuedPrimitiveType->maybe_val.value());
     }
-    // pretty sure we would have already thrown an error.
-    return std::nullopt;
-  } else if (ctx->primitiveType()) {
-    if (ctx->primitiveType()->KW_BOOL()) {
+  }
+  // pretty sure we would have already thrown an error.
+  return std::nullopt;
+}
+
+std::optional<td::SymbolTable::Symbol> MakeSymbol(
+    antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
+    std::string& id, TypedefParser::UnvaluedTypeContext* ctx) {
+  if (ctx->primitiveType()) {
+    auto primitiveType = ctx->primitiveType();
+    if (primitiveType->KW_BOOL()) {
       return std::make_pair(id, std::optional<bool>());
-    } else if (ctx->primitiveType()->KW_CHAR()) {
+    } else if (primitiveType->KW_CHAR()) {
       return std::make_pair(id, std::optional<char32_t>());
-    } else if (ctx->primitiveType()->KW_STRING()) {
+    } else if (primitiveType->KW_STRING()) {
       return std::make_pair(id, std::optional<std::string>());
-    } else if (ctx->primitiveType()->KW_F32()) {
+    } else if (primitiveType->KW_F32()) {
       return std::make_pair(id, std::optional<float>());
-    } else if (ctx->primitiveType()->KW_F64()) {
+    } else if (primitiveType->KW_F64()) {
       return std::make_pair(id, std::optional<double>());
-    } else if (ctx->primitiveType()->KW_U8()) {
+    } else if (primitiveType->KW_U8()) {
       return std::make_pair(id, std::optional<uint8_t>());
-    } else if (ctx->primitiveType()->KW_U16()) {
+    } else if (primitiveType->KW_U16()) {
       return std::make_pair(id, std::optional<uint16_t>());
-    } else if (ctx->primitiveType()->KW_U32()) {
+    } else if (primitiveType->KW_U32()) {
       return std::make_pair(id, std::optional<uint32_t>());
-    } else if (ctx->primitiveType()->KW_U64()) {
+    } else if (primitiveType->KW_U64()) {
       return std::make_pair(id, std::optional<uint64_t>());
-    } else if (ctx->primitiveType()->KW_I8()) {
+    } else if (primitiveType->KW_I8()) {
       return std::make_pair(id, std::optional<int8_t>());
-    } else if (ctx->primitiveType()->KW_I16()) {
+    } else if (primitiveType->KW_I16()) {
       return std::make_pair(id, std::optional<int16_t>());
-    } else if (ctx->primitiveType()->KW_I32()) {
+    } else if (primitiveType->KW_I32()) {
       return std::make_pair(id, std::optional<int32_t>());
-    } else if (ctx->primitiveType()->KW_I64()) {
+    } else if (primitiveType->KW_I64()) {
       return std::make_pair(id, std::optional<int64_t>());
     } else {
       // all possible primitive types need to be handled.
       abort();
     }
   } else if (ctx->identifier()) {
+    auto identifier = ctx->identifier();
     std::string referencedSymbol =
-        ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol()->getText();
+        identifier->NON_KEYWORD_IDENTIFIER()->getSymbol()->getText();
     auto maybe_symbol = global_symbol_table.Get(referencedSymbol);
     if (maybe_symbol) {
       return std::make_pair(id, *maybe_symbol);
     } else {
       throw SymbolNotFoundException(
-          recognizer, ctx,
-          ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
+          recognizer, ctx, identifier->NON_KEYWORD_IDENTIFIER()->getSymbol());
     }
   }
-  // the grammar only provides 3 options, so crash if we get here.
-  abort();
+  // grammar only provides 2 options; pretty sure we would have already thrown
+  // an error.
+  return std::nullopt;
 }
 
 void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,
@@ -263,8 +284,31 @@ void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,
   }
 }
 
+void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,
+                 TypedefParser::VariantDeclarationContext* ctx) {
+  if (ctx->maybe_symbol) {
+    if (!dstTable.TryInsert(*ctx->maybe_symbol)) {
+      throw DuplicateSymbolException(
+          recognizer, ctx,
+          ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
+    }
+  }
+}
+
 void TryInsertSymbol(std::shared_ptr<td::Struct>& s, antlr4::Parser* recognizer,
                      TypedefParser::MaybeValuedSymbolContext* ctx) {
+  if (ctx->maybe_symbol) {
+    if (!s->TryInsert(*ctx->maybe_symbol)) {
+      throw DuplicateSymbolException(
+          recognizer, ctx,
+          ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
+    }
+  }
+}
+
+void TryInsertSymbol(std::shared_ptr<td::Variant>& s,
+                     antlr4::Parser* recognizer,
+                     TypedefParser::UnvaluedSymbolContext* ctx) {
   if (ctx->maybe_symbol) {
     if (!s->TryInsert(*ctx->maybe_symbol)) {
       throw DuplicateSymbolException(

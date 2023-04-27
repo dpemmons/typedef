@@ -97,6 +97,11 @@ SomeOtherType: Something<T: Any>;
 // seems Rust style traits are useful here.
 
 
+SomeEnumI32Type: variant {
+  CaseA: char;
+  CaseB: int32 = 2;
+  CaseC: f32;
+};
 // An enum in which members are of the type specified between
 // angled brackets.
 SomeEnumI32Type: variant<T: Any> {

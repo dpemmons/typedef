@@ -30,6 +30,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitVariantDeclaration(TypedefParser::VariantDeclarationContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -38,7 +42,19 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitType_(TypedefParser::Type_Context *ctx) override {
+  virtual antlrcpp::Any visitUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitMaybeValuedType(TypedefParser::MaybeValuedTypeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitValuedType(TypedefParser::ValuedTypeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitUnvaluedType(TypedefParser::UnvaluedTypeContext *ctx) override {
     return visitChildren(ctx);
   }
 

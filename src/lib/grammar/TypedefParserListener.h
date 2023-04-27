@@ -26,14 +26,26 @@ public:
   virtual void enterMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext *ctx) = 0;
   virtual void exitMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext *ctx) = 0;
 
+  virtual void enterVariantDeclaration(TypedefParser::VariantDeclarationContext *ctx) = 0;
+  virtual void exitVariantDeclaration(TypedefParser::VariantDeclarationContext *ctx) = 0;
+
   virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
   virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
 
   virtual void enterMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext *ctx) = 0;
   virtual void exitMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext *ctx) = 0;
 
-  virtual void enterType_(TypedefParser::Type_Context *ctx) = 0;
-  virtual void exitType_(TypedefParser::Type_Context *ctx) = 0;
+  virtual void enterUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext *ctx) = 0;
+  virtual void exitUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext *ctx) = 0;
+
+  virtual void enterMaybeValuedType(TypedefParser::MaybeValuedTypeContext *ctx) = 0;
+  virtual void exitMaybeValuedType(TypedefParser::MaybeValuedTypeContext *ctx) = 0;
+
+  virtual void enterValuedType(TypedefParser::ValuedTypeContext *ctx) = 0;
+  virtual void exitValuedType(TypedefParser::ValuedTypeContext *ctx) = 0;
+
+  virtual void enterUnvaluedType(TypedefParser::UnvaluedTypeContext *ctx) = 0;
+  virtual void exitUnvaluedType(TypedefParser::UnvaluedTypeContext *ctx) = 0;
 
   virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
   virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;

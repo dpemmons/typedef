@@ -16,6 +16,7 @@ namespace td {
 using namespace std;
 
 struct Struct;
+struct Variant;
 
 class SymbolTable {
  public:
@@ -32,7 +33,8 @@ class SymbolTable {
                   optional<uint16_t>,  // u16
                   optional<uint32_t>,  // u32
                   optional<uint64_t>,  // u64
-                  shared_ptr<Struct>   // struct
+                  shared_ptr<Struct>,   // struct
+                  shared_ptr<Variant>   // variant
                   >
       Value;
   typedef pair<string, Value> Symbol;
@@ -44,9 +46,6 @@ class SymbolTable {
     return table_.try_emplace(name, value).second;
   }
   bool TryInsert(Symbol &symbol) { return table_.insert(symbol).second; }
-  // bool TryInsert(string &name, shared_ptr<Struct> value) {
-  //   return table_.try_emplace(name, value).second;
-  // }
   void Clear() { table_.clear(); }
 
   friend ostream &operator<<(ostream &os, const SymbolTable &value);
@@ -68,6 +67,15 @@ class Struct {
   bool TryInsert(SymbolTable::Symbol &symbol) { return table.TryInsert(symbol); }
 
   friend ostream &operator<<(ostream &os, const Struct &s);
+
+  SymbolTable table;
+};
+
+class Variant {
+ public:
+  bool TryInsert(SymbolTable::Symbol &symbol) { return table.TryInsert(symbol); }
+
+  friend ostream &operator<<(ostream &os, const Variant &s);
 
   SymbolTable table;
 };

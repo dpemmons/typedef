@@ -28,11 +28,19 @@ public:
 
     virtual antlrcpp::Any visitMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext *context) = 0;
 
+    virtual antlrcpp::Any visitVariantDeclaration(TypedefParser::VariantDeclarationContext *context) = 0;
+
     virtual antlrcpp::Any visitStructDeclaration(TypedefParser::StructDeclarationContext *context) = 0;
 
     virtual antlrcpp::Any visitMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext *context) = 0;
 
-    virtual antlrcpp::Any visitType_(TypedefParser::Type_Context *context) = 0;
+    virtual antlrcpp::Any visitUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext *context) = 0;
+
+    virtual antlrcpp::Any visitMaybeValuedType(TypedefParser::MaybeValuedTypeContext *context) = 0;
+
+    virtual antlrcpp::Any visitValuedType(TypedefParser::ValuedTypeContext *context) = 0;
+
+    virtual antlrcpp::Any visitUnvaluedType(TypedefParser::UnvaluedTypeContext *context) = 0;
 
     virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *context) = 0;
 

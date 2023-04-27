@@ -43,18 +43,29 @@ Items in ***bold*** are in-progress.
   - [ ] write and read a baisc serialized blob, and print to stdout
   - [ ] print a basic struct ito json stdout
   - [ ] input json to basic struct
-  - [ ] Codegen basics
-    - [ ] cpp: mutable classes
+  - [ ] ***Codegen basics***
+    - [ ] ***cpp: mutable classes***
     - [ ] serialize
     - [ ] deserialize
     - [ ] views?
 
-- [ ] Self hosting
+- [ ] ***Self hosting***
   - [x] generate basic mutable classes
+    - [ ] struct members
   - [ ] generate views
-  - [ ] variants
+  - [ ] ***variants***
+    - [x] parse
+    - [ ] generate
   - [ ] collections
+    - [ ] vector
+    - [ ] map
   - [ ] use those in cpp generation
+
+Currently using this to test...
+
+```sh
+make -j 12 debug && ./build/cmd/typedef --cpp_out=examples ./examples/simple_values.td && g++ -O0 -g examples/examples/*.cpp -o out && ./out
+```
 
 Command line utility should, by default print out all the parts of the parsed file.
 Modes:

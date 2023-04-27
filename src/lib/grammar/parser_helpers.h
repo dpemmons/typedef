@@ -1,5 +1,5 @@
-#ifndef TYPEDEF_PARSER_HELPERS_
-#define TYPEDEF_PARSER_HELPERS_
+#ifndef LIB_GRAMMAR_PARSER_HELPERS_H__
+#define LIB_GRAMMAR_PARSER_HELPERS_H__
 
 #include <stdlib.h>
 
@@ -166,7 +166,15 @@ std::string GetRawString(TypedefParser *parser, antlr4::Token *token);
 
 std::optional<td::SymbolTable::Symbol> MakeSymbol(
     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-    std::string &id, TypedefParser::Type_Context *type_);
+    std::string &id, TypedefParser::MaybeValuedTypeContext *ctx);
+
+std::optional<td::SymbolTable::Symbol> MakeSymbol(
+    antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
+    std::string &id, TypedefParser::ValuedTypeContext *ctx);
+
+std::optional<td::SymbolTable::Symbol> MakeSymbol(
+    antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
+    std::string &id, TypedefParser::UnvaluedTypeContext *ctx);
 
 // Insert fields into symbol tables.
 void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
@@ -175,7 +183,13 @@ void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
 void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
                  TypedefParser::StructDeclarationContext *ctx);
 
+void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
+                 TypedefParser::VariantDeclarationContext *ctx);
+
 void TryInsertSymbol(std::shared_ptr<td::Struct> &s, antlr4::Parser *recognizer,
                      TypedefParser::MaybeValuedSymbolContext *ctx);
 
-#endif  // TYPEDEF_PARSER_HELPERS_
+void TryInsertSymbol(std::shared_ptr<td::Variant> &s, antlr4::Parser *recognizer,
+                     TypedefParser::UnvaluedSymbolContext *ctx);
+
+#endif  // LIB_GRAMMAR_PARSER_HELPERS_H__

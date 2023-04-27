@@ -31,9 +31,30 @@ item:
 }
 	| structDeclaration {
 		InsertField(global_symbol_table, this, $structDeclaration.ctx);
+}
+	| variantDeclaration {
+		InsertField(global_symbol_table, this, $variantDeclaration.ctx);
 };
 
 maybeValuedSymbolDeclaration: maybeValuedSymbol WS* SEMI;
+
+variantDeclaration
+	returns[
+		std::optional<td::SymbolTable::Symbol> maybe_symbol,
+		std::shared_ptr<td::Variant> v
+	]
+	@init {
+		$v = std::make_shared<td::Variant>();
+	}:
+	(
+		identifier WS* COLON WS* KW_VARIANT WS* LBRACE (
+			WS* unvaluedSymbol {
+				TryInsertSymbol($v, this, $unvaluedSymbol.ctx);
+			} WS* SEMI WS*
+		)* RBRACE WS* SEMI
+	) {
+		$maybe_symbol = std::make_pair($identifier.ctx->id, $v);
+	};
 
 structDeclaration
 	returns[
@@ -56,15 +77,23 @@ structDeclaration
 // ValA: i32 = 42;
 maybeValuedSymbol
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
-	identifier WS* type_ WS* {
+	identifier WS* maybeValuedType WS* {
 		$maybe_symbol = MakeSymbol(this, global_symbol_table,
-			$identifier.ctx->id, $type_.ctx);
+			$identifier.ctx->id, $maybeValuedType.ctx);
 };
 
-type_:
-	primitiveType
-	| valuedPrimitiveType
-	| (COLON WS* identifier);
+// ValA: i32 = 42;
+unvaluedSymbol
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
+	identifier WS* unvaluedType WS* {
+		$maybe_symbol = MakeSymbol(this, global_symbol_table,
+			$identifier.ctx->id, $unvaluedType.ctx);
+};
+
+maybeValuedType: valuedType | unvaluedType;
+valuedType: valuedPrimitiveType;
+unvaluedType: primitiveType | (COLON WS* identifier);
+
 primitiveType:
 	COLON WS* (
 		KW_BOOL
@@ -81,9 +110,6 @@ primitiveType:
 		| KW_I32
 		| KW_I64
 	);
-
-// TODO(dpemmons) rename to valued type? then type_ (used by struct) can be either primitiveType or
-// valued(primitive?)Type
 
 // Matches " : bool = literal"
 valuedPrimitiveType

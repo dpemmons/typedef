@@ -28,14 +28,26 @@ public:
   virtual void enterMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext * /*ctx*/) override { }
   virtual void exitMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext * /*ctx*/) override { }
 
+  virtual void enterVariantDeclaration(TypedefParser::VariantDeclarationContext * /*ctx*/) override { }
+  virtual void exitVariantDeclaration(TypedefParser::VariantDeclarationContext * /*ctx*/) override { }
+
   virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
   virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
 
   virtual void enterMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext * /*ctx*/) override { }
   virtual void exitMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext * /*ctx*/) override { }
 
-  virtual void enterType_(TypedefParser::Type_Context * /*ctx*/) override { }
-  virtual void exitType_(TypedefParser::Type_Context * /*ctx*/) override { }
+  virtual void enterUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext * /*ctx*/) override { }
+  virtual void exitUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext * /*ctx*/) override { }
+
+  virtual void enterMaybeValuedType(TypedefParser::MaybeValuedTypeContext * /*ctx*/) override { }
+  virtual void exitMaybeValuedType(TypedefParser::MaybeValuedTypeContext * /*ctx*/) override { }
+
+  virtual void enterValuedType(TypedefParser::ValuedTypeContext * /*ctx*/) override { }
+  virtual void exitValuedType(TypedefParser::ValuedTypeContext * /*ctx*/) override { }
+
+  virtual void enterUnvaluedType(TypedefParser::UnvaluedTypeContext * /*ctx*/) override { }
+  virtual void exitUnvaluedType(TypedefParser::UnvaluedTypeContext * /*ctx*/) override { }
 
   virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
   virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }

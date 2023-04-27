@@ -92,6 +92,12 @@ StructC: struct {
   jkl: i32;
 };
 
-
+VariantA: variant {
+  // a: StructA;
+  // b: StructB;
+  // c: StructC;
+  d: i32;
+  e: char;
+};
 
 //ValArr: array<i32, 3> = "";

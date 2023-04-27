@@ -2,11 +2,11 @@
 
 #include <charconv>
 #include <codecvt>
+#include <cstdint>
 #include <ios>
+#include <locale>
 #include <sstream>
 #include <variant>
-#include <cstdint>
-#include <locale>
 
 #define FMT_HEADER_ONLY
 #include "fmt/core.h"
@@ -145,11 +145,29 @@ void PrintField(ostream& os, const SymbolTable::Symbol& s) {
                 ss << *ptr;
                 fmt::print(os, "{} : struct {{ {} }}\n", kv.first, ss.str());
               }
+            },
+            [&os, &kv](shared_ptr<Variant>&) {
+              auto ptr = get<shared_ptr<Variant>>(kv.second);
+              if (ptr) {
+                // TODO: variants can hold a single value; it should be printed
+                // here. BUT - we'll probably just wait to do that in templated
+                // code generation.
+                std::stringstream ss;
+                ss << *ptr;
+                fmt::print(os, "{} : variant {{ {} }}\n", kv.first, ss.str());
+              }
             }},
         kv.second);
 }
 
 ostream& operator<<(ostream& os, const Struct& s) {
+  for (auto kv : s.table.table_) {
+    PrintField(os, kv);
+  }
+  return os;
+}
+
+ostream& operator<<(ostream& os, const Variant& s) {
   for (auto kv : s.table.table_) {
     PrintField(os, kv);
   }

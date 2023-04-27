@@ -51,18 +51,19 @@ public:
 
   enum {
     RuleCompilationUnit = 0, RuleItem = 1, RuleMaybeValuedSymbolDeclaration = 2, 
-    RuleStructDeclaration = 3, RuleMaybeValuedSymbol = 4, RuleType_ = 5, 
-    RulePrimitiveType = 6, RuleValuedPrimitiveType = 7, RuleValuedBoolFragment = 8, 
-    RuleValuedCharFragment = 9, RuleValuedStringFragment = 10, RuleValuedF32Fragment = 11, 
-    RuleValuedF64Fragment = 12, RuleValuedU8Fragment = 13, RuleValuedU16Fragment = 14, 
-    RuleValuedU32Fragment = 15, RuleValuedU64Fragment = 16, RuleValuedI8Fragment = 17, 
-    RuleValuedI16Fragment = 18, RuleValuedI32Fragment = 19, RuleValuedI64Fragment = 20, 
-    RuleTypedefVersionDeclaration = 21, RuleModuleDeclaration = 22, RuleUseDeclaration = 23, 
-    RuleUseTree = 24, RuleSimplePath = 25, RuleBoolLiteral = 26, RuleCharLiteral = 27, 
-    RuleF32Literal = 28, RuleF64Literal = 29, RuleU8Literal = 30, RuleU16Literal = 31, 
-    RuleU32Literal = 32, RuleU64Literal = 33, RuleI8Literal = 34, RuleI16Literal = 35, 
-    RuleI32Literal = 36, RuleI64Literal = 37, RuleStringLiteral = 38, RuleIdentifier = 39, 
-    RuleKeyword = 40
+    RuleVariantDeclaration = 3, RuleStructDeclaration = 4, RuleMaybeValuedSymbol = 5, 
+    RuleUnvaluedSymbol = 6, RuleMaybeValuedType = 7, RuleValuedType = 8, 
+    RuleUnvaluedType = 9, RulePrimitiveType = 10, RuleValuedPrimitiveType = 11, 
+    RuleValuedBoolFragment = 12, RuleValuedCharFragment = 13, RuleValuedStringFragment = 14, 
+    RuleValuedF32Fragment = 15, RuleValuedF64Fragment = 16, RuleValuedU8Fragment = 17, 
+    RuleValuedU16Fragment = 18, RuleValuedU32Fragment = 19, RuleValuedU64Fragment = 20, 
+    RuleValuedI8Fragment = 21, RuleValuedI16Fragment = 22, RuleValuedI32Fragment = 23, 
+    RuleValuedI64Fragment = 24, RuleTypedefVersionDeclaration = 25, RuleModuleDeclaration = 26, 
+    RuleUseDeclaration = 27, RuleUseTree = 28, RuleSimplePath = 29, RuleBoolLiteral = 30, 
+    RuleCharLiteral = 31, RuleF32Literal = 32, RuleF64Literal = 33, RuleU8Literal = 34, 
+    RuleU16Literal = 35, RuleU32Literal = 36, RuleU64Literal = 37, RuleI8Literal = 38, 
+    RuleI16Literal = 39, RuleI32Literal = 40, RuleI64Literal = 41, RuleStringLiteral = 42, 
+    RuleIdentifier = 43, RuleKeyword = 44
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -81,9 +82,13 @@ public:
   class CompilationUnitContext;
   class ItemContext;
   class MaybeValuedSymbolDeclarationContext;
+  class VariantDeclarationContext;
   class StructDeclarationContext;
   class MaybeValuedSymbolContext;
-  class Type_Context;
+  class UnvaluedSymbolContext;
+  class MaybeValuedTypeContext;
+  class ValuedTypeContext;
+  class UnvaluedTypeContext;
   class PrimitiveTypeContext;
   class ValuedPrimitiveTypeContext;
   class ValuedBoolFragmentContext;
@@ -147,10 +152,12 @@ public:
   public:
     TypedefParser::MaybeValuedSymbolDeclarationContext *maybeValuedSymbolDeclarationContext = nullptr;;
     TypedefParser::StructDeclarationContext *structDeclarationContext = nullptr;;
+    TypedefParser::VariantDeclarationContext *variantDeclarationContext = nullptr;;
     ItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     MaybeValuedSymbolDeclarationContext *maybeValuedSymbolDeclaration();
     StructDeclarationContext *structDeclaration();
+    VariantDeclarationContext *variantDeclaration();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -178,6 +185,35 @@ public:
   };
 
   MaybeValuedSymbolDeclarationContext* maybeValuedSymbolDeclaration();
+
+  class  VariantDeclarationContext : public antlr4::ParserRuleContext {
+  public:
+    std::optional<td::SymbolTable::Symbol> maybe_symbol;
+    std::shared_ptr<td::Variant> v;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    TypedefParser::UnvaluedSymbolContext *unvaluedSymbolContext = nullptr;;
+    VariantDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IdentifierContext *identifier();
+    antlr4::tree::TerminalNode *COLON();
+    antlr4::tree::TerminalNode *KW_VARIANT();
+    antlr4::tree::TerminalNode *LBRACE();
+    antlr4::tree::TerminalNode *RBRACE();
+    std::vector<antlr4::tree::TerminalNode *> SEMI();
+    antlr4::tree::TerminalNode* SEMI(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
+    std::vector<UnvaluedSymbolContext *> unvaluedSymbol();
+    UnvaluedSymbolContext* unvaluedSymbol(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  VariantDeclarationContext* variantDeclaration();
 
   class  StructDeclarationContext : public antlr4::ParserRuleContext {
   public:
@@ -212,11 +248,11 @@ public:
   public:
     std::optional<td::SymbolTable::Symbol> maybe_symbol;
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
-    TypedefParser::Type_Context *type_Context = nullptr;;
+    TypedefParser::MaybeValuedTypeContext *maybeValuedTypeContext = nullptr;;
     MaybeValuedSymbolContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     IdentifierContext *identifier();
-    Type_Context *type_();
+    MaybeValuedTypeContext *maybeValuedType();
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
 
@@ -229,12 +265,63 @@ public:
 
   MaybeValuedSymbolContext* maybeValuedSymbol();
 
-  class  Type_Context : public antlr4::ParserRuleContext {
+  class  UnvaluedSymbolContext : public antlr4::ParserRuleContext {
   public:
-    Type_Context(antlr4::ParserRuleContext *parent, size_t invokingState);
+    std::optional<td::SymbolTable::Symbol> maybe_symbol;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    TypedefParser::UnvaluedTypeContext *unvaluedTypeContext = nullptr;;
+    UnvaluedSymbolContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IdentifierContext *identifier();
+    UnvaluedTypeContext *unvaluedType();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  UnvaluedSymbolContext* unvaluedSymbol();
+
+  class  MaybeValuedTypeContext : public antlr4::ParserRuleContext {
+  public:
+    MaybeValuedTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ValuedTypeContext *valuedType();
+    UnvaluedTypeContext *unvaluedType();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  MaybeValuedTypeContext* maybeValuedType();
+
+  class  ValuedTypeContext : public antlr4::ParserRuleContext {
+  public:
+    ValuedTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ValuedPrimitiveTypeContext *valuedPrimitiveType();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ValuedTypeContext* valuedType();
+
+  class  UnvaluedTypeContext : public antlr4::ParserRuleContext {
+  public:
+    UnvaluedTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     PrimitiveTypeContext *primitiveType();
-    ValuedPrimitiveTypeContext *valuedPrimitiveType();
     antlr4::tree::TerminalNode *COLON();
     IdentifierContext *identifier();
     std::vector<antlr4::tree::TerminalNode *> WS();
@@ -247,7 +334,7 @@ public:
    
   };
 
-  Type_Context* type_();
+  UnvaluedTypeContext* unvaluedType();
 
   class  PrimitiveTypeContext : public antlr4::ParserRuleContext {
   public:
