@@ -53,9 +53,9 @@ Items in ***bold*** are in-progress.
   - [x] generate basic mutable classes
     - [x] struct members
   - [ ] generate views
-  - [ ] ***variants***
+  - [x] variants
     - [x] parse
-    - [ ] generate
+    - [x] generate
   - [ ] collections
     - [ ] vector
     - [ ] map

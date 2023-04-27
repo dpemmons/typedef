@@ -94,9 +94,9 @@ StructC: struct {
 };
 
 VariantA: variant {
-  // a: StructA;
-  // b: StructB;
-  // c: StructC;
+  a: StructA;
+  b: StructB;
+  c: StructC;
   d: i32;
   e: char;
 };

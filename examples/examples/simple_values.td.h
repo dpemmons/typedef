@@ -5,6 +5,7 @@
 #include <memory>
 #include <ostream>
 #include <string>
+#include <variant>
 
 
 // clang-format off
@@ -314,10 +315,44 @@ bool operator==(const MutableStructC &lhs, const MutableStructC &rhs);
 inline bool operator!=(const MutableStructC &lhs, const MutableStructC &rhs) { return !(lhs == rhs); };
 
 
-class VariantA TD_FINAL_CLASS {
+class MutableVariantA TD_FINAL_CLASS {
   public:
+    MutableVariantA() {};
+    bool Isa() const { return std::holds_alternative<a_t>(value_); };
+    std::shared_ptr<MutableStructA> a() { return std::get<a_t>(value_); };
+    void a(std::shared_ptr<MutableStructA> _val) { value_ = _val; };
+
+    bool Isb() const { return std::holds_alternative<b_t>(value_); };
+    std::shared_ptr<MutableStructB> b() { return std::get<b_t>(value_); };
+    void b(std::shared_ptr<MutableStructB> _val) { value_ = _val; };
+
+    bool Isc() const { return std::holds_alternative<c_t>(value_); };
+    std::shared_ptr<MutableStructC> c() { return std::get<c_t>(value_); };
+    void c(std::shared_ptr<MutableStructC> _val) { value_ = _val; };
+
+    bool Isd() const { return std::holds_alternative<d_t>(value_); };
+    int32_t d() { return std::get<d_t>(value_); };
+    void d(int32_t _val) { value_ = _val; };
+
+    bool Ise() const { return std::holds_alternative<e_t>(value_); };
+    char32_t e() { return std::get<e_t>(value_); };
+    void e(char32_t _val) { value_ = _val; };
 
   private:
+    typedef std::shared_ptr<MutableStructA> a_t;
+    typedef std::shared_ptr<MutableStructB> b_t;
+    typedef std::shared_ptr<MutableStructC> c_t;
+    typedef int32_t d_t;
+    typedef char32_t e_t;
+
+  std::variant<
+      a_t,
+      b_t,
+      c_t,
+      d_t,
+      e_t
+  > value_;
+
 };
 
 
