@@ -18,31 +18,132 @@ using namespace std;
 void DeclarePrimitive(ostream& os, SymbolTable::Symbol const& s) {
   std::string escaped_id = escape_utf8_to_cpp_identifier(s.first);
   if (holds_alternative<optional<bool>>(s.second)) {
-    fmt::print(os, "bool {};\n", escaped_id);
+    fmt::print(os, "extern bool {};\n", escaped_id);
   } else if (holds_alternative<optional<char32_t>>(s.second)) {
-    fmt::print(os, "char32_t {};\n", escaped_id);
+    fmt::print(os, "extern char32_t {};\n", escaped_id);
   } else if (holds_alternative<optional<string>>(s.second)) {
-    fmt::print(os, "std::string {};\n", escaped_id);
+    fmt::print(os, "extern std::string {};\n", escaped_id);
   } else if (holds_alternative<optional<float>>(s.second)) {
-    fmt::print(os, "float {};\n", escaped_id);
+    fmt::print(os, "extern float {};\n", escaped_id);
   } else if (holds_alternative<optional<double>>(s.second)) {
-    fmt::print(os, "double {};\n", escaped_id);
+    fmt::print(os, "extern double {};\n", escaped_id);
   } else if (holds_alternative<optional<int8_t>>(s.second)) {
-    fmt::print(os, "int8_t {};\n", escaped_id);
+    fmt::print(os, "extern int8_t {};\n", escaped_id);
   } else if (holds_alternative<optional<int16_t>>(s.second)) {
-    fmt::print(os, "int16_t {};\n", escaped_id);
+    fmt::print(os, "extern int16_t {};\n", escaped_id);
   } else if (holds_alternative<optional<int32_t>>(s.second)) {
-    fmt::print(os, "int32_t {};\n", escaped_id);
+    fmt::print(os, "extern int32_t {};\n", escaped_id);
   } else if (holds_alternative<optional<int64_t>>(s.second)) {
-    fmt::print(os, "int64_t {};\n", escaped_id);
+    fmt::print(os, "extern int64_t {};\n", escaped_id);
   } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-    fmt::print(os, "uint8_t {};\n", escaped_id);
+    fmt::print(os, "extern uint8_t {};\n", escaped_id);
   } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-    fmt::print(os, "uint16_t {};\n", escaped_id);
+    fmt::print(os, "extern uint16_t {};\n", escaped_id);
   } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-    fmt::print(os, "uint32_t {};\n", escaped_id);
+    fmt::print(os, "extern uint32_t {};\n", escaped_id);
   } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-    fmt::print(os, "uint64_t {};\n", escaped_id);
+    fmt::print(os, "extern uint64_t {};\n", escaped_id);
+  } else {
+    abort();
+  }
+}
+
+void DefinePrimitive(ostream& os, SymbolTable::Symbol const& s) {
+  std::string escaped_id = escape_utf8_to_cpp_identifier(s.first);
+  if (holds_alternative<optional<bool>>(s.second)) {
+    auto maybe_val = get<optional<bool>>(s.second);
+    if (maybe_val) {
+      fmt::print(os, "bool {} = {};\n", escaped_id, *maybe_val);
+    } else {
+      fmt::print(os, "bool {};\n", escaped_id);
+    }
+  } else if (holds_alternative<optional<char32_t>>(s.second)) {
+    auto maybe_val = get<optional<char32_t>>(s.second);
+    if (maybe_val) {
+      wstring_convert<codecvt_utf8<char32_t>, char32_t> converter;
+      fmt::print(os, "char32_t {} = *(char32_t*)\"{}\";\n", escaped_id,
+                 converter.to_bytes(*maybe_val));
+    } else {
+      fmt::print(os, "char32_t {} = 0;\n", escaped_id);
+    }
+  } else if (holds_alternative<optional<string>>(s.second)) {
+    auto maybe_val = get<optional<string>>(s.second);
+    if (maybe_val) {
+      fmt::print(os, "std::string {} = R\"LITERAL({})LITERAL\";\n", escaped_id,
+                 *maybe_val);
+    } else {
+      fmt::print(os, "std::string {};\n", escaped_id);
+    }
+  } else if (holds_alternative<optional<float>>(s.second)) {
+    auto maybe_val = get<optional<float>>(s.second);
+    if (maybe_val) {
+      fmt::print(os, "float {} = {};\n", escaped_id, *maybe_val);
+    } else {
+      fmt::print(os, "float {};\n", escaped_id);
+    }
+  } else if (holds_alternative<optional<double>>(s.second)) {
+    auto maybe_val = get<optional<double>>(s.second);
+    if (maybe_val) {
+      fmt::print(os, "double {} = {};\n", escaped_id, *maybe_val);
+    } else {
+      fmt::print(os, "double {};\n", escaped_id);
+    }
+  } else if (holds_alternative<optional<int8_t>>(s.second)) {
+    auto maybe_val = get<optional<int8_t>>(s.second);
+    if (maybe_val) {
+      fmt::print(os, "int8_t {} = {};\n", escaped_id, *maybe_val);
+    } else {
+      fmt::print(os, "int8_t {};\n", escaped_id);
+    }
+  } else if (holds_alternative<optional<int16_t>>(s.second)) {
+    auto maybe_val = get<optional<int16_t>>(s.second);
+    if (maybe_val) {
+      fmt::print(os, "int16_t {} = {};\n", escaped_id, *maybe_val);
+    } else {
+      fmt::print(os, "int16_t {};\n", escaped_id);
+    }
+  } else if (holds_alternative<optional<int32_t>>(s.second)) {
+    auto maybe_val = get<optional<int32_t>>(s.second);
+    if (maybe_val) {
+      fmt::print(os, "int32_t {} = {};\n", escaped_id, *maybe_val);
+    } else {
+      fmt::print(os, "int32_t {};\n", escaped_id);
+    }
+  } else if (holds_alternative<optional<int64_t>>(s.second)) {
+    auto maybe_val = get<optional<int64_t>>(s.second);
+    if (maybe_val) {
+      fmt::print(os, "int64_t {} = {};\n", escaped_id, *maybe_val);
+    } else {
+      fmt::print(os, "int64_t {};\n", escaped_id);
+    }
+  } else if (holds_alternative<optional<uint8_t>>(s.second)) {
+    auto maybe_val = get<optional<uint8_t>>(s.second);
+    if (maybe_val) {
+      fmt::print(os, "uint8_t {} = {};\n", escaped_id, *maybe_val);
+    } else {
+      fmt::print(os, "uint8_t {};\n", escaped_id);
+    }
+  } else if (holds_alternative<optional<uint16_t>>(s.second)) {
+    auto maybe_val = get<optional<uint16_t>>(s.second);
+    if (maybe_val) {
+      fmt::print(os, "uint16_t {} = {};\n", escaped_id, *maybe_val);
+    } else {
+      fmt::print(os, "uint16_t {};\n", escaped_id);
+    }
+  } else if (holds_alternative<optional<uint32_t>>(s.second)) {
+    auto maybe_val = get<optional<uint32_t>>(s.second);
+    if (maybe_val) {
+      fmt::print(os, "uint32_t {} = {};\n", escaped_id, *maybe_val);
+    } else {
+      fmt::print(os, "uint32_t {};\n", escaped_id);
+    }
+  } else if (holds_alternative<optional<uint64_t>>(s.second)) {
+    auto maybe_val = get<optional<uint64_t>>(s.second);
+    if (maybe_val) {
+      fmt::print(os, "uint64_t {} = {};\n", escaped_id, *maybe_val);
+    } else {
+      fmt::print(os, "uint64_t {};\n", escaped_id);
+    }
   } else {
     abort();
   }
@@ -366,7 +467,8 @@ void DefineStruct(ostream& hdr, ostream& src,
   fmt::print(src, "  os << \"struct {} :\\n\";\n", escaped_struct_id);
   for (auto s : ptr->table.table_) {
     std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    fmt::print(src, "  os << \"  {} = \" << obj.{}() << \"\\n\";\n", member_id, member_id);
+    fmt::print(src, "  os << \"  {} = \" << obj.{}() << \"\\n\";\n", member_id,
+               member_id);
   }
   fmt::print(src, "  return os;\n}}\n");
   fmt::print(src, "\n");
@@ -423,15 +525,19 @@ void CodegenCpp::Generate() {
   fmt::print(hdr_file->OStream(), "\n");
 
   // value declarations
-  // fmt::print(hdr_file->OStream(), "// value declarations\n");
-  // for (auto symbol : parser_->symbols2_.table_) {
-  //   // declare everything first.
-  //   if (!holds_alternative<shared_ptr<td::Struct>>(symbol.second)) {
-  //     DeclarePrimitive(hdr_file->OStream(), symbol);
-  //   }
-  // }
+  fmt::print(hdr_file->OStream(), "// value declarations\n");
+  for (auto symbol : parser_->symbols2_.table_) {
+    // declare everything first.
+    if (holds_alternative<shared_ptr<td::Struct>>(symbol.second) ||
+        holds_alternative<shared_ptr<td::Variant>>(symbol.second)) {
+      continue;
+    }
+    DeclarePrimitive(hdr_file->OStream(), symbol);
+    DefinePrimitive(src_file->OStream(), symbol);
+  }
 
   fmt::print(hdr_file->OStream(), "\n");
+  fmt::print(src_file->OStream(), "\n");
 
   // declare structs
   for (auto symbol : parser_->symbols2_.table_) {

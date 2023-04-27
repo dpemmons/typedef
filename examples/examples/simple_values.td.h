@@ -58,6 +58,34 @@ struct StructA;
 struct StructB;
 struct StructC;
 
+// value declarations
+extern std::string VAL;
+extern char32_t ValB;
+extern bool ValBool;
+extern bool ValBool2;
+extern char32_t ValC;
+extern std::string ValD;
+extern std::string ValE;
+extern std::string ValRaw;
+extern uint16_t Val_u16;
+extern uint16_t Val_u16_suffix;
+extern uint32_t Val_u32;
+extern uint32_t Val_u32_suffix;
+extern uint64_t Val_u64;
+extern uint64_t Val_u64_suffix;
+extern uint8_t Val_u8;
+extern uint8_t Val_u8_suffix;
+extern char32_t impliedChar;
+extern std::string impliedStr;
+extern float val_f32;
+extern float val_f32_bare;
+extern float val_f32_suffix;
+extern double val_f64;
+extern double val_f64_suffix;
+extern int32_t val_i32;
+extern int32_t val_i32_bare2;
+extern int32_t val_i32_bare__2118;
+extern int32_t _0440_0443_0441_0441_043a_0438_0439__0438_0434_0435_043d_0442_0438_0444_0438_043a_0430_0442_043e_0440;
 
 class MutableStructA TD_FINAL_CLASS {
   public:

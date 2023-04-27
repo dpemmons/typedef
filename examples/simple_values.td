@@ -42,7 +42,7 @@ ValRaw : str = r#"
 👨‍💻 Together we create, a world beyond compare.
 "#;
 
-impliedStr = "string";
+impliedStr = "a string";
 impliedChar = 'c';
 
 StructA: struct {
