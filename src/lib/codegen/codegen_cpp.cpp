@@ -517,18 +517,18 @@ void DefineStruct(ostream& hdr, ostream& src,
 }
 
 void DefineVariant(ostream& hdr, ostream& src,
-                   SymbolTable::Symbol const& struct_symbol) {
-  auto ptr = get<shared_ptr<Variant>>(struct_symbol.second);
-  std::string escaped_struct_id =
-      escape_utf8_to_cpp_identifier(struct_symbol.first);
+                   SymbolTable::Symbol const& variant_symbol) {
+  auto ptr = get<shared_ptr<Variant>>(variant_symbol.second);
+  std::string escaped_variant_id =
+      escape_utf8_to_cpp_identifier(variant_symbol.first);
 
-  fmt::print(hdr, "class Mutable{} TD_FINAL_CLASS {{\n", escaped_struct_id);
+  fmt::print(hdr, "class Mutable{} TD_FINAL_CLASS {{\n", escaped_variant_id);
 
   size_t total_size = 0;
 
   fmt::print(hdr, "  public:\n");
   // constructors
-  fmt::print(hdr, "    Mutable{}() {{}};\n", escaped_struct_id);
+  fmt::print(hdr, "    Mutable{}() {{}};\n", escaped_variant_id);
 
   // setters and getters
   for (auto s : ptr->table.table_) {
@@ -672,6 +672,17 @@ void DefineVariant(ostream& hdr, ostream& src,
     }
   }
 
+  fmt::print(hdr,
+             "    bool isEqual(const Mutable{} &rhs) const {{ "
+             "return value_ == rhs.value_; }}\n\n",
+             escaped_variant_id);
+
+  fmt::print(
+      hdr,
+      "    friend std::ostream& operator<<(std::ostream& os, const {}& obj);\n",
+      escaped_variant_id);
+  fmt::print(hdr, "\n");
+
   fmt::print(hdr, "  private:\n");
 
   for (auto s : ptr->table.table_) {
@@ -738,6 +749,35 @@ void DefineVariant(ostream& hdr, ostream& src,
   // End class declaration.
   fmt::print(hdr, "}};\n");
   fmt::print(hdr, "\n");
+
+  // declare operators
+  fmt::print(hdr,
+             "bool operator==(const Mutable{} &lhs, const Mutable{} &rhs);\n",
+             escaped_variant_id, escaped_variant_id);
+  fmt::print(hdr,
+             "inline bool operator!=(const Mutable{} &lhs, const Mutable{} "
+             "&rhs) {{ return "
+             "!(lhs == rhs); }};\n",
+             escaped_variant_id, escaped_variant_id);
+  fmt::print(hdr, "\n");
+
+  // define operator==
+  fmt::print(src,
+             "bool operator==(const Mutable{} &lhs, const Mutable{} &rhs) {{\n",
+             escaped_variant_id, escaped_variant_id);
+  fmt::print(src, "  return lhs.isEqual(rhs);\n");
+  fmt::print(src, "}}\n");
+  fmt::print(src, "\n");
+
+  // define operator<<
+  fmt::print(
+      src,
+      "std::ostream& operator<<(std::ostream& os, const Mutable{}& obj) {{\n",
+      escaped_variant_id, escaped_variant_id);
+  fmt::print(src, "  os << \"variant {} :\\n\";\n", escaped_variant_id);
+  fmt::print(src, "  os << \"  something.\\n\";\n");
+  fmt::print(src, "  return os;\n}}\n");
+  fmt::print(src, "\n");
 }
 
 string HeaderGuard(filesystem::path source_filename) {

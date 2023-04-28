@@ -338,6 +338,10 @@ class MutableVariantA TD_FINAL_CLASS {
     char32_t e() { return std::get<e_t>(value_); };
     void e(char32_t _val) { value_ = _val; };
 
+    bool isEqual(const MutableVariantA &rhs) const { return value_ == rhs.value_; }
+
+    friend std::ostream& operator<<(std::ostream& os, const VariantA& obj);
+
   private:
     typedef std::shared_ptr<MutableStructA> a_t;
     typedef std::shared_ptr<MutableStructB> b_t;
@@ -354,6 +358,9 @@ class MutableVariantA TD_FINAL_CLASS {
   > value_;
 
 };
+
+bool operator==(const MutableVariantA &lhs, const MutableVariantA &rhs);
+inline bool operator!=(const MutableVariantA &lhs, const MutableVariantA &rhs) { return !(lhs == rhs); };
 
 
 

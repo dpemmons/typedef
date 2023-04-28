@@ -122,3 +122,13 @@ std::ostream& operator<<(std::ostream& os, const MutableStructC& obj) {
   return os;
 }
 
+bool operator==(const MutableVariantA &lhs, const MutableVariantA &rhs) {
+  return lhs.isEqual(rhs);
+}
+
+std::ostream& operator<<(std::ostream& os, const MutableVariantA& obj) {
+  os << "variant VariantA :\n";
+  os << "  something.\n";
+  return os;
+}
+
