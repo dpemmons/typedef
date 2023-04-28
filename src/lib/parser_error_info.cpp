@@ -1,6 +1,7 @@
 #include "parser_error_info.h"
 
 #include <stdlib.h>
+
 #include <algorithm>
 
 #include "antlr4/antlr4-runtime.h"
@@ -43,6 +44,14 @@ const char *TokenToString(size_t token) {
       return "KW_TYPEDEF";
     case TypedefParser::KW_USE:
       return "KW_USE";
+
+    case TypedefParser::KW_VARIANT:
+      return "KW_VARIANT";
+    case TypedefParser::KW_VECTOR:
+      return "KW_VECTOR";
+    case TypedefParser::KW_MAP:
+      return "KW_MAP";
+
     case TypedefParser::KW_AND:
       return "KW_AND";
     case TypedefParser::KW_IN:

@@ -122,6 +122,20 @@ std::ostream& operator<<(std::ostream& os, const MutableStructC& obj) {
   return os;
 }
 
+bool operator==(const MutableStructD &lhs, const MutableStructD &rhs) {
+  return
+    (lhs.i() == rhs.i()) &&
+    (lhs.j() == rhs.j()) &&
+    true;
+}
+
+std::ostream& operator<<(std::ostream& os, const MutableStructD& obj) {
+  os << "struct MutableStructD :\n";
+  os << "  i = " << obj.i() << "\n";
+  os << "  j = " << obj.j() << "\n";
+  return os;
+}
+
 bool operator==(const MutableVariantA &lhs, const MutableVariantA &rhs) {
   return lhs.isEqual(rhs);
 }

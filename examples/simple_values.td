@@ -101,4 +101,11 @@ VariantA: variant {
   e: char;
 };
 
+StructD: struct {
+  i: i32;
+  v: vector<i32>;
+  j: u32;
+  m: map<i32, str>;
+};
+
 //ValArr: array<i32, 3> = "";

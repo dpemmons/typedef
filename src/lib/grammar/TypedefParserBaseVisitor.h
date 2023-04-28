@@ -58,6 +58,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitVectorType(TypedefParser::VectorTypeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitMapType(TypedefParser::MapTypeContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) override {
     return visitChildren(ctx);
   }

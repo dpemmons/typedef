@@ -59,6 +59,7 @@
 class StructA;
 class StructB;
 class StructC;
+class StructD;
 class VariantA;
 
 // value declarations
@@ -313,6 +314,35 @@ class MutableStructC TD_FINAL_CLASS {
 
 bool operator==(const MutableStructC &lhs, const MutableStructC &rhs);
 inline bool operator!=(const MutableStructC &lhs, const MutableStructC &rhs) { return !(lhs == rhs); };
+
+
+class MutableStructD TD_FINAL_CLASS {
+  public:
+    MutableStructD() {};
+    MutableStructD(
+      int32_t _i,
+      uint32_t _j,
+      bool __foo = false) :
+      i_(_i),
+      j_(_j),
+      __foo(false) {}
+
+    int32_t i() const { return i_; }
+    void i(int32_t val) { i_ = val; }
+
+    uint32_t j() const { return j_; }
+    void j(uint32_t val) { j_ = val; }
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableStructD& obj);
+
+  private:
+    int32_t i_ = 0;
+    uint32_t j_ = 0;
+    bool __foo; // to simplify codegen. will remove in future versions...
+};
+
+bool operator==(const MutableStructD &lhs, const MutableStructD &rhs);
+inline bool operator!=(const MutableStructD &lhs, const MutableStructD &rhs) { return !(lhs == rhs); };
 
 
 class MutableVariantA TD_FINAL_CLASS {

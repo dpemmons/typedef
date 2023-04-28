@@ -42,6 +42,10 @@ public:
 
     virtual antlrcpp::Any visitUnvaluedType(TypedefParser::UnvaluedTypeContext *context) = 0;
 
+    virtual antlrcpp::Any visitVectorType(TypedefParser::VectorTypeContext *context) = 0;
+
+    virtual antlrcpp::Any visitMapType(TypedefParser::MapTypeContext *context) = 0;
+
     virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *context) = 0;
 
     virtual antlrcpp::Any visitValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext *context) = 0;

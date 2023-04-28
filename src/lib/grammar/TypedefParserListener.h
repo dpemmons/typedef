@@ -47,6 +47,12 @@ public:
   virtual void enterUnvaluedType(TypedefParser::UnvaluedTypeContext *ctx) = 0;
   virtual void exitUnvaluedType(TypedefParser::UnvaluedTypeContext *ctx) = 0;
 
+  virtual void enterVectorType(TypedefParser::VectorTypeContext *ctx) = 0;
+  virtual void exitVectorType(TypedefParser::VectorTypeContext *ctx) = 0;
+
+  virtual void enterMapType(TypedefParser::MapTypeContext *ctx) = 0;
+  virtual void exitMapType(TypedefParser::MapTypeContext *ctx) = 0;
+
   virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
   virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
 

@@ -49,6 +49,12 @@ public:
   virtual void enterUnvaluedType(TypedefParser::UnvaluedTypeContext * /*ctx*/) override { }
   virtual void exitUnvaluedType(TypedefParser::UnvaluedTypeContext * /*ctx*/) override { }
 
+  virtual void enterVectorType(TypedefParser::VectorTypeContext * /*ctx*/) override { }
+  virtual void exitVectorType(TypedefParser::VectorTypeContext * /*ctx*/) override { }
+
+  virtual void enterMapType(TypedefParser::MapTypeContext * /*ctx*/) override { }
+  virtual void exitMapType(TypedefParser::MapTypeContext * /*ctx*/) override { }
+
   virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
   virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
 

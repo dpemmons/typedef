@@ -84,7 +84,7 @@ maybeValuedSymbol
 			$identifier.ctx->id, $maybeValuedType.ctx);
 };
 
-// ValA: i32 = 42;
+// ValA: i32;
 unvaluedSymbol
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
 	identifier WS* unvaluedType WS* {
@@ -94,24 +94,24 @@ unvaluedSymbol
 
 maybeValuedType: valuedType | unvaluedType;
 valuedType: valuedPrimitiveType;
-unvaluedType: primitiveType | (COLON WS* identifier);
+unvaluedType: COLON WS* (primitiveType | vectorType | mapType | identifier);
+vectorType: KW_VECTOR WS* LT WS* (primitiveType | identifier) WS* GT;
+mapType: KW_MAP WS* LT WS* primitiveType WS* COMMA WS* (primitiveType | identifier) WS* GT;
 
 primitiveType:
-	COLON WS* (
-		KW_BOOL
-		| KW_CHAR
-		| KW_STRING
-		| KW_F32
-		| KW_F64
-		| KW_U8
-		| KW_U16
-		| KW_U32
-		| KW_U64
-		| KW_I8
-		| KW_I16
-		| KW_I32
-		| KW_I64
-	);
+	KW_BOOL
+	| KW_CHAR
+	| KW_STRING
+	| KW_F32
+	| KW_F64
+	| KW_U8
+	| KW_U16
+	| KW_U32
+	| KW_U64
+	| KW_I8
+	| KW_I16
+	| KW_I32
+	| KW_I64;
 
 // Matches " : bool = literal"
 valuedPrimitiveType
@@ -338,6 +338,9 @@ keyword:
 	| KW_TYPE
 	| KW_TYPEDEF
 	| KW_USE
+	| KW_VARIANT
+	| KW_VECTOR
+	| KW_MAP
 
 	// reserved misc
 	| KW_AND
