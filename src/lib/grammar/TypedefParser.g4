@@ -87,16 +87,27 @@ maybeValuedSymbol
 // ValA: i32;
 unvaluedSymbol
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
-	identifier WS* unvaluedType WS* {
+	identifier WS* COLON WS* unvaluedType WS* {
 		$maybe_symbol = MakeSymbol(this, global_symbol_table,
 			$identifier.ctx->id, $unvaluedType.ctx);
 };
 
-maybeValuedType: valuedType | unvaluedType;
+maybeValuedType: valuedType | (COLON WS* unvaluedType);
 valuedType: valuedPrimitiveType;
-unvaluedType: COLON WS* (primitiveType | vectorType | mapType | identifier);
-vectorType: KW_VECTOR WS* LT WS* (primitiveType | identifier) WS* GT;
-mapType: KW_MAP WS* LT WS* primitiveType WS* COMMA WS* (primitiveType | identifier) WS* GT;
+unvaluedType:
+	(primitiveType | vectorType | mapType | identifier);
+vectorType
+	returns[std::optional<td::SymbolTable::Value> maybe_val]:
+	KW_VECTOR WS* LT WS* unvaluedType WS* GT {
+		$maybe_val = MakeVector(
+			this, global_symbol_table, $unvaluedType.ctx);
+	};
+mapType
+	returns[std::optional<td::SymbolTable::Value> maybe_val]:
+	KW_MAP WS* LT WS* primitiveType WS* COMMA WS* unvaluedType WS* GT {
+		$maybe_val = MakeMap(
+			this, global_symbol_table, $primitiveType.ctx, $unvaluedType.ctx);
+	};
 
 primitiveType:
 	KW_BOOL

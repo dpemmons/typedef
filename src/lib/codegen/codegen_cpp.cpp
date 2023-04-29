@@ -15,37 +15,72 @@ namespace td {
 
 using namespace std;
 
-void DeclarePrimitive(ostream& os, SymbolTable::Symbol const& s) {
-  std::string escaped_id = escape_utf8_to_cpp_identifier(s.first);
+std::string GetCppTypeName(SymbolTable::Symbol const& s) {
   if (holds_alternative<optional<bool>>(s.second)) {
-    fmt::print(os, "extern bool {};\n", escaped_id);
+    return "bool";
   } else if (holds_alternative<optional<char32_t>>(s.second)) {
-    fmt::print(os, "extern char32_t {};\n", escaped_id);
+    return "char32_t";
   } else if (holds_alternative<optional<string>>(s.second)) {
-    fmt::print(os, "extern std::string {};\n", escaped_id);
+    return "std::string";
   } else if (holds_alternative<optional<float>>(s.second)) {
-    fmt::print(os, "extern float {};\n", escaped_id);
+    return "float";
   } else if (holds_alternative<optional<double>>(s.second)) {
-    fmt::print(os, "extern double {};\n", escaped_id);
+    return "double";
   } else if (holds_alternative<optional<int8_t>>(s.second)) {
-    fmt::print(os, "extern int8_t {};\n", escaped_id);
+    return "int8_t";
   } else if (holds_alternative<optional<int16_t>>(s.second)) {
-    fmt::print(os, "extern int16_t {};\n", escaped_id);
+    return "int16_t";
   } else if (holds_alternative<optional<int32_t>>(s.second)) {
-    fmt::print(os, "extern int32_t {};\n", escaped_id);
+    return "int32_t";
   } else if (holds_alternative<optional<int64_t>>(s.second)) {
-    fmt::print(os, "extern int64_t {};\n", escaped_id);
+    return "int64_t";
   } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-    fmt::print(os, "extern uint8_t {};\n", escaped_id);
+    return "uint8_t";
   } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-    fmt::print(os, "extern uint16_t {};\n", escaped_id);
+    return "uint16_t";
   } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-    fmt::print(os, "extern uint32_t {};\n", escaped_id);
+    return "uint32_t";
   } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-    fmt::print(os, "extern uint64_t {};\n", escaped_id);
+    return "uint64_t";
+  } else if (holds_alternative<optional<uint64_t>>(s.second)) {
+    return "uint64_t";
   } else {
     abort();
   }
+}
+
+void DeclarePrimitive(ostream& os, SymbolTable::Symbol const& s) {
+  std::string escaped_id = escape_utf8_to_cpp_identifier(s.first);
+  if (holds_alternative<optional<bool>>(s.second)) {
+    fmt::print(os, "typedef bool {};\n", escaped_id);
+  } else if (holds_alternative<optional<char32_t>>(s.second)) {
+    fmt::print(os, "typedef char32_t {};\n", escaped_id);
+  } else if (holds_alternative<optional<string>>(s.second)) {
+    fmt::print(os, "typedef std::string {};\n", escaped_id);
+  } else if (holds_alternative<optional<float>>(s.second)) {
+    fmt::print(os, "typedef float {};\n", escaped_id);
+  } else if (holds_alternative<optional<double>>(s.second)) {
+    fmt::print(os, "typedef double {};\n", escaped_id);
+  } else if (holds_alternative<optional<int8_t>>(s.second)) {
+    fmt::print(os, "typedef int8_t {};\n", escaped_id);
+  } else if (holds_alternative<optional<int16_t>>(s.second)) {
+    fmt::print(os, "typedef int16_t {};\n", escaped_id);
+  } else if (holds_alternative<optional<int32_t>>(s.second)) {
+    fmt::print(os, "typedef int32_t {};\n", escaped_id);
+  } else if (holds_alternative<optional<int64_t>>(s.second)) {
+    fmt::print(os, "typedef int64_t {};\n", escaped_id);
+  } else if (holds_alternative<optional<uint8_t>>(s.second)) {
+    fmt::print(os, "typedef uint8_t {};\n", escaped_id);
+  } else if (holds_alternative<optional<uint16_t>>(s.second)) {
+    fmt::print(os, "typedef uint16_t {};\n", escaped_id);
+  } else if (holds_alternative<optional<uint32_t>>(s.second)) {
+    fmt::print(os, "typedef uint32_t {};\n", escaped_id);
+  } else if (holds_alternative<optional<uint64_t>>(s.second)) {
+    fmt::print(os, "typedef uint64_t {};\n", escaped_id);
+  } else {
+    abort();
+  }
+  fmt::print(os, "extern {} _{};\n", escaped_id, escaped_id);
 }
 
 void DefinePrimitive(ostream& os, SymbolTable::Symbol const& s) {
@@ -53,96 +88,70 @@ void DefinePrimitive(ostream& os, SymbolTable::Symbol const& s) {
   if (holds_alternative<optional<bool>>(s.second)) {
     auto maybe_val = get<optional<bool>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "bool {} = {};\n", escaped_id, *maybe_val);
-    } else {
-      fmt::print(os, "bool {};\n", escaped_id);
+      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
     }
   } else if (holds_alternative<optional<char32_t>>(s.second)) {
     auto maybe_val = get<optional<char32_t>>(s.second);
     if (maybe_val) {
       wstring_convert<codecvt_utf8<char32_t>, char32_t> converter;
-      fmt::print(os, "char32_t {} = *(char32_t*)\"{}\";\n", escaped_id,
+      fmt::print(os, "{} _{} = *(char32_t*)\"{}\";\n", escaped_id, escaped_id,
                  converter.to_bytes(*maybe_val));
-    } else {
-      fmt::print(os, "char32_t {} = 0;\n", escaped_id);
     }
   } else if (holds_alternative<optional<string>>(s.second)) {
     auto maybe_val = get<optional<string>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "std::string {} = R\"LITERAL({})LITERAL\";\n", escaped_id,
-                 *maybe_val);
-    } else {
-      fmt::print(os, "std::string {};\n", escaped_id);
+      fmt::print(os, "{} _{} = R\"LITERAL({})LITERAL\";\n", escaped_id,
+                 escaped_id, *maybe_val);
     }
   } else if (holds_alternative<optional<float>>(s.second)) {
     auto maybe_val = get<optional<float>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "float {} = {};\n", escaped_id, *maybe_val);
-    } else {
-      fmt::print(os, "float {};\n", escaped_id);
+      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
     }
   } else if (holds_alternative<optional<double>>(s.second)) {
     auto maybe_val = get<optional<double>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "double {} = {};\n", escaped_id, *maybe_val);
-    } else {
-      fmt::print(os, "double {};\n", escaped_id);
+      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
     }
   } else if (holds_alternative<optional<int8_t>>(s.second)) {
     auto maybe_val = get<optional<int8_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "int8_t {} = {};\n", escaped_id, *maybe_val);
-    } else {
-      fmt::print(os, "int8_t {};\n", escaped_id);
+      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
     }
   } else if (holds_alternative<optional<int16_t>>(s.second)) {
     auto maybe_val = get<optional<int16_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "int16_t {} = {};\n", escaped_id, *maybe_val);
-    } else {
-      fmt::print(os, "int16_t {};\n", escaped_id);
+      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
     }
   } else if (holds_alternative<optional<int32_t>>(s.second)) {
     auto maybe_val = get<optional<int32_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "int32_t {} = {};\n", escaped_id, *maybe_val);
-    } else {
-      fmt::print(os, "int32_t {};\n", escaped_id);
+      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
     }
   } else if (holds_alternative<optional<int64_t>>(s.second)) {
     auto maybe_val = get<optional<int64_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "int64_t {} = {};\n", escaped_id, *maybe_val);
-    } else {
-      fmt::print(os, "int64_t {};\n", escaped_id);
+      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
     }
   } else if (holds_alternative<optional<uint8_t>>(s.second)) {
     auto maybe_val = get<optional<uint8_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "uint8_t {} = {};\n", escaped_id, *maybe_val);
-    } else {
-      fmt::print(os, "uint8_t {};\n", escaped_id);
+      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
     }
   } else if (holds_alternative<optional<uint16_t>>(s.second)) {
     auto maybe_val = get<optional<uint16_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "uint16_t {} = {};\n", escaped_id, *maybe_val);
-    } else {
-      fmt::print(os, "uint16_t {};\n", escaped_id);
+      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
     }
   } else if (holds_alternative<optional<uint32_t>>(s.second)) {
     auto maybe_val = get<optional<uint32_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "uint32_t {} = {};\n", escaped_id, *maybe_val);
-    } else {
-      fmt::print(os, "uint32_t {};\n", escaped_id);
+      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
     }
   } else if (holds_alternative<optional<uint64_t>>(s.second)) {
     auto maybe_val = get<optional<uint64_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "uint64_t {} = {};\n", escaped_id, *maybe_val);
-    } else {
-      fmt::print(os, "uint64_t {};\n", escaped_id);
+      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
     }
   } else {
     abort();
@@ -204,6 +213,18 @@ void DefineStruct(ostream& hdr, ostream& src,
                  member_id);
     } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
       auto def = get<shared_ptr<Variant>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n", escaped_def_id,
+                 member_id);
+    } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
+      auto def = get<shared_ptr<Vector>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n", escaped_def_id,
+                 member_id);
+    } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
+      auto def = get<shared_ptr<Map>>(s.second);
       std::string escaped_def_id =
           escape_utf8_to_cpp_identifier(def->identifier);
       fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n", escaped_def_id,
@@ -341,6 +362,28 @@ void DefineStruct(ostream& hdr, ostream& src,
           hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val; }}\n",
           member_id, escaped_def_id, member_id);
       fmt::print(hdr, "\n");
+    } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
+      auto def = get<shared_ptr<Vector>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(
+          hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_; }}\n",
+          escaped_def_id, member_id, member_id);
+      fmt::print(
+          hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val; }}\n",
+          member_id, escaped_def_id, member_id);
+      fmt::print(hdr, "\n");
+    } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
+      auto def = get<shared_ptr<Map>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(
+          hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_; }}\n",
+          escaped_def_id, member_id, member_id);
+      fmt::print(
+          hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val; }}\n",
+          member_id, escaped_def_id, member_id);
+      fmt::print(hdr, "\n");
     } else {
       abort();
     }
@@ -465,6 +508,20 @@ void DefineStruct(ostream& hdr, ostream& src,
       // TODO total size
     } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
       auto def = get<shared_ptr<Variant>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n", escaped_def_id,
+                 member_id);
+      // TODO total size
+    } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
+      auto def = get<shared_ptr<Vector>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n", escaped_def_id,
+                 member_id);
+      // TODO total size
+    } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
+      auto def = get<shared_ptr<Map>>(s.second);
       std::string escaped_def_id =
           escape_utf8_to_cpp_identifier(def->identifier);
       fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n", escaped_def_id,
@@ -667,6 +724,34 @@ void DefineVariant(ostream& hdr, ostream& src,
                  member_id, escaped_def_id);
       fmt::print(hdr, "\n");
 
+    } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
+      auto def = get<shared_ptr<Vector>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(hdr,
+                 "    std::shared_ptr<Mutable{}> {}() {{ return "
+                 "std::get<{}_t>(value_); }};\n",
+                 escaped_def_id, member_id, member_id);
+      fmt::print(hdr,
+                 "    void {}(std::shared_ptr<Mutable{}> _val) {{ value_ = "
+                 "_val; }};\n",
+                 member_id, escaped_def_id);
+      fmt::print(hdr, "\n");
+
+    } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
+      auto def = get<shared_ptr<Map>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(hdr,
+                 "    std::shared_ptr<Mutable{}> {}() {{ return "
+                 "std::get<{}_t>(value_); }};\n",
+                 escaped_def_id, member_id, member_id);
+      fmt::print(hdr,
+                 "    void {}(std::shared_ptr<Mutable{}> _val) {{ value_ = "
+                 "_val; }};\n",
+                 member_id, escaped_def_id);
+      fmt::print(hdr, "\n");
+
     } else {
       abort();
     }
@@ -677,10 +762,10 @@ void DefineVariant(ostream& hdr, ostream& src,
              "return value_ == rhs.value_; }}\n\n",
              escaped_variant_id);
 
-  fmt::print(
-      hdr,
-      "    friend std::ostream& operator<<(std::ostream& os, const {}& obj);\n",
-      escaped_variant_id);
+  fmt::print(hdr,
+             "    friend std::ostream& operator<<(std::ostream& os, const "
+             "Mutable{}& obj);\n",
+             escaped_variant_id);
   fmt::print(hdr, "\n");
 
   fmt::print(hdr, "  private:\n");
@@ -721,6 +806,18 @@ void DefineVariant(ostream& hdr, ostream& src,
                  escaped_def_id, member_id);
     } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
       auto def = get<shared_ptr<Variant>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(hdr, "    typedef std::shared_ptr<Mutable{}> {}_t;\n",
+                 escaped_def_id, member_id);
+    } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
+      auto def = get<shared_ptr<Vector>>(s.second);
+      std::string escaped_def_id =
+          escape_utf8_to_cpp_identifier(def->identifier);
+      fmt::print(hdr, "    typedef std::shared_ptr<Mutable{}> {}_t;\n",
+                 escaped_def_id, member_id);
+    } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
+      auto def = get<shared_ptr<Map>>(s.second);
       std::string escaped_def_id =
           escape_utf8_to_cpp_identifier(def->identifier);
       fmt::print(hdr, "    typedef std::shared_ptr<Mutable{}> {}_t;\n",
@@ -780,6 +877,56 @@ void DefineVariant(ostream& hdr, ostream& src,
   fmt::print(src, "\n");
 }
 
+void DefineVector(ostream& hdr, ostream& src,
+                  SymbolTable::Symbol const& vector_symbol) {
+  auto ptr = get<shared_ptr<Vector>>(vector_symbol.second);
+  std::string escaped_vector_id =
+      escape_utf8_to_cpp_identifier(vector_symbol.first);
+
+  std::string cpp_type = "uint32_t";
+
+  fmt::print(hdr, "class Mutable{} : public std::vector<{}> {{\n",
+             escaped_vector_id, cpp_type);
+  fmt::print(hdr, "\n");
+
+  fmt::print(hdr, "  public:\n");
+  // constructors
+  fmt::print(hdr, "    Mutable{}() {{}};\n", escaped_vector_id);
+
+  fmt::print(hdr, "\n");
+  fmt::print(hdr, "  private:\n");
+  fmt::print(hdr, "\n");
+
+  // End class declaration.
+  fmt::print(hdr, "}};\n");
+  fmt::print(hdr, "\n");
+}
+
+void DefineMap(ostream& hdr, ostream& src,
+               SymbolTable::Symbol const& map_symbol) {
+  auto ptr = get<shared_ptr<Map>>(map_symbol.second);
+  std::string escaped_map_id = escape_utf8_to_cpp_identifier(map_symbol.first);
+
+  std::string cpp_key_type = "uint32_t";
+  std::string cpp_value_type = "std::string";
+
+  fmt::print(hdr, "class Mutable{} : public std::map<{}, {}> {{\n",
+             escaped_map_id, cpp_key_type, cpp_value_type);
+  fmt::print(hdr, "\n");
+
+  fmt::print(hdr, "  public:\n");
+  // constructors
+  fmt::print(hdr, "    Mutable{}() {{}};\n", escaped_map_id);
+
+  fmt::print(hdr, "\n");
+  fmt::print(hdr, "  private:\n");
+  fmt::print(hdr, "\n");
+
+  // End class declaration.
+  fmt::print(hdr, "}};\n");
+  fmt::print(hdr, "\n");
+}
+
 string HeaderGuard(filesystem::path source_filename) {
   string hdr_guard = source_filename.string() + "_H__";
   replace(hdr_guard.begin(), hdr_guard.end(), '.', '_');
@@ -805,10 +952,12 @@ void CodegenCpp::Generate() {
 
   // hdr includes
   fmt::print(hdr_file->OStream(), "#include <cstdint>\n");
+  fmt::print(hdr_file->OStream(), "#include <map>\n");
   fmt::print(hdr_file->OStream(), "#include <memory>\n");
   fmt::print(hdr_file->OStream(), "#include <ostream>\n");
   fmt::print(hdr_file->OStream(), "#include <string>\n");
   fmt::print(hdr_file->OStream(), "#include <variant>\n");
+  fmt::print(hdr_file->OStream(), "#include <vector>\n");
 
   // hdr macros
   fmt::print(hdr_file->OStream(), "{}\n", StructAlignmentMacro());
@@ -825,9 +974,11 @@ void CodegenCpp::Generate() {
   for (auto symbol : parser_->symbols2_.table_) {
     // declare everything first.
     if (holds_alternative<shared_ptr<td::Struct>>(symbol.second) ||
-        holds_alternative<shared_ptr<td::Variant>>(symbol.second)) {
+        holds_alternative<shared_ptr<td::Variant>>(symbol.second) ||
+        holds_alternative<shared_ptr<td::Vector>>(symbol.second) ||
+        holds_alternative<shared_ptr<td::Map>>(symbol.second)) {
       std::string escaped_id = escape_utf8_to_cpp_identifier(symbol.first);
-      fmt::print(hdr_file->OStream(), "class {};\n", escaped_id);
+      fmt::print(hdr_file->OStream(), "class Mutable{};\n", escaped_id);
     }
   }
 
@@ -838,7 +989,9 @@ void CodegenCpp::Generate() {
   for (auto symbol : parser_->symbols2_.table_) {
     // declare everything first.
     if (holds_alternative<shared_ptr<td::Struct>>(symbol.second) ||
-        holds_alternative<shared_ptr<td::Variant>>(symbol.second)) {
+        holds_alternative<shared_ptr<td::Variant>>(symbol.second) ||
+        holds_alternative<shared_ptr<td::Vector>>(symbol.second) ||
+        holds_alternative<shared_ptr<td::Map>>(symbol.second)) {
       continue;
     }
     DeclarePrimitive(hdr_file->OStream(), symbol);
@@ -855,6 +1008,12 @@ void CodegenCpp::Generate() {
       fmt::print(hdr_file->OStream(), "\n");
     } else if (holds_alternative<shared_ptr<td::Variant>>(symbol.second)) {
       DefineVariant(hdr_file->OStream(), src_file->OStream(), symbol);
+      fmt::print(hdr_file->OStream(), "\n");
+    } else if (holds_alternative<shared_ptr<td::Vector>>(symbol.second)) {
+      DefineVector(hdr_file->OStream(), src_file->OStream(), symbol);
+      fmt::print(hdr_file->OStream(), "\n");
+    } else if (holds_alternative<shared_ptr<td::Map>>(symbol.second)) {
+      DefineMap(hdr_file->OStream(), src_file->OStream(), symbol);
       fmt::print(hdr_file->OStream(), "\n");
     }
   }

@@ -17,27 +17,34 @@ using namespace std;
 
 struct Struct;
 struct Variant;
+struct Vector;
+struct Map;
 
 class SymbolTable {
  public:
-  typedef variant<optional<bool>,      // bool
-                  optional<char32_t>,  // char
-                  optional<string>,    // str
-                  optional<float>,     // f32
-                  optional<double>,    // f64
-                  optional<int8_t>,    // i8
-                  optional<int16_t>,   // i16
-                  optional<int32_t>,   // i32
-                  optional<int64_t>,   // i64
-                  optional<uint8_t>,   // u8
-                  optional<uint16_t>,  // u16
-                  optional<uint32_t>,  // u32
-                  optional<uint64_t>,  // u64
-                  shared_ptr<Struct>,  // struct
-                  shared_ptr<Variant>  // variant
+  class SymbolRef;
+  typedef variant<optional<bool>,       // bool
+                  optional<char32_t>,   // char
+                  optional<string>,     // str
+                  optional<float>,      // f32
+                  optional<double>,     // f64
+                  optional<int8_t>,     // i8
+                  optional<int16_t>,    // i16
+                  optional<int32_t>,    // i32
+                  optional<int64_t>,    // i64
+                  optional<uint8_t>,    // u8
+                  optional<uint16_t>,   // u16
+                  optional<uint32_t>,   // u32
+                  optional<uint64_t>,   // u64
+                  shared_ptr<Struct>,   // struct
+                  shared_ptr<Variant>,  // variant
+                  shared_ptr<Vector>,   // vector
+                  shared_ptr<Map>,      // map
+                  shared_ptr<SymbolRef> // reference to some other symbol.
                   >
       Value;
   typedef pair<string, Value> Symbol;
+  class SymbolRef : public Symbol {};
 
   SymbolTable() {}
   ~SymbolTable() {}
@@ -87,7 +94,31 @@ class Variant {
   // probably symbol table should point to other symbols rather
   // than the underlying struct, and derive the name that way?
   string identifier;
+
   SymbolTable table;
+};
+
+class Vector {
+ public:
+
+  friend ostream &operator<<(ostream &os, const Vector &s);
+
+  string identifier;
+
+  SymbolTable::Value type;
+};
+
+class Map {
+ public:
+  friend ostream &operator<<(ostream &os, const Map &s);
+
+  // TODO not sure this is the right way to handle this;
+  // probably symbol table should point to other symbols rather
+  // than the underlying struct, and derive the name that way?
+  string identifier;
+
+  SymbolTable::Value key_type;
+  SymbolTable::Value value_type;
 };
 
 }  // namespace td

@@ -2,10 +2,12 @@
 #define __EXAMPLES_SIMPLE_VALUES_TD_CPP_H__
 
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <ostream>
 #include <string>
 #include <variant>
+#include <vector>
 
 
 // clang-format off
@@ -56,40 +58,79 @@
 
 
 // struct forward declarations
-class StructA;
-class StructB;
-class StructC;
-class StructD;
-class VariantA;
+class MutableMapA;
+class MutableStructA;
+class MutableStructB;
+class MutableStructC;
+class MutableStructD;
+class MutableVariantA;
+class MutableVecA;
 
 // value declarations
-extern std::string VAL;
-extern char32_t ValB;
-extern bool ValBool;
-extern bool ValBool2;
-extern char32_t ValC;
-extern std::string ValD;
-extern std::string ValE;
-extern std::string ValRaw;
-extern uint16_t Val_u16;
-extern uint16_t Val_u16_suffix;
-extern uint32_t Val_u32;
-extern uint32_t Val_u32_suffix;
-extern uint64_t Val_u64;
-extern uint64_t Val_u64_suffix;
-extern uint8_t Val_u8;
-extern uint8_t Val_u8_suffix;
-extern char32_t impliedChar;
-extern std::string impliedStr;
-extern float val_f32;
-extern float val_f32_bare;
-extern float val_f32_suffix;
-extern double val_f64;
-extern double val_f64_suffix;
-extern int32_t val_i32;
-extern int32_t val_i32_bare2;
-extern int32_t val_i32_bare__2118;
-extern int32_t _0440_0443_0441_0441_043a_0438_0439__0438_0434_0435_043d_0442_0438_0444_0438_043a_0430_0442_043e_0440;
+typedef std::string VAL;
+extern VAL _VAL;
+typedef char32_t ValB;
+extern ValB _ValB;
+typedef bool ValBool;
+extern ValBool _ValBool;
+typedef bool ValBool2;
+extern ValBool2 _ValBool2;
+typedef char32_t ValC;
+extern ValC _ValC;
+typedef std::string ValD;
+extern ValD _ValD;
+typedef std::string ValE;
+extern ValE _ValE;
+typedef std::string ValRaw;
+extern ValRaw _ValRaw;
+typedef uint16_t Val_u16;
+extern Val_u16 _Val_u16;
+typedef uint16_t Val_u16_suffix;
+extern Val_u16_suffix _Val_u16_suffix;
+typedef uint32_t Val_u32;
+extern Val_u32 _Val_u32;
+typedef uint32_t Val_u32_suffix;
+extern Val_u32_suffix _Val_u32_suffix;
+typedef uint64_t Val_u64;
+extern Val_u64 _Val_u64;
+typedef uint64_t Val_u64_suffix;
+extern Val_u64_suffix _Val_u64_suffix;
+typedef uint8_t Val_u8;
+extern Val_u8 _Val_u8;
+typedef uint8_t Val_u8_suffix;
+extern Val_u8_suffix _Val_u8_suffix;
+typedef char32_t impliedChar;
+extern impliedChar _impliedChar;
+typedef std::string impliedStr;
+extern impliedStr _impliedStr;
+typedef float val_f32;
+extern val_f32 _val_f32;
+typedef float val_f32_bare;
+extern val_f32_bare _val_f32_bare;
+typedef float val_f32_suffix;
+extern val_f32_suffix _val_f32_suffix;
+typedef double val_f64;
+extern val_f64 _val_f64;
+typedef double val_f64_suffix;
+extern val_f64_suffix _val_f64_suffix;
+typedef int32_t val_i32;
+extern val_i32 _val_i32;
+typedef int32_t val_i32_bare2;
+extern val_i32_bare2 _val_i32_bare2;
+typedef int32_t val_i32_bare__2118;
+extern val_i32_bare__2118 _val_i32_bare__2118;
+typedef int32_t _0440_0443_0441_0441_043a_0438_0439__0438_0434_0435_043d_0442_0438_0444_0438_043a_0430_0442_043e_0440;
+extern _0440_0443_0441_0441_043a_0438_0439__0438_0434_0435_043d_0442_0438_0444_0438_043a_0430_0442_043e_0440 __0440_0443_0441_0441_043a_0438_0439__0438_0434_0435_043d_0442_0438_0444_0438_043a_0430_0442_043e_0440;
+
+class MutableMapA : public std::map<uint32_t, std::string> {
+
+  public:
+    MutableMapA() {};
+
+  private:
+
+};
+
 
 class MutableStructA TD_FINAL_CLASS {
   public:
@@ -320,12 +361,22 @@ class MutableStructD TD_FINAL_CLASS {
   public:
     MutableStructD() {};
     MutableStructD(
+      std::shared_ptr<MutableVecA> _a,
+      std::shared_ptr<MutableMapA> _b,
       int32_t _i,
       uint32_t _j,
       bool __foo = false) :
+      a_(_a),
+      b_(_b),
       i_(_i),
       j_(_j),
       __foo(false) {}
+
+    std::shared_ptr<MutableVecA> a() const { return a_; }
+    void a(std::shared_ptr<MutableVecA> val) { a_ = val; }
+
+    std::shared_ptr<MutableMapA> b() const { return b_; }
+    void b(std::shared_ptr<MutableMapA> val) { b_ = val; }
 
     int32_t i() const { return i_; }
     void i(int32_t val) { i_ = val; }
@@ -336,6 +387,8 @@ class MutableStructD TD_FINAL_CLASS {
     friend std::ostream& operator<<(std::ostream& os, const MutableStructD& obj);
 
   private:
+    std::shared_ptr<MutableVecA> a_;
+    std::shared_ptr<MutableMapA> b_;
     int32_t i_ = 0;
     uint32_t j_ = 0;
     bool __foo; // to simplify codegen. will remove in future versions...
@@ -370,7 +423,7 @@ class MutableVariantA TD_FINAL_CLASS {
 
     bool isEqual(const MutableVariantA &rhs) const { return value_ == rhs.value_; }
 
-    friend std::ostream& operator<<(std::ostream& os, const VariantA& obj);
+    friend std::ostream& operator<<(std::ostream& os, const MutableVariantA& obj);
 
   private:
     typedef std::shared_ptr<MutableStructA> a_t;
@@ -391,6 +444,16 @@ class MutableVariantA TD_FINAL_CLASS {
 
 bool operator==(const MutableVariantA &lhs, const MutableVariantA &rhs);
 inline bool operator!=(const MutableVariantA &lhs, const MutableVariantA &rhs) { return !(lhs == rhs); };
+
+
+class MutableVecA : public std::vector<uint32_t> {
+
+  public:
+    MutableVecA() {};
+
+  private:
+
+};
 
 
 

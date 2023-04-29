@@ -243,6 +243,18 @@ std::optional<td::SymbolTable::Symbol> MakeSymbol(
       // all possible primitive types need to be handled.
       abort();
     }
+  } else if (ctx->vectorType()) {
+    // DIRTY HACK. I feel bad.
+    auto v =
+        std::get<std::shared_ptr<td::Vector>>(*ctx->vectorType()->maybe_val);
+    v->identifier = id;
+    return std::make_pair(id, *ctx->vectorType()->maybe_val);
+  } else if (ctx->mapType()) {
+    // DIRTY HACK. I feel bad.
+    auto v = std::get<std::shared_ptr<td::Map>>(*ctx->mapType()->maybe_val);
+    v->identifier = id;
+
+    return std::make_pair(id, *ctx->mapType()->maybe_val);
   } else if (ctx->identifier()) {
     auto identifier = ctx->identifier();
     std::string referencedSymbol =
@@ -258,6 +270,19 @@ std::optional<td::SymbolTable::Symbol> MakeSymbol(
   // grammar only provides 2 options; pretty sure we would have already thrown
   // an error.
   return std::nullopt;
+}
+
+std::optional<td::SymbolTable::Value> MakeVector(
+    antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
+    TypedefParser::UnvaluedTypeContext* ctx) {
+  return std::make_shared<td::Vector>();
+}
+
+std::optional<td::SymbolTable::Value> MakeMap(
+    antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
+    TypedefParser::PrimitiveTypeContext* key_ctx,
+    TypedefParser::UnvaluedTypeContext* val_ctx) {
+  return std::make_shared<td::Map>();
 }
 
 void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,

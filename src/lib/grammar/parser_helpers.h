@@ -176,6 +176,15 @@ std::optional<td::SymbolTable::Symbol> MakeSymbol(
     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
     std::string &id, TypedefParser::UnvaluedTypeContext *ctx);
 
+std::optional<td::SymbolTable::Value> MakeVector(
+    antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
+    TypedefParser::UnvaluedTypeContext* ctx);
+
+std::optional<td::SymbolTable::Value> MakeMap(
+    antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
+    TypedefParser::PrimitiveTypeContext* key_ctx,
+    TypedefParser::UnvaluedTypeContext* val_ctx);
+
 // Insert fields into symbol tables.
 void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
                  TypedefParser::MaybeValuedSymbolDeclarationContext *ctx);
