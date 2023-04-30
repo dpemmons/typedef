@@ -127,6 +127,8 @@ class MutableMapA : public std::map<uint32_t, std::string> {
   public:
     MutableMapA() {};
 
+    friend std::ostream& operator<<(std::ostream& os, const MutableMapA& obj);
+
   private:
 
 };
@@ -150,19 +152,19 @@ class MutableStructA TD_FINAL_CLASS {
       uint64_t _example_u64,
       uint8_t _example_u8,
       bool __foo = false) :
-      example_bool_(_example_bool),
-      example_char_(_example_char),
-      example_f32_(_example_f32),
-      example_f64_(_example_f64),
-      example_i16_(_example_i16),
-      example_i32_(_example_i32),
-      example_i64_(_example_i64),
-      example_i8_(_example_i8),
-      example_str_(_example_str),
-      example_u16_(_example_u16),
-      example_u32_(_example_u32),
-      example_u64_(_example_u64),
-      example_u8_(_example_u8),
+      example_bool_(std::move(_example_bool)),
+      example_char_(std::move(_example_char)),
+      example_f32_(std::move(_example_f32)),
+      example_f64_(std::move(_example_f64)),
+      example_i16_(std::move(_example_i16)),
+      example_i32_(std::move(_example_i32)),
+      example_i64_(std::move(_example_i64)),
+      example_i8_(std::move(_example_i8)),
+      example_str_(std::move(_example_str)),
+      example_u16_(std::move(_example_u16)),
+      example_u32_(std::move(_example_u32)),
+      example_u64_(std::move(_example_u64)),
+      example_u8_(std::move(_example_u8)),
       __foo(false) {}
 
     bool example_bool() const { return example_bool_; }
@@ -245,19 +247,19 @@ class MutableStructB TD_FINAL_CLASS {
       uint64_t _example_u64,
       uint8_t _example_u8,
       bool __foo = false) :
-      example_bool_(_example_bool),
-      example_char_(_example_char),
-      example_f32_(_example_f32),
-      example_f64_(_example_f64),
-      example_i16_(_example_i16),
-      example_i32_(_example_i32),
-      example_i64_(_example_i64),
-      example_i8_(_example_i8),
-      example_str_(_example_str),
-      example_u16_(_example_u16),
-      example_u32_(_example_u32),
-      example_u64_(_example_u64),
-      example_u8_(_example_u8),
+      example_bool_(std::move(_example_bool)),
+      example_char_(std::move(_example_char)),
+      example_f32_(std::move(_example_f32)),
+      example_f64_(std::move(_example_f64)),
+      example_i16_(std::move(_example_i16)),
+      example_i32_(std::move(_example_i32)),
+      example_i64_(std::move(_example_i64)),
+      example_i8_(std::move(_example_i8)),
+      example_str_(std::move(_example_str)),
+      example_u16_(std::move(_example_u16)),
+      example_u32_(std::move(_example_u32)),
+      example_u64_(std::move(_example_u64)),
+      example_u8_(std::move(_example_u8)),
       __foo(false) {}
 
     bool example_bool() const { return example_bool_; }
@@ -326,17 +328,18 @@ class MutableStructC TD_FINAL_CLASS {
   public:
     MutableStructC() {};
     MutableStructC(
-      std::shared_ptr<MutableStructA> _asdf,
+      std::unique_ptr<MutableStructA> _asdf,
       int32_t _jkl,
       int32_t _zxcv,
       bool __foo = false) :
-      asdf_(_asdf),
-      jkl_(_jkl),
-      zxcv_(_zxcv),
+      asdf_(std::move(_asdf)),
+      jkl_(std::move(_jkl)),
+      zxcv_(std::move(_zxcv)),
       __foo(false) {}
 
-    std::shared_ptr<MutableStructA> asdf() const { return asdf_; }
-    void asdf(std::shared_ptr<MutableStructA> val) { asdf_ = val; }
+    std::unique_ptr<MutableStructA>& asdf() { return asdf_; }
+    const std::unique_ptr<MutableStructA>& asdf() const { return asdf_; }
+    void asdf(std::unique_ptr<MutableStructA> val) { asdf_ = std::move(val); }
 
     int32_t jkl() const { return jkl_; }
     void jkl(int32_t val) { jkl_ = val; }
@@ -347,7 +350,7 @@ class MutableStructC TD_FINAL_CLASS {
     friend std::ostream& operator<<(std::ostream& os, const MutableStructC& obj);
 
   private:
-    std::shared_ptr<MutableStructA> asdf_;
+    std::unique_ptr<MutableStructA> asdf_;
     int32_t jkl_ = 0;
     int32_t zxcv_ = 0;
     bool __foo; // to simplify codegen. will remove in future versions...
@@ -361,36 +364,40 @@ class MutableStructD TD_FINAL_CLASS {
   public:
     MutableStructD() {};
     MutableStructD(
-      std::shared_ptr<MutableVecA> _a,
-      std::shared_ptr<MutableMapA> _b,
-      int32_t _i,
-      uint32_t _j,
+      std::unique_ptr<MutableStructA> _a_struct,
+      std::unique_ptr<MutableVariantA> _b_variant,
+      std::unique_ptr<MutableVecA> _c_vec,
+      std::unique_ptr<MutableMapA> _d_map,
       bool __foo = false) :
-      a_(_a),
-      b_(_b),
-      i_(_i),
-      j_(_j),
+      a_struct_(std::move(_a_struct)),
+      b_variant_(std::move(_b_variant)),
+      c_vec_(std::move(_c_vec)),
+      d_map_(std::move(_d_map)),
       __foo(false) {}
 
-    std::shared_ptr<MutableVecA> a() const { return a_; }
-    void a(std::shared_ptr<MutableVecA> val) { a_ = val; }
+    std::unique_ptr<MutableStructA>& a_struct() { return a_struct_; }
+    const std::unique_ptr<MutableStructA>& a_struct() const { return a_struct_; }
+    void a_struct(std::unique_ptr<MutableStructA> val) { a_struct_ = std::move(val); }
 
-    std::shared_ptr<MutableMapA> b() const { return b_; }
-    void b(std::shared_ptr<MutableMapA> val) { b_ = val; }
+    std::unique_ptr<MutableVariantA>& b_variant() { return b_variant_; }
+    const std::unique_ptr<MutableVariantA>& b_variant() const { return b_variant_; }
+    void b_variant(std::unique_ptr<MutableVariantA> val) { b_variant_ = std::move(val); }
 
-    int32_t i() const { return i_; }
-    void i(int32_t val) { i_ = val; }
+    std::unique_ptr<MutableVecA>& c_vec() { return c_vec_; }
+    const std::unique_ptr<MutableVecA>& c_vec() const { return c_vec_; }
+    void c_vec(std::unique_ptr<MutableVecA> val) { c_vec_ = std::move(val); }
 
-    uint32_t j() const { return j_; }
-    void j(uint32_t val) { j_ = val; }
+    std::unique_ptr<MutableMapA>& d_map() { return d_map_; }
+    const std::unique_ptr<MutableMapA>& d_map() const { return d_map_; }
+    void d_map(std::unique_ptr<MutableMapA> val) { d_map_ = std::move(val); }
 
     friend std::ostream& operator<<(std::ostream& os, const MutableStructD& obj);
 
   private:
-    std::shared_ptr<MutableVecA> a_;
-    std::shared_ptr<MutableMapA> b_;
-    int32_t i_ = 0;
-    uint32_t j_ = 0;
+    std::unique_ptr<MutableStructA> a_struct_;
+    std::unique_ptr<MutableVariantA> b_variant_;
+    std::unique_ptr<MutableVecA> c_vec_;
+    std::unique_ptr<MutableMapA> d_map_;
     bool __foo; // to simplify codegen. will remove in future versions...
 };
 
@@ -402,23 +409,26 @@ class MutableVariantA TD_FINAL_CLASS {
   public:
     MutableVariantA() {};
     bool Isa() const { return std::holds_alternative<a_t>(value_); };
-    std::shared_ptr<MutableStructA> a() { return std::get<a_t>(value_); };
-    void a(std::shared_ptr<MutableStructA> _val) { value_ = _val; };
+    std::unique_ptr<MutableStructA>& a() { return std::get<a_t>(value_); };
+    const std::unique_ptr<MutableStructA>& a() const { return std::get<a_t>(value_); };
+    void a(std::unique_ptr<MutableStructA> _val) { value_ = std::move(_val); };
 
     bool Isb() const { return std::holds_alternative<b_t>(value_); };
-    std::shared_ptr<MutableStructB> b() { return std::get<b_t>(value_); };
-    void b(std::shared_ptr<MutableStructB> _val) { value_ = _val; };
+    std::unique_ptr<MutableStructB>& b() { return std::get<b_t>(value_); };
+    const std::unique_ptr<MutableStructB>& b() const { return std::get<b_t>(value_); };
+    void b(std::unique_ptr<MutableStructB> _val) { value_ = std::move(_val); };
 
     bool Isc() const { return std::holds_alternative<c_t>(value_); };
-    std::shared_ptr<MutableStructC> c() { return std::get<c_t>(value_); };
-    void c(std::shared_ptr<MutableStructC> _val) { value_ = _val; };
+    std::unique_ptr<MutableStructC>& c() { return std::get<c_t>(value_); };
+    const std::unique_ptr<MutableStructC>& c() const { return std::get<c_t>(value_); };
+    void c(std::unique_ptr<MutableStructC> _val) { value_ = std::move(_val); };
 
     bool Isd() const { return std::holds_alternative<d_t>(value_); };
-    int32_t d() { return std::get<d_t>(value_); };
+    int32_t d() const { return std::get<d_t>(value_); };
     void d(int32_t _val) { value_ = _val; };
 
     bool Ise() const { return std::holds_alternative<e_t>(value_); };
-    char32_t e() { return std::get<e_t>(value_); };
+    char32_t e() const { return std::get<e_t>(value_); };
     void e(char32_t _val) { value_ = _val; };
 
     bool isEqual(const MutableVariantA &rhs) const { return value_ == rhs.value_; }
@@ -426,9 +436,9 @@ class MutableVariantA TD_FINAL_CLASS {
     friend std::ostream& operator<<(std::ostream& os, const MutableVariantA& obj);
 
   private:
-    typedef std::shared_ptr<MutableStructA> a_t;
-    typedef std::shared_ptr<MutableStructB> b_t;
-    typedef std::shared_ptr<MutableStructC> c_t;
+    typedef std::unique_ptr<MutableStructA> a_t;
+    typedef std::unique_ptr<MutableStructB> b_t;
+    typedef std::unique_ptr<MutableStructC> c_t;
     typedef int32_t d_t;
     typedef char32_t e_t;
 
@@ -450,6 +460,8 @@ class MutableVecA : public std::vector<uint32_t> {
 
   public:
     MutableVecA() {};
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableVecA& obj);
 
   private:
 

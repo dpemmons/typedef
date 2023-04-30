@@ -105,12 +105,10 @@ VecA: vector<u8>;
 MapA: map<i32, str>;
 
 StructD: struct {
-  i: i32;
-  // v: vector<i32>;
-  j: u32;
-  // m: map<i32, str>;
-  a: VecA;
-  b: MapA;
+  a_struct: StructA;
+  b_variant: VariantA;
+  c_vec: VecA;
+  d_map: MapA;
 };
 
 //ValArr: array<i32, 3> = "";

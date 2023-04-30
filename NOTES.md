@@ -43,11 +43,14 @@ Items in ***bold*** are in-progress.
   - [ ] write and read a baisc serialized blob, and print to stdout
   - [ ] print a basic struct ito json stdout
   - [ ] input json to basic struct
-  - [ ] ***Codegen basics***
-    - [ ] ***cpp: mutable classes***
-    - [ ] serialize
-    - [ ] deserialize
-    - [ ] views?
+
+- [ ] ***Codegen basics***
+  - [x] ***cpp: mutable classes***
+  - [ ] copy constructors
+  - [ ] move constructors
+  - [ ] serialize
+  - [ ] deserialize
+  - [ ] views?
 
 - [ ] ***Self hosting***
   - [x] generate basic mutable classes
@@ -56,9 +59,9 @@ Items in ***bold*** are in-progress.
   - [x] variants
     - [x] parse
     - [x] generate
-  - [ ] collections
-    - [ ] vector
-    - [ ] map
+  - [x] collections
+    - [x] vector
+    - [x] map
   - [ ] use those in cpp generation
 
 Currently using this to test...

@@ -1,3 +1,4 @@
 src/.antlr/
 build/
 out
+examples/a.out

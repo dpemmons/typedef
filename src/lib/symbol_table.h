@@ -19,10 +19,10 @@ struct Struct;
 struct Variant;
 struct Vector;
 struct Map;
+using SymbolRef = std::string;
 
 class SymbolTable {
  public:
-  class SymbolRef;
   typedef variant<optional<bool>,       // bool
                   optional<char32_t>,   // char
                   optional<string>,     // str
@@ -40,11 +40,10 @@ class SymbolTable {
                   shared_ptr<Variant>,  // variant
                   shared_ptr<Vector>,   // vector
                   shared_ptr<Map>,      // map
-                  shared_ptr<SymbolRef> // reference to some other symbol.
+                  SymbolRef             // reference to some other symbol.
                   >
       Value;
   typedef pair<string, Value> Symbol;
-  class SymbolRef : public Symbol {};
 
   SymbolTable() {}
   ~SymbolTable() {}
@@ -75,10 +74,6 @@ class Struct {
 
   friend ostream &operator<<(ostream &os, const Struct &s);
 
-  // TODO not sure this is the right way to handle this;
-  // probably symbol table should point to other symbols rather
-  // than the underlying struct, and derive the name that way?
-  string identifier;
   SymbolTable table;
 };
 
@@ -90,20 +85,12 @@ class Variant {
 
   friend ostream &operator<<(ostream &os, const Variant &s);
 
-  // TODO not sure this is the right way to handle this;
-  // probably symbol table should point to other symbols rather
-  // than the underlying struct, and derive the name that way?
-  string identifier;
-
   SymbolTable table;
 };
 
 class Vector {
  public:
-
   friend ostream &operator<<(ostream &os, const Vector &s);
-
-  string identifier;
 
   SymbolTable::Value type;
 };
@@ -111,11 +98,6 @@ class Vector {
 class Map {
  public:
   friend ostream &operator<<(ostream &os, const Map &s);
-
-  // TODO not sure this is the right way to handle this;
-  // probably symbol table should point to other symbols rather
-  // than the underlying struct, and derive the name that way?
-  string identifier;
 
   SymbolTable::Value key_type;
   SymbolTable::Value value_type;

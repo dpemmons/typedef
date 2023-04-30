@@ -166,9 +166,6 @@ void DefineStruct(ostream& hdr, ostream& src,
       escape_utf8_to_cpp_identifier(struct_symbol.first);
 
   fmt::print(hdr, "class {} TD_FINAL_CLASS {{\n", escaped_struct_id);
-
-  size_t total_size = 0;
-
   fmt::print(hdr, "  public:\n");
 
   // -------------------------------------------------
@@ -205,30 +202,39 @@ void DefineStruct(ostream& hdr, ostream& src,
       fmt::print(hdr, "      uint32_t _{},\n", member_id);
     } else if (holds_alternative<optional<uint64_t>>(s.second)) {
       fmt::print(hdr, "      uint64_t _{},\n", member_id);
-    } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
-      auto def = get<shared_ptr<Struct>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n", escaped_def_id,
-                 member_id);
-    } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
-      auto def = get<shared_ptr<Variant>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n", escaped_def_id,
-                 member_id);
-    } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
-      auto def = get<shared_ptr<Vector>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n", escaped_def_id,
-                 member_id);
-    } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
-      auto def = get<shared_ptr<Map>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n", escaped_def_id,
-                 member_id);
+    } else if (holds_alternative<SymbolRef>(s.second)) {
+      auto referenced_symbol =
+          escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
+      fmt::print(hdr, "      std::unique_ptr<Mutable{}> _{},\n",
+                 referenced_symbol, member_id);
+      // } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
+      //   auto def = get<shared_ptr<Struct>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n",
+      //   escaped_def_id,
+      //              member_id);
+      // } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
+      //   auto def = get<shared_ptr<Variant>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n",
+      //   escaped_def_id,
+      //              member_id);
+      // } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
+      //   auto def = get<shared_ptr<Vector>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n",
+      //   escaped_def_id,
+      //              member_id);
+      // } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
+      //   auto def = get<shared_ptr<Map>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n",
+      //   escaped_def_id,
+      //              member_id);
     } else {
       abort();
     }
@@ -236,7 +242,7 @@ void DefineStruct(ostream& hdr, ostream& src,
   fmt::print(hdr, "      bool __foo = false) :\n");
   for (auto s : ptr->table.table_) {
     std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    fmt::print(hdr, "      {}_(_{}),\n", member_id, member_id);
+    fmt::print(hdr, "      {}_(std::move(_{})),\n", member_id, member_id);
   }
   // TODO remove this dirty hack
   fmt::print(hdr, "      __foo(false) {{}}\n");
@@ -338,61 +344,75 @@ void DefineStruct(ostream& hdr, ostream& src,
       fmt::print(hdr, "    void {}(uint64_t val) {{ {}_ = val; }}\n", member_id,
                  member_id);
       fmt::print(hdr, "\n");
+    } else if (holds_alternative<SymbolRef>(s.second)) {
+      auto referenced_symbol =
+          escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
+      fmt::print(hdr,
+                 "    std::unique_ptr<Mutable{}>& {}() {{ return {}_; }}\n",
+                 referenced_symbol, member_id, member_id);
+      fmt::print(hdr,
+                 "    const std::unique_ptr<Mutable{}>& {}() const {{ return "
+                 "{}_; }}\n",
+                 referenced_symbol, member_id, member_id);
+      fmt::print(hdr,
+                 "    void {}(std::unique_ptr<Mutable{}> val) {{ {}_ = "
+                 "std::move(val); }}\n",
+                 member_id, referenced_symbol, member_id);
+      fmt::print(hdr, "\n");
+      // } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
+      //   auto def = get<shared_ptr<Struct>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(
+      //       hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_;
+      //       }}\n", escaped_def_id, member_id, member_id);
+      //   fmt::print(
+      //       hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val;
+      //       }}\n", member_id, escaped_def_id, member_id);
+      //   fmt::print(hdr, "\n");
 
-    } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
-      auto def = get<shared_ptr<Struct>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(
-          hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_; }}\n",
-          escaped_def_id, member_id, member_id);
-      fmt::print(
-          hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val; }}\n",
-          member_id, escaped_def_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
-      auto def = get<shared_ptr<Variant>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(
-          hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_; }}\n",
-          escaped_def_id, member_id, member_id);
-      fmt::print(
-          hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val; }}\n",
-          member_id, escaped_def_id, member_id);
-      fmt::print(hdr, "\n");
-    } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
-      auto def = get<shared_ptr<Vector>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(
-          hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_; }}\n",
-          escaped_def_id, member_id, member_id);
-      fmt::print(
-          hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val; }}\n",
-          member_id, escaped_def_id, member_id);
-      fmt::print(hdr, "\n");
-    } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
-      auto def = get<shared_ptr<Map>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(
-          hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_; }}\n",
-          escaped_def_id, member_id, member_id);
-      fmt::print(
-          hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val; }}\n",
-          member_id, escaped_def_id, member_id);
-      fmt::print(hdr, "\n");
+      // } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
+      //   auto def = get<shared_ptr<Variant>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(
+      //       hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_;
+      //       }}\n", escaped_def_id, member_id, member_id);
+      //   fmt::print(
+      //       hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val;
+      //       }}\n", member_id, escaped_def_id, member_id);
+      //   fmt::print(hdr, "\n");
+      // } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
+      //   auto def = get<shared_ptr<Vector>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(
+      //       hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_;
+      //       }}\n", escaped_def_id, member_id, member_id);
+      //   fmt::print(
+      //       hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val;
+      //       }}\n", member_id, escaped_def_id, member_id);
+      //   fmt::print(hdr, "\n");
+      // } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
+      //   auto def = get<shared_ptr<Map>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(
+      //       hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_;
+      //       }}\n", escaped_def_id, member_id, member_id);
+      //   fmt::print(
+      //       hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val;
+      //       }}\n", member_id, escaped_def_id, member_id);
+      //   fmt::print(hdr, "\n");
     } else {
       abort();
     }
   }
 
-  fmt::print(
-      hdr,
-      "    friend std::ostream& operator<<(std::ostream& os, const {}& obj);\n",
-      escaped_struct_id);
+  fmt::print(hdr,
+             "    friend std::ostream& operator<<(std::ostream& os, const "
+             "{}& obj);\n",
+             escaped_struct_id);
 
   fmt::print(hdr, "\n");
 
@@ -409,7 +429,6 @@ void DefineStruct(ostream& hdr, ostream& src,
         maybe_val = false;
       }
       fmt::print(hdr, "    bool {}_ = {};\n", member_id, *maybe_val);
-      total_size += sizeof(bool);
     } else if (holds_alternative<optional<char32_t>>(s.second)) {
       auto maybe_val = get<optional<char32_t>>(s.second);
       if (maybe_val) {
@@ -419,7 +438,6 @@ void DefineStruct(ostream& hdr, ostream& src,
       } else {
         fmt::print(hdr, "    char32_t {}_ = 0;\n", member_id);
       }
-      total_size += sizeof(char32_t);
     } else if (holds_alternative<optional<string>>(s.second)) {
       auto maybe_val = get<optional<std::string>>(s.second);
       if (maybe_val && maybe_val->size() > 0) {
@@ -434,99 +452,94 @@ void DefineStruct(ostream& hdr, ostream& src,
         maybe_val = 0;
       }
       fmt::print(hdr, "    float {}_ = {};\n", member_id, *maybe_val);
-      total_size += sizeof(float);
     } else if (holds_alternative<optional<double>>(s.second)) {
       auto maybe_val = get<optional<double>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
       fmt::print(hdr, "    double {}_ = {};\n", member_id, *maybe_val);
-      total_size += sizeof(double);
     } else if (holds_alternative<optional<int8_t>>(s.second)) {
       auto maybe_val = get<optional<int8_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
       fmt::print(hdr, "    int8_t {}_ = {};\n", member_id, *maybe_val);
-      total_size += sizeof(int8_t);
     } else if (holds_alternative<optional<int16_t>>(s.second)) {
       auto maybe_val = get<optional<int16_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
       fmt::print(hdr, "    int16_t {}_ = {};\n", member_id, *maybe_val);
-      total_size += sizeof(int16_t);
     } else if (holds_alternative<optional<int32_t>>(s.second)) {
       auto maybe_val = get<optional<int32_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
       fmt::print(hdr, "    int32_t {}_ = {};\n", member_id, *maybe_val);
-      total_size += sizeof(int32_t);
     } else if (holds_alternative<optional<int64_t>>(s.second)) {
       auto maybe_val = get<optional<int64_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
       fmt::print(hdr, "    int64_t {}_ = {};\n", member_id, *maybe_val);
-      total_size += sizeof(int64_t);
     } else if (holds_alternative<optional<uint8_t>>(s.second)) {
       auto maybe_val = get<optional<uint8_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
       fmt::print(hdr, "    uint8_t {}_ = {};\n", member_id, *maybe_val);
-      total_size += sizeof(uint8_t);
     } else if (holds_alternative<optional<uint16_t>>(s.second)) {
       auto maybe_val = get<optional<uint16_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
       fmt::print(hdr, "    uint16_t {}_ = {};\n", member_id, *maybe_val);
-      total_size += sizeof(uint16_t);
     } else if (holds_alternative<optional<uint32_t>>(s.second)) {
       auto maybe_val = get<optional<uint32_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
       fmt::print(hdr, "    uint32_t {}_ = {};\n", member_id, *maybe_val);
-      total_size += sizeof(uint32_t);
     } else if (holds_alternative<optional<uint64_t>>(s.second)) {
       auto maybe_val = get<optional<uint64_t>>(s.second);
       if (!maybe_val) {
         maybe_val = 0;
       }
       fmt::print(hdr, "    uint64_t {}_ = {};\n", member_id, *maybe_val);
-      total_size += sizeof(uint64_t);
+    } else if (holds_alternative<SymbolRef>(s.second)) {
+      auto referenced_symbol =
+          escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
+      fmt::print(hdr, "    std::unique_ptr<Mutable{}> {}_;\n",
+                 referenced_symbol, member_id);
 
-    } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
-      auto def = get<shared_ptr<Struct>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n", escaped_def_id,
-                 member_id);
-      // TODO total size
-    } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
-      auto def = get<shared_ptr<Variant>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n", escaped_def_id,
-                 member_id);
-      // TODO total size
-    } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
-      auto def = get<shared_ptr<Vector>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n", escaped_def_id,
-                 member_id);
-      // TODO total size
-    } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
-      auto def = get<shared_ptr<Map>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n", escaped_def_id,
-                 member_id);
-      // TODO total size
+      // } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
+      //   auto def = get<shared_ptr<Struct>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n",
+      //   escaped_def_id,
+      //              member_id);
+      // } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
+      //   auto def = get<shared_ptr<Variant>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n",
+      //   escaped_def_id,
+      //              member_id);
+      // } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
+      //   auto def = get<shared_ptr<Vector>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n",
+      //   escaped_def_id,
+      //              member_id);
+      // } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
+      //   auto def = get<shared_ptr<Map>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n",
+      //   escaped_def_id,
+      //              member_id);
     } else {
       abort();
     }
@@ -566,8 +579,13 @@ void DefineStruct(ostream& hdr, ostream& src,
   fmt::print(src, "  os << \"struct {} :\\n\";\n", escaped_struct_id);
   for (auto s : ptr->table.table_) {
     std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    fmt::print(src, "  os << \"  {} = \" << obj.{}() << \"\\n\";\n", member_id,
-               member_id);
+    if (holds_alternative<SymbolRef>(s.second)) {
+      fmt::print(src, "  os << \"  {} = \" << *obj.{}() << \"\\n\";\n",
+                 member_id, member_id);
+    } else {
+      fmt::print(src, "  os << \"  {} = \" << obj.{}() << \"\\n\";\n",
+                 member_id, member_id);
+    }
   }
   fmt::print(src, "  return os;\n}}\n");
   fmt::print(src, "\n");
@@ -577,15 +595,14 @@ void DefineVariant(ostream& hdr, ostream& src,
                    SymbolTable::Symbol const& variant_symbol) {
   auto ptr = get<shared_ptr<Variant>>(variant_symbol.second);
   std::string escaped_variant_id =
+      std::string("Mutable") +
       escape_utf8_to_cpp_identifier(variant_symbol.first);
 
-  fmt::print(hdr, "class Mutable{} TD_FINAL_CLASS {{\n", escaped_variant_id);
-
-  size_t total_size = 0;
+  fmt::print(hdr, "class {} TD_FINAL_CLASS {{\n", escaped_variant_id);
 
   fmt::print(hdr, "  public:\n");
   // constructors
-  fmt::print(hdr, "    Mutable{}() {{}};\n", escaped_variant_id);
+  fmt::print(hdr, "    {}() {{}};\n", escaped_variant_id);
 
   // setters and getters
   for (auto s : ptr->table.table_) {
@@ -595,162 +612,195 @@ void DefineVariant(ostream& hdr, ostream& src,
                "std::holds_alternative<{}_t>(value_); }};\n",
                member_id, member_id);
     if (holds_alternative<optional<bool>>(s.second)) {
-      fmt::print(hdr, "    bool {}() {{ return std::get<{}_t}>(value_); }};\n",
+      fmt::print(hdr,
+                 "    bool {}() const {{ return std::get<{}_t}>(value_); }};\n",
                  member_id, member_id);
       fmt::print(hdr, "    void {}(bool _val) {{ value_ = _val; }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<char32_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    char32_t {}() {{ return std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
+      fmt::print(
+          hdr,
+          "    char32_t {}() const {{ return std::get<{}_t>(value_); }};\n",
+          member_id, member_id);
       fmt::print(hdr, "    void {}(char32_t _val) {{ value_ = _val; }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<string>>(s.second)) {
-      fmt::print(
-          hdr,
-          "    std::string_view {}() {{ return std::get<{}_t>(value_); }};\n",
-          member_id, member_id);
+      fmt::print(hdr,
+                 "    std::string_view {}() const {{ return "
+                 "std::get<{}_t>(value_); }};\n",
+                 member_id, member_id);
+      fmt::print(hdr,
+                 "    std::string& {}() {{ return "
+                 "std::get<{}_t>(value_); }};\n",
+                 member_id, member_id);
       fmt::print(hdr,
                  "    void {}(std::string_view _val) {{ value_ = _val; }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<float>>(s.second)) {
-      fmt::print(hdr, "    float {}() {{ return std::get<{}_t>(value_); }};\n",
+      fmt::print(hdr,
+                 "    float {}() const {{ return std::get<{}_t>(value_); }};\n",
                  member_id, member_id);
       fmt::print(hdr, "    void {}(float _val) {{ value_ = _val; }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<double>>(s.second)) {
-      fmt::print(hdr, "    double {}() {{ return std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
+      fmt::print(
+          hdr, "    double {}() const {{ return std::get<{}_t>(value_); }};\n",
+          member_id, member_id);
       fmt::print(hdr, "    void {}(double _val) {{ value_ = _val; }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<int8_t>>(s.second)) {
-      fmt::print(hdr, "    int8_t {}() {{ return std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
+      fmt::print(
+          hdr, "    int8_t {}() const {{ return std::get<{}_t>(value_); }};\n",
+          member_id, member_id);
       fmt::print(hdr, "    void {}(int8_t _val) {{ value_ = _val; }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<int16_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    int16_t {}() {{ return std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
+      fmt::print(
+          hdr, "    int16_t {}() const {{ return std::get<{}_t>(value_); }};\n",
+          member_id, member_id);
       fmt::print(hdr, "    void {}(int16_t _val) {{ value_ = _val; }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<int32_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    int32_t {}() {{ return std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
+      fmt::print(
+          hdr, "    int32_t {}() const {{ return std::get<{}_t>(value_); }};\n",
+          member_id, member_id);
       fmt::print(hdr, "    void {}(int32_t _val) {{ value_ = _val; }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<int64_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    int64_t {}() {{ return std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
+      fmt::print(
+          hdr, "    int64_t {}() const {{ return std::get<{}_t>(value_); }};\n",
+          member_id, member_id);
       fmt::print(hdr, "    void {}(int64_t _val) {{ value_ = _val; }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    uint8_t {}() {{ return std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
+      fmt::print(
+          hdr, "    uint8_t {}() const {{ return std::get<{}_t>(value_); }};\n",
+          member_id, member_id);
       fmt::print(hdr, "    void {}(uint8_t _val) {{ value_ = _val; }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    uint16_t {}() {{ return std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
+      fmt::print(
+          hdr,
+          "    uint16_t {}() const {{ return std::get<{}_t>(value_); }};\n",
+          member_id, member_id);
       fmt::print(hdr, "    void {}(uint16_t _val) {{ value_ = _val; }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    uint32_t {}() {{ return std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
+      fmt::print(
+          hdr,
+          "    uint32_t {}() const {{ return std::get<{}_t>(value_); }};\n",
+          member_id, member_id);
       fmt::print(hdr, "    void {}(uint32_t _val) {{ value_ = _val; }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    uint64_t {}() {{ return std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
+      fmt::print(
+          hdr,
+          "    uint64_t {}() const {{ return std::get<{}_t>(value_); }};\n",
+          member_id, member_id);
       fmt::print(hdr, "    void {}(uint64_t _val) {{ value_ = _val; }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
-    } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
-      auto def = get<shared_ptr<Struct>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
+    } else if (holds_alternative<SymbolRef>(s.second)) {
+      auto referenced_symbol =
+          escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
       fmt::print(hdr,
-                 "    std::shared_ptr<Mutable{}> {}() {{ return "
+                 "    std::unique_ptr<Mutable{}>& {}() {{ return "
                  "std::get<{}_t>(value_); }};\n",
-                 escaped_def_id, member_id, member_id);
+                 referenced_symbol, member_id, member_id);
       fmt::print(hdr,
-                 "    void {}(std::shared_ptr<Mutable{}> _val) {{ value_ = "
-                 "_val; }};\n",
-                 member_id, escaped_def_id);
+                 "    const std::unique_ptr<Mutable{}>& {}() const {{ return "
+                 "std::get<{}_t>(value_); }};\n",
+                 referenced_symbol, member_id, member_id);
+      fmt::print(hdr,
+                 "    void {}(std::unique_ptr<Mutable{}> _val) {{ value_ = "
+                 "std::move(_val); }};\n",
+                 member_id, referenced_symbol);
       fmt::print(hdr, "\n");
 
-    } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
-      auto def = get<shared_ptr<Variant>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr,
-                 "    std::shared_ptr<Mutable{}> {}() {{ return "
-                 "std::get<{}_t>(value_); }};\n",
-                 escaped_def_id, member_id, member_id);
-      fmt::print(hdr,
-                 "    void {}(std::shared_ptr<Mutable{}> _val) {{ value_ = "
-                 "_val; }};\n",
-                 member_id, escaped_def_id);
-      fmt::print(hdr, "\n");
+      // } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
+      //   auto def = get<shared_ptr<Struct>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr,
+      //              "    std::shared_ptr<{}> {}() {{ return "
+      //              "std::get<{}_t>(value_); }};\n",
+      //              escaped_def_id, member_id, member_id);
+      //   fmt::print(hdr,
+      //              "    void {}(std::shared_ptr<{}> _val) {{ value_ =
+      //              "
+      //              "_val; }};\n",
+      //              member_id, escaped_def_id);
+      //   fmt::print(hdr, "\n");
 
-    } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
-      auto def = get<shared_ptr<Vector>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr,
-                 "    std::shared_ptr<Mutable{}> {}() {{ return "
-                 "std::get<{}_t>(value_); }};\n",
-                 escaped_def_id, member_id, member_id);
-      fmt::print(hdr,
-                 "    void {}(std::shared_ptr<Mutable{}> _val) {{ value_ = "
-                 "_val; }};\n",
-                 member_id, escaped_def_id);
-      fmt::print(hdr, "\n");
+      // } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
+      //   auto def = get<shared_ptr<Variant>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr,
+      //              "    std::shared_ptr<{}> {}() {{ return "
+      //              "std::get<{}_t>(value_); }};\n",
+      //              escaped_def_id, member_id, member_id);
+      //   fmt::print(hdr,
+      //              "    void {}(std::shared_ptr<{}> _val) {{ value_ =
+      //              "
+      //              "_val; }};\n",
+      //              member_id, escaped_def_id);
+      //   fmt::print(hdr, "\n");
 
-    } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
-      auto def = get<shared_ptr<Map>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr,
-                 "    std::shared_ptr<Mutable{}> {}() {{ return "
-                 "std::get<{}_t>(value_); }};\n",
-                 escaped_def_id, member_id, member_id);
-      fmt::print(hdr,
-                 "    void {}(std::shared_ptr<Mutable{}> _val) {{ value_ = "
-                 "_val; }};\n",
-                 member_id, escaped_def_id);
-      fmt::print(hdr, "\n");
+      // } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
+      //   auto def = get<shared_ptr<Vector>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr,
+      //              "    std::shared_ptr<{}> {}() {{ return "
+      //              "std::get<{}_t>(value_); }};\n",
+      //              escaped_def_id, member_id, member_id);
+      //   fmt::print(hdr,
+      //              "    void {}(std::shared_ptr<{}> _val) {{ value_ =
+      //              "
+      //              "_val; }};\n",
+      //              member_id, escaped_def_id);
+      //   fmt::print(hdr, "\n");
+
+      // } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
+      //   auto def = get<shared_ptr<Map>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr,
+      //              "    std::shared_ptr<{}> {}() {{ return "
+      //              "std::get<{}_t>(value_); }};\n",
+      //              escaped_def_id, member_id, member_id);
+      //   fmt::print(hdr,
+      //              "    void {}(std::shared_ptr<{}> _val) {{ value_ =
+      //              "
+      //              "_val; }};\n",
+      //              member_id, escaped_def_id);
+      //   fmt::print(hdr, "\n");
 
     } else {
       abort();
@@ -758,13 +808,13 @@ void DefineVariant(ostream& hdr, ostream& src,
   }
 
   fmt::print(hdr,
-             "    bool isEqual(const Mutable{} &rhs) const {{ "
+             "    bool isEqual(const {} &rhs) const {{ "
              "return value_ == rhs.value_; }}\n\n",
              escaped_variant_id);
 
   fmt::print(hdr,
              "    friend std::ostream& operator<<(std::ostream& os, const "
-             "Mutable{}& obj);\n",
+             "{}& obj);\n",
              escaped_variant_id);
   fmt::print(hdr, "\n");
 
@@ -798,30 +848,35 @@ void DefineVariant(ostream& hdr, ostream& src,
       fmt::print(hdr, "    typedef uint32_t {}_t;\n", member_id);
     } else if (holds_alternative<optional<uint64_t>>(s.second)) {
       fmt::print(hdr, "    typedef uint64_t {}_t;\n", member_id);
-    } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
-      auto def = get<shared_ptr<Struct>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr, "    typedef std::shared_ptr<Mutable{}> {}_t;\n",
-                 escaped_def_id, member_id);
-    } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
-      auto def = get<shared_ptr<Variant>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr, "    typedef std::shared_ptr<Mutable{}> {}_t;\n",
-                 escaped_def_id, member_id);
-    } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
-      auto def = get<shared_ptr<Vector>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr, "    typedef std::shared_ptr<Mutable{}> {}_t;\n",
-                 escaped_def_id, member_id);
-    } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
-      auto def = get<shared_ptr<Map>>(s.second);
-      std::string escaped_def_id =
-          escape_utf8_to_cpp_identifier(def->identifier);
-      fmt::print(hdr, "    typedef std::shared_ptr<Mutable{}> {}_t;\n",
-                 escaped_def_id, member_id);
+    } else if (holds_alternative<SymbolRef>(s.second)) {
+      auto referenced_symbol =
+          escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
+      fmt::print(hdr, "    typedef std::unique_ptr<Mutable{}> {}_t;\n",
+                 referenced_symbol, member_id);
+      // } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
+      //   auto def = get<shared_ptr<Struct>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr, "    typedef std::shared_ptr<{}> {}_t;\n",
+      //              escaped_def_id, member_id);
+      // } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
+      //   auto def = get<shared_ptr<Variant>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr, "    typedef std::shared_ptr<{}> {}_t;\n",
+      //              escaped_def_id, member_id);
+      // } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
+      //   auto def = get<shared_ptr<Vector>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr, "    typedef std::shared_ptr<{}> {}_t;\n",
+      //              escaped_def_id, member_id);
+      // } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
+      //   auto def = get<shared_ptr<Map>>(s.second);
+      //   std::string escaped_def_id =
+      //       escape_utf8_to_cpp_identifier(def->identifier);
+      //   fmt::print(hdr, "    typedef std::shared_ptr<{}> {}_t;\n",
+      //              escaped_def_id, member_id);
     } else {
       abort();
     }
@@ -848,29 +903,26 @@ void DefineVariant(ostream& hdr, ostream& src,
   fmt::print(hdr, "\n");
 
   // declare operators
-  fmt::print(hdr,
-             "bool operator==(const Mutable{} &lhs, const Mutable{} &rhs);\n",
+  fmt::print(hdr, "bool operator==(const {} &lhs, const {} &rhs);\n",
              escaped_variant_id, escaped_variant_id);
   fmt::print(hdr,
-             "inline bool operator!=(const Mutable{} &lhs, const Mutable{} "
+             "inline bool operator!=(const {} &lhs, const {} "
              "&rhs) {{ return "
              "!(lhs == rhs); }};\n",
              escaped_variant_id, escaped_variant_id);
   fmt::print(hdr, "\n");
 
   // define operator==
-  fmt::print(src,
-             "bool operator==(const Mutable{} &lhs, const Mutable{} &rhs) {{\n",
+  fmt::print(src, "bool operator==(const {} &lhs, const {} &rhs) {{\n",
              escaped_variant_id, escaped_variant_id);
   fmt::print(src, "  return lhs.isEqual(rhs);\n");
   fmt::print(src, "}}\n");
   fmt::print(src, "\n");
 
   // define operator<<
-  fmt::print(
-      src,
-      "std::ostream& operator<<(std::ostream& os, const Mutable{}& obj) {{\n",
-      escaped_variant_id, escaped_variant_id);
+  fmt::print(src,
+             "std::ostream& operator<<(std::ostream& os, const {}& obj) {{\n",
+             escaped_variant_id, escaped_variant_id);
   fmt::print(src, "  os << \"variant {} :\\n\";\n", escaped_variant_id);
   fmt::print(src, "  os << \"  something.\\n\";\n");
   fmt::print(src, "  return os;\n}}\n");
@@ -881,17 +933,24 @@ void DefineVector(ostream& hdr, ostream& src,
                   SymbolTable::Symbol const& vector_symbol) {
   auto ptr = get<shared_ptr<Vector>>(vector_symbol.second);
   std::string escaped_vector_id =
+      std::string("Mutable") +
       escape_utf8_to_cpp_identifier(vector_symbol.first);
 
   std::string cpp_type = "uint32_t";
 
-  fmt::print(hdr, "class Mutable{} : public std::vector<{}> {{\n",
-             escaped_vector_id, cpp_type);
+  fmt::print(hdr, "class {} : public std::vector<{}> {{\n", escaped_vector_id,
+             cpp_type);
   fmt::print(hdr, "\n");
 
   fmt::print(hdr, "  public:\n");
   // constructors
-  fmt::print(hdr, "    Mutable{}() {{}};\n", escaped_vector_id);
+  fmt::print(hdr, "    {}() {{}};\n", escaped_vector_id);
+  fmt::print(hdr, "\n");
+
+  fmt::print(hdr,
+             "    friend std::ostream& operator<<(std::ostream& os, const "
+             "{}& obj);\n",
+             escaped_vector_id);
 
   fmt::print(hdr, "\n");
   fmt::print(hdr, "  private:\n");
@@ -900,23 +959,39 @@ void DefineVector(ostream& hdr, ostream& src,
   // End class declaration.
   fmt::print(hdr, "}};\n");
   fmt::print(hdr, "\n");
+
+  // define operator<<
+  fmt::print(src,
+             "std::ostream& operator<<(std::ostream& os, const {}& obj) {{\n",
+             escaped_vector_id, escaped_vector_id);
+  fmt::print(src, "  os << \"vector {} :\\n\";\n", escaped_vector_id);
+  fmt::print(src, "  os << \"  something.\\n\";\n");
+  fmt::print(src, "  return os;\n}}\n");
+  fmt::print(src, "\n");
 }
 
 void DefineMap(ostream& hdr, ostream& src,
                SymbolTable::Symbol const& map_symbol) {
   auto ptr = get<shared_ptr<Map>>(map_symbol.second);
-  std::string escaped_map_id = escape_utf8_to_cpp_identifier(map_symbol.first);
+  std::string escaped_map_id =
+      std::string("Mutable") + escape_utf8_to_cpp_identifier(map_symbol.first);
 
   std::string cpp_key_type = "uint32_t";
   std::string cpp_value_type = "std::string";
 
-  fmt::print(hdr, "class Mutable{} : public std::map<{}, {}> {{\n",
-             escaped_map_id, cpp_key_type, cpp_value_type);
+  fmt::print(hdr, "class {} : public std::map<{}, {}> {{\n", escaped_map_id,
+             cpp_key_type, cpp_value_type);
   fmt::print(hdr, "\n");
 
   fmt::print(hdr, "  public:\n");
   // constructors
-  fmt::print(hdr, "    Mutable{}() {{}};\n", escaped_map_id);
+  fmt::print(hdr, "    {}() {{}};\n", escaped_map_id);
+  fmt::print(hdr, "\n");
+
+  fmt::print(hdr,
+             "    friend std::ostream& operator<<(std::ostream& os, const "
+             "{}& obj);\n",
+             escaped_map_id);
 
   fmt::print(hdr, "\n");
   fmt::print(hdr, "  private:\n");
@@ -925,6 +1000,15 @@ void DefineMap(ostream& hdr, ostream& src,
   // End class declaration.
   fmt::print(hdr, "}};\n");
   fmt::print(hdr, "\n");
+
+  // define operator<<
+  fmt::print(src,
+             "std::ostream& operator<<(std::ostream& os, const {}& obj) {{\n",
+             escaped_map_id, escaped_map_id);
+  fmt::print(src, "  os << \"map {} :\\n\";\n", escaped_map_id);
+  fmt::print(src, "  os << \"  something.\\n\";\n");
+  fmt::print(src, "  return os;\n}}\n");
+  fmt::print(src, "\n");
 }
 
 string HeaderGuard(filesystem::path source_filename) {

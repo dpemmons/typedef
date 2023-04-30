@@ -34,6 +34,12 @@ val_i32_bare2 _val_i32_bare2 = 214748364;
 val_i32_bare__2118 _val_i32_bare__2118 = 2147483647;
 _0440_0443_0441_0441_043a_0438_0439__0438_0434_0435_043d_0442_0438_0444_0438_043a_0430_0442_043e_0440 __0440_0443_0441_0441_043a_0438_0439__0438_0434_0435_043d_0442_0438_0444_0438_043a_0430_0442_043e_0440 = 2;
 
+std::ostream& operator<<(std::ostream& os, const MutableMapA& obj) {
+  os << "map MutableMapA :\n";
+  os << "  something.\n";
+  return os;
+}
+
 bool operator==(const MutableStructA &lhs, const MutableStructA &rhs) {
   return
     (lhs.example_bool() == rhs.example_bool()) &&
@@ -116,7 +122,7 @@ bool operator==(const MutableStructC &lhs, const MutableStructC &rhs) {
 
 std::ostream& operator<<(std::ostream& os, const MutableStructC& obj) {
   os << "struct MutableStructC :\n";
-  os << "  asdf = " << obj.asdf() << "\n";
+  os << "  asdf = " << *obj.asdf() << "\n";
   os << "  jkl = " << obj.jkl() << "\n";
   os << "  zxcv = " << obj.zxcv() << "\n";
   return os;
@@ -124,19 +130,19 @@ std::ostream& operator<<(std::ostream& os, const MutableStructC& obj) {
 
 bool operator==(const MutableStructD &lhs, const MutableStructD &rhs) {
   return
-    (lhs.a() == rhs.a()) &&
-    (lhs.b() == rhs.b()) &&
-    (lhs.i() == rhs.i()) &&
-    (lhs.j() == rhs.j()) &&
+    (lhs.a_struct() == rhs.a_struct()) &&
+    (lhs.b_variant() == rhs.b_variant()) &&
+    (lhs.c_vec() == rhs.c_vec()) &&
+    (lhs.d_map() == rhs.d_map()) &&
     true;
 }
 
 std::ostream& operator<<(std::ostream& os, const MutableStructD& obj) {
   os << "struct MutableStructD :\n";
-  os << "  a = " << obj.a() << "\n";
-  os << "  b = " << obj.b() << "\n";
-  os << "  i = " << obj.i() << "\n";
-  os << "  j = " << obj.j() << "\n";
+  os << "  a_struct = " << *obj.a_struct() << "\n";
+  os << "  b_variant = " << *obj.b_variant() << "\n";
+  os << "  c_vec = " << *obj.c_vec() << "\n";
+  os << "  d_map = " << *obj.d_map() << "\n";
   return os;
 }
 
@@ -145,7 +151,13 @@ bool operator==(const MutableVariantA &lhs, const MutableVariantA &rhs) {
 }
 
 std::ostream& operator<<(std::ostream& os, const MutableVariantA& obj) {
-  os << "variant VariantA :\n";
+  os << "variant MutableVariantA :\n";
+  os << "  something.\n";
+  return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const MutableVecA& obj) {
+  os << "vector MutableVecA :\n";
   os << "  something.\n";
   return os;
 }

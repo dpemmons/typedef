@@ -642,7 +642,6 @@ public class TypedefParser extends Parser {
 			match(SEMI);
 			}
 
-					_localctx.v->identifier = ((VariantDeclarationContext)_localctx).identifier->id;
 					((VariantDeclarationContext)_localctx).maybe_symbol =  std::make_pair(((VariantDeclarationContext)_localctx).identifier->id, _localctx.v);
 				
 			}
@@ -835,7 +834,6 @@ public class TypedefParser extends Parser {
 			match(SEMI);
 			}
 
-					_localctx.s->identifier = ((StructDeclarationContext)_localctx).identifier->id;
 					((StructDeclarationContext)_localctx).maybe_symbol =  std::make_pair(((StructDeclarationContext)_localctx).identifier->id, _localctx.s);
 				
 			}

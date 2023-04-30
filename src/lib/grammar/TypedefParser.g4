@@ -53,7 +53,6 @@ variantDeclaration
 			} WS* SEMI WS*
 		)* RBRACE WS* SEMI
 	) {
-		$v->identifier = $identifier.ctx->id;
 		$maybe_symbol = std::make_pair($identifier.ctx->id, $v);
 	};
 
@@ -72,7 +71,6 @@ structDeclaration
 			} WS* SEMI WS*
 		)* RBRACE WS* SEMI
 	) {
-		$s->identifier = $identifier.ctx->id;
 		$maybe_symbol = std::make_pair($identifier.ctx->id, $s);
 	};
 

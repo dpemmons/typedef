@@ -244,16 +244,10 @@ std::optional<td::SymbolTable::Symbol> MakeSymbol(
       abort();
     }
   } else if (ctx->vectorType()) {
-    // DIRTY HACK. I feel bad.
-    auto v =
-        std::get<std::shared_ptr<td::Vector>>(*ctx->vectorType()->maybe_val);
-    v->identifier = id;
+    // inline vector
     return std::make_pair(id, *ctx->vectorType()->maybe_val);
   } else if (ctx->mapType()) {
-    // DIRTY HACK. I feel bad.
-    auto v = std::get<std::shared_ptr<td::Map>>(*ctx->mapType()->maybe_val);
-    v->identifier = id;
-
+    // inline map
     return std::make_pair(id, *ctx->mapType()->maybe_val);
   } else if (ctx->identifier()) {
     auto identifier = ctx->identifier();
@@ -261,7 +255,7 @@ std::optional<td::SymbolTable::Symbol> MakeSymbol(
         identifier->NON_KEYWORD_IDENTIFIER()->getSymbol()->getText();
     auto maybe_symbol = global_symbol_table.Get(referencedSymbol);
     if (maybe_symbol) {
-      return std::make_pair(id, *maybe_symbol);
+      return std::make_pair(id, td::SymbolRef(referencedSymbol));
     } else {
       throw SymbolNotFoundException(
           recognizer, ctx, identifier->NON_KEYWORD_IDENTIFIER()->getSymbol());
