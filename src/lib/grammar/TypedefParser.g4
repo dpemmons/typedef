@@ -86,14 +86,28 @@ maybeValuedSymbol
 unvaluedSymbol
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
 	identifier WS* COLON WS* unvaluedType WS* {
+		// TODO probably don't need this now that maybe_val's are getting
+		// bubbled up the tree.
 		$maybe_symbol = MakeSymbol(this, global_symbol_table,
 			$identifier.ctx->id, $unvaluedType.ctx);
 };
 
-maybeValuedType: valuedType | (COLON WS* unvaluedType);
-valuedType: valuedPrimitiveType;
-unvaluedType:
-	(primitiveType | vectorType | mapType | identifier);
+maybeValuedType returns[std::optional<td::SymbolTable::Value> maybe_val]:
+	valuedType {$maybe_val = $valuedType.ctx->mayble_val;}
+	| (COLON WS* unvaluedType) {$maybe_val = $unvaluedType.ctx->mayble_val;};
+valuedType
+	returns[std::optional<td::SymbolTable::Value> maybe_val]:
+	valuedPrimitiveType {$maybe_val = $valuedPrimitiveType.ctx->mayble_val;};
+unvaluedType
+	returns[std::optional<td::SymbolTable::Value> maybe_val]:
+	(
+		primitiveType {$maybe_val = $primitiveType.ctx->mayble_val;}
+		| vectorType {$maybe_val = $vectorType.ctx->mayble_val;}
+		| mapType {$maybe_val = $mapType.ctx->mayble_val;}
+		| identifier {$maybe_val = std::optional<SymbolRef>(
+			  $identifier.ctx->NON_KEYWORD_IDENTIFIER()->getSymbol()->getText());
+			}
+	);
 vectorType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
 	KW_VECTOR WS* LT WS* unvaluedType WS* GT {
@@ -107,20 +121,21 @@ mapType
 			this, global_symbol_table, $primitiveType.ctx, $unvaluedType.ctx);
 	};
 
-primitiveType:
-	KW_BOOL
-	| KW_CHAR
-	| KW_STRING
-	| KW_F32
-	| KW_F64
-	| KW_U8
-	| KW_U16
-	| KW_U32
-	| KW_U64
-	| KW_I8
-	| KW_I16
-	| KW_I32
-	| KW_I64;
+primitiveType
+	returns[std::optional<td::SymbolTable::Value> maybe_val]:
+	KW_BOOL { $maybe_val = std::optional<bool>(); }
+	| KW_CHAR { $maybe_val = std::optional<char32_t>(); }
+	| KW_STRING { $maybe_val = std::optional<string>(); }
+	| KW_F32 { $maybe_val = std::optional<float>(); }
+	| KW_F64 { $maybe_val = std::optional<double>(); }
+	| KW_U8 { $maybe_val = std::optional<uint8_t>(); }
+	| KW_U16 { $maybe_val = std::optional<uint16_t>(); }
+	| KW_U32 { $maybe_val = std::optional<uint32_t>(); }
+	| KW_U64 { $maybe_val = std::optional<uint64_t>(); }
+	| KW_I8 { $maybe_val = std::optional<int8_t>(); }
+	| KW_I16 { $maybe_val = std::optional<int16_t>(); }
+	| KW_I32 { $maybe_val = std::optional<int32_t>(); }
+	| KW_I64 { $maybe_val = std::optional<int64_t>(); };
 
 // Matches " : bool = literal"
 valuedPrimitiveType

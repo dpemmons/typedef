@@ -15,143 +15,194 @@ namespace td {
 
 using namespace std;
 
-std::string GetCppTypeName(SymbolTable::Symbol const& s) {
+struct CppIdentifiers {
+  enum TypeClass {
+    SCALAR_NOT_CHAR,
+    CHAR,
+    STRING,
+    STRUCT,
+    VARIANT,
+    VECTOR,
+    MAP,
+    SYMBOL_REF
+  };
+  CppIdentifiers(TypeClass type_class, std::string symbol_id,
+                 std::string type_id)
+      : type_class(type_class), symbol_id(symbol_id), type_id(type_id) {
+    if (type_class >= STRUCT) {
+      full_type_id = fmt::format("std::unique_ptr<{}>", type_id);
+    } else {
+      full_type_id = type_id;
+    }
+  }
+  TypeClass type_class;
+  bool WrappedType() { return type_class > STRING; }
+
+  // Examples:
+  // anInt : i32;
+  // symol_id = "anInt", type_id = "int32_t", full_type_id = "int32_t"
+  //
+  // aStruct: struct {};
+  //    symol_id = "aStruct"
+  //    type_id = "MutableaStruct"
+  //    full_type_id = "std::unique_ptr<MutableaStruct>"
+
+  std::string symbol_id;
+  std::string type_id;
+  std::string full_type_id;
+};
+CppIdentifiers GetCppType(SymbolTable::Symbol const& s) {
   if (holds_alternative<optional<bool>>(s.second)) {
-    return "bool";
+    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
+                          escape_utf8_to_cpp_identifier(s.first), "bool");
   } else if (holds_alternative<optional<char32_t>>(s.second)) {
-    return "char32_t";
+    return CppIdentifiers(CppIdentifiers::CHAR,
+                          escape_utf8_to_cpp_identifier(s.first), "char32_t");
   } else if (holds_alternative<optional<string>>(s.second)) {
-    return "std::string";
+    return CppIdentifiers(CppIdentifiers::STRING,
+                          escape_utf8_to_cpp_identifier(s.first),
+                          "std::string");
   } else if (holds_alternative<optional<float>>(s.second)) {
-    return "float";
+    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
+                          escape_utf8_to_cpp_identifier(s.first), "float");
   } else if (holds_alternative<optional<double>>(s.second)) {
-    return "double";
+    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
+                          escape_utf8_to_cpp_identifier(s.first), "double");
   } else if (holds_alternative<optional<int8_t>>(s.second)) {
-    return "int8_t";
+    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
+                          escape_utf8_to_cpp_identifier(s.first), "int8_t");
   } else if (holds_alternative<optional<int16_t>>(s.second)) {
-    return "int16_t";
+    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
+                          escape_utf8_to_cpp_identifier(s.first), "int16_t");
   } else if (holds_alternative<optional<int32_t>>(s.second)) {
-    return "int32_t";
+    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
+                          escape_utf8_to_cpp_identifier(s.first), "int32_t");
   } else if (holds_alternative<optional<int64_t>>(s.second)) {
-    return "int64_t";
+    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
+                          escape_utf8_to_cpp_identifier(s.first), "int64_t");
   } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-    return "uint8_t";
+    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
+                          escape_utf8_to_cpp_identifier(s.first), "uint8_t");
   } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-    return "uint16_t";
+    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
+                          escape_utf8_to_cpp_identifier(s.first), "uint16_t");
   } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-    return "uint32_t";
+    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
+                          escape_utf8_to_cpp_identifier(s.first), "uint32_t");
   } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-    return "uint64_t";
-  } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-    return "uint64_t";
+    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
+                          escape_utf8_to_cpp_identifier(s.first), "uint64_t");
+  } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
+    return CppIdentifiers(
+        CppIdentifiers::STRUCT, escape_utf8_to_cpp_identifier(s.first),
+        std::string("Mutable") + escape_utf8_to_cpp_identifier(s.first));
+  } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
+    return CppIdentifiers(
+        CppIdentifiers::VARIANT, escape_utf8_to_cpp_identifier(s.first),
+        std::string("Mutable") + escape_utf8_to_cpp_identifier(s.first));
+  } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
+    return CppIdentifiers(
+        CppIdentifiers::VECTOR, escape_utf8_to_cpp_identifier(s.first),
+        std::string("Mutable") + escape_utf8_to_cpp_identifier(s.first));
+  } else if (holds_alternative<SymbolRef>(s.second)) {
+    return CppIdentifiers(
+        CppIdentifiers::SYMBOL_REF, escape_utf8_to_cpp_identifier(s.first),
+        std::string("Mutable") + escape_utf8_to_cpp_identifier(s.first));
   } else {
     abort();
   }
 }
 
 void DeclarePrimitive(ostream& os, SymbolTable::Symbol const& s) {
-  std::string escaped_id = escape_utf8_to_cpp_identifier(s.first);
-  if (holds_alternative<optional<bool>>(s.second)) {
-    fmt::print(os, "typedef bool {};\n", escaped_id);
-  } else if (holds_alternative<optional<char32_t>>(s.second)) {
-    fmt::print(os, "typedef char32_t {};\n", escaped_id);
-  } else if (holds_alternative<optional<string>>(s.second)) {
-    fmt::print(os, "typedef std::string {};\n", escaped_id);
-  } else if (holds_alternative<optional<float>>(s.second)) {
-    fmt::print(os, "typedef float {};\n", escaped_id);
-  } else if (holds_alternative<optional<double>>(s.second)) {
-    fmt::print(os, "typedef double {};\n", escaped_id);
-  } else if (holds_alternative<optional<int8_t>>(s.second)) {
-    fmt::print(os, "typedef int8_t {};\n", escaped_id);
-  } else if (holds_alternative<optional<int16_t>>(s.second)) {
-    fmt::print(os, "typedef int16_t {};\n", escaped_id);
-  } else if (holds_alternative<optional<int32_t>>(s.second)) {
-    fmt::print(os, "typedef int32_t {};\n", escaped_id);
-  } else if (holds_alternative<optional<int64_t>>(s.second)) {
-    fmt::print(os, "typedef int64_t {};\n", escaped_id);
-  } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-    fmt::print(os, "typedef uint8_t {};\n", escaped_id);
-  } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-    fmt::print(os, "typedef uint16_t {};\n", escaped_id);
-  } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-    fmt::print(os, "typedef uint32_t {};\n", escaped_id);
-  } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-    fmt::print(os, "typedef uint64_t {};\n", escaped_id);
+  CppIdentifiers cpp_id = GetCppType(s);
+  if (!cpp_id.WrappedType()) {
+    fmt::print(os, "typedef {} {};\n", cpp_id.type_id, cpp_id.symbol_id);
   } else {
     abort();
   }
-  fmt::print(os, "extern {} _{};\n", escaped_id, escaped_id);
+  fmt::print(os, "extern {} _{};\n", cpp_id.symbol_id, cpp_id.symbol_id);
 }
 
 void DefinePrimitive(ostream& os, SymbolTable::Symbol const& s) {
-  std::string escaped_id = escape_utf8_to_cpp_identifier(s.first);
+  CppIdentifiers cpp_id = GetCppType(s);
   if (holds_alternative<optional<bool>>(s.second)) {
     auto maybe_val = get<optional<bool>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
+      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
+                 *maybe_val);
     }
   } else if (holds_alternative<optional<char32_t>>(s.second)) {
     auto maybe_val = get<optional<char32_t>>(s.second);
     if (maybe_val) {
       wstring_convert<codecvt_utf8<char32_t>, char32_t> converter;
-      fmt::print(os, "{} _{} = *(char32_t*)\"{}\";\n", escaped_id, escaped_id,
-                 converter.to_bytes(*maybe_val));
+      fmt::print(os, "{} _{} = *(char32_t*)\"{}\";\n", cpp_id.symbol_id,
+                 cpp_id.symbol_id, converter.to_bytes(*maybe_val));
     }
   } else if (holds_alternative<optional<string>>(s.second)) {
     auto maybe_val = get<optional<string>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "{} _{} = R\"LITERAL({})LITERAL\";\n", escaped_id,
-                 escaped_id, *maybe_val);
+      fmt::print(os, "{} _{} = R\"LITERAL({})LITERAL\";\n", cpp_id.symbol_id,
+                 cpp_id.symbol_id, *maybe_val);
     }
   } else if (holds_alternative<optional<float>>(s.second)) {
     auto maybe_val = get<optional<float>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
+      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
+                 *maybe_val);
     }
   } else if (holds_alternative<optional<double>>(s.second)) {
     auto maybe_val = get<optional<double>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
+      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
+                 *maybe_val);
     }
   } else if (holds_alternative<optional<int8_t>>(s.second)) {
     auto maybe_val = get<optional<int8_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
+      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
+                 *maybe_val);
     }
   } else if (holds_alternative<optional<int16_t>>(s.second)) {
     auto maybe_val = get<optional<int16_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
+      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
+                 *maybe_val);
     }
   } else if (holds_alternative<optional<int32_t>>(s.second)) {
     auto maybe_val = get<optional<int32_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
+      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
+                 *maybe_val);
     }
   } else if (holds_alternative<optional<int64_t>>(s.second)) {
     auto maybe_val = get<optional<int64_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
+      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
+                 *maybe_val);
     }
   } else if (holds_alternative<optional<uint8_t>>(s.second)) {
     auto maybe_val = get<optional<uint8_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
+      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
+                 *maybe_val);
     }
   } else if (holds_alternative<optional<uint16_t>>(s.second)) {
     auto maybe_val = get<optional<uint16_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
+      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
+                 *maybe_val);
     }
   } else if (holds_alternative<optional<uint32_t>>(s.second)) {
     auto maybe_val = get<optional<uint32_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
+      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
+                 *maybe_val);
     }
   } else if (holds_alternative<optional<uint64_t>>(s.second)) {
     auto maybe_val = get<optional<uint64_t>>(s.second);
     if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", escaped_id, escaped_id, *maybe_val);
+      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
+                 *maybe_val);
     }
   } else {
     abort();
@@ -936,10 +987,10 @@ void DefineVector(ostream& hdr, ostream& src,
       std::string("Mutable") +
       escape_utf8_to_cpp_identifier(vector_symbol.first);
 
-  std::string cpp_type = "uint32_t";
+  auto cpp_type = GetCppType(vector_symbol);
 
   fmt::print(hdr, "class {} : public std::vector<{}> {{\n", escaped_vector_id,
-             cpp_type);
+             cpp_type.full_type_id);
   fmt::print(hdr, "\n");
 
   fmt::print(hdr, "  public:\n");
@@ -976,11 +1027,12 @@ void DefineMap(ostream& hdr, ostream& src,
   std::string escaped_map_id =
       std::string("Mutable") + escape_utf8_to_cpp_identifier(map_symbol.first);
 
-  std::string cpp_key_type = "uint32_t";
-  std::string cpp_value_type = "std::string";
+  auto cpp_key_type = GetCppType(td::SymbolTable::Symbol("", ptr->key_type));
+  auto cpp_value_type = GetCppType(td::SymbolTable::Symbol("", ptr->value_type));
+
 
   fmt::print(hdr, "class {} : public std::map<{}, {}> {{\n", escaped_map_id,
-             cpp_key_type, cpp_value_type);
+             cpp_key_type.full_type_id, cpp_value_type.full_type_id);
   fmt::print(hdr, "\n");
 
   fmt::print(hdr, "  public:\n");

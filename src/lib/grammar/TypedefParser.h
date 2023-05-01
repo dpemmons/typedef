@@ -291,6 +291,9 @@ public:
 
   class  MaybeValuedTypeContext : public antlr4::ParserRuleContext {
   public:
+    std::optional<td::SymbolTable::Value> maybe_val;
+    TypedefParser::ValuedTypeContext *valuedTypeContext = nullptr;;
+    TypedefParser::UnvaluedTypeContext *unvaluedTypeContext = nullptr;;
     MaybeValuedTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ValuedTypeContext *valuedType();
@@ -310,6 +313,8 @@ public:
 
   class  ValuedTypeContext : public antlr4::ParserRuleContext {
   public:
+    std::optional<td::SymbolTable::Value> maybe_val;
+    TypedefParser::ValuedPrimitiveTypeContext *valuedPrimitiveTypeContext = nullptr;;
     ValuedTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ValuedPrimitiveTypeContext *valuedPrimitiveType();
@@ -325,6 +330,11 @@ public:
 
   class  UnvaluedTypeContext : public antlr4::ParserRuleContext {
   public:
+    std::optional<td::SymbolTable::Value> maybe_val;
+    TypedefParser::PrimitiveTypeContext *primitiveTypeContext = nullptr;;
+    TypedefParser::VectorTypeContext *vectorTypeContext = nullptr;;
+    TypedefParser::MapTypeContext *mapTypeContext = nullptr;;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
     UnvaluedTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     PrimitiveTypeContext *primitiveType();
@@ -390,6 +400,7 @@ public:
 
   class  PrimitiveTypeContext : public antlr4::ParserRuleContext {
   public:
+    std::optional<td::SymbolTable::Value> maybe_val;
     PrimitiveTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_BOOL();

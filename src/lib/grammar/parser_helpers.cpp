@@ -208,9 +208,17 @@ std::optional<td::SymbolTable::Symbol> MakeSymbol(
   return std::nullopt;
 }
 
+td::SymbolTable::Value MakeValue(antlr4::Parser* recognizer,
+                                 td::SymbolTable& global_symbol_table,
+                                 std::string& id,
+                                 TypedefParser::UnvaluedTypeContext* ctx) {}
+
 std::optional<td::SymbolTable::Symbol> MakeSymbol(
     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
     std::string& id, TypedefParser::UnvaluedTypeContext* ctx) {
+
+  // TODO achieve this through the parser tree?
+
   if (ctx->primitiveType()) {
     auto primitiveType = ctx->primitiveType();
     if (primitiveType->KW_BOOL()) {
@@ -269,6 +277,7 @@ std::optional<td::SymbolTable::Symbol> MakeSymbol(
 std::optional<td::SymbolTable::Value> MakeVector(
     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
     TypedefParser::UnvaluedTypeContext* ctx) {
+  // TODO this.
   return std::make_shared<td::Vector>();
 }
 
@@ -276,6 +285,7 @@ std::optional<td::SymbolTable::Value> MakeMap(
     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
     TypedefParser::PrimitiveTypeContext* key_ctx,
     TypedefParser::UnvaluedTypeContext* val_ctx) {
+  // TODO this.
   return std::make_shared<td::Map>();
 }
 

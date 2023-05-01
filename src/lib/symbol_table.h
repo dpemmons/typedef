@@ -90,6 +90,7 @@ class Variant {
 
 class Vector {
  public:
+  Vector(SymbolTable::Value type) : type(type){};
   friend ostream &operator<<(ostream &os, const Vector &s);
 
   SymbolTable::Value type;
@@ -97,6 +98,8 @@ class Vector {
 
 class Map {
  public:
+  Map(SymbolTable::Value key_type, SymbolTable::Value value_type)
+      : key_type(key_type), value_type(value_type){};
   friend ostream &operator<<(ostream &os, const Map &s);
 
   SymbolTable::Value key_type;

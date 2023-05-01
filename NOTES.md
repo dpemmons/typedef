@@ -35,6 +35,7 @@ Items in ***bold*** are in-progress.
     - [ ] raw byte strings
   - [ ] handle raw identifiers
   - [x] parse a very basic struct statement
+  - [ ] inline structs, vectors and maps.
 
 - [ ] Command line util basics
   - [x] write basic errors
