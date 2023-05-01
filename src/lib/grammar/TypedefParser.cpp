@@ -883,8 +883,9 @@ TypedefParser::MaybeValuedSymbolContext* TypedefParser::maybeValuedSymbol() {
       alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 26, _ctx);
     }
 
-    		dynamic_cast<MaybeValuedSymbolContext *>(_localctx)->maybe_symbol =  MakeSymbol(this, global_symbol_table,
-    			dynamic_cast<MaybeValuedSymbolContext *>(_localctx)->identifierContext->id, dynamic_cast<MaybeValuedSymbolContext *>(_localctx)->maybeValuedTypeContext);
+    		if (dynamic_cast<MaybeValuedSymbolContext *>(_localctx)->maybeValuedTypeContext->maybe_val) {
+    			dynamic_cast<MaybeValuedSymbolContext *>(_localctx)->maybe_symbol =  std::make_pair(dynamic_cast<MaybeValuedSymbolContext *>(_localctx)->identifierContext->id, *dynamic_cast<MaybeValuedSymbolContext *>(_localctx)->maybeValuedTypeContext->maybe_val);
+    		}
 
    
   }
@@ -998,10 +999,9 @@ TypedefParser::UnvaluedSymbolContext* TypedefParser::unvaluedSymbol() {
       alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 29, _ctx);
     }
 
-    		// TODO probably don't need this now that maybe_val's are getting
-    		// bubbled up the tree.
-    		dynamic_cast<UnvaluedSymbolContext *>(_localctx)->maybe_symbol =  MakeSymbol(this, global_symbol_table,
-    			dynamic_cast<UnvaluedSymbolContext *>(_localctx)->identifierContext->id, dynamic_cast<UnvaluedSymbolContext *>(_localctx)->unvaluedTypeContext);
+    		if (dynamic_cast<UnvaluedSymbolContext *>(_localctx)->unvaluedTypeContext->maybe_val) {
+    			dynamic_cast<UnvaluedSymbolContext *>(_localctx)->maybe_symbol =  std::make_pair(dynamic_cast<UnvaluedSymbolContext *>(_localctx)->identifierContext->id, *dynamic_cast<UnvaluedSymbolContext *>(_localctx)->unvaluedTypeContext->maybe_val);
+    		}
 
    
   }
@@ -1081,7 +1081,7 @@ TypedefParser::MaybeValuedTypeContext* TypedefParser::maybeValuedType() {
       enterOuterAlt(_localctx, 1);
       setState(313);
       dynamic_cast<MaybeValuedTypeContext *>(_localctx)->valuedTypeContext = valuedType();
-      dynamic_cast<MaybeValuedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<MaybeValuedTypeContext *>(_localctx)->valuedTypeContext->mayble_val;
+      dynamic_cast<MaybeValuedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<MaybeValuedTypeContext *>(_localctx)->valuedTypeContext->maybe_val;
       break;
     }
 
@@ -1101,7 +1101,7 @@ TypedefParser::MaybeValuedTypeContext* TypedefParser::maybeValuedType() {
       }
       setState(323);
       dynamic_cast<MaybeValuedTypeContext *>(_localctx)->unvaluedTypeContext = unvaluedType();
-      dynamic_cast<MaybeValuedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<MaybeValuedTypeContext *>(_localctx)->unvaluedTypeContext->mayble_val;
+      dynamic_cast<MaybeValuedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<MaybeValuedTypeContext *>(_localctx)->unvaluedTypeContext->maybe_val;
       break;
     }
 
@@ -1163,7 +1163,7 @@ TypedefParser::ValuedTypeContext* TypedefParser::valuedType() {
     enterOuterAlt(_localctx, 1);
     setState(329);
     dynamic_cast<ValuedTypeContext *>(_localctx)->valuedPrimitiveTypeContext = valuedPrimitiveType();
-    dynamic_cast<ValuedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<ValuedTypeContext *>(_localctx)->valuedPrimitiveTypeContext->mayble_val;
+    dynamic_cast<ValuedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<ValuedTypeContext *>(_localctx)->valuedPrimitiveTypeContext->maybe_val;
    
   }
   catch (RecognitionException &e) {
@@ -1249,21 +1249,21 @@ TypedefParser::UnvaluedTypeContext* TypedefParser::unvaluedType() {
       case TypedefParser::KW_I64: {
         setState(332);
         dynamic_cast<UnvaluedTypeContext *>(_localctx)->primitiveTypeContext = primitiveType();
-        dynamic_cast<UnvaluedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<UnvaluedTypeContext *>(_localctx)->primitiveTypeContext->mayble_val;
+        dynamic_cast<UnvaluedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<UnvaluedTypeContext *>(_localctx)->primitiveTypeContext->maybe_val;
         break;
       }
 
       case TypedefParser::KW_VECTOR: {
         setState(335);
         dynamic_cast<UnvaluedTypeContext *>(_localctx)->vectorTypeContext = vectorType();
-        dynamic_cast<UnvaluedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<UnvaluedTypeContext *>(_localctx)->vectorTypeContext->mayble_val;
+        dynamic_cast<UnvaluedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<UnvaluedTypeContext *>(_localctx)->vectorTypeContext->maybe_val;
         break;
       }
 
       case TypedefParser::KW_MAP: {
         setState(338);
         dynamic_cast<UnvaluedTypeContext *>(_localctx)->mapTypeContext = mapType();
-        dynamic_cast<UnvaluedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<UnvaluedTypeContext *>(_localctx)->mapTypeContext->mayble_val;
+        dynamic_cast<UnvaluedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<UnvaluedTypeContext *>(_localctx)->mapTypeContext->maybe_val;
         break;
       }
 
@@ -1271,9 +1271,8 @@ TypedefParser::UnvaluedTypeContext* TypedefParser::unvaluedType() {
       case TypedefParser::RAW_ESCAPE: {
         setState(341);
         dynamic_cast<UnvaluedTypeContext *>(_localctx)->identifierContext = identifier();
-        dynamic_cast<UnvaluedTypeContext *>(_localctx)->maybe_val =  std::optional<SymbolRef>(
-        			  dynamic_cast<UnvaluedTypeContext *>(_localctx)->identifierContext->NON_KEYWORD_IDENTIFIER()->getSymbol()->getText());
-        			
+        dynamic_cast<UnvaluedTypeContext *>(_localctx)->maybe_val = 
+        		CheckIdentifierExists(this, global_symbol_table, dynamic_cast<UnvaluedTypeContext *>(_localctx)->identifierContext);
         break;
       }
 
@@ -1395,8 +1394,9 @@ TypedefParser::VectorTypeContext* TypedefParser::vectorType() {
     setState(367);
     match(TypedefParser::GT);
 
-    		dynamic_cast<VectorTypeContext *>(_localctx)->maybe_val =  MakeVector(
-    			this, global_symbol_table, dynamic_cast<VectorTypeContext *>(_localctx)->unvaluedTypeContext);
+    		if (dynamic_cast<VectorTypeContext *>(_localctx)->unvaluedTypeContext->maybe_val) {
+    			dynamic_cast<VectorTypeContext *>(_localctx)->maybe_val =  std::make_shared<td::Vector>(*dynamic_cast<VectorTypeContext *>(_localctx)->unvaluedTypeContext->maybe_val);
+    		}
     	
    
   }
@@ -1545,8 +1545,9 @@ TypedefParser::MapTypeContext* TypedefParser::mapType() {
     setState(405);
     match(TypedefParser::GT);
 
-    		dynamic_cast<MapTypeContext *>(_localctx)->maybe_val =  MakeMap(
-    			this, global_symbol_table, dynamic_cast<MapTypeContext *>(_localctx)->primitiveTypeContext, dynamic_cast<MapTypeContext *>(_localctx)->unvaluedTypeContext);
+    		if (dynamic_cast<MapTypeContext *>(_localctx)->primitiveTypeContext->maybe_val && dynamic_cast<MapTypeContext *>(_localctx)->unvaluedTypeContext->maybe_val) {
+    			dynamic_cast<MapTypeContext *>(_localctx)->maybe_val =  std::make_shared<td::Map>(*dynamic_cast<MapTypeContext *>(_localctx)->primitiveTypeContext->maybe_val, *dynamic_cast<MapTypeContext *>(_localctx)->unvaluedTypeContext->maybe_val);
+    		}
     	
    
   }
@@ -1673,7 +1674,7 @@ TypedefParser::PrimitiveTypeContext* TypedefParser::primitiveType() {
         enterOuterAlt(_localctx, 3);
         setState(412);
         match(TypedefParser::KW_STRING);
-         dynamic_cast<PrimitiveTypeContext *>(_localctx)->maybe_val =  std::optional<string>(); 
+         dynamic_cast<PrimitiveTypeContext *>(_localctx)->maybe_val =  std::optional<std::string>(); 
         break;
       }
 

@@ -183,110 +183,77 @@ std::string GetRawString(TypedefParser* parser, antlr4::Token* token) {
   return std::string(literal);
 }
 
-std::optional<td::SymbolTable::Symbol> MakeSymbol(
+// std::optional<td::SymbolTable::Symbol> MakeSymbol(
+//     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
+//     std::string& id, TypedefParser::MaybeValuedTypeContext* ctx) {
+//   if (ctx->valuedType()) {
+//     return MakeSymbol(recognizer, global_symbol_table, id, ctx->valuedType());
+//   } else if (ctx->unvaluedType()) {
+//     return MakeSymbol(recognizer, global_symbol_table, id, ctx->unvaluedType());
+//   }
+//   // pretty sure we would have already thrown an error.
+//   return std::nullopt;
+// }
+
+// std::optional<td::SymbolTable::Symbol> MakeSymbol(
+//     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
+//     std::string& id, TypedefParser::ValuedTypeContext* ctx) {
+//   if (ctx->valuedPrimitiveType()) {
+//     auto valuedPrimitiveType = ctx->valuedPrimitiveType();
+//     if (valuedPrimitiveType->maybe_val) {
+//       return std::make_pair(id, valuedPrimitiveType->maybe_val.value());
+//     }
+//   }
+//   // pretty sure we would have already thrown an error.
+//   return std::nullopt;
+// }
+
+// std::optional<td::SymbolTable::Symbol> MakeSymbol(
+//     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
+//     std::string& id, TypedefParser::UnvaluedTypeContext* ctx) {
+//   if (ctx->identifier()) {
+//     auto identifier = ctx->identifier();
+//     std::string referencedSymbol =
+//         identifier->NON_KEYWORD_IDENTIFIER()->getSymbol()->getText();
+//     auto maybe_symbol = global_symbol_table.Get(referencedSymbol);
+//     if (maybe_symbol) {
+//       return std::make_pair(id, td::SymbolRef(referencedSymbol));
+//     } else {
+//       throw SymbolNotFoundException(
+//           recognizer, ctx, identifier->NON_KEYWORD_IDENTIFIER()->getSymbol());
+//     }
+//   } else if (ctx->maybe_val) {
+//     return std::make_pair(id, *ctx->maybe_val);
+//   }
+//   // pretty sure we would have already thrown an error.
+//   return std::nullopt;
+// }
+
+// std::optional<td::SymbolTable::Value> MakeVector(
+//     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
+//     TypedefParser::UnvaluedTypeContext* ctx) {
+//   // TODO this.
+//   return std::make_shared<td::Vector>(*ctx->maybe_val);
+// }
+
+// std::optional<td::SymbolTable::Value> MakeMap(
+//     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
+//     TypedefParser::PrimitiveTypeContext* key_ctx,
+//     TypedefParser::UnvaluedTypeContext* val_ctx) {
+//   // TODO this.
+//   return std::make_shared<td::Map>();
+// }
+
+std::optional<td::SymbolRef> CheckIdentifierExists(
     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
-    std::string& id, TypedefParser::MaybeValuedTypeContext* ctx) {
-  if (ctx->valuedType()) {
-    return MakeSymbol(recognizer, global_symbol_table, id, ctx->valuedType());
-  } else if (ctx->unvaluedType()) {
-    return MakeSymbol(recognizer, global_symbol_table, id, ctx->unvaluedType());
+    TypedefParser::IdentifierContext* ctx) {
+  auto maybe_symbol = global_symbol_table.Get(ctx->id);
+  if (maybe_symbol) {
+    return td::SymbolRef(ctx->id);
+  } else {
+    throw SymbolNotFoundException(recognizer, ctx,
+                                  ctx->NON_KEYWORD_IDENTIFIER()->getSymbol());
   }
-  // pretty sure we would have already thrown an error.
-  return std::nullopt;
-}
-
-std::optional<td::SymbolTable::Symbol> MakeSymbol(
-    antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
-    std::string& id, TypedefParser::ValuedTypeContext* ctx) {
-  if (ctx->valuedPrimitiveType()) {
-    auto valuedPrimitiveType = ctx->valuedPrimitiveType();
-    if (valuedPrimitiveType->maybe_val) {
-      return std::make_pair(id, valuedPrimitiveType->maybe_val.value());
-    }
-  }
-  // pretty sure we would have already thrown an error.
-  return std::nullopt;
-}
-
-td::SymbolTable::Value MakeValue(antlr4::Parser* recognizer,
-                                 td::SymbolTable& global_symbol_table,
-                                 std::string& id,
-                                 TypedefParser::UnvaluedTypeContext* ctx) {}
-
-std::optional<td::SymbolTable::Symbol> MakeSymbol(
-    antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
-    std::string& id, TypedefParser::UnvaluedTypeContext* ctx) {
-
-  // TODO achieve this through the parser tree?
-
-  if (ctx->primitiveType()) {
-    auto primitiveType = ctx->primitiveType();
-    if (primitiveType->KW_BOOL()) {
-      return std::make_pair(id, std::optional<bool>());
-    } else if (primitiveType->KW_CHAR()) {
-      return std::make_pair(id, std::optional<char32_t>());
-    } else if (primitiveType->KW_STRING()) {
-      return std::make_pair(id, std::optional<std::string>());
-    } else if (primitiveType->KW_F32()) {
-      return std::make_pair(id, std::optional<float>());
-    } else if (primitiveType->KW_F64()) {
-      return std::make_pair(id, std::optional<double>());
-    } else if (primitiveType->KW_U8()) {
-      return std::make_pair(id, std::optional<uint8_t>());
-    } else if (primitiveType->KW_U16()) {
-      return std::make_pair(id, std::optional<uint16_t>());
-    } else if (primitiveType->KW_U32()) {
-      return std::make_pair(id, std::optional<uint32_t>());
-    } else if (primitiveType->KW_U64()) {
-      return std::make_pair(id, std::optional<uint64_t>());
-    } else if (primitiveType->KW_I8()) {
-      return std::make_pair(id, std::optional<int8_t>());
-    } else if (primitiveType->KW_I16()) {
-      return std::make_pair(id, std::optional<int16_t>());
-    } else if (primitiveType->KW_I32()) {
-      return std::make_pair(id, std::optional<int32_t>());
-    } else if (primitiveType->KW_I64()) {
-      return std::make_pair(id, std::optional<int64_t>());
-    } else {
-      // all possible primitive types need to be handled.
-      abort();
-    }
-  } else if (ctx->vectorType()) {
-    // inline vector
-    return std::make_pair(id, *ctx->vectorType()->maybe_val);
-  } else if (ctx->mapType()) {
-    // inline map
-    return std::make_pair(id, *ctx->mapType()->maybe_val);
-  } else if (ctx->identifier()) {
-    auto identifier = ctx->identifier();
-    std::string referencedSymbol =
-        identifier->NON_KEYWORD_IDENTIFIER()->getSymbol()->getText();
-    auto maybe_symbol = global_symbol_table.Get(referencedSymbol);
-    if (maybe_symbol) {
-      return std::make_pair(id, td::SymbolRef(referencedSymbol));
-    } else {
-      throw SymbolNotFoundException(
-          recognizer, ctx, identifier->NON_KEYWORD_IDENTIFIER()->getSymbol());
-    }
-  }
-  // grammar only provides 2 options; pretty sure we would have already thrown
-  // an error.
-  return std::nullopt;
-}
-
-std::optional<td::SymbolTable::Value> MakeVector(
-    antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
-    TypedefParser::UnvaluedTypeContext* ctx) {
-  // TODO this.
-  return std::make_shared<td::Vector>();
-}
-
-std::optional<td::SymbolTable::Value> MakeMap(
-    antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
-    TypedefParser::PrimitiveTypeContext* key_ctx,
-    TypedefParser::UnvaluedTypeContext* val_ctx) {
-  // TODO this.
-  return std::make_shared<td::Map>();
 }
 
 void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,

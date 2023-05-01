@@ -68,7 +68,7 @@ Items in ***bold*** are in-progress.
 Currently using this to test...
 
 ```sh
-make -j 12 debug && ./build/cmd/typedef --cpp_out=examples ./examples/simple_values.td && g++ -O0 -g examples/examples/*.cpp -o out && ./out
+make -j 4 debug && ./build/cmd/typedef --cpp_out=examples ./examples/simple_values.td && g++ -O0 -g examples/examples/*.cpp -o out && ./out
 ```
 
 Command line utility should, by default print out all the parts of the parsed file.

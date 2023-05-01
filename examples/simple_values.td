@@ -97,8 +97,11 @@ VariantA: variant {
   a: StructA;
   b: StructB;
   c: StructC;
-  d: i32;
-  e: char;
+  d: bool;
+  e: bool;
+  f: i32;
+  g: char;
+  h: str;
 };
 
 VecA: vector<u8>;

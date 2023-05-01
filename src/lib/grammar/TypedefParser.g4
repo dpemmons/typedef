@@ -78,54 +78,58 @@ structDeclaration
 maybeValuedSymbol
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
 	identifier WS* maybeValuedType WS* {
-		$maybe_symbol = MakeSymbol(this, global_symbol_table,
-			$identifier.ctx->id, $maybeValuedType.ctx);
+		if ($maybeValuedType.ctx->maybe_val) {
+			$maybe_symbol = std::make_pair($identifier.ctx->id, *$maybeValuedType.ctx->maybe_val);
+		}
 };
 
 // ValA: i32;
 unvaluedSymbol
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
 	identifier WS* COLON WS* unvaluedType WS* {
-		// TODO probably don't need this now that maybe_val's are getting
-		// bubbled up the tree.
-		$maybe_symbol = MakeSymbol(this, global_symbol_table,
-			$identifier.ctx->id, $unvaluedType.ctx);
+		if ($unvaluedType.ctx->maybe_val) {
+			$maybe_symbol = std::make_pair($identifier.ctx->id, *$unvaluedType.ctx->maybe_val);
+		}
 };
 
-maybeValuedType returns[std::optional<td::SymbolTable::Value> maybe_val]:
-	valuedType {$maybe_val = $valuedType.ctx->mayble_val;}
-	| (COLON WS* unvaluedType) {$maybe_val = $unvaluedType.ctx->mayble_val;};
+maybeValuedType
+	returns[std::optional<td::SymbolTable::Value> maybe_val]:
+	valuedType {$maybe_val = $valuedType.ctx->maybe_val;}
+	| (COLON WS* unvaluedType) {$maybe_val = $unvaluedType.ctx->maybe_val;};
+
 valuedType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
-	valuedPrimitiveType {$maybe_val = $valuedPrimitiveType.ctx->mayble_val;};
+	valuedPrimitiveType {$maybe_val = $valuedPrimitiveType.ctx->maybe_val;};
+
 unvaluedType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
 	(
-		primitiveType {$maybe_val = $primitiveType.ctx->mayble_val;}
-		| vectorType {$maybe_val = $vectorType.ctx->mayble_val;}
-		| mapType {$maybe_val = $mapType.ctx->mayble_val;}
-		| identifier {$maybe_val = std::optional<SymbolRef>(
-			  $identifier.ctx->NON_KEYWORD_IDENTIFIER()->getSymbol()->getText());
-			}
+		primitiveType {$maybe_val = $primitiveType.ctx->maybe_val;}
+		| vectorType {$maybe_val = $vectorType.ctx->maybe_val;}
+		| mapType {$maybe_val = $mapType.ctx->maybe_val;}
+		| identifier {$maybe_val =
+		CheckIdentifierExists(this, global_symbol_table, $identifier.ctx);}
 	);
 vectorType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
 	KW_VECTOR WS* LT WS* unvaluedType WS* GT {
-		$maybe_val = MakeVector(
-			this, global_symbol_table, $unvaluedType.ctx);
+		if ($unvaluedType.ctx->maybe_val) {
+			$maybe_val = std::make_shared<td::Vector>(*$unvaluedType.ctx->maybe_val);
+		}
 	};
 mapType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
 	KW_MAP WS* LT WS* primitiveType WS* COMMA WS* unvaluedType WS* GT {
-		$maybe_val = MakeMap(
-			this, global_symbol_table, $primitiveType.ctx, $unvaluedType.ctx);
+		if ($primitiveType.ctx->maybe_val && $unvaluedType.ctx->maybe_val) {
+			$maybe_val = std::make_shared<td::Map>(*$primitiveType.ctx->maybe_val, *$unvaluedType.ctx->maybe_val);
+		}
 	};
 
 primitiveType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
 	KW_BOOL { $maybe_val = std::optional<bool>(); }
 	| KW_CHAR { $maybe_val = std::optional<char32_t>(); }
-	| KW_STRING { $maybe_val = std::optional<string>(); }
+	| KW_STRING { $maybe_val = std::optional<std::string>(); }
 	| KW_F32 { $maybe_val = std::optional<float>(); }
 	| KW_F64 { $maybe_val = std::optional<double>(); }
 	| KW_U8 { $maybe_val = std::optional<uint8_t>(); }

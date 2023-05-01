@@ -649,6 +649,8 @@ void DefineVariant(ostream& hdr, ostream& src,
       std::string("Mutable") +
       escape_utf8_to_cpp_identifier(variant_symbol.first);
 
+  // TODO rewrite this to use a tagged union.
+
   fmt::print(hdr, "class {} TD_FINAL_CLASS {{\n", escaped_variant_id);
 
   fmt::print(hdr, "  public:\n");
@@ -664,10 +666,10 @@ void DefineVariant(ostream& hdr, ostream& src,
                member_id, member_id);
     if (holds_alternative<optional<bool>>(s.second)) {
       fmt::print(hdr,
-                 "    bool {}() const {{ return std::get<{}_t}>(value_); }};\n",
+                 "    bool {}() const {{ return std::get<{}_t>(value_); }};\n",
                  member_id, member_id);
-      fmt::print(hdr, "    void {}(bool _val) {{ value_ = _val; }};\n",
-                 member_id);
+      fmt::print(hdr, "    void {}(bool _val) {{ value_ = ({}_t)_val; }};\n",
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<char32_t>>(s.second)) {
@@ -689,7 +691,7 @@ void DefineVariant(ostream& hdr, ostream& src,
                  "std::get<{}_t>(value_); }};\n",
                  member_id, member_id);
       fmt::print(hdr,
-                 "    void {}(std::string_view _val) {{ value_ = _val; }};\n",
+                 "    void {}(std::string_view _val) {{ value_ = std::string(_val); }};\n",
                  member_id);
       fmt::print(hdr, "\n");
 
@@ -878,7 +880,7 @@ void DefineVariant(ostream& hdr, ostream& src,
     } else if (holds_alternative<optional<char32_t>>(s.second)) {
       fmt::print(hdr, "    typedef char32_t {}_t;\n", member_id);
     } else if (holds_alternative<optional<string>>(s.second)) {
-      fmt::print(hdr, "    typedef std::string const& {}_t;\n", member_id);
+      fmt::print(hdr, "    typedef std::string {}_t;\n", member_id);
     } else if (holds_alternative<optional<float>>(s.second)) {
       fmt::print(hdr, "    typedef float {}_t;\n", member_id);
     } else if (holds_alternative<optional<double>>(s.second)) {

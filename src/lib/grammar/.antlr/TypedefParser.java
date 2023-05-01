@@ -913,8 +913,9 @@ public class TypedefParser extends Parser {
 				_alt = getInterpreter().adaptivePredict(_input,26,_ctx);
 			}
 
-					((MaybeValuedSymbolContext)_localctx).maybe_symbol =  MakeSymbol(this, global_symbol_table,
-						((MaybeValuedSymbolContext)_localctx).identifier->id, ((MaybeValuedSymbolContext)_localctx).maybeValuedType);
+					if (((MaybeValuedSymbolContext)_localctx).maybeValuedType->maybe_val) {
+						((MaybeValuedSymbolContext)_localctx).maybe_symbol =  std::make_pair(((MaybeValuedSymbolContext)_localctx).identifier->id, *((MaybeValuedSymbolContext)_localctx).maybeValuedType->maybe_val);
+					}
 
 			}
 		}
@@ -1009,10 +1010,9 @@ public class TypedefParser extends Parser {
 				_alt = getInterpreter().adaptivePredict(_input,29,_ctx);
 			}
 
-					// TODO probably don't need this now that maybe_val's are getting
-					// bubbled up the tree.
-					((UnvaluedSymbolContext)_localctx).maybe_symbol =  MakeSymbol(this, global_symbol_table,
-						((UnvaluedSymbolContext)_localctx).identifier->id, ((UnvaluedSymbolContext)_localctx).unvaluedType);
+					if (((UnvaluedSymbolContext)_localctx).unvaluedType->maybe_val) {
+						((UnvaluedSymbolContext)_localctx).maybe_symbol =  std::make_pair(((UnvaluedSymbolContext)_localctx).identifier->id, *((UnvaluedSymbolContext)_localctx).unvaluedType->maybe_val);
+					}
 
 			}
 		}
@@ -1061,7 +1061,7 @@ public class TypedefParser extends Parser {
 				{
 				setState(313);
 				((MaybeValuedTypeContext)_localctx).valuedType = valuedType();
-				((MaybeValuedTypeContext)_localctx).maybe_val =  ((MaybeValuedTypeContext)_localctx).valuedType->mayble_val;
+				((MaybeValuedTypeContext)_localctx).maybe_val =  ((MaybeValuedTypeContext)_localctx).valuedType->maybe_val;
 				}
 				break;
 			case 2:
@@ -1087,7 +1087,7 @@ public class TypedefParser extends Parser {
 				setState(323);
 				((MaybeValuedTypeContext)_localctx).unvaluedType = unvaluedType();
 				}
-				((MaybeValuedTypeContext)_localctx).maybe_val =  ((MaybeValuedTypeContext)_localctx).unvaluedType->mayble_val;
+				((MaybeValuedTypeContext)_localctx).maybe_val =  ((MaybeValuedTypeContext)_localctx).unvaluedType->maybe_val;
 				}
 				break;
 			}
@@ -1123,7 +1123,7 @@ public class TypedefParser extends Parser {
 			{
 			setState(329);
 			((ValuedTypeContext)_localctx).valuedPrimitiveType = valuedPrimitiveType();
-			((ValuedTypeContext)_localctx).maybe_val =  ((ValuedTypeContext)_localctx).valuedPrimitiveType->mayble_val;
+			((ValuedTypeContext)_localctx).maybe_val =  ((ValuedTypeContext)_localctx).valuedPrimitiveType->maybe_val;
 			}
 		}
 		catch (RecognitionException re) {
@@ -1186,21 +1186,21 @@ public class TypedefParser extends Parser {
 				{
 				setState(332);
 				((UnvaluedTypeContext)_localctx).primitiveType = primitiveType();
-				((UnvaluedTypeContext)_localctx).maybe_val =  ((UnvaluedTypeContext)_localctx).primitiveType->mayble_val;
+				((UnvaluedTypeContext)_localctx).maybe_val =  ((UnvaluedTypeContext)_localctx).primitiveType->maybe_val;
 				}
 				break;
 			case KW_VECTOR:
 				{
 				setState(335);
 				((UnvaluedTypeContext)_localctx).vectorType = vectorType();
-				((UnvaluedTypeContext)_localctx).maybe_val =  ((UnvaluedTypeContext)_localctx).vectorType->mayble_val;
+				((UnvaluedTypeContext)_localctx).maybe_val =  ((UnvaluedTypeContext)_localctx).vectorType->maybe_val;
 				}
 				break;
 			case KW_MAP:
 				{
 				setState(338);
 				((UnvaluedTypeContext)_localctx).mapType = mapType();
-				((UnvaluedTypeContext)_localctx).maybe_val =  ((UnvaluedTypeContext)_localctx).mapType->mayble_val;
+				((UnvaluedTypeContext)_localctx).maybe_val =  ((UnvaluedTypeContext)_localctx).mapType->maybe_val;
 				}
 				break;
 			case NON_KEYWORD_IDENTIFIER:
@@ -1208,9 +1208,8 @@ public class TypedefParser extends Parser {
 				{
 				setState(341);
 				((UnvaluedTypeContext)_localctx).identifier = identifier();
-				((UnvaluedTypeContext)_localctx).maybe_val =  std::optional<SymbolRef>(
-							  ((UnvaluedTypeContext)_localctx).identifier->NON_KEYWORD_IDENTIFIER()->getSymbol()->getText());
-							
+				((UnvaluedTypeContext)_localctx).maybe_val = 
+						CheckIdentifierExists(this, global_symbol_table, ((UnvaluedTypeContext)_localctx).identifier);
 				}
 				break;
 			default:
@@ -1306,8 +1305,9 @@ public class TypedefParser extends Parser {
 			setState(367);
 			match(GT);
 
-					((VectorTypeContext)_localctx).maybe_val =  MakeVector(
-						this, global_symbol_table, ((VectorTypeContext)_localctx).unvaluedType);
+					if (((VectorTypeContext)_localctx).unvaluedType->maybe_val) {
+						((VectorTypeContext)_localctx).maybe_val =  std::make_shared<td::Vector>(*((VectorTypeContext)_localctx).unvaluedType->maybe_val);
+					}
 				
 			}
 		}
@@ -1436,8 +1436,9 @@ public class TypedefParser extends Parser {
 			setState(405);
 			match(GT);
 
-					((MapTypeContext)_localctx).maybe_val =  MakeMap(
-						this, global_symbol_table, ((MapTypeContext)_localctx).primitiveType, ((MapTypeContext)_localctx).unvaluedType);
+					if (((MapTypeContext)_localctx).primitiveType->maybe_val && ((MapTypeContext)_localctx).unvaluedType->maybe_val) {
+						((MapTypeContext)_localctx).maybe_val =  std::make_shared<td::Map>(*((MapTypeContext)_localctx).primitiveType->maybe_val, *((MapTypeContext)_localctx).unvaluedType->maybe_val);
+					}
 				
 			}
 		}
@@ -1501,7 +1502,7 @@ public class TypedefParser extends Parser {
 				{
 				setState(412);
 				match(KW_STRING);
-				 ((PrimitiveTypeContext)_localctx).maybe_val =  std::optional<string>(); 
+				 ((PrimitiveTypeContext)_localctx).maybe_val =  std::optional<std::string>(); 
 				}
 				break;
 			case KW_F32:
