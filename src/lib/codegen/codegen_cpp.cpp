@@ -105,9 +105,10 @@ CppIdentifiers GetCppType(SymbolTable::Symbol const& s) {
         CppIdentifiers::VECTOR, escape_utf8_to_cpp_identifier(s.first),
         std::string("Mutable") + escape_utf8_to_cpp_identifier(s.first));
   } else if (holds_alternative<SymbolRef>(s.second)) {
+    auto v = std::get<SymbolRef>(s.second);
     return CppIdentifiers(
         CppIdentifiers::SYMBOL_REF, escape_utf8_to_cpp_identifier(s.first),
-        std::string("Mutable") + escape_utf8_to_cpp_identifier(s.first));
+        std::string("Mutable") + escape_utf8_to_cpp_identifier(v.id));
   } else {
     abort();
   }
@@ -689,7 +690,7 @@ void DefineVariant(ostream& hdr, ostream& src,
                  "       return {}_;\n"
                  "    }};\n",
                  member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(bool _val) {{ {}_ = ({}_t)_val; }};\n",
+      fmt::print(hdr, "    void {}(bool _val) {{ {}_ = _val; }};\n",
                  member_id, member_id, member_id);
       fmt::print(hdr, "\n");
 
@@ -938,83 +939,11 @@ void DefineVariant(ostream& hdr, ostream& src,
   fmt::print(hdr, "    Tag tag_ = Tag::__TAGS_BEGIN;\n");
   fmt::print(hdr, "\n");
 
-  for (auto s : ptr->table.table_) {
-    std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    if (holds_alternative<optional<bool>>(s.second)) {
-      fmt::print(hdr, "    typedef bool {}_t;\n", member_id);
-    } else if (holds_alternative<optional<char32_t>>(s.second)) {
-      fmt::print(hdr, "    typedef char32_t {}_t;\n", member_id);
-    } else if (holds_alternative<optional<string>>(s.second)) {
-      fmt::print(hdr, "    typedef std::string {}_t;\n", member_id);
-    } else if (holds_alternative<optional<float>>(s.second)) {
-      fmt::print(hdr, "    typedef float {}_t;\n", member_id);
-    } else if (holds_alternative<optional<double>>(s.second)) {
-      fmt::print(hdr, "    typedef double {}_t;\n", member_id);
-    } else if (holds_alternative<optional<int8_t>>(s.second)) {
-      fmt::print(hdr, "    typedef int8_t {}_t;\n", member_id);
-    } else if (holds_alternative<optional<int16_t>>(s.second)) {
-      fmt::print(hdr, "    typedef int16_t {}_t;\n", member_id);
-    } else if (holds_alternative<optional<int32_t>>(s.second)) {
-      fmt::print(hdr, "    typedef int32_t {}_t;\n", member_id);
-    } else if (holds_alternative<optional<int64_t>>(s.second)) {
-      fmt::print(hdr, "    typedef int64_t {}_t;\n", member_id);
-    } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-      fmt::print(hdr, "    typedef uint8_t {}_t;\n", member_id);
-    } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-      fmt::print(hdr, "    typedef uint16_t {}_t;\n", member_id);
-    } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-      fmt::print(hdr, "    typedef uint32_t {}_t;\n", member_id);
-    } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-      fmt::print(hdr, "    typedef uint64_t {}_t;\n", member_id);
-    } else if (holds_alternative<SymbolRef>(s.second)) {
-      auto referenced_symbol =
-          escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
-      fmt::print(hdr, "    typedef std::unique_ptr<Mutable{}> {}_t;\n",
-                 referenced_symbol, member_id);
-      // } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
-      //   auto def = get<shared_ptr<Struct>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr, "    typedef std::shared_ptr<{}> {}_t;\n",
-      //              escaped_def_id, member_id);
-      // } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
-      //   auto def = get<shared_ptr<Variant>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr, "    typedef std::shared_ptr<{}> {}_t;\n",
-      //              escaped_def_id, member_id);
-      // } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
-      //   auto def = get<shared_ptr<Vector>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr, "    typedef std::shared_ptr<{}> {}_t;\n",
-      //              escaped_def_id, member_id);
-      // } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
-      //   auto def = get<shared_ptr<Map>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr, "    typedef std::shared_ptr<{}> {}_t;\n",
-      //              escaped_def_id, member_id);
-    } else {
-      abort();
-    }
-  }
-  fmt::print(hdr, "\n");
-
-  // TODO create the union here. I don't think we need the typedefs above?
-
   fmt::print(hdr, "  union {{\n");
   bool first = true;
   for (auto s : ptr->table.table_) {
     CppIdentifiers cpp_id = GetCppType(s);
-    if (holds_alternative<SymbolRef>(s.second)) {
-      auto referenced_symbol =
-          escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
-      fmt::print(hdr, "      std::unique_ptr<Mutable{}> {}_;\n",
-                 referenced_symbol, cpp_id.symbol_id);
-    } else {
-      fmt::print(hdr, "      {} {}_;\n", cpp_id.full_type_id, cpp_id.symbol_id);
-    }
+    fmt::print(hdr, "      {} {}_;\n", cpp_id.full_type_id, cpp_id.symbol_id);
   }
   fmt::print(hdr, "  }};\n");
   fmt::print(hdr, "\n");

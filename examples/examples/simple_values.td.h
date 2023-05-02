@@ -60,13 +60,19 @@
 
 // struct forward declarations
 class MutableMapA;
+class MutableMapB;
+class MutableMapC;
+class MutableMapD;
 class MutableStructA;
 class MutableStructB;
 class MutableStructC;
 class MutableStructD;
 class MutableVariantA;
+class MutableVariantB;
 class MutableVecA;
 class MutableVecB;
+class MutableVecC;
+class MutableVecD;
 
 // value declarations
 typedef std::string VAL;
@@ -130,6 +136,42 @@ class MutableMapA : public std::map<int32_t, std::string> {
     MutableMapA() {};
 
     friend std::ostream& operator<<(std::ostream& os, const MutableMapA& obj);
+
+  private:
+
+};
+
+
+class MutableMapB : public std::map<std::string, std::unique_ptr<MutableStructC>> {
+
+  public:
+    MutableMapB() {};
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableMapB& obj);
+
+  private:
+
+};
+
+
+class MutableMapC : public std::map<std::string, std::unique_ptr<MutableVecA>> {
+
+  public:
+    MutableMapC() {};
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableMapC& obj);
+
+  private:
+
+};
+
+
+class MutableMapD : public std::map<std::string, std::unique_ptr<MutableVariantA>> {
+
+  public:
+    MutableMapD() {};
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableMapD& obj);
 
   private:
 
@@ -419,86 +461,22 @@ class MutableVariantA TD_FINAL_CLASS {
     __TAGS_BEGIN = 0,
     TAG_a,
     TAG_b,
-    TAG_c,
-    TAG_d,
-    TAG_e,
-    TAG_f,
-    TAG_g,
-    TAG_h,
     __TAGS_END,
     };
 
     bool Isa() const { return tag_ == Tag::TAG_a; };
-    std::unique_ptr<MutableStructA>& a() {
+    bool a() const {
        assert(tag_ == Tag::TAG_a);
        return a_;
     };
-    const std::unique_ptr<MutableStructA>& a() const {
-       assert(tag_ == Tag::TAG_a);
-       return a_;
-    };
-    void a(std::unique_ptr<MutableStructA> _val) { a_ = std::move(_val); };
+    void a(bool _val) { a_ = _val; };
 
     bool Isb() const { return tag_ == Tag::TAG_b; };
-    std::unique_ptr<MutableStructB>& b() {
+    int8_t b() const {
        assert(tag_ == Tag::TAG_b);
        return b_;
     };
-    const std::unique_ptr<MutableStructB>& b() const {
-       assert(tag_ == Tag::TAG_b);
-       return b_;
-    };
-    void b(std::unique_ptr<MutableStructB> _val) { b_ = std::move(_val); };
-
-    bool Isc() const { return tag_ == Tag::TAG_c; };
-    std::unique_ptr<MutableStructC>& c() {
-       assert(tag_ == Tag::TAG_c);
-       return c_;
-    };
-    const std::unique_ptr<MutableStructC>& c() const {
-       assert(tag_ == Tag::TAG_c);
-       return c_;
-    };
-    void c(std::unique_ptr<MutableStructC> _val) { c_ = std::move(_val); };
-
-    bool Isd() const { return tag_ == Tag::TAG_d; };
-    bool d() const {
-       assert(tag_ == Tag::TAG_d);
-       return d_;
-    };
-    void d(bool _val) { d_ = (d_t)_val; };
-
-    bool Ise() const { return tag_ == Tag::TAG_e; };
-    bool e() const {
-       assert(tag_ == Tag::TAG_e);
-       return e_;
-    };
-    void e(bool _val) { e_ = (e_t)_val; };
-
-    bool Isf() const { return tag_ == Tag::TAG_f; };
-    int32_t f() const {
-       assert(tag_ == Tag::TAG_f);
-       return f_;
-    };
-    void f(int32_t _val) { f_ = _val; };
-
-    bool Isg() const { return tag_ == Tag::TAG_g; };
-    char32_t g() const {
-       assert(tag_ == Tag::TAG_g);
-       return g_;
-    };
-    void g(char32_t _val) { g_ = _val; };
-
-    bool Ish() const { return tag_ == Tag::TAG_h; };
-    std::string_view h() const {
-       assert(tag_ == Tag::TAG_h);
-       return h_;
-    };
-    std::string& h() {
-       assert(tag_ == Tag::TAG_h);
-       return h_;
-    };
-    void h(std::string_view _val) { h_ = std::string(_val); };
+    void b(int8_t _val) { b_ = _val; };
 
     bool isEqual(const MutableVariantA &rhs) const {
       if (tag_ != rhs.tag_) { return false; };
@@ -511,30 +489,225 @@ class MutableVariantA TD_FINAL_CLASS {
   private:
     Tag tag_ = Tag::__TAGS_BEGIN;
 
-    typedef std::unique_ptr<MutableStructA> a_t;
-    typedef std::unique_ptr<MutableStructB> b_t;
-    typedef std::unique_ptr<MutableStructC> c_t;
-    typedef bool d_t;
-    typedef bool e_t;
-    typedef int32_t f_t;
-    typedef char32_t g_t;
-    typedef std::string h_t;
-
   union {
-      std::unique_ptr<MutableStructA> a_;
-      std::unique_ptr<MutableStructB> b_;
-      std::unique_ptr<MutableStructC> c_;
-      bool d_;
-      bool e_;
-      int32_t f_;
-      char32_t g_;
-      std::string h_;
+      bool a_;
+      int8_t b_;
   };
 
 };
 
 bool operator==(const MutableVariantA &lhs, const MutableVariantA &rhs);
 inline bool operator!=(const MutableVariantA &lhs, const MutableVariantA &rhs) { return !(lhs == rhs); };
+
+
+class MutableVariantB TD_FINAL_CLASS {
+  public:
+    MutableVariantB() {};
+    ~MutableVariantB() {};
+    enum class Tag {
+    __TAGS_BEGIN = 0,
+    TAG_a,
+    TAG_b,
+    TAG_c,
+    TAG_d,
+    TAG_e,
+    TAG_f,
+    TAG_g,
+    TAG_h,
+    TAG_i,
+    TAG_j,
+    TAG_k,
+    TAG_mapa,
+    TAG_sa,
+    TAG_sb,
+    TAG_sc,
+    TAG_va,
+    TAG_vara,
+    __TAGS_END,
+    };
+
+    bool Isa() const { return tag_ == Tag::TAG_a; };
+    bool a() const {
+       assert(tag_ == Tag::TAG_a);
+       return a_;
+    };
+    void a(bool _val) { a_ = _val; };
+
+    bool Isb() const { return tag_ == Tag::TAG_b; };
+    char32_t b() const {
+       assert(tag_ == Tag::TAG_b);
+       return b_;
+    };
+    void b(char32_t _val) { b_ = _val; };
+
+    bool Isc() const { return tag_ == Tag::TAG_c; };
+    std::string_view c() const {
+       assert(tag_ == Tag::TAG_c);
+       return c_;
+    };
+    std::string& c() {
+       assert(tag_ == Tag::TAG_c);
+       return c_;
+    };
+    void c(std::string_view _val) { c_ = std::string(_val); };
+
+    bool Isd() const { return tag_ == Tag::TAG_d; };
+    uint8_t d() const {
+       assert(tag_ == Tag::TAG_d);
+       return d_;
+    };
+    void d(uint8_t _val) { d_ = _val; };
+
+    bool Ise() const { return tag_ == Tag::TAG_e; };
+    uint16_t e() const {
+       assert(tag_ == Tag::TAG_e);
+       return e_;
+    };
+    void e(uint16_t _val) { e_ = _val; };
+
+    bool Isf() const { return tag_ == Tag::TAG_f; };
+    uint32_t f() const {
+       assert(tag_ == Tag::TAG_f);
+       return f_;
+    };
+    void f(uint32_t _val) { f_ = _val; };
+
+    bool Isg() const { return tag_ == Tag::TAG_g; };
+    uint64_t g() const {
+       assert(tag_ == Tag::TAG_g);
+       return g_;
+    };
+    void g(uint64_t _val) { g_ = _val; };
+
+    bool Ish() const { return tag_ == Tag::TAG_h; };
+    int8_t h() const {
+       assert(tag_ == Tag::TAG_h);
+       return h_;
+    };
+    void h(int8_t _val) { h_ = _val; };
+
+    bool Isi() const { return tag_ == Tag::TAG_i; };
+    int16_t i() const {
+       assert(tag_ == Tag::TAG_i);
+       return i_;
+    };
+    void i(int16_t _val) { i_ = _val; };
+
+    bool Isj() const { return tag_ == Tag::TAG_j; };
+    int32_t j() const {
+       assert(tag_ == Tag::TAG_j);
+       return j_;
+    };
+    void j(int32_t _val) { j_ = _val; };
+
+    bool Isk() const { return tag_ == Tag::TAG_k; };
+    int64_t k() const {
+       assert(tag_ == Tag::TAG_k);
+       return k_;
+    };
+    void k(int64_t _val) { k_ = _val; };
+
+    bool Ismapa() const { return tag_ == Tag::TAG_mapa; };
+    std::unique_ptr<MutableMapA>& mapa() {
+       assert(tag_ == Tag::TAG_mapa);
+       return mapa_;
+    };
+    const std::unique_ptr<MutableMapA>& mapa() const {
+       assert(tag_ == Tag::TAG_mapa);
+       return mapa_;
+    };
+    void mapa(std::unique_ptr<MutableMapA> _val) { mapa_ = std::move(_val); };
+
+    bool Issa() const { return tag_ == Tag::TAG_sa; };
+    std::unique_ptr<MutableStructA>& sa() {
+       assert(tag_ == Tag::TAG_sa);
+       return sa_;
+    };
+    const std::unique_ptr<MutableStructA>& sa() const {
+       assert(tag_ == Tag::TAG_sa);
+       return sa_;
+    };
+    void sa(std::unique_ptr<MutableStructA> _val) { sa_ = std::move(_val); };
+
+    bool Issb() const { return tag_ == Tag::TAG_sb; };
+    std::unique_ptr<MutableStructB>& sb() {
+       assert(tag_ == Tag::TAG_sb);
+       return sb_;
+    };
+    const std::unique_ptr<MutableStructB>& sb() const {
+       assert(tag_ == Tag::TAG_sb);
+       return sb_;
+    };
+    void sb(std::unique_ptr<MutableStructB> _val) { sb_ = std::move(_val); };
+
+    bool Issc() const { return tag_ == Tag::TAG_sc; };
+    std::unique_ptr<MutableStructC>& sc() {
+       assert(tag_ == Tag::TAG_sc);
+       return sc_;
+    };
+    const std::unique_ptr<MutableStructC>& sc() const {
+       assert(tag_ == Tag::TAG_sc);
+       return sc_;
+    };
+    void sc(std::unique_ptr<MutableStructC> _val) { sc_ = std::move(_val); };
+
+    bool Isva() const { return tag_ == Tag::TAG_va; };
+    std::unique_ptr<MutableVecA>& va() {
+       assert(tag_ == Tag::TAG_va);
+       return va_;
+    };
+    const std::unique_ptr<MutableVecA>& va() const {
+       assert(tag_ == Tag::TAG_va);
+       return va_;
+    };
+    void va(std::unique_ptr<MutableVecA> _val) { va_ = std::move(_val); };
+
+    bool Isvara() const { return tag_ == Tag::TAG_vara; };
+    std::unique_ptr<MutableVariantA>& vara() {
+       assert(tag_ == Tag::TAG_vara);
+       return vara_;
+    };
+    const std::unique_ptr<MutableVariantA>& vara() const {
+       assert(tag_ == Tag::TAG_vara);
+       return vara_;
+    };
+    void vara(std::unique_ptr<MutableVariantA> _val) { vara_ = std::move(_val); };
+
+    bool isEqual(const MutableVariantB &rhs) const {
+      if (tag_ != rhs.tag_) { return false; };
+      // TODO(dpemmons) this.
+      return false;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableVariantB& obj);
+
+  private:
+    Tag tag_ = Tag::__TAGS_BEGIN;
+
+  union {
+      bool a_;
+      char32_t b_;
+      std::string c_;
+      uint8_t d_;
+      uint16_t e_;
+      uint32_t f_;
+      uint64_t g_;
+      int8_t h_;
+      int16_t i_;
+      int32_t j_;
+      int64_t k_;
+      std::unique_ptr<MutableMapA> mapa_;
+      std::unique_ptr<MutableStructA> sa_;
+      std::unique_ptr<MutableStructB> sb_;
+      std::unique_ptr<MutableStructC> sc_;
+      std::unique_ptr<MutableVecA> va_;
+      std::unique_ptr<MutableVariantA> vara_;
+  };
+
+};
+
+bool operator==(const MutableVariantB &lhs, const MutableVariantB &rhs);
+inline bool operator!=(const MutableVariantB &lhs, const MutableVariantB &rhs) { return !(lhs == rhs); };
 
 
 class MutableVecA : public std::vector<uint8_t> {
@@ -550,13 +723,39 @@ class MutableVecA : public std::vector<uint8_t> {
 };
 
 
-class MutableVecB : public std::vector<std::unique_ptr<Mutable_>> {
+class MutableVecB : public std::vector<std::unique_ptr<MutableStructC>> {
 
   public:
     MutableVecB() {};
     ~MutableVecB() {};
 
     friend std::ostream& operator<<(std::ostream& os, const MutableVecB& obj);
+
+  private:
+
+};
+
+
+class MutableVecC : public std::vector<std::unique_ptr<MutableVariantB>> {
+
+  public:
+    MutableVecC() {};
+    ~MutableVecC() {};
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableVecC& obj);
+
+  private:
+
+};
+
+
+class MutableVecD : public std::vector<std::unique_ptr<MutableMapA>> {
+
+  public:
+    MutableVecD() {};
+    ~MutableVecD() {};
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableVecD& obj);
 
   private:
 

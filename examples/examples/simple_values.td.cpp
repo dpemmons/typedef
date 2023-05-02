@@ -40,6 +40,24 @@ std::ostream& operator<<(std::ostream& os, const MutableMapA& obj) {
   return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const MutableMapB& obj) {
+  os << "map MutableMapB :\n";
+  os << "  something.\n";
+  return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const MutableMapC& obj) {
+  os << "map MutableMapC :\n";
+  os << "  something.\n";
+  return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const MutableMapD& obj) {
+  os << "map MutableMapD :\n";
+  os << "  something.\n";
+  return os;
+}
+
 bool operator==(const MutableStructA &lhs, const MutableStructA &rhs) {
   return
     (lhs.example_bool() == rhs.example_bool()) &&
@@ -176,6 +194,16 @@ std::ostream& operator<<(std::ostream& os, const MutableVariantA& obj) {
   return os;
 }
 
+bool operator==(const MutableVariantB &lhs, const MutableVariantB &rhs) {
+  return lhs.isEqual(rhs);
+}
+
+std::ostream& operator<<(std::ostream& os, const MutableVariantB& obj) {
+  os << "variant MutableVariantB :\n";
+  os << "  something.\n";
+  return os;
+}
+
 std::ostream& operator<<(std::ostream& os, const MutableVecA& obj) {
   os << "vector MutableVecA :\n";
   os << "  something.\n";
@@ -184,6 +212,18 @@ std::ostream& operator<<(std::ostream& os, const MutableVecA& obj) {
 
 std::ostream& operator<<(std::ostream& os, const MutableVecB& obj) {
   os << "vector MutableVecB :\n";
+  os << "  something.\n";
+  return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const MutableVecC& obj) {
+  os << "vector MutableVecC :\n";
+  os << "  something.\n";
+  return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const MutableVecD& obj) {
+  os << "vector MutableVecD :\n";
   os << "  something.\n";
   return os;
 }

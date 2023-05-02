@@ -93,21 +93,42 @@ StructC: struct {
   jkl: i32;
 };
 
+VecA: vector<u8>;
 VariantA: variant {
-  a: StructA;
-  b: StructB;
-  c: StructC;
-  d: bool;
-  e: bool;
-  f: i32;
-  g: char;
-  h: str;
+  a: bool;
+  b: i8;
+};
+MapA: map<i32, str>;
+
+VariantB: variant {
+  a: bool;
+  b: char;
+  c: str;
+  d: u8;
+  e: u16;
+  f: u32;
+  g: u64;
+  h: i8;
+  i: i16;
+  j: i32;
+  k: i64;
+
+  sa: StructA;
+  sb: StructB;
+  sc: StructC;
+
+  va: VecA;
+  vara: VariantA;
+  mapa: MapA;
 };
 
-VecA: vector<u8>;
 VecB: vector<StructC>;
+VecC: vector<VariantB>;
+VecD: vector<MapA>;
 
-MapA: map<i32, str>;
+MapB: map<str, StructC>;
+MapC: map<str, VecA>;
+MapD: map<str, VariantA>;
 
 StructD: struct {
   a_struct: StructA;
