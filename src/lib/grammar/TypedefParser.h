@@ -77,6 +77,8 @@ public:
 
 
   	td::SymbolTable global_symbol_table;
+  	std::string global_version;
+  	std::vector<std::string> global_module;
 
 
   class CompilationUnitContext;
@@ -129,6 +131,8 @@ public:
 
   class  CompilationUnitContext : public antlr4::ParserRuleContext {
   public:
+    TypedefParser::TypedefVersionDeclarationContext *typedefVersionDeclarationContext = nullptr;;
+    TypedefParser::ModuleDeclarationContext *moduleDeclarationContext = nullptr;;
     CompilationUnitContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     TypedefVersionDeclarationContext *typedefVersionDeclaration();
@@ -752,6 +756,8 @@ public:
 
   class  TypedefVersionDeclarationContext : public antlr4::ParserRuleContext {
   public:
+    std::string version;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
     TypedefVersionDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_TYPEDEF();
@@ -772,6 +778,8 @@ public:
 
   class  ModuleDeclarationContext : public antlr4::ParserRuleContext {
   public:
+    std::vector<std::string> module;
+    TypedefParser::SimplePathContext *simplePathContext = nullptr;;
     ModuleDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_MODULE();
@@ -831,6 +839,8 @@ public:
 
   class  SimplePathContext : public antlr4::ParserRuleContext {
   public:
+    std::vector<std::string> path;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
     SimplePathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<IdentifierContext *> identifier();

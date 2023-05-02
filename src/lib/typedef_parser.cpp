@@ -155,15 +155,9 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
   }
 
   ParsedFileBuilder builder;
-  // ProcessLanguageVersion(compilation_unit, builder, errors);
-  // ProcessModuleDeclaration(compilation_unit, builder, errors);
-  // ProcessUseDeclarations(compilation_unit, builder, errors);
-  // ProcessValueDefinitions(compilation_unit, builder, errors);
-
-  // AddValueDefinitions(compilation_unit, builder, errors);
   if (errors.empty()) {
-    builder.SetLanguageVersion(LangaugeVersionFromString(
-        compilation_unit->typedefVersionDeclaration()->identifier()->id));
+    builder.SetLanguageVersion(LangaugeVersionFromString(parser.global_version));
+    builder.SetModule(parser.global_module);
     builder.AddSymbols2(parser.global_symbol_table);
   }
   builder.AddErrors(errors);

@@ -18,12 +18,14 @@ options {
 
 @parser::members {
 	td::SymbolTable global_symbol_table;
+	std::string global_version;
+	std::vector<std::string> global_module;
 }
 
 compilationUnit:
-	typedefVersionDeclaration WS* moduleDeclaration? (
-		WS* useDeclaration
-	)* (WS* item)* WS* EOF;
+	typedefVersionDeclaration {global_version = $typedefVersionDeclaration.ctx->version; } WS* (
+		moduleDeclaration { global_module = $moduleDeclaration.ctx->module; }
+	)? (WS* useDeclaration)* (WS* item)* WS* EOF;
 
 item:
 	maybeValuedSymbolDeclaration {
@@ -209,9 +211,13 @@ valuedI64Fragment: (
 
 // thing < arg2, 42 > parameterizedType: identifier LT (identifier | u64Literal)+ GT;
 
-typedefVersionDeclaration:
-	KW_TYPEDEF WS* EQ WS* identifier WS* SEMI;
-moduleDeclaration: KW_MODULE simplePath SEMI;
+typedefVersionDeclaration
+	returns[std::string version]:
+	KW_TYPEDEF WS* EQ WS* identifier WS* SEMI { $version = $identifier.ctx->id; };
+
+moduleDeclaration
+	returns[std::vector<std::string> module]:
+	KW_MODULE simplePath SEMI { $module = $simplePath.ctx->path; };
 
 useDeclaration: 'use' useTree ';';
 useTree: (simplePath? '::')? (
@@ -232,7 +238,11 @@ useTree: (simplePath? '::')? (
 // array: LBRACK (value (COMMA value)*)? COMMA? RBRACK; map: LBRACE (keyValue (COMMA keyValue)*
 // COMMA?)? RBRACE; keyValue: identifier COLON value;
 
-simplePath: '::'? identifier ('::' identifier)*;
+simplePath
+	returns[std::vector<std::string> path]:
+	'::'? identifier {$path.push_back($identifier.ctx->id);} (
+		'::' identifier {$path.push_back($identifier.ctx->id);}
+	)*;
 
 boolLiteral
 	returns[std::optional<bool> maybe_val]
