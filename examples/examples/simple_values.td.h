@@ -1,6 +1,7 @@
 #ifndef __EXAMPLES_SIMPLE_VALUES_TD_CPP_H__
 #define __EXAMPLES_SIMPLE_VALUES_TD_CPP_H__
 
+#include <cassert>
 #include <cstdint>
 #include <map>
 #include <memory>
@@ -138,6 +139,7 @@ class MutableMapA : public std::map<int32_t, std::string> {
 class MutableStructA TD_FINAL_CLASS {
   public:
     MutableStructA() {};
+    ~MutableStructA() {};
     MutableStructA(
       bool _example_bool,
       char32_t _example_char,
@@ -233,6 +235,7 @@ inline bool operator!=(const MutableStructA &lhs, const MutableStructA &rhs) { r
 class MutableStructB TD_FINAL_CLASS {
   public:
     MutableStructB() {};
+    ~MutableStructB() {};
     MutableStructB(
       bool _example_bool,
       char32_t _example_char,
@@ -328,8 +331,9 @@ inline bool operator!=(const MutableStructB &lhs, const MutableStructB &rhs) { r
 class MutableStructC TD_FINAL_CLASS {
   public:
     MutableStructC() {};
+    ~MutableStructC() {};
     MutableStructC(
-      std::string const& _asdf,
+      std::unique_ptr<MutableStructA> _asdf,
       int32_t _jkl,
       int32_t _zxcv,
       bool __foo = false) :
@@ -338,8 +342,9 @@ class MutableStructC TD_FINAL_CLASS {
       zxcv_(std::move(_zxcv)),
       __foo(false) {}
 
-    std::string_view asdf() const { return asdf_; }
-    void asdf(std::string_view const& val) { asdf_ = val; }
+    std::unique_ptr<MutableStructA>& asdf() { return asdf_; }
+    const std::unique_ptr<MutableStructA>& asdf() const { return asdf_; }
+    void asdf(std::unique_ptr<MutableStructA> val) { asdf_ = std::move(val); }
 
     int32_t jkl() const { return jkl_; }
     void jkl(int32_t val) { jkl_ = val; }
@@ -350,7 +355,7 @@ class MutableStructC TD_FINAL_CLASS {
     friend std::ostream& operator<<(std::ostream& os, const MutableStructC& obj);
 
   private:
-    std::string asdf_ = R"LITERAL(StructA)LITERAL";
+    std::unique_ptr<MutableStructA> asdf_;
     int32_t jkl_ = 0;
     int32_t zxcv_ = 0;
     bool __foo; // to simplify codegen. will remove in future versions...
@@ -363,11 +368,12 @@ inline bool operator!=(const MutableStructC &lhs, const MutableStructC &rhs) { r
 class MutableStructD TD_FINAL_CLASS {
   public:
     MutableStructD() {};
+    ~MutableStructD() {};
     MutableStructD(
-      std::string const& _a_struct,
-      std::string const& _b_variant,
-      std::string const& _c_vec,
-      std::string const& _d_map,
+      std::unique_ptr<MutableStructA> _a_struct,
+      std::unique_ptr<MutableVariantA> _b_variant,
+      std::unique_ptr<MutableVecA> _c_vec,
+      std::unique_ptr<MutableMapA> _d_map,
       bool __foo = false) :
       a_struct_(std::move(_a_struct)),
       b_variant_(std::move(_b_variant)),
@@ -375,25 +381,29 @@ class MutableStructD TD_FINAL_CLASS {
       d_map_(std::move(_d_map)),
       __foo(false) {}
 
-    std::string_view a_struct() const { return a_struct_; }
-    void a_struct(std::string_view const& val) { a_struct_ = val; }
+    std::unique_ptr<MutableStructA>& a_struct() { return a_struct_; }
+    const std::unique_ptr<MutableStructA>& a_struct() const { return a_struct_; }
+    void a_struct(std::unique_ptr<MutableStructA> val) { a_struct_ = std::move(val); }
 
-    std::string_view b_variant() const { return b_variant_; }
-    void b_variant(std::string_view const& val) { b_variant_ = val; }
+    std::unique_ptr<MutableVariantA>& b_variant() { return b_variant_; }
+    const std::unique_ptr<MutableVariantA>& b_variant() const { return b_variant_; }
+    void b_variant(std::unique_ptr<MutableVariantA> val) { b_variant_ = std::move(val); }
 
-    std::string_view c_vec() const { return c_vec_; }
-    void c_vec(std::string_view const& val) { c_vec_ = val; }
+    std::unique_ptr<MutableVecA>& c_vec() { return c_vec_; }
+    const std::unique_ptr<MutableVecA>& c_vec() const { return c_vec_; }
+    void c_vec(std::unique_ptr<MutableVecA> val) { c_vec_ = std::move(val); }
 
-    std::string_view d_map() const { return d_map_; }
-    void d_map(std::string_view const& val) { d_map_ = val; }
+    std::unique_ptr<MutableMapA>& d_map() { return d_map_; }
+    const std::unique_ptr<MutableMapA>& d_map() const { return d_map_; }
+    void d_map(std::unique_ptr<MutableMapA> val) { d_map_ = std::move(val); }
 
     friend std::ostream& operator<<(std::ostream& os, const MutableStructD& obj);
 
   private:
-    std::string a_struct_ = R"LITERAL(StructA)LITERAL";
-    std::string b_variant_ = R"LITERAL(VariantA)LITERAL";
-    std::string c_vec_ = R"LITERAL(VecA)LITERAL";
-    std::string d_map_ = R"LITERAL(MapA)LITERAL";
+    std::unique_ptr<MutableStructA> a_struct_;
+    std::unique_ptr<MutableVariantA> b_variant_;
+    std::unique_ptr<MutableVecA> c_vec_;
+    std::unique_ptr<MutableMapA> d_map_;
     bool __foo; // to simplify codegen. will remove in future versions...
 };
 
@@ -404,66 +414,122 @@ inline bool operator!=(const MutableStructD &lhs, const MutableStructD &rhs) { r
 class MutableVariantA TD_FINAL_CLASS {
   public:
     MutableVariantA() {};
-    bool Isa() const { return std::holds_alternative<a_t>(value_); };
-    std::string_view a() const { return std::get<a_t>(value_); };
-    std::string& a() { return std::get<a_t>(value_); };
-    void a(std::string_view _val) { value_ = std::string(_val); };
+    ~MutableVariantA() {};
+    enum class Tag {
+    __TAGS_BEGIN = 0,
+    TAG_a,
+    TAG_b,
+    TAG_c,
+    TAG_d,
+    TAG_e,
+    TAG_f,
+    TAG_g,
+    TAG_h,
+    __TAGS_END,
+    };
 
-    bool Isb() const { return std::holds_alternative<b_t>(value_); };
-    std::string_view b() const { return std::get<b_t>(value_); };
-    std::string& b() { return std::get<b_t>(value_); };
-    void b(std::string_view _val) { value_ = std::string(_val); };
+    bool Isa() const { return tag_ == Tag::TAG_a; };
+    std::unique_ptr<MutableStructA>& a() {
+       assert(tag_ == Tag::TAG_a);
+       return a_;
+    };
+    const std::unique_ptr<MutableStructA>& a() const {
+       assert(tag_ == Tag::TAG_a);
+       return a_;
+    };
+    void a(std::unique_ptr<MutableStructA> _val) { a_ = std::move(_val); };
 
-    bool Isc() const { return std::holds_alternative<c_t>(value_); };
-    std::string_view c() const { return std::get<c_t>(value_); };
-    std::string& c() { return std::get<c_t>(value_); };
-    void c(std::string_view _val) { value_ = std::string(_val); };
+    bool Isb() const { return tag_ == Tag::TAG_b; };
+    std::unique_ptr<MutableStructB>& b() {
+       assert(tag_ == Tag::TAG_b);
+       return b_;
+    };
+    const std::unique_ptr<MutableStructB>& b() const {
+       assert(tag_ == Tag::TAG_b);
+       return b_;
+    };
+    void b(std::unique_ptr<MutableStructB> _val) { b_ = std::move(_val); };
 
-    bool Isd() const { return std::holds_alternative<d_t>(value_); };
-    bool d() const { return std::get<d_t>(value_); };
-    void d(bool _val) { value_ = (d_t)_val; };
+    bool Isc() const { return tag_ == Tag::TAG_c; };
+    std::unique_ptr<MutableStructC>& c() {
+       assert(tag_ == Tag::TAG_c);
+       return c_;
+    };
+    const std::unique_ptr<MutableStructC>& c() const {
+       assert(tag_ == Tag::TAG_c);
+       return c_;
+    };
+    void c(std::unique_ptr<MutableStructC> _val) { c_ = std::move(_val); };
 
-    bool Ise() const { return std::holds_alternative<e_t>(value_); };
-    bool e() const { return std::get<e_t>(value_); };
-    void e(bool _val) { value_ = (e_t)_val; };
+    bool Isd() const { return tag_ == Tag::TAG_d; };
+    bool d() const {
+       assert(tag_ == Tag::TAG_d);
+       return d_;
+    };
+    void d(bool _val) { d_ = (d_t)_val; };
 
-    bool Isf() const { return std::holds_alternative<f_t>(value_); };
-    int32_t f() const { return std::get<f_t>(value_); };
-    void f(int32_t _val) { value_ = _val; };
+    bool Ise() const { return tag_ == Tag::TAG_e; };
+    bool e() const {
+       assert(tag_ == Tag::TAG_e);
+       return e_;
+    };
+    void e(bool _val) { e_ = (e_t)_val; };
 
-    bool Isg() const { return std::holds_alternative<g_t>(value_); };
-    char32_t g() const { return std::get<g_t>(value_); };
-    void g(char32_t _val) { value_ = _val; };
+    bool Isf() const { return tag_ == Tag::TAG_f; };
+    int32_t f() const {
+       assert(tag_ == Tag::TAG_f);
+       return f_;
+    };
+    void f(int32_t _val) { f_ = _val; };
 
-    bool Ish() const { return std::holds_alternative<h_t>(value_); };
-    std::string_view h() const { return std::get<h_t>(value_); };
-    std::string& h() { return std::get<h_t>(value_); };
-    void h(std::string_view _val) { value_ = std::string(_val); };
+    bool Isg() const { return tag_ == Tag::TAG_g; };
+    char32_t g() const {
+       assert(tag_ == Tag::TAG_g);
+       return g_;
+    };
+    void g(char32_t _val) { g_ = _val; };
 
-    bool isEqual(const MutableVariantA &rhs) const { return value_ == rhs.value_; }
+    bool Ish() const { return tag_ == Tag::TAG_h; };
+    std::string_view h() const {
+       assert(tag_ == Tag::TAG_h);
+       return h_;
+    };
+    std::string& h() {
+       assert(tag_ == Tag::TAG_h);
+       return h_;
+    };
+    void h(std::string_view _val) { h_ = std::string(_val); };
+
+    bool isEqual(const MutableVariantA &rhs) const {
+      if (tag_ != rhs.tag_) { return false; };
+      // TODO(dpemmons) this.
+      return false;
+    }
 
     friend std::ostream& operator<<(std::ostream& os, const MutableVariantA& obj);
 
   private:
-    typedef std::string a_t;
-    typedef std::string b_t;
-    typedef std::string c_t;
+    Tag tag_ = Tag::__TAGS_BEGIN;
+
+    typedef std::unique_ptr<MutableStructA> a_t;
+    typedef std::unique_ptr<MutableStructB> b_t;
+    typedef std::unique_ptr<MutableStructC> c_t;
     typedef bool d_t;
     typedef bool e_t;
     typedef int32_t f_t;
     typedef char32_t g_t;
     typedef std::string h_t;
 
-  std::variant<
-      a_t,
-      b_t,
-      c_t,
-      d_t,
-      e_t,
-      f_t,
-      g_t,
-      h_t
-  > value_;
+  union {
+      std::unique_ptr<MutableStructA> a_;
+      std::unique_ptr<MutableStructB> b_;
+      std::unique_ptr<MutableStructC> c_;
+      bool d_;
+      bool e_;
+      int32_t f_;
+      char32_t g_;
+      std::string h_;
+  };
 
 };
 
@@ -471,10 +537,11 @@ bool operator==(const MutableVariantA &lhs, const MutableVariantA &rhs);
 inline bool operator!=(const MutableVariantA &lhs, const MutableVariantA &rhs) { return !(lhs == rhs); };
 
 
-class MutableVecA : public std::vector<std::unique_ptr<MutableVecA>> {
+class MutableVecA : public std::vector<uint8_t> {
 
   public:
     MutableVecA() {};
+    ~MutableVecA() {};
 
     friend std::ostream& operator<<(std::ostream& os, const MutableVecA& obj);
 
@@ -483,10 +550,11 @@ class MutableVecA : public std::vector<std::unique_ptr<MutableVecA>> {
 };
 
 
-class MutableVecB : public std::vector<std::unique_ptr<MutableVecB>> {
+class MutableVecB : public std::vector<std::unique_ptr<Mutable_>> {
 
   public:
     MutableVecB() {};
+    ~MutableVecB() {};
 
     friend std::ostream& operator<<(std::ostream& os, const MutableVecB& obj);
 

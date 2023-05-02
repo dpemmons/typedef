@@ -63,7 +63,7 @@ void PrintType(ostream& os, const SymbolTable::Value& v) {
     fmt::print(os, "map");
   } else if (holds_alternative<SymbolRef>(v)) {
     auto id = get<SymbolRef>(v);
-    fmt::print(os, "ref to {}", id);
+    fmt::print(os, "ref to {}", id.id);
   } else {
     abort();
   }
@@ -112,7 +112,7 @@ void MaybePrintValue(ostream& os, const SymbolTable::Value& v) {
     fmt::print(os, "{}", fmt::streamed(*maybe_val));
   } else if (holds_alternative<SymbolRef>(v)) {
     auto maybe_val = get<SymbolRef>(v);
-    fmt::print(os, "{}", maybe_val);
+    fmt::print(os, "{}", maybe_val.id);
   } else {
     abort();
   }

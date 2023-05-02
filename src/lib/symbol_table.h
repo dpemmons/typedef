@@ -19,7 +19,10 @@ struct Struct;
 struct Variant;
 struct Vector;
 struct Map;
-using SymbolRef = std::string;
+struct SymbolRef {
+  SymbolRef(const std::string &str) : id(str) {}
+  std::string id;
+};
 
 class SymbolTable {
  public:

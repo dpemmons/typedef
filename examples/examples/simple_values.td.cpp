@@ -122,7 +122,11 @@ bool operator==(const MutableStructC &lhs, const MutableStructC &rhs) {
 
 std::ostream& operator<<(std::ostream& os, const MutableStructC& obj) {
   os << "struct MutableStructC :\n";
-  os << "  asdf = " << obj.asdf() << "\n";
+  if (obj.asdf()) {
+    os << "  asdf = " << *obj.asdf() << "\n";
+  } else {
+    os << "  asdf = empty;\n";
+  }
   os << "  jkl = " << obj.jkl() << "\n";
   os << "  zxcv = " << obj.zxcv() << "\n";
   return os;
@@ -139,10 +143,26 @@ bool operator==(const MutableStructD &lhs, const MutableStructD &rhs) {
 
 std::ostream& operator<<(std::ostream& os, const MutableStructD& obj) {
   os << "struct MutableStructD :\n";
-  os << "  a_struct = " << obj.a_struct() << "\n";
-  os << "  b_variant = " << obj.b_variant() << "\n";
-  os << "  c_vec = " << obj.c_vec() << "\n";
-  os << "  d_map = " << obj.d_map() << "\n";
+  if (obj.a_struct()) {
+    os << "  a_struct = " << *obj.a_struct() << "\n";
+  } else {
+    os << "  a_struct = empty;\n";
+  }
+  if (obj.b_variant()) {
+    os << "  b_variant = " << *obj.b_variant() << "\n";
+  } else {
+    os << "  b_variant = empty;\n";
+  }
+  if (obj.c_vec()) {
+    os << "  c_vec = " << *obj.c_vec() << "\n";
+  } else {
+    os << "  c_vec = empty;\n";
+  }
+  if (obj.d_map()) {
+    os << "  d_map = " << *obj.d_map() << "\n";
+  } else {
+    os << "  d_map = empty;\n";
+  }
   return os;
 }
 

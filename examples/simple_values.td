@@ -105,9 +105,9 @@ VariantA: variant {
 };
 
 VecA: vector<u8>;
-MapA: map<i32, str>;
-
 VecB: vector<StructC>;
+
+MapA: map<i32, str>;
 
 StructD: struct {
   a_struct: StructA;

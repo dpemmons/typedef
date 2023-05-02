@@ -223,6 +223,7 @@ void DefineStruct(ostream& hdr, ostream& src,
   // constructor
   // -------------------------------------------------
   fmt::print(hdr, "    {}() {{}};\n", escaped_struct_id);
+  fmt::print(hdr, "    ~{}() {{}};\n", escaped_struct_id);
 
   fmt::print(hdr, "    {}(\n", escaped_struct_id);
   for (auto s : ptr->table.table_) {
@@ -631,8 +632,13 @@ void DefineStruct(ostream& hdr, ostream& src,
   for (auto s : ptr->table.table_) {
     std::string member_id = escape_utf8_to_cpp_identifier(s.first);
     if (holds_alternative<SymbolRef>(s.second)) {
-      fmt::print(src, "  os << \"  {} = \" << *obj.{}() << \"\\n\";\n",
-                 member_id, member_id);
+      fmt::print(src,
+                 "  if (obj.{}()) {{\n"
+                 "    os << \"  {} = \" << *obj.{}() << \"\\n\";\n"
+                 "  }} else {{\n"
+                 "    os << \"  {} = empty;\\n\";\n"
+                 "  }}\n",
+                 member_id, member_id, member_id, member_id);
     } else {
       fmt::print(src, "  os << \"  {} = \" << obj.{}() << \"\\n\";\n",
                  member_id, member_id);
@@ -656,143 +662,196 @@ void DefineVariant(ostream& hdr, ostream& src,
   fmt::print(hdr, "  public:\n");
   // constructors
   fmt::print(hdr, "    {}() {{}};\n", escaped_variant_id);
+  fmt::print(hdr, "    ~{}() {{}};\n", escaped_variant_id);
+
+  // tag enum
+  fmt::print(hdr, "    enum class Tag {{\n");
+  fmt::print(hdr, "    __TAGS_BEGIN = 0,\n");
+  for (auto s : ptr->table.table_) {
+    std::string member_id = escape_utf8_to_cpp_identifier(s.first);
+    fmt::print(hdr, "    TAG_{},\n", member_id);
+  }
+  fmt::print(hdr, "    __TAGS_END,\n");
+  fmt::print(hdr, "    }};\n");
+  fmt::print(hdr, "\n");
 
   // setters and getters
   for (auto s : ptr->table.table_) {
     std::string member_id = escape_utf8_to_cpp_identifier(s.first);
     fmt::print(hdr,
-               "    bool Is{}() const {{ return "
-               "std::holds_alternative<{}_t>(value_); }};\n",
+               "    bool Is{}() const {{ return tag_ == Tag::TAG_{}; }};\n",
                member_id, member_id);
+
     if (holds_alternative<optional<bool>>(s.second)) {
       fmt::print(hdr,
-                 "    bool {}() const {{ return std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
-      fmt::print(hdr, "    void {}(bool _val) {{ value_ = ({}_t)_val; }};\n",
-                 member_id, member_id);
+                 "    bool {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
+      fmt::print(hdr, "    void {}(bool _val) {{ {}_ = ({}_t)_val; }};\n",
+                 member_id, member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<char32_t>>(s.second)) {
-      fmt::print(
-          hdr,
-          "    char32_t {}() const {{ return std::get<{}_t>(value_); }};\n",
-          member_id, member_id);
-      fmt::print(hdr, "    void {}(char32_t _val) {{ value_ = _val; }};\n",
-                 member_id);
+      fmt::print(hdr,
+                 "    char32_t {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
+      fmt::print(hdr, "    void {}(char32_t _val) {{ {}_ = _val; }};\n",
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<string>>(s.second)) {
       fmt::print(hdr,
-                 "    std::string_view {}() const {{ return "
-                 "std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
+                 "    std::string_view {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
       fmt::print(hdr,
-                 "    std::string& {}() {{ return "
-                 "std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
+                 "    std::string& {}() {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
       fmt::print(hdr,
-                 "    void {}(std::string_view _val) {{ value_ = std::string(_val); }};\n",
-                 member_id);
+                 "    void {}(std::string_view _val) {{ {}_ = "
+                 "std::string(_val); }};\n",
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<float>>(s.second)) {
       fmt::print(hdr,
-                 "    float {}() const {{ return std::get<{}_t>(value_); }};\n",
-                 member_id, member_id);
-      fmt::print(hdr, "    void {}(float _val) {{ value_ = _val; }};\n",
+                 "    float {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
+      fmt::print(hdr, "    void {}(float _val) {{ {}_ = _val; }};\n", member_id,
                  member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<double>>(s.second)) {
-      fmt::print(
-          hdr, "    double {}() const {{ return std::get<{}_t>(value_); }};\n",
-          member_id, member_id);
-      fmt::print(hdr, "    void {}(double _val) {{ value_ = _val; }};\n",
-                 member_id);
+      fmt::print(hdr,
+                 "    double {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
+      fmt::print(hdr, "    void {}(double _val) {{ {}_ = _val; }};\n",
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<int8_t>>(s.second)) {
-      fmt::print(
-          hdr, "    int8_t {}() const {{ return std::get<{}_t>(value_); }};\n",
-          member_id, member_id);
-      fmt::print(hdr, "    void {}(int8_t _val) {{ value_ = _val; }};\n",
-                 member_id);
+      fmt::print(hdr,
+                 "    int8_t {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
+      fmt::print(hdr, "    void {}(int8_t _val) {{ {}_ = _val; }};\n",
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<int16_t>>(s.second)) {
-      fmt::print(
-          hdr, "    int16_t {}() const {{ return std::get<{}_t>(value_); }};\n",
-          member_id, member_id);
-      fmt::print(hdr, "    void {}(int16_t _val) {{ value_ = _val; }};\n",
-                 member_id);
+      fmt::print(hdr,
+                 "    int16_t {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
+      fmt::print(hdr, "    void {}(int16_t _val) {{ {}_ = _val; }};\n",
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<int32_t>>(s.second)) {
-      fmt::print(
-          hdr, "    int32_t {}() const {{ return std::get<{}_t>(value_); }};\n",
-          member_id, member_id);
-      fmt::print(hdr, "    void {}(int32_t _val) {{ value_ = _val; }};\n",
-                 member_id);
+      fmt::print(hdr,
+                 "    int32_t {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
+      fmt::print(hdr, "    void {}(int32_t _val) {{ {}_ = _val; }};\n",
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<int64_t>>(s.second)) {
-      fmt::print(
-          hdr, "    int64_t {}() const {{ return std::get<{}_t>(value_); }};\n",
-          member_id, member_id);
-      fmt::print(hdr, "    void {}(int64_t _val) {{ value_ = _val; }};\n",
-                 member_id);
+      fmt::print(hdr,
+                 "    int64_t {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
+      fmt::print(hdr, "    void {}(int64_t _val) {{ {}_ = _val; }};\n",
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-      fmt::print(
-          hdr, "    uint8_t {}() const {{ return std::get<{}_t>(value_); }};\n",
-          member_id, member_id);
-      fmt::print(hdr, "    void {}(uint8_t _val) {{ value_ = _val; }};\n",
-                 member_id);
+      fmt::print(hdr,
+                 "    uint8_t {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
+      fmt::print(hdr, "    void {}(uint8_t _val) {{ {}_ = _val; }};\n",
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-      fmt::print(
-          hdr,
-          "    uint16_t {}() const {{ return std::get<{}_t>(value_); }};\n",
-          member_id, member_id);
-      fmt::print(hdr, "    void {}(uint16_t _val) {{ value_ = _val; }};\n",
-                 member_id);
+      fmt::print(hdr,
+                 "    uint16_t {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
+      fmt::print(hdr, "    void {}(uint16_t _val) {{ {}_ = _val; }};\n",
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-      fmt::print(
-          hdr,
-          "    uint32_t {}() const {{ return std::get<{}_t>(value_); }};\n",
-          member_id, member_id);
-      fmt::print(hdr, "    void {}(uint32_t _val) {{ value_ = _val; }};\n",
-                 member_id);
+      fmt::print(hdr,
+                 "    uint32_t {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
+      fmt::print(hdr, "    void {}(uint32_t _val) {{ {}_ = _val; }};\n",
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-      fmt::print(
-          hdr,
-          "    uint64_t {}() const {{ return std::get<{}_t>(value_); }};\n",
-          member_id, member_id);
-      fmt::print(hdr, "    void {}(uint64_t _val) {{ value_ = _val; }};\n",
-                 member_id);
+      fmt::print(hdr,
+                 "    uint64_t {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 member_id, member_id, member_id);
+      fmt::print(hdr, "    void {}(uint64_t _val) {{ {}_ = _val; }};\n",
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<SymbolRef>(s.second)) {
       auto referenced_symbol =
           escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
       fmt::print(hdr,
-                 "    std::unique_ptr<Mutable{}>& {}() {{ return "
-                 "std::get<{}_t>(value_); }};\n",
-                 referenced_symbol, member_id, member_id);
+                 "    std::unique_ptr<Mutable{}>& {}() {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 referenced_symbol, member_id, member_id, member_id);
       fmt::print(hdr,
-                 "    const std::unique_ptr<Mutable{}>& {}() const {{ return "
-                 "std::get<{}_t>(value_); }};\n",
-                 referenced_symbol, member_id, member_id);
+                 "    const std::unique_ptr<Mutable{}>& {}() const {{\n"
+                 "       assert(tag_ == Tag::TAG_{});\n"
+                 "       return {}_;\n"
+                 "    }};\n",
+                 referenced_symbol, member_id, member_id, member_id);
       fmt::print(hdr,
-                 "    void {}(std::unique_ptr<Mutable{}> _val) {{ value_ = "
+                 "    void {}(std::unique_ptr<Mutable{}> _val) {{ {}_ = "
                  "std::move(_val); }};\n",
-                 member_id, referenced_symbol);
+                 member_id, referenced_symbol, member_id);
       fmt::print(hdr, "\n");
 
       // } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
@@ -861,8 +920,11 @@ void DefineVariant(ostream& hdr, ostream& src,
   }
 
   fmt::print(hdr,
-             "    bool isEqual(const {} &rhs) const {{ "
-             "return value_ == rhs.value_; }}\n\n",
+             "    bool isEqual(const {} &rhs) const {{\n"
+             "      if (tag_ != rhs.tag_) {{ return false; }};\n"
+             "      // TODO(dpemmons) this.\n"
+             "      return false;\n"
+             "    }}\n\n",
              escaped_variant_id);
 
   fmt::print(hdr,
@@ -872,6 +934,9 @@ void DefineVariant(ostream& hdr, ostream& src,
   fmt::print(hdr, "\n");
 
   fmt::print(hdr, "  private:\n");
+
+  fmt::print(hdr, "    Tag tag_ = Tag::__TAGS_BEGIN;\n");
+  fmt::print(hdr, "\n");
 
   for (auto s : ptr->table.table_) {
     std::string member_id = escape_utf8_to_cpp_identifier(s.first);
@@ -936,19 +1001,22 @@ void DefineVariant(ostream& hdr, ostream& src,
   }
   fmt::print(hdr, "\n");
 
-  fmt::print(hdr, "  std::variant<\n");
+  // TODO create the union here. I don't think we need the typedefs above?
+
+  fmt::print(hdr, "  union {{\n");
   bool first = true;
   for (auto s : ptr->table.table_) {
-    std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    if (first) {
-      fmt::print(hdr, "      {}_t", member_id);
+    CppIdentifiers cpp_id = GetCppType(s);
+    if (holds_alternative<SymbolRef>(s.second)) {
+      auto referenced_symbol =
+          escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
+      fmt::print(hdr, "      std::unique_ptr<Mutable{}> {}_;\n",
+                 referenced_symbol, cpp_id.symbol_id);
     } else {
-      fmt::print(hdr, ",\n      {}_t", member_id);
+      fmt::print(hdr, "      {} {}_;\n", cpp_id.full_type_id, cpp_id.symbol_id);
     }
-    first = false;
   }
-  fmt::print(hdr, "\n");
-  fmt::print(hdr, "  > value_;\n");
+  fmt::print(hdr, "  }};\n");
   fmt::print(hdr, "\n");
 
   // End class declaration.
@@ -989,7 +1057,8 @@ void DefineVector(ostream& hdr, ostream& src,
       std::string("Mutable") +
       escape_utf8_to_cpp_identifier(vector_symbol.first);
 
-  auto cpp_type = GetCppType(vector_symbol);
+  // TODO dirty hack to turn this into a symbol...
+  auto cpp_type = GetCppType(td::SymbolTable::Symbol("", ptr->type));
 
   fmt::print(hdr, "class {} : public std::vector<{}> {{\n", escaped_vector_id,
              cpp_type.full_type_id);
@@ -998,6 +1067,8 @@ void DefineVector(ostream& hdr, ostream& src,
   fmt::print(hdr, "  public:\n");
   // constructors
   fmt::print(hdr, "    {}() {{}};\n", escaped_vector_id);
+  fmt::print(hdr, "    ~{}() {{}};\n", escaped_vector_id);
+
   fmt::print(hdr, "\n");
 
   fmt::print(hdr,
@@ -1029,9 +1100,10 @@ void DefineMap(ostream& hdr, ostream& src,
   std::string escaped_map_id =
       std::string("Mutable") + escape_utf8_to_cpp_identifier(map_symbol.first);
 
+  // TODO dirty hack to turn this into a symbol...
   auto cpp_key_type = GetCppType(td::SymbolTable::Symbol("", ptr->key_type));
-  auto cpp_value_type = GetCppType(td::SymbolTable::Symbol("", ptr->value_type));
-
+  auto cpp_value_type =
+      GetCppType(td::SymbolTable::Symbol("", ptr->value_type));
 
   fmt::print(hdr, "class {} : public std::map<{}, {}> {{\n", escaped_map_id,
              cpp_key_type.full_type_id, cpp_value_type.full_type_id);
@@ -1089,6 +1161,7 @@ void CodegenCpp::Generate() {
   fmt::print(hdr_file->OStream(), "#define {}\n\n", hdr_guard);
 
   // hdr includes
+  fmt::print(hdr_file->OStream(), "#include <cassert>\n");
   fmt::print(hdr_file->OStream(), "#include <cstdint>\n");
   fmt::print(hdr_file->OStream(), "#include <map>\n");
   fmt::print(hdr_file->OStream(), "#include <memory>\n");
