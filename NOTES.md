@@ -4,66 +4,19 @@
 
 Items in ***bold*** are in-progress.
 
-- [ ] Basics (build and lib)
-  - [x] change over to using normal VS.Code tasks, instead of makefile extension.
-  - [x] build parser with makefile
-  - [x] Use error matching in unit tests
-  - [x] proper(ish) debug makefile targets
-  - [ ] parse module import statements
-  - [ ] ***parse primitive value statements***
-    - [x] scalars
-      - [x] booleans
-      - [x] chars
-      - [x] integers
-      - [x] floats
-    - [x] strings
-      - [x] raw strings
-        - [ ] (needs tests)
-    - [ ] parameterized types
-      - [ ] list types
-        - [ ] arrays (which are fixed length)
-        - [ ] vectors
-    - [ ] product types
-      - [x] basic struct
-      - [ ] complex struct
-      - [ ] message
-    - [ ] sum types
-      - [ ] enum
-      - [x] variant
-    - [ ] byte literals
-    - [ ] byte strings
-    - [ ] raw byte strings
-  - [ ] handle raw identifiers
-  - [x] parse a very basic struct statement
-  - [ ] inline structs, vectors and maps.
-
-- [ ] Command line util basics
-  - [x] write basic errors
-  - [ ] print default formatting to stdout
-    - [ ] scalars
-  - [ ] write and read a baisc serialized blob, and print to stdout
-  - [ ] print a basic struct ito json stdout
-  - [ ] input json to basic struct
-
-- [ ] ***Codegen basics***
-  - [x] ***cpp: mutable classes***
-  - [ ] copy constructors
-  - [ ] move constructors
-  - [ ] serialize
-  - [ ] deserialize
-  - [ ] views?
-
-- [ ] ***Self hosting***
-  - [x] generate basic mutable classes
-    - [x] struct members
-  - [ ] generate views
-  - [x] variants
-    - [x] parse
-    - [x] generate
-  - [x] collections
-    - [x] vector
-    - [x] map
-  - [ ] use those in cpp generation
+- [ ] separate type declaration from field, value, etc. declaration
+- [ ] inline types: structs, vectors, maps.
+- [ ] consider making cpp codegen more sane? (or hold off until tempalte language is done?)
+- [ ] self-host symbol table
+- [ ] more types
+  - [ ] fixed length arrays
+  - [ ] message
+  - [ ] enum
+- [ ] more literals
+  - [ ] byte literals
+  - [ ] byte strings
+  - [ ] raw byte strings
+- [ ] raw identifiers (do they just work?)
 
 Currently using this to test...
 
