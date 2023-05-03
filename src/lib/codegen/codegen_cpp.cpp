@@ -690,8 +690,8 @@ void DefineVariant(ostream& hdr, ostream& src,
                  "       return {}_;\n"
                  "    }};\n",
                  member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(bool _val) {{ {}_ = _val; }};\n",
-                 member_id, member_id, member_id);
+      fmt::print(hdr, "    void {}(bool _val) {{ {}_ = _val; }};\n", member_id,
+                 member_id, member_id);
       fmt::print(hdr, "\n");
 
     } else if (holds_alternative<optional<char32_t>>(s.second)) {
@@ -1107,6 +1107,17 @@ void CodegenCpp::Generate() {
              hdr_file->GetPath().filename().string());
   fmt::print(src_file->OStream(), "\n");
 
+  // namespace declarations
+  for (auto raw_namespace : parser_->module_) {
+    std::string ns = escape_utf8_to_cpp_identifier(raw_namespace);
+    fmt::print(hdr_file->OStream(), "namespace {} {{\n", ns);
+    fmt::print(src_file->OStream(), "namespace {} {{\n", ns);
+  }
+  if (parser_->module_.size() > 0) {
+    fmt::print(hdr_file->OStream(), "\n");
+    fmt::print(src_file->OStream(), "\n");
+  }
+
   // forward declare everything first.
 
   // forward declare structs and variants
@@ -1159,6 +1170,17 @@ void CodegenCpp::Generate() {
   }
 
   fmt::print(hdr_file->OStream(), "\n");
+
+  // close namespace declarations
+  for (auto raw_namespace : parser_->module_) {
+    std::string ns = escape_utf8_to_cpp_identifier(raw_namespace);
+    fmt::print(hdr_file->OStream(), "}}  // namespace {}\n", ns);
+    fmt::print(src_file->OStream(), "}}  // namespace {}\n", ns);
+  }
+  if (parser_->module_.size() > 0) {
+    fmt::print(hdr_file->OStream(), "\n");
+    fmt::print(src_file->OStream(), "\n");
+  }
 
   // end hdr gueard
   fmt::print(hdr_file->OStream(), "\n#endif  // {}\n", hdr_guard);

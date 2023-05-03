@@ -217,7 +217,7 @@ typedefVersionDeclaration
 
 moduleDeclaration
 	returns[std::vector<std::string> module]:
-	KW_MODULE simplePath SEMI { $module = $simplePath.ctx->path; };
+	KW_MODULE WS+ simplePath WS* SEMI { $module = $simplePath.ctx->path; };
 
 useDeclaration: 'use' useTree ';';
 useTree: (simplePath? '::')? (

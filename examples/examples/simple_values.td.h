@@ -58,6 +58,9 @@
 #endif
 
 
+namespace sv {
+namespace t {
+
 // struct forward declarations
 class MutableMapA;
 class MutableMapB;
@@ -762,6 +765,9 @@ class MutableVecD : public std::vector<std::unique_ptr<MutableMapA>> {
 };
 
 
+
+}  // namespace sv
+}  // namespace t
 
 
 #endif  // __EXAMPLES_SIMPLE_VALUES_TD_CPP_H__

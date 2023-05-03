@@ -1,4 +1,5 @@
 typedef=alpha;
+module sv::t;
 
 ValBool : bool = true;
 r#ValBool2 : bool = true;

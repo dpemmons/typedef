@@ -1,5 +1,8 @@
 #include "simple_values.td.h"
 
+namespace sv {
+namespace t {
+
 VAL _VAL = R"LITERAL(hello)LITERAL";
 ValB _ValB = *(char32_t*)"😀";
 ValBool _ValBool = true;
@@ -227,4 +230,7 @@ std::ostream& operator<<(std::ostream& os, const MutableVecD& obj) {
   os << "  something.\n";
   return os;
 }
+
+}  // namespace sv
+}  // namespace t
 

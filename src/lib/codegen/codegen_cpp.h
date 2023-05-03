@@ -1,5 +1,5 @@
-#ifndef CODEGEN_CODEGEN_CPP_H_
-#define CODEGEN_CODEGEN_CPP_H_
+#ifndef LIB_CODEGEN_CODEGEN_CPP_H__
+#define LIB_CODEGEN_CODEGEN_CPP_H__
 
 #include "codegen_base.h"
 #include "file_printer_base.h"
@@ -21,4 +21,4 @@ class CodegenCpp : public CodegenBase {
 
 }  // namespace td
 
-#endif  // CODEGEN_CODEGEN_CPP_H_
+#endif  // LIB_CODEGEN_CODEGEN_CPP_H__

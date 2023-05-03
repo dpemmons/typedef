@@ -3,6 +3,7 @@
 #include "simple_values.td.h"
 
 int main() {
+  using namespace sv::t;
   MutableStructA sA;
   MutableStructB sB;
 
