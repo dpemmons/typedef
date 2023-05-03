@@ -412,51 +412,6 @@ void DefineStruct(ostream& hdr, ostream& src,
                  "std::move(val); }}\n",
                  member_id, referenced_symbol, member_id);
       fmt::print(hdr, "\n");
-      // } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
-      //   auto def = get<shared_ptr<Struct>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(
-      //       hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_;
-      //       }}\n", escaped_def_id, member_id, member_id);
-      //   fmt::print(
-      //       hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val;
-      //       }}\n", member_id, escaped_def_id, member_id);
-      //   fmt::print(hdr, "\n");
-
-      // } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
-      //   auto def = get<shared_ptr<Variant>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(
-      //       hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_;
-      //       }}\n", escaped_def_id, member_id, member_id);
-      //   fmt::print(
-      //       hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val;
-      //       }}\n", member_id, escaped_def_id, member_id);
-      //   fmt::print(hdr, "\n");
-      // } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
-      //   auto def = get<shared_ptr<Vector>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(
-      //       hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_;
-      //       }}\n", escaped_def_id, member_id, member_id);
-      //   fmt::print(
-      //       hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val;
-      //       }}\n", member_id, escaped_def_id, member_id);
-      //   fmt::print(hdr, "\n");
-      // } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
-      //   auto def = get<shared_ptr<Map>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(
-      //       hdr, "    std::shared_ptr<Mutable{}> {}() const {{ return {}_;
-      //       }}\n", escaped_def_id, member_id, member_id);
-      //   fmt::print(
-      //       hdr, "    void {}(std::shared_ptr<Mutable{}> val) {{ {}_ = val;
-      //       }}\n", member_id, escaped_def_id, member_id);
-      //   fmt::print(hdr, "\n");
     } else {
       abort();
     }
@@ -564,35 +519,6 @@ void DefineStruct(ostream& hdr, ostream& src,
           escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
       fmt::print(hdr, "    std::unique_ptr<Mutable{}> {}_;\n",
                  referenced_symbol, member_id);
-
-      // } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
-      //   auto def = get<shared_ptr<Struct>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n",
-      //   escaped_def_id,
-      //              member_id);
-      // } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
-      //   auto def = get<shared_ptr<Variant>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n",
-      //   escaped_def_id,
-      //              member_id);
-      // } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
-      //   auto def = get<shared_ptr<Vector>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n",
-      //   escaped_def_id,
-      //              member_id);
-      // } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
-      //   auto def = get<shared_ptr<Map>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr, "    std::shared_ptr<Mutable{}> {}_;\n",
-      //   escaped_def_id,
-      //              member_id);
     } else {
       abort();
     }
@@ -854,67 +780,6 @@ void DefineVariant(ostream& hdr, ostream& src,
                  "std::move(_val); }};\n",
                  member_id, referenced_symbol, member_id);
       fmt::print(hdr, "\n");
-
-      // } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
-      //   auto def = get<shared_ptr<Struct>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr,
-      //              "    std::shared_ptr<{}> {}() {{ return "
-      //              "std::get<{}_t>(value_); }};\n",
-      //              escaped_def_id, member_id, member_id);
-      //   fmt::print(hdr,
-      //              "    void {}(std::shared_ptr<{}> _val) {{ value_ =
-      //              "
-      //              "_val; }};\n",
-      //              member_id, escaped_def_id);
-      //   fmt::print(hdr, "\n");
-
-      // } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
-      //   auto def = get<shared_ptr<Variant>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr,
-      //              "    std::shared_ptr<{}> {}() {{ return "
-      //              "std::get<{}_t>(value_); }};\n",
-      //              escaped_def_id, member_id, member_id);
-      //   fmt::print(hdr,
-      //              "    void {}(std::shared_ptr<{}> _val) {{ value_ =
-      //              "
-      //              "_val; }};\n",
-      //              member_id, escaped_def_id);
-      //   fmt::print(hdr, "\n");
-
-      // } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
-      //   auto def = get<shared_ptr<Vector>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr,
-      //              "    std::shared_ptr<{}> {}() {{ return "
-      //              "std::get<{}_t>(value_); }};\n",
-      //              escaped_def_id, member_id, member_id);
-      //   fmt::print(hdr,
-      //              "    void {}(std::shared_ptr<{}> _val) {{ value_ =
-      //              "
-      //              "_val; }};\n",
-      //              member_id, escaped_def_id);
-      //   fmt::print(hdr, "\n");
-
-      // } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
-      //   auto def = get<shared_ptr<Map>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr,
-      //              "    std::shared_ptr<{}> {}() {{ return "
-      //              "std::get<{}_t>(value_); }};\n",
-      //              escaped_def_id, member_id, member_id);
-      //   fmt::print(hdr,
-      //              "    void {}(std::shared_ptr<{}> _val) {{ value_ =
-      //              "
-      //              "_val; }};\n",
-      //              member_id, escaped_def_id);
-      //   fmt::print(hdr, "\n");
-
     } else {
       abort();
     }
