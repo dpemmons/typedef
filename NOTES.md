@@ -5,6 +5,7 @@
 Items in ***bold*** are in-progress.
 
 - [ ] separate type declaration from field, value, etc. declaration
+- [ ] optionals
 - [ ] inline types: structs, vectors, maps.
 - [ ] consider making cpp codegen more sane? (or hold off until tempalte language is done?)
 - [ ] self-host symbol table
