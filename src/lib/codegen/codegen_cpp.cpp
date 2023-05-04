@@ -1,10 +1,14 @@
 #include "codegen_cpp.h"
 
 #include <algorithm>
+#include <cassert>
 #include <filesystem>
+#include <sstream>
+#include <string>
 #include <variant>
 
 #define FMT_HEADER_ONLY
+#include <fmt/args.h>
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 
@@ -15,923 +19,125 @@ namespace td {
 
 using namespace std;
 
-struct CppIdentifiers {
-  enum TypeClass {
-    SCALAR_NOT_CHAR,
-    CHAR,
-    STRING,
-    STRUCT,
-    VARIANT,
-    VECTOR,
-    MAP,
-    SYMBOL_REF
-  };
-  CppIdentifiers(TypeClass type_class, std::string symbol_id,
-                 std::string type_id)
-      : type_class(type_class), symbol_id(symbol_id), type_id(type_id) {
-    if (type_class >= STRUCT) {
-      full_type_id = fmt::format("std::unique_ptr<{}>", type_id);
-    } else {
-      full_type_id = type_id;
-    }
-  }
-  TypeClass type_class;
-  bool WrappedType() { return type_class > STRING; }
+CodegenCpp::CppSymRef::CppSymRef(string const& referenced_escaped_identifier) {
+  referenced_cpp_type_ =
+      fmt::format("std::unique_ptr<Mutable{}>", referenced_escaped_identifier);
+}
 
-  // Examples:
-  // anInt : i32;
-  // symol_id = "anInt", type_id = "int32_t", full_type_id = "int32_t"
-  //
-  // aStruct: struct {};
-  //    symol_id = "aStruct"
-  //    type_id = "MutableaStruct"
-  //    full_type_id = "std::unique_ptr<MutableaStruct>"
-
-  std::string symbol_id;
-  std::string type_id;
-  std::string full_type_id;
-};
-CppIdentifiers GetCppType(SymbolTable::Symbol const& s) {
-  if (holds_alternative<optional<bool>>(s.second)) {
-    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
-                          escape_utf8_to_cpp_identifier(s.first), "bool");
-  } else if (holds_alternative<optional<char32_t>>(s.second)) {
-    return CppIdentifiers(CppIdentifiers::CHAR,
-                          escape_utf8_to_cpp_identifier(s.first), "char32_t");
-  } else if (holds_alternative<optional<string>>(s.second)) {
-    return CppIdentifiers(CppIdentifiers::STRING,
-                          escape_utf8_to_cpp_identifier(s.first),
-                          "std::string");
-  } else if (holds_alternative<optional<float>>(s.second)) {
-    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
-                          escape_utf8_to_cpp_identifier(s.first), "float");
-  } else if (holds_alternative<optional<double>>(s.second)) {
-    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
-                          escape_utf8_to_cpp_identifier(s.first), "double");
-  } else if (holds_alternative<optional<int8_t>>(s.second)) {
-    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
-                          escape_utf8_to_cpp_identifier(s.first), "int8_t");
-  } else if (holds_alternative<optional<int16_t>>(s.second)) {
-    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
-                          escape_utf8_to_cpp_identifier(s.first), "int16_t");
-  } else if (holds_alternative<optional<int32_t>>(s.second)) {
-    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
-                          escape_utf8_to_cpp_identifier(s.first), "int32_t");
-  } else if (holds_alternative<optional<int64_t>>(s.second)) {
-    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
-                          escape_utf8_to_cpp_identifier(s.first), "int64_t");
-  } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
-                          escape_utf8_to_cpp_identifier(s.first), "uint8_t");
-  } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
-                          escape_utf8_to_cpp_identifier(s.first), "uint16_t");
-  } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
-                          escape_utf8_to_cpp_identifier(s.first), "uint32_t");
-  } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-    return CppIdentifiers(CppIdentifiers::SCALAR_NOT_CHAR,
-                          escape_utf8_to_cpp_identifier(s.first), "uint64_t");
-  } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
-    return CppIdentifiers(
-        CppIdentifiers::STRUCT, escape_utf8_to_cpp_identifier(s.first),
-        std::string("Mutable") + escape_utf8_to_cpp_identifier(s.first));
+CodegenCpp::CppNonPrimitiveValue::CppNonPrimitiveValue(
+    SymbolTable::Symbol const& s)
+    : class_name_(escape_utf8_to_cpp_identifier(s.first)),
+      is_struct_(false),
+      is_variant_(false),
+      is_vector_(false) {
+  if (holds_alternative<shared_ptr<Struct>>(s.second)) {
+    is_struct_ = true;
   } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
-    return CppIdentifiers(
-        CppIdentifiers::VARIANT, escape_utf8_to_cpp_identifier(s.first),
-        std::string("Mutable") + escape_utf8_to_cpp_identifier(s.first));
+    is_variant_ = true;
   } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
-    return CppIdentifiers(
-        CppIdentifiers::VECTOR, escape_utf8_to_cpp_identifier(s.first),
-        std::string("Mutable") + escape_utf8_to_cpp_identifier(s.first));
+    is_vector_ = true;
+  }
+  cpp_type_ = fmt::format("std::unique_ptr<Mutable{}>", class_name_);
+}
+
+CodegenCpp::CppSymbol::CppSymbol(SymbolTable::Symbol const& s)
+    : escaped_identifier_(escape_utf8_to_cpp_identifier(s.first)) {
+  if (holds_alternative<shared_ptr<Struct>>(s.second) ||
+      holds_alternative<shared_ptr<Variant>>(s.second) ||
+      holds_alternative<shared_ptr<Vector>>(s.second)) {
+    non_primitive_ = CppNonPrimitiveValue(s);
   } else if (holds_alternative<SymbolRef>(s.second)) {
-    auto v = std::get<SymbolRef>(s.second);
-    return CppIdentifiers(
-        CppIdentifiers::SYMBOL_REF, escape_utf8_to_cpp_identifier(s.first),
-        std::string("Mutable") + escape_utf8_to_cpp_identifier(v.id));
+    auto sr = get<SymbolRef>(s.second);
+    reference_ = CppSymRef(escape_utf8_to_cpp_identifier(sr.id));
   } else {
-    abort();
+    primitive_ = CppPrimitiveValue(s.second);
   }
 }
 
-void DeclarePrimitive(ostream& os, SymbolTable::Symbol const& s) {
-  CppIdentifiers cpp_id = GetCppType(s);
-  if (!cpp_id.WrappedType()) {
-    fmt::print(os, "typedef {} {};\n", cpp_id.type_id, cpp_id.symbol_id);
-  } else {
-    abort();
-  }
-  fmt::print(os, "extern {} _{};\n", cpp_id.symbol_id, cpp_id.symbol_id);
-}
-
-void DefinePrimitive(ostream& os, SymbolTable::Symbol const& s) {
-  CppIdentifiers cpp_id = GetCppType(s);
-  if (holds_alternative<optional<bool>>(s.second)) {
-    auto maybe_val = get<optional<bool>>(s.second);
-    if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
-                 *maybe_val);
-    }
-  } else if (holds_alternative<optional<char32_t>>(s.second)) {
-    auto maybe_val = get<optional<char32_t>>(s.second);
-    if (maybe_val) {
-      wstring_convert<codecvt_utf8<char32_t>, char32_t> converter;
-      fmt::print(os, "{} _{} = *(char32_t*)\"{}\";\n", cpp_id.symbol_id,
-                 cpp_id.symbol_id, converter.to_bytes(*maybe_val));
-    }
-  } else if (holds_alternative<optional<string>>(s.second)) {
-    auto maybe_val = get<optional<string>>(s.second);
-    if (maybe_val) {
-      fmt::print(os, "{} _{} = R\"LITERAL({})LITERAL\";\n", cpp_id.symbol_id,
-                 cpp_id.symbol_id, *maybe_val);
-    }
-  } else if (holds_alternative<optional<float>>(s.second)) {
-    auto maybe_val = get<optional<float>>(s.second);
-    if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
-                 *maybe_val);
-    }
-  } else if (holds_alternative<optional<double>>(s.second)) {
-    auto maybe_val = get<optional<double>>(s.second);
-    if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
-                 *maybe_val);
-    }
-  } else if (holds_alternative<optional<int8_t>>(s.second)) {
-    auto maybe_val = get<optional<int8_t>>(s.second);
-    if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
-                 *maybe_val);
-    }
-  } else if (holds_alternative<optional<int16_t>>(s.second)) {
-    auto maybe_val = get<optional<int16_t>>(s.second);
-    if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
-                 *maybe_val);
-    }
-  } else if (holds_alternative<optional<int32_t>>(s.second)) {
-    auto maybe_val = get<optional<int32_t>>(s.second);
-    if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
-                 *maybe_val);
-    }
-  } else if (holds_alternative<optional<int64_t>>(s.second)) {
-    auto maybe_val = get<optional<int64_t>>(s.second);
-    if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
-                 *maybe_val);
-    }
-  } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-    auto maybe_val = get<optional<uint8_t>>(s.second);
-    if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
-                 *maybe_val);
-    }
-  } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-    auto maybe_val = get<optional<uint16_t>>(s.second);
-    if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
-                 *maybe_val);
-    }
-  } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-    auto maybe_val = get<optional<uint32_t>>(s.second);
-    if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
-                 *maybe_val);
-    }
-  } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-    auto maybe_val = get<optional<uint64_t>>(s.second);
-    if (maybe_val) {
-      fmt::print(os, "{} _{} = {};\n", cpp_id.symbol_id, cpp_id.symbol_id,
-                 *maybe_val);
-    }
-  } else {
-    abort();
-  }
-}
-
-void DefineStruct(ostream& hdr, ostream& src,
-                  SymbolTable::Symbol const& struct_symbol) {
-  auto ptr = get<shared_ptr<Struct>>(struct_symbol.second);
-  std::string escaped_struct_id =
-      std::string("Mutable") +
-      escape_utf8_to_cpp_identifier(struct_symbol.first);
-
-  fmt::print(hdr, "class {} TD_FINAL_CLASS {{\n", escaped_struct_id);
-  fmt::print(hdr, "  public:\n");
-
-  // -------------------------------------------------
-  // constructor
-  // -------------------------------------------------
-  fmt::print(hdr, "    {}() {{}};\n", escaped_struct_id);
-  fmt::print(hdr, "    ~{}() {{}};\n", escaped_struct_id);
-
-  fmt::print(hdr, "    {}(\n", escaped_struct_id);
-  for (auto s : ptr->table.table_) {
-    std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    if (holds_alternative<optional<bool>>(s.second)) {
-      fmt::print(hdr, "      bool _{},\n", member_id);
-    } else if (holds_alternative<optional<char32_t>>(s.second)) {
-      fmt::print(hdr, "      char32_t _{},\n", member_id);
-    } else if (holds_alternative<optional<string>>(s.second)) {
-      fmt::print(hdr, "      std::string const& _{},\n", member_id);
-    } else if (holds_alternative<optional<float>>(s.second)) {
-      fmt::print(hdr, "      float _{},\n", member_id);
-    } else if (holds_alternative<optional<double>>(s.second)) {
-      fmt::print(hdr, "      double _{},\n", member_id);
-    } else if (holds_alternative<optional<int8_t>>(s.second)) {
-      fmt::print(hdr, "      int8_t _{},\n", member_id);
-    } else if (holds_alternative<optional<int16_t>>(s.second)) {
-      fmt::print(hdr, "      int16_t _{},\n", member_id);
-    } else if (holds_alternative<optional<int32_t>>(s.second)) {
-      fmt::print(hdr, "      int32_t _{},\n", member_id);
-    } else if (holds_alternative<optional<int64_t>>(s.second)) {
-      fmt::print(hdr, "      int64_t _{},\n", member_id);
-    } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-      fmt::print(hdr, "      uint8_t _{},\n", member_id);
-    } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-      fmt::print(hdr, "      uint16_t _{},\n", member_id);
-    } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-      fmt::print(hdr, "      uint32_t _{},\n", member_id);
-    } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-      fmt::print(hdr, "      uint64_t _{},\n", member_id);
-    } else if (holds_alternative<SymbolRef>(s.second)) {
-      auto referenced_symbol =
-          escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
-      fmt::print(hdr, "      std::unique_ptr<Mutable{}> _{},\n",
-                 referenced_symbol, member_id);
-      // } else if (holds_alternative<shared_ptr<Struct>>(s.second)) {
-      //   auto def = get<shared_ptr<Struct>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n",
-      //   escaped_def_id,
-      //              member_id);
-      // } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
-      //   auto def = get<shared_ptr<Variant>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n",
-      //   escaped_def_id,
-      //              member_id);
-      // } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
-      //   auto def = get<shared_ptr<Vector>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n",
-      //   escaped_def_id,
-      //              member_id);
-      // } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
-      //   auto def = get<shared_ptr<Map>>(s.second);
-      //   std::string escaped_def_id =
-      //       escape_utf8_to_cpp_identifier(def->identifier);
-      //   fmt::print(hdr, "      std::shared_ptr<Mutable{}> _{},\n",
-      //   escaped_def_id,
-      //              member_id);
-    } else {
-      abort();
-    }
-  }
-  fmt::print(hdr, "      bool __foo = false) :\n");
-  for (auto s : ptr->table.table_) {
-    std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    fmt::print(hdr, "      {}_(std::move(_{})),\n", member_id, member_id);
-  }
-  // TODO remove this dirty hack
-  fmt::print(hdr, "      __foo(false) {{}}\n");
-
-  fmt::print(hdr, "\n");
-
-  // -------------------------------------------------
-  // Setters and Getters.
-  // -------------------------------------------------
-  for (auto s : ptr->table.table_) {
-    std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    if (holds_alternative<optional<bool>>(s.second)) {
-      fmt::print(hdr, "    bool {}() const {{ return {}_; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "    void {}(bool val) {{ {}_ = val; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "\n");
-    } else if (holds_alternative<optional<char32_t>>(s.second)) {
-      fmt::print(hdr, "    char32_t {}() const {{ return {}_; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "    void {}(char32_t val) {{ {}_ = val; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<string>>(s.second)) {
-      fmt::print(hdr, "    std::string_view {}() const {{ return {}_; }}\n",
-                 member_id, member_id);
-      fmt::print(hdr,
-                 "    void {}(std::string_view const& val) {{ {}_ = val; }}\n",
-                 member_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<float>>(s.second)) {
-      fmt::print(hdr, "    float {}() const {{ return {}_; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "    void {}(float val) {{ {}_ = val; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<double>>(s.second)) {
-      fmt::print(hdr, "    double {}() const {{ return {}_; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "    void {}(double val) {{ {}_ = val; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<int8_t>>(s.second)) {
-      fmt::print(hdr, "    int8_t {}() const {{ return {}_; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "    void {}(int8_t val) {{ {}_ = val; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<int16_t>>(s.second)) {
-      fmt::print(hdr, "    int16_t {}() const {{ return {}_; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "    void {}(int16_t val) {{ {}_ = val; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<int32_t>>(s.second)) {
-      fmt::print(hdr, "    int32_t {}() const {{ return {}_; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "    void {}(int32_t val) {{ {}_ = val; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<int64_t>>(s.second)) {
-      fmt::print(hdr, "    int64_t {}() const {{ return {}_; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "    void {}(int64_t val) {{ {}_ = val; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-      fmt::print(hdr, "    uint8_t {}() const {{ return {}_; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "    void {}(uint8_t val) {{ {}_ = val; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-      fmt::print(hdr, "    uint16_t {}() const {{ return {}_; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "    void {}(uint16_t val) {{ {}_ = val; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-      fmt::print(hdr, "    uint32_t {}() const {{ return {}_; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "    void {}(uint32_t val) {{ {}_ = val; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-      fmt::print(hdr, "    uint64_t {}() const {{ return {}_; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "    void {}(uint64_t val) {{ {}_ = val; }}\n", member_id,
-                 member_id);
-      fmt::print(hdr, "\n");
-    } else if (holds_alternative<SymbolRef>(s.second)) {
-      auto referenced_symbol =
-          escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
-      fmt::print(hdr,
-                 "    std::unique_ptr<Mutable{}>& {}() {{ return {}_; }}\n",
-                 referenced_symbol, member_id, member_id);
-      fmt::print(hdr,
-                 "    const std::unique_ptr<Mutable{}>& {}() const {{ return "
-                 "{}_; }}\n",
-                 referenced_symbol, member_id, member_id);
-      fmt::print(hdr,
-                 "    void {}(std::unique_ptr<Mutable{}> val) {{ {}_ = "
-                 "std::move(val); }}\n",
-                 member_id, referenced_symbol, member_id);
-      fmt::print(hdr, "\n");
-    } else {
-      abort();
-    }
-  }
-
-  fmt::print(hdr,
-             "    friend std::ostream& operator<<(std::ostream& os, const "
-             "{}& obj);\n",
-             escaped_struct_id);
-
-  fmt::print(hdr, "\n");
-
-  fmt::print(hdr, "  private:\n");
-
-  // -------------------------------------------------
-  // private member declarations.
-  // -------------------------------------------------
-  for (auto s : ptr->table.table_) {
-    std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    if (holds_alternative<optional<bool>>(s.second)) {
-      auto maybe_val = get<optional<bool>>(s.second);
-      if (!maybe_val) {
-        maybe_val = false;
-      }
-      fmt::print(hdr, "    bool {}_ = {};\n", member_id, *maybe_val);
-    } else if (holds_alternative<optional<char32_t>>(s.second)) {
-      auto maybe_val = get<optional<char32_t>>(s.second);
-      if (maybe_val) {
-        wstring_convert<codecvt_utf8<char32_t>, char32_t> converter;
-        fmt::print(hdr, "    char32_t {}_ = *(char32_t*)\"{}\";\n", member_id,
-                   converter.to_bytes(*maybe_val));
+CodegenCpp::CppPrimitiveValue::CppPrimitiveValue(SymbolTable::Value const& v)
+    : is_char_(false), is_string_(false) {
+  if (holds_alternative<optional<bool>>(v)) {
+    cpp_type_ = "bool";
+    auto opt = get<optional<bool>>(v);
+    if (opt) {
+      if (*opt) {
+        val_ = "true";
       } else {
-        fmt::print(hdr, "    char32_t {}_ = 0;\n", member_id);
+        val_ = "true";
       }
-    } else if (holds_alternative<optional<string>>(s.second)) {
-      auto maybe_val = get<optional<std::string>>(s.second);
-      if (maybe_val && maybe_val->size() > 0) {
-        fmt::print(hdr, "    std::string {}_ = R\"LITERAL({})LITERAL\";\n",
-                   member_id, *maybe_val);
-      } else {
-        fmt::print(hdr, "    std::string {}_;\n", member_id);
-      }
-    } else if (holds_alternative<optional<float>>(s.second)) {
-      auto maybe_val = get<optional<float>>(s.second);
-      if (!maybe_val) {
-        maybe_val = 0;
-      }
-      fmt::print(hdr, "    float {}_ = {};\n", member_id, *maybe_val);
-    } else if (holds_alternative<optional<double>>(s.second)) {
-      auto maybe_val = get<optional<double>>(s.second);
-      if (!maybe_val) {
-        maybe_val = 0;
-      }
-      fmt::print(hdr, "    double {}_ = {};\n", member_id, *maybe_val);
-    } else if (holds_alternative<optional<int8_t>>(s.second)) {
-      auto maybe_val = get<optional<int8_t>>(s.second);
-      if (!maybe_val) {
-        maybe_val = 0;
-      }
-      fmt::print(hdr, "    int8_t {}_ = {};\n", member_id, *maybe_val);
-    } else if (holds_alternative<optional<int16_t>>(s.second)) {
-      auto maybe_val = get<optional<int16_t>>(s.second);
-      if (!maybe_val) {
-        maybe_val = 0;
-      }
-      fmt::print(hdr, "    int16_t {}_ = {};\n", member_id, *maybe_val);
-    } else if (holds_alternative<optional<int32_t>>(s.second)) {
-      auto maybe_val = get<optional<int32_t>>(s.second);
-      if (!maybe_val) {
-        maybe_val = 0;
-      }
-      fmt::print(hdr, "    int32_t {}_ = {};\n", member_id, *maybe_val);
-    } else if (holds_alternative<optional<int64_t>>(s.second)) {
-      auto maybe_val = get<optional<int64_t>>(s.second);
-      if (!maybe_val) {
-        maybe_val = 0;
-      }
-      fmt::print(hdr, "    int64_t {}_ = {};\n", member_id, *maybe_val);
-    } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-      auto maybe_val = get<optional<uint8_t>>(s.second);
-      if (!maybe_val) {
-        maybe_val = 0;
-      }
-      fmt::print(hdr, "    uint8_t {}_ = {};\n", member_id, *maybe_val);
-    } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-      auto maybe_val = get<optional<uint16_t>>(s.second);
-      if (!maybe_val) {
-        maybe_val = 0;
-      }
-      fmt::print(hdr, "    uint16_t {}_ = {};\n", member_id, *maybe_val);
-    } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-      auto maybe_val = get<optional<uint32_t>>(s.second);
-      if (!maybe_val) {
-        maybe_val = 0;
-      }
-      fmt::print(hdr, "    uint32_t {}_ = {};\n", member_id, *maybe_val);
-    } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-      auto maybe_val = get<optional<uint64_t>>(s.second);
-      if (!maybe_val) {
-        maybe_val = 0;
-      }
-      fmt::print(hdr, "    uint64_t {}_ = {};\n", member_id, *maybe_val);
-    } else if (holds_alternative<SymbolRef>(s.second)) {
-      auto referenced_symbol =
-          escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
-      fmt::print(hdr, "    std::unique_ptr<Mutable{}> {}_;\n",
-                 referenced_symbol, member_id);
+    }
+  } else if (holds_alternative<optional<char32_t>>(v)) {
+    is_char_ = true;
+    cpp_type_ = "char32_t";
+  } else if (holds_alternative<optional<string>>(v)) {
+    is_string_ = true;
+    cpp_type_ = "std::string";
+  } else if (holds_alternative<optional<float>>(v)) {
+    cpp_type_ = "float";
+  } else if (holds_alternative<optional<double>>(v)) {
+    cpp_type_ = "double";
+  } else if (holds_alternative<optional<int8_t>>(v)) {
+    cpp_type_ = "int8_t";
+  } else if (holds_alternative<optional<int16_t>>(v)) {
+    cpp_type_ = "int16_t";
+  } else if (holds_alternative<optional<int32_t>>(v)) {
+    cpp_type_ = "int32_t";
+  } else if (holds_alternative<optional<int64_t>>(v)) {
+    cpp_type_ = "int64_t";
+  } else if (holds_alternative<optional<uint8_t>>(v)) {
+    cpp_type_ = "uint8_t";
+  } else if (holds_alternative<optional<uint16_t>>(v)) {
+    cpp_type_ = "uint16_t";
+  } else if (holds_alternative<optional<uint32_t>>(v)) {
+    cpp_type_ = "uint32_t";
+  } else if (holds_alternative<optional<uint64_t>>(v)) {
+    cpp_type_ = "uint64_t";
+  } else {
+    assert(false);  // unreachable
+  }
+}
+
+void CodegenCpp::Generate() {
+  GroupedSymbols grouped_symbols = GroupSymbols(parser_->symbols2_.table_);
+
+  filesystem::path hdr_filename = source_filename_ + ".h";
+  filesystem::path source_filename = source_filename_ + ".cpp";
+
+  ViewModel view_model =
+      CreateViewModel(hdr_filename, parser_->module_, grouped_symbols);
+
+  auto hdr_file = out_path_->OpenOutputFile(hdr_filename);
+  hdr_file->Open();
+  auto src_file = out_path_->OpenOutputFile(source_filename);
+  src_file->Open();
+
+  PrintHeader(hdr_file->OStream(), view_model);
+  PrintSource(src_file->OStream(), view_model);
+
+  hdr_file->Close();
+  src_file->Close();
+}
+
+CodegenCpp::GroupedSymbols CodegenCpp::GroupSymbols(
+    map<string, SymbolTable::Value> table) const {
+  GroupedSymbols symbols;
+  for (auto s : table) {
+    if (holds_alternative<shared_ptr<Struct>>(s.second)) {
+      symbols.structs.push_back(s);
+    } else if (holds_alternative<shared_ptr<Variant>>(s.second)) {
+      symbols.variants.push_back(s);
+    } else if (holds_alternative<shared_ptr<Vector>>(s.second)) {
+      symbols.vectors.push_back(s);
+    } else if (holds_alternative<shared_ptr<Map>>(s.second)) {
+      symbols.maps.push_back(s);
     } else {
-      abort();
+      symbols.values.push_back(s);
     }
   }
-  fmt::print(hdr,
-             "    bool __foo; // to simplify codegen. will remove in future "
-             "versions...\n");
-
-  // End class declaration.
-  fmt::print(hdr, "}};\n");
-  fmt::print(hdr, "\n");
-
-  // declare operators
-  fmt::print(hdr, "bool operator==(const {} &lhs, const {} &rhs);\n",
-             escaped_struct_id, escaped_struct_id);
-  fmt::print(hdr,
-             "inline bool operator!=(const {} &lhs, const {} &rhs) {{ return "
-             "!(lhs == rhs); }};\n",
-             escaped_struct_id, escaped_struct_id);
-  fmt::print(hdr, "\n");
-
-  // define operator==
-  fmt::print(src,
-             "bool operator==(const {} &lhs, const {} &rhs) {{\n  return\n",
-             escaped_struct_id, escaped_struct_id);
-  for (auto s : ptr->table.table_) {
-    std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    fmt::print(src, "    (lhs.{}() == rhs.{}()) &&\n", member_id, member_id);
-  }
-  fmt::print(src, "    true;\n}}\n");
-  fmt::print(src, "\n");
-
-  // define operator<<
-  fmt::print(src,
-             "std::ostream& operator<<(std::ostream& os, const {}& obj) {{\n",
-             escaped_struct_id, escaped_struct_id);
-  fmt::print(src, "  os << \"struct {} :\\n\";\n", escaped_struct_id);
-  for (auto s : ptr->table.table_) {
-    std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    if (holds_alternative<SymbolRef>(s.second)) {
-      fmt::print(src,
-                 "  if (obj.{}()) {{\n"
-                 "    os << \"  {} = \" << *obj.{}() << \"\\n\";\n"
-                 "  }} else {{\n"
-                 "    os << \"  {} = empty;\\n\";\n"
-                 "  }}\n",
-                 member_id, member_id, member_id, member_id);
-    } else {
-      fmt::print(src, "  os << \"  {} = \" << obj.{}() << \"\\n\";\n",
-                 member_id, member_id);
-    }
-  }
-  fmt::print(src, "  return os;\n}}\n");
-  fmt::print(src, "\n");
+  return symbols;
 }
 
-void DefineVariant(ostream& hdr, ostream& src,
-                   SymbolTable::Symbol const& variant_symbol) {
-  auto ptr = get<shared_ptr<Variant>>(variant_symbol.second);
-  std::string escaped_variant_id =
-      std::string("Mutable") +
-      escape_utf8_to_cpp_identifier(variant_symbol.first);
-
-  // TODO rewrite this to use a tagged union.
-
-  fmt::print(hdr, "class {} TD_FINAL_CLASS {{\n", escaped_variant_id);
-
-  fmt::print(hdr, "  public:\n");
-  // constructors
-  fmt::print(hdr, "    {}() {{}};\n", escaped_variant_id);
-  fmt::print(hdr, "    ~{}() {{}};\n", escaped_variant_id);
-
-  // tag enum
-  fmt::print(hdr, "    enum class Tag {{\n");
-  fmt::print(hdr, "    __TAGS_BEGIN = 0,\n");
-  for (auto s : ptr->table.table_) {
-    std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    fmt::print(hdr, "    TAG_{},\n", member_id);
-  }
-  fmt::print(hdr, "    __TAGS_END,\n");
-  fmt::print(hdr, "    }};\n");
-  fmt::print(hdr, "\n");
-
-  // setters and getters
-  for (auto s : ptr->table.table_) {
-    std::string member_id = escape_utf8_to_cpp_identifier(s.first);
-    fmt::print(hdr,
-               "    bool Is{}() const {{ return tag_ == Tag::TAG_{}; }};\n",
-               member_id, member_id);
-
-    if (holds_alternative<optional<bool>>(s.second)) {
-      fmt::print(hdr,
-                 "    bool {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(bool _val) {{ {}_ = _val; }};\n", member_id,
-                 member_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<char32_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    char32_t {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(char32_t _val) {{ {}_ = _val; }};\n",
-                 member_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<string>>(s.second)) {
-      fmt::print(hdr,
-                 "    std::string_view {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr,
-                 "    std::string& {}() {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr,
-                 "    void {}(std::string_view _val) {{ {}_ = "
-                 "std::string(_val); }};\n",
-                 member_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<float>>(s.second)) {
-      fmt::print(hdr,
-                 "    float {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(float _val) {{ {}_ = _val; }};\n", member_id,
-                 member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<double>>(s.second)) {
-      fmt::print(hdr,
-                 "    double {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(double _val) {{ {}_ = _val; }};\n",
-                 member_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<int8_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    int8_t {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(int8_t _val) {{ {}_ = _val; }};\n",
-                 member_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<int16_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    int16_t {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(int16_t _val) {{ {}_ = _val; }};\n",
-                 member_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<int32_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    int32_t {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(int32_t _val) {{ {}_ = _val; }};\n",
-                 member_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<int64_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    int64_t {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(int64_t _val) {{ {}_ = _val; }};\n",
-                 member_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<uint8_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    uint8_t {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(uint8_t _val) {{ {}_ = _val; }};\n",
-                 member_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<uint16_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    uint16_t {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(uint16_t _val) {{ {}_ = _val; }};\n",
-                 member_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<uint32_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    uint32_t {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(uint32_t _val) {{ {}_ = _val; }};\n",
-                 member_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<optional<uint64_t>>(s.second)) {
-      fmt::print(hdr,
-                 "    uint64_t {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 member_id, member_id, member_id);
-      fmt::print(hdr, "    void {}(uint64_t _val) {{ {}_ = _val; }};\n",
-                 member_id, member_id);
-      fmt::print(hdr, "\n");
-
-    } else if (holds_alternative<SymbolRef>(s.second)) {
-      auto referenced_symbol =
-          escape_utf8_to_cpp_identifier(get<SymbolRef>(s.second));
-      fmt::print(hdr,
-                 "    std::unique_ptr<Mutable{}>& {}() {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 referenced_symbol, member_id, member_id, member_id);
-      fmt::print(hdr,
-                 "    const std::unique_ptr<Mutable{}>& {}() const {{\n"
-                 "       assert(tag_ == Tag::TAG_{});\n"
-                 "       return {}_;\n"
-                 "    }};\n",
-                 referenced_symbol, member_id, member_id, member_id);
-      fmt::print(hdr,
-                 "    void {}(std::unique_ptr<Mutable{}> _val) {{ {}_ = "
-                 "std::move(_val); }};\n",
-                 member_id, referenced_symbol, member_id);
-      fmt::print(hdr, "\n");
-    } else {
-      abort();
-    }
-  }
-
-  fmt::print(hdr,
-             "    bool isEqual(const {} &rhs) const {{\n"
-             "      if (tag_ != rhs.tag_) {{ return false; }};\n"
-             "      // TODO(dpemmons) this.\n"
-             "      return false;\n"
-             "    }}\n\n",
-             escaped_variant_id);
-
-  fmt::print(hdr,
-             "    friend std::ostream& operator<<(std::ostream& os, const "
-             "{}& obj);\n",
-             escaped_variant_id);
-  fmt::print(hdr, "\n");
-
-  fmt::print(hdr, "  private:\n");
-
-  fmt::print(hdr, "    Tag tag_ = Tag::__TAGS_BEGIN;\n");
-  fmt::print(hdr, "\n");
-
-  fmt::print(hdr, "  union {{\n");
-  bool first = true;
-  for (auto s : ptr->table.table_) {
-    CppIdentifiers cpp_id = GetCppType(s);
-    fmt::print(hdr, "      {} {}_;\n", cpp_id.full_type_id, cpp_id.symbol_id);
-  }
-  fmt::print(hdr, "  }};\n");
-  fmt::print(hdr, "\n");
-
-  // End class declaration.
-  fmt::print(hdr, "}};\n");
-  fmt::print(hdr, "\n");
-
-  // declare operators
-  fmt::print(hdr, "bool operator==(const {} &lhs, const {} &rhs);\n",
-             escaped_variant_id, escaped_variant_id);
-  fmt::print(hdr,
-             "inline bool operator!=(const {} &lhs, const {} "
-             "&rhs) {{ return "
-             "!(lhs == rhs); }};\n",
-             escaped_variant_id, escaped_variant_id);
-  fmt::print(hdr, "\n");
-
-  // define operator==
-  fmt::print(src, "bool operator==(const {} &lhs, const {} &rhs) {{\n",
-             escaped_variant_id, escaped_variant_id);
-  fmt::print(src, "  return lhs.isEqual(rhs);\n");
-  fmt::print(src, "}}\n");
-  fmt::print(src, "\n");
-
-  // define operator<<
-  fmt::print(src,
-             "std::ostream& operator<<(std::ostream& os, const {}& obj) {{\n",
-             escaped_variant_id, escaped_variant_id);
-  fmt::print(src, "  os << \"variant {} :\\n\";\n", escaped_variant_id);
-  fmt::print(src, "  os << \"  something.\\n\";\n");
-  fmt::print(src, "  return os;\n}}\n");
-  fmt::print(src, "\n");
-}
-
-void DefineVector(ostream& hdr, ostream& src,
-                  SymbolTable::Symbol const& vector_symbol) {
-  auto ptr = get<shared_ptr<Vector>>(vector_symbol.second);
-  std::string escaped_vector_id =
-      std::string("Mutable") +
-      escape_utf8_to_cpp_identifier(vector_symbol.first);
-
-  // TODO dirty hack to turn this into a symbol...
-  auto cpp_type = GetCppType(td::SymbolTable::Symbol("", ptr->type));
-
-  fmt::print(hdr, "class {} : public std::vector<{}> {{\n", escaped_vector_id,
-             cpp_type.full_type_id);
-  fmt::print(hdr, "\n");
-
-  fmt::print(hdr, "  public:\n");
-  // constructors
-  fmt::print(hdr, "    {}() {{}};\n", escaped_vector_id);
-  fmt::print(hdr, "    ~{}() {{}};\n", escaped_vector_id);
-
-  fmt::print(hdr, "\n");
-
-  fmt::print(hdr,
-             "    friend std::ostream& operator<<(std::ostream& os, const "
-             "{}& obj);\n",
-             escaped_vector_id);
-
-  fmt::print(hdr, "\n");
-  fmt::print(hdr, "  private:\n");
-  fmt::print(hdr, "\n");
-
-  // End class declaration.
-  fmt::print(hdr, "}};\n");
-  fmt::print(hdr, "\n");
-
-  // define operator<<
-  fmt::print(src,
-             "std::ostream& operator<<(std::ostream& os, const {}& obj) {{\n",
-             escaped_vector_id, escaped_vector_id);
-  fmt::print(src, "  os << \"vector {} :\\n\";\n", escaped_vector_id);
-  fmt::print(src, "  os << \"  something.\\n\";\n");
-  fmt::print(src, "  return os;\n}}\n");
-  fmt::print(src, "\n");
-}
-
-void DefineMap(ostream& hdr, ostream& src,
-               SymbolTable::Symbol const& map_symbol) {
-  auto ptr = get<shared_ptr<Map>>(map_symbol.second);
-  std::string escaped_map_id =
-      std::string("Mutable") + escape_utf8_to_cpp_identifier(map_symbol.first);
-
-  // TODO dirty hack to turn this into a symbol...
-  auto cpp_key_type = GetCppType(td::SymbolTable::Symbol("", ptr->key_type));
-  auto cpp_value_type =
-      GetCppType(td::SymbolTable::Symbol("", ptr->value_type));
-
-  fmt::print(hdr, "class {} : public std::map<{}, {}> {{\n", escaped_map_id,
-             cpp_key_type.full_type_id, cpp_value_type.full_type_id);
-  fmt::print(hdr, "\n");
-
-  fmt::print(hdr, "  public:\n");
-  // constructors
-  fmt::print(hdr, "    {}() {{}};\n", escaped_map_id);
-  fmt::print(hdr, "\n");
-
-  fmt::print(hdr,
-             "    friend std::ostream& operator<<(std::ostream& os, const "
-             "{}& obj);\n",
-             escaped_map_id);
-
-  fmt::print(hdr, "\n");
-  fmt::print(hdr, "  private:\n");
-  fmt::print(hdr, "\n");
-
-  // End class declaration.
-  fmt::print(hdr, "}};\n");
-  fmt::print(hdr, "\n");
-
-  // define operator<<
-  fmt::print(src,
-             "std::ostream& operator<<(std::ostream& os, const {}& obj) {{\n",
-             escaped_map_id, escaped_map_id);
-  fmt::print(src, "  os << \"map {} :\\n\";\n", escaped_map_id);
-  fmt::print(src, "  os << \"  something.\\n\";\n");
-  fmt::print(src, "  return os;\n}}\n");
-  fmt::print(src, "\n");
-}
-
-string HeaderGuard(filesystem::path source_filename) {
+string CodegenCpp::HeaderGuard(filesystem::path source_filename) const {
   string hdr_guard = source_filename.string() + "_H__";
   replace(hdr_guard.begin(), hdr_guard.end(), '.', '_');
   replace(hdr_guard.begin(), hdr_guard.end(), ' ', '_');
@@ -940,118 +146,561 @@ string HeaderGuard(filesystem::path source_filename) {
   return hdr_guard;
 }
 
-void CodegenCpp::Generate() {
-  filesystem::path hdr_filename = source_filename_ + ".h";
-  filesystem::path source_filename = source_filename_ + ".cpp";
-  auto hdr_file = out_path_->OpenOutputFile(hdr_filename);
-  hdr_file->Open();
+void CodegenCpp::PrintHeader(ostream& os, ViewModel const& vm) const {
+  fmt::dynamic_format_arg_store<fmt::format_context> store;
+  store.push_back(fmt::arg("header_guard", vm.header_guard));
+  store.push_back(fmt::arg("namespaces_open", NamespaceOpen(vm.namesapces)));
+  store.push_back(fmt::arg("namespaces_close", NamespaceClose(vm.namesapces)));
+  store.push_back(fmt::arg("value_declarations", ValueDeclarations(vm.values)));
+  store.push_back(
+      fmt::arg("class_forward_declarations", ForwardDeclarations(vm)));
+  store.push_back(fmt::arg("struct_classes", StructClasses(vm.structs)));
+  store.push_back(fmt::arg("variant_classes", VariantClasses(vm.variants)));
+  store.push_back(fmt::arg("vector_classes", VectorClasses(vm.vectors)));
+  store.push_back(fmt::arg("map_classes", MapClasses(vm.maps)));
 
-  auto src_file = out_path_->OpenOutputFile(source_filename);
-  src_file->Open();
+  fmt::vprint(os, R"(
+#ifndef {header_guard}
+#define {header_guard}
 
-  // begin hdr guard
-  string hdr_guard = HeaderGuard(source_filename.string());
-  fmt::print(hdr_file->OStream(), "#ifndef {}\n", hdr_guard);
-  fmt::print(hdr_file->OStream(), "#define {}\n\n", hdr_guard);
+#include <cassert>
+#include <cstdint>
+#include <map>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <variant>
+#include <vector>
 
-  // hdr includes
-  fmt::print(hdr_file->OStream(), "#include <cassert>\n");
-  fmt::print(hdr_file->OStream(), "#include <cstdint>\n");
-  fmt::print(hdr_file->OStream(), "#include <map>\n");
-  fmt::print(hdr_file->OStream(), "#include <memory>\n");
-  fmt::print(hdr_file->OStream(), "#include <ostream>\n");
-  fmt::print(hdr_file->OStream(), "#include <string>\n");
-  fmt::print(hdr_file->OStream(), "#include <variant>\n");
-  fmt::print(hdr_file->OStream(), "#include <vector>\n");
+{namespaces_open}
 
-  // hdr macros
-  fmt::print(hdr_file->OStream(), "{}\n", StructAlignmentMacro());
+// Value declarations
+{value_declarations}
 
-  // source includes
-  fmt::print(src_file->OStream(), "#include \"{}\"\n",
-             hdr_file->GetPath().filename().string());
-  fmt::print(src_file->OStream(), "\n");
+// Forward Declarations
+{class_forward_declarations}
 
-  // namespace declarations
-  for (auto raw_namespace : parser_->module_) {
-    std::string ns = escape_utf8_to_cpp_identifier(raw_namespace);
-    fmt::print(hdr_file->OStream(), "namespace {} {{\n", ns);
-    fmt::print(src_file->OStream(), "namespace {} {{\n", ns);
+// Structs
+{struct_classes}
+
+// Variants
+{variant_classes}
+
+// Vectors
+{vector_classes}
+
+// Maps
+{map_classes}
+
+{namespaces_close}
+
+#endif  // {header_guard}
+)",
+              store);
+}
+
+void CodegenCpp::PrintSource(ostream& os, ViewModel const& vm) const {
+  fmt::dynamic_format_arg_store<fmt::format_context> store;
+  store.push_back(fmt::arg("hdr_filename", vm.hdr_filename.c_str()));
+  store.push_back(fmt::arg("namespaces_open", NamespaceOpen(vm.namesapces)));
+  store.push_back(fmt::arg("namespaces_close", NamespaceClose(vm.namesapces)));
+  store.push_back(fmt::arg("struct_methods", StructMethods(vm.structs)));
+  store.push_back(fmt::arg("variant_methods", VariantMethods(vm.variants)));
+  store.push_back(fmt::arg("vector_methods", VectorMethods(vm.vectors)));
+  store.push_back(fmt::arg("map_methods", MapMethods(vm.maps)));
+
+  fmt::vprint(os, R"(
+#include "{hdr_filename}"
+
+{namespaces_open}
+
+{struct_methods}
+
+{variant_methods}
+
+{vector_methods}
+
+{map_methods}
+
+{namespaces_close}
+)",
+              store);
+}
+
+string CodegenCpp::NamespaceOpen(vector<string> namespaces) const {
+  stringstream ss;
+  for (auto ns : namespaces) {
+    fmt::print(ss, "namespace {} {{\n", ns);
   }
-  if (parser_->module_.size() > 0) {
-    fmt::print(hdr_file->OStream(), "\n");
-    fmt::print(src_file->OStream(), "\n");
+  return ss.str();
+}
+
+string CodegenCpp::NamespaceClose(vector<string> namespaces) const {
+  stringstream ss;
+  for (auto ns : namespaces) {
+    fmt::print(ss, "}}  // {}\n", ns);
   }
+  return ss.str();
+}
 
-  // forward declare everything first.
+string CodegenCpp::ValueDeclarations(
+    vector<ValueViewModel> const& values) const {
+  stringstream ss;
+  for (auto v : values) {
+    fmt::print(ss, "typedef {} {};\n", v.sym.Primitive().CppType(),
+               v.sym.EscapedIdentifier());
+  }
+  return ss.str();
+}
 
-  // forward declare structs and variants
-  fmt::print(hdr_file->OStream(), "// struct forward declarations\n");
-  for (auto symbol : parser_->symbols2_.table_) {
-    // declare everything first.
-    if (holds_alternative<shared_ptr<td::Struct>>(symbol.second) ||
-        holds_alternative<shared_ptr<td::Variant>>(symbol.second) ||
-        holds_alternative<shared_ptr<td::Vector>>(symbol.second) ||
-        holds_alternative<shared_ptr<td::Map>>(symbol.second)) {
-      std::string escaped_id = escape_utf8_to_cpp_identifier(symbol.first);
-      fmt::print(hdr_file->OStream(), "class Mutable{};\n", escaped_id);
+string CodegenCpp::ForwardDeclarations(ViewModel const& vm) const {
+  stringstream ss;
+  for (auto s : vm.structs) {
+    fmt::print(ss, "class {};\n", s.struct_name);
+  }
+  for (auto s : vm.variants) {
+    fmt::print(ss, "class {};\n", s.struct_name);
+  }
+  for (auto s : vm.vectors) {
+    fmt::print(ss, "class {};\n", s.struct_name);
+  }
+  for (auto s : vm.maps) {
+    fmt::print(ss, "class {};\n", s.struct_name);
+  }
+  return ss.str();
+}
+
+string CodegenCpp::StructAccessors(
+    vector<CodegenCpp::CppSymbol> const& members) const {
+  stringstream ss;
+  for (auto m : members) {
+    fmt::dynamic_format_arg_store<fmt::format_context> store;
+    store.push_back(fmt::arg("identifier", m.EscapedIdentifier()));
+
+    if (m.IsPrimitive()) {
+      store.push_back(fmt::arg("type", m.Primitive().CppType()));
+      fmt::vprint(ss, R"(
+    {type} {identifier}() const {{ return {identifier}_; }}
+    void {identifier}({type} _val) {{ {identifier}_ = _val; }}
+    )",
+                  store);
+    } else if (m.IsNonPrimitive()) {
+      assert(false);  // not yet.
+    } else if (m.IsReference()) {
+      store.push_back(fmt::arg("type", m.Reference().ReferencedCppType()));
+      fmt::vprint(ss, R"(
+    {type}& {identifier}() {{ return {identifier}_; }}
+    const {type}& {identifier}() const {{ return {identifier}_; }}
+    void {identifier}({type} _val) {{ {identifier}_ = std::move(_val); }}
+    )",
+                  store);
+    } else {
+      assert(false);
     }
   }
+  return ss.str();
+}
 
-  fmt::print(hdr_file->OStream(), "\n");
-
-  // value declarations
-  fmt::print(hdr_file->OStream(), "// value declarations\n");
-  for (auto symbol : parser_->symbols2_.table_) {
-    // declare everything first.
-    if (holds_alternative<shared_ptr<td::Struct>>(symbol.second) ||
-        holds_alternative<shared_ptr<td::Variant>>(symbol.second) ||
-        holds_alternative<shared_ptr<td::Vector>>(symbol.second) ||
-        holds_alternative<shared_ptr<td::Map>>(symbol.second)) {
-      continue;
+string CodegenCpp::StructMembers(
+    vector<CodegenCpp::CppSymbol> const& members) const {
+  stringstream ss;
+  for (auto m : members) {
+    fmt::dynamic_format_arg_store<fmt::format_context> store;
+    bool has_value = false;
+    if (m.IsPrimitive()) {
+      store.push_back(fmt::arg("type", m.Primitive().CppType()));
+      if (!m.Primitive().Value().empty()) {
+        store.push_back(fmt::arg("value", m.Primitive().Value()));
+        has_value = true;
+      }
+    } else if (m.IsNonPrimitive()) {
+      store.push_back(fmt::arg("type", m.NonPrimitive().CppType()));
+    } else if (m.IsReference()) {
+      store.push_back(fmt::arg("type", m.Reference().ReferencedCppType()));
+    } else {
+      assert(false);
     }
-    DeclarePrimitive(hdr_file->OStream(), symbol);
-    DefinePrimitive(src_file->OStream(), symbol);
-  }
+    store.push_back(fmt::arg("identifier", m.EscapedIdentifier()));
 
-  fmt::print(hdr_file->OStream(), "\n");
-  fmt::print(src_file->OStream(), "\n");
-
-  // declare structs
-  for (auto symbol : parser_->symbols2_.table_) {
-    if (holds_alternative<shared_ptr<td::Struct>>(symbol.second)) {
-      DefineStruct(hdr_file->OStream(), src_file->OStream(), symbol);
-      fmt::print(hdr_file->OStream(), "\n");
-    } else if (holds_alternative<shared_ptr<td::Variant>>(symbol.second)) {
-      DefineVariant(hdr_file->OStream(), src_file->OStream(), symbol);
-      fmt::print(hdr_file->OStream(), "\n");
-    } else if (holds_alternative<shared_ptr<td::Vector>>(symbol.second)) {
-      DefineVector(hdr_file->OStream(), src_file->OStream(), symbol);
-      fmt::print(hdr_file->OStream(), "\n");
-    } else if (holds_alternative<shared_ptr<td::Map>>(symbol.second)) {
-      DefineMap(hdr_file->OStream(), src_file->OStream(), symbol);
-      fmt::print(hdr_file->OStream(), "\n");
+    if (has_value) {
+      fmt::vprint(ss, "    {type} {identifier}_ = {value};\n", store);
+    } else {
+      fmt::vprint(ss, "    {type} {identifier}_;\n", store);
     }
   }
+  return ss.str();
+}
 
-  fmt::print(hdr_file->OStream(), "\n");
+string CodegenCpp::StructClasses(vector<StructViewModel> const& structs) const {
+  stringstream ss;
+  for (auto s : structs) {
+    fmt::dynamic_format_arg_store<fmt::format_context> store;
+    store.push_back(fmt::arg("classname", s.struct_name));
+    store.push_back(fmt::arg("accessors", StructAccessors(s.members)));
+    store.push_back(fmt::arg("members", StructMembers(s.members)));
+    fmt::vprint(ss, R"(
+class {classname} {{
+  public:
+    {classname}() {{}};
+    ~{classname}() {{}};
 
-  // close namespace declarations
-  for (auto raw_namespace : parser_->module_) {
-    std::string ns = escape_utf8_to_cpp_identifier(raw_namespace);
-    fmt::print(hdr_file->OStream(), "}}  // namespace {}\n", ns);
-    fmt::print(src_file->OStream(), "}}  // namespace {}\n", ns);
+{accessors}
+
+    friend std::ostream& operator<<(std::ostream& os, const {classname}& obj);
+
+  private:
+{members}
+}};
+)",
+                store);
   }
-  if (parser_->module_.size() > 0) {
-    fmt::print(hdr_file->OStream(), "\n");
-    fmt::print(src_file->OStream(), "\n");
+  return ss.str();
+}
+
+string CodegenCpp::VariantAccessors(
+    vector<CodegenCpp::CppSymbol> const& members) const {
+  stringstream ss;
+  for (auto m : members) {
+    fmt::dynamic_format_arg_store<fmt::format_context> store;
+    store.push_back(fmt::arg("identifier", m.EscapedIdentifier()));
+
+    if (m.IsPrimitive()) {
+      store.push_back(fmt::arg("type", m.Primitive().CppType()));
+      fmt::vprint(ss, R"(
+    bool Is{identifier}() const {{ return tag == Tag::TAG_{identifier}; }}
+    {type} {identifier}() const {{
+      assert(tag == Tag::TAG_{identifier});
+      return {identifier}_; 
+    }}
+    void {identifier}({type} _val) {{
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_{identifier};
+      {identifier}_ = _val;
+    }}
+    )",
+                  store);
+    } else if (m.IsNonPrimitive()) {
+      assert(false);  // not yet.
+    } else if (m.IsReference()) {
+      store.push_back(fmt::arg("type", m.Reference().ReferencedCppType()));
+      fmt::vprint(ss, R"(
+    bool Is{identifier}() const {{ return tag == Tag::TAG_{identifier}; }}
+    {type}& {identifier}() {{
+      assert(tag == Tag::TAG_{identifier});
+      return {identifier}_;
+    }}
+    const {type}& {identifier}() const {{
+      assert(tag == Tag::TAG_{identifier});
+      return {identifier}_;
+    }}
+    void {identifier}({type} _val) {{
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_{identifier};
+      {identifier}_ = std::move(_val);
+    }}
+    )",
+                  store);
+    } else {
+      assert(false);
+    }
+  }
+  return ss.str();
+}
+
+string CodegenCpp::VariantTags(vector<CppSymbol> const& members) const {
+  stringstream ss;
+  for (auto m : members) {
+    fmt::print(ss, "      TAG_{},\n", m.EscapedIdentifier());
+  }
+  return ss.str();
+}
+
+string CodegenCpp::VariantMemberDeletionCases(
+    vector<CppSymbol> const& members) const {
+  stringstream ss;
+  for (auto m : members) {
+    if (!m.IsPrimitive()) {
+      fmt::print(ss, "        case Tag::TAG_{}:\n", m.EscapedIdentifier());
+      fmt::print(ss, "          {}_.reset(nullptr);\n", m.EscapedIdentifier());
+      fmt::print(ss, "          break;\n", m.EscapedIdentifier());
+    }
+  }
+  return ss.str();
+}
+
+string CodegenCpp::VariantClasses(
+    vector<VariantViewModel> const& variants) const {
+  stringstream ss;
+  for (auto v : variants) {
+    fmt::dynamic_format_arg_store<fmt::format_context> store;
+    store.push_back(fmt::arg("classname", v.struct_name));
+    store.push_back(fmt::arg("accessors", VariantAccessors(v.members)));
+    store.push_back(fmt::arg("members", StructMembers(v.members)));
+    store.push_back(fmt::arg("tags", VariantTags(v.members)));
+    store.push_back(fmt::arg("member_deletion_cases",
+                             VariantMemberDeletionCases(v.members)));
+
+    fmt::vprint(ss, R"(
+class {classname} {{
+  public:
+    {classname}() {{}};
+    ~{classname}() {{}};
+
+    {accessors}
+
+    friend std::ostream& operator<<(std::ostream& os, const {classname}& obj);
+
+  private:
+    enum class Tag {{
+      __TAGS_BEGIN = 0,
+{tags}
+      __TAGS_END
+    }} tag = Tag::__TAGS_BEGIN;
+
+    union {{
+{members}
+    }};  // union
+
+    void MaybeDeleteExistingMember() {{
+      switch (tag) {{
+{member_deletion_cases}
+        default:
+          return;
+      }}
+    }}
+
+}};
+)",
+                store);
+  }
+  return ss.str();
+}
+
+string CodegenCpp::VectorClasses(vector<VectorViewModel> const& vectors) const {
+  stringstream ss;
+  for (auto v : vectors) {
+    fmt::dynamic_format_arg_store<fmt::format_context> store;
+    store.push_back(fmt::arg("classname", v.struct_name));
+    if (v.payload.IsPrimitive()) {
+      store.push_back(fmt::arg("payload", v.payload.Primitive().CppType()));
+    } else if (v.payload.IsNonPrimitive()) {
+      store.push_back(fmt::arg("payload", v.payload.NonPrimitive().CppType()));
+    } else if (v.payload.IsReference()) {
+      store.push_back(
+          fmt::arg("payload", v.payload.Reference().ReferencedCppType()));
+    } else {
+      assert(false);
+    }
+    fmt::vprint(ss, R"(
+class {classname} : public std::vector<{payload}> {{
+  public:
+    {classname}() {{}};
+    ~{classname}() {{}};
+
+    friend std::ostream& operator<<(std::ostream& os, const {classname}& obj);
+}};
+)",
+                store);
+  }
+  return ss.str();
+}
+
+string CodegenCpp::MapClasses(vector<MapViewModel> const& maps) const {
+  stringstream ss;
+  for (auto v : maps) {
+    fmt::dynamic_format_arg_store<fmt::format_context> store;
+    store.push_back(fmt::arg("classname", v.struct_name));
+
+    if (v.key.IsPrimitive()) {
+      store.push_back(fmt::arg("key", v.key.Primitive().CppType()));
+    } else if (v.key.IsNonPrimitive()) {
+      store.push_back(fmt::arg("key", v.key.NonPrimitive().CppType()));
+    } else if (v.key.IsReference()) {
+      store.push_back(fmt::arg("key", v.key.Reference().ReferencedCppType()));
+    } else {
+      assert(false);
+    }
+
+    if (v.value.IsPrimitive()) {
+      store.push_back(fmt::arg("value", v.value.Primitive().CppType()));
+    } else if (v.value.IsNonPrimitive()) {
+      store.push_back(fmt::arg("value", v.value.NonPrimitive().CppType()));
+    } else if (v.value.IsReference()) {
+      store.push_back(
+          fmt::arg("value", v.value.Reference().ReferencedCppType()));
+    } else {
+      assert(false);
+    }
+
+    fmt::vprint(ss, R"(
+class {classname} : public std::map<{key}, {value}> {{
+  public:
+    {classname}() {{}};
+    ~{classname}() {{}};
+
+    friend std::ostream& operator<<(std::ostream& os, const {classname}& obj);
+}};
+)",
+                store);
+  }
+  return ss.str();
+}
+
+string CodegenCpp::StructMethods(vector<StructViewModel> const& structs) const {
+  stringstream ss;
+  for (auto s : structs) {
+    fmt::dynamic_format_arg_store<fmt::format_context> store;
+    store.push_back(fmt::arg("classname", s.struct_name));
+
+    fmt::vprint(ss, R"(
+std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
+  os << "struct {classname}.\n";
+  return os;
+}}
+)",
+                store);
+  }
+  return ss.str();
+}
+
+string CodegenCpp::VariantMethods(
+    vector<VariantViewModel> const& variants) const {
+  stringstream ss;
+  for (auto v : variants) {
+    fmt::dynamic_format_arg_store<fmt::format_context> store;
+    store.push_back(fmt::arg("classname", v.struct_name));
+
+    fmt::vprint(ss, R"(
+std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
+  os << "variant {classname}.\n";
+  return os;
+}}
+)",
+                store);
+  }
+  return ss.str();
+}
+
+string CodegenCpp::VectorMethods(vector<VectorViewModel> const& vectors) const {
+  stringstream ss;
+  for (auto v : vectors) {
+    fmt::dynamic_format_arg_store<fmt::format_context> store;
+    store.push_back(fmt::arg("classname", v.struct_name));
+
+    fmt::vprint(ss, R"(
+std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
+  os << "vector {classname}.\n";
+  return os;
+}}
+)",
+                store);
+  }
+  return ss.str();
+}
+
+string CodegenCpp::MapMethods(vector<MapViewModel> const& maps) const {
+  stringstream ss;
+  for (auto m : maps) {
+    fmt::dynamic_format_arg_store<fmt::format_context> store;
+    store.push_back(fmt::arg("classname", m.struct_name));
+
+    fmt::vprint(ss, R"(
+std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
+  os << "map {classname}.\n";
+  return os;
+}}
+)",
+                store);
+  }
+  return ss.str();
+}
+
+CodegenCpp::ViewModel CodegenCpp::CreateViewModel(
+    filesystem::path hdr_path, vector<string> module,
+    GroupedSymbols const& grouped_symbols) const {
+  ViewModel view_model;
+  view_model.hdr_filename = hdr_path.filename().string();
+  view_model.header_guard = HeaderGuard(hdr_path);
+  for (auto m : module) {
+    view_model.namesapces.push_back(escape_utf8_to_cpp_identifier(m));
   }
 
-  // end hdr gueard
-  fmt::print(hdr_file->OStream(), "\n#endif  // {}\n", hdr_guard);
+  view_model.values = CreateValueViewModels(grouped_symbols.values);
+  view_model.structs = CreateStructViewModels(grouped_symbols.structs);
+  view_model.variants = CreateVaraintViewModels(grouped_symbols.variants);
+  view_model.vectors = CreateVectorViewModels(grouped_symbols.vectors);
+  view_model.maps = CreateMapViewModels(grouped_symbols.maps);
 
-  hdr_file->Close();
-  src_file->Close();
+  return view_model;
+}
+
+vector<CodegenCpp::ValueViewModel> CodegenCpp::CreateValueViewModels(
+    vector<pair<string, SymbolTable::Value>> values) const {
+  vector<ValueViewModel> view_models;
+  for (auto s : values) {
+    view_models.push_back(s);
+  }
+  return view_models;
+}
+
+vector<CodegenCpp::StructViewModel> CodegenCpp::CreateStructViewModels(
+    vector<pair<string, SymbolTable::Value>> structs) const {
+  vector<StructViewModel> view_models;
+  for (auto s : structs) {
+    // each struct.
+    StructViewModel svm;
+    svm.struct_name =
+        string("Mutable") + escape_utf8_to_cpp_identifier(s.first);
+    // each member of the struct.
+    auto str = get<shared_ptr<Struct>>(s.second);
+    for (auto m : str->table.table_) {
+      svm.members.push_back(CppSymbol(m));
+    }
+    view_models.push_back(svm);
+  }
+  return view_models;
+}
+
+vector<CodegenCpp::VariantViewModel> CodegenCpp::CreateVaraintViewModels(
+    vector<pair<string, SymbolTable::Value>> variants) const {
+  vector<VariantViewModel> view_models;
+  for (auto s : variants) {
+    VariantViewModel vvm;
+    vvm.struct_name =
+        string("Mutable") + escape_utf8_to_cpp_identifier(s.first);
+    // each member of the variant.
+    auto str = get<shared_ptr<Variant>>(s.second);
+    for (auto m : str->table.table_) {
+      vvm.members.push_back(CppSymbol(m));
+    }
+    view_models.push_back(vvm);
+  }
+  return view_models;
+}
+
+vector<CodegenCpp::VectorViewModel> CodegenCpp::CreateVectorViewModels(
+    vector<pair<string, SymbolTable::Value>> vectors) const {
+  vector<VectorViewModel> view_models;
+  for (auto s : vectors) {
+    auto ptr = get<shared_ptr<Vector>>(s.second);
+    view_models.push_back(VectorViewModel(
+        string("Mutable") + escape_utf8_to_cpp_identifier(s.first),
+        SymbolTable::Symbol(string(""), ptr->type)));
+  }
+  return view_models;
+}
+
+vector<CodegenCpp::MapViewModel> CodegenCpp::CreateMapViewModels(
+    vector<pair<string, SymbolTable::Value>> maps) const {
+  vector<MapViewModel> view_models;
+  for (auto s : maps) {
+    auto ptr = get<shared_ptr<Map>>(s.second);
+    view_models.push_back(
+        MapViewModel(string("Mutable") + escape_utf8_to_cpp_identifier(s.first),
+                     SymbolTable::Symbol(string(""), ptr->key_type),
+                     SymbolTable::Symbol(string(""), ptr->value_type)));
+  }
+  return view_models;
 }
 
 }  // namespace td

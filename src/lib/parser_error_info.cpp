@@ -1,8 +1,8 @@
 #include "parser_error_info.h"
 
-#include <stdlib.h>
-
 #include <algorithm>
+#include <cassert>
+#include <cstdlib>
 
 #include "antlr4/antlr4-runtime.h"
 #include "grammar/TypedefLexer.h"
@@ -307,7 +307,7 @@ const char *TokenToString(size_t token) {
     case TypedefParser::RPAREN:
       return "RPAREN";
     default:
-      abort();
+      assert(false);  // unreachable
   }
 }
 }  // namespace
@@ -351,7 +351,7 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
     case INVALID_STRING_LITERAL:
       return "INVALID_STRING_LITERAL";
     default:
-      abort();
+      assert(false);  // unreachable
   }
 }
 

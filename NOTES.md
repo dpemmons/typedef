@@ -18,6 +18,10 @@ Items in ***bold*** are in-progress.
   - [ ] byte strings
   - [ ] raw byte strings
 - [ ] raw identifiers (do they just work?)
+- [ ] generated cpp features
+  - [ ] move semantics
+  - [ ] print methods
+  - [ ] comparison operators
 
 Currently using this to test...
 

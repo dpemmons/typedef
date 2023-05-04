@@ -1,5 +1,6 @@
 #include "symbol_table.h"
 
+#include <cassert>
 #include <charconv>
 #include <codecvt>
 #include <cstdint>
@@ -65,7 +66,7 @@ void PrintType(ostream& os, const SymbolTable::Value& v) {
     auto id = get<SymbolRef>(v);
     fmt::print(os, "ref to {}", id.id);
   } else {
-    abort();
+    assert(false);  // unreachable
   }
 }
 
@@ -114,7 +115,7 @@ void MaybePrintValue(ostream& os, const SymbolTable::Value& v) {
     auto maybe_val = get<SymbolRef>(v);
     fmt::print(os, "{}", maybe_val.id);
   } else {
-    abort();
+    assert(false);  // unreachable
   }
 }
 

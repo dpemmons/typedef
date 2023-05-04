@@ -1,9 +1,9 @@
 #ifndef LIB_GRAMMAR_PARSER_HELPERS_H__
 #define LIB_GRAMMAR_PARSER_HELPERS_H__
 
-#include <stdlib.h>
-
+#include <cassert>
 #include <charconv>
+#include <cstdlib>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -134,7 +134,7 @@ T GetIntValue(TypedefParser *parser, CTX *ctx) {
     remove_underscores = true;
   } else {
     // Grammar shouldn't let us get here...
-    abort();
+    assert(false);  // unreachable
   }
 
   if (remove_underscores) {
