@@ -30,7 +30,7 @@ class DuplicateSymbolException : public antlr4::RecognitionException {
  public:
   DuplicateSymbolException(antlr4::Parser *recognizer,
                            antlr4::ParserRuleContext *ctx,
-                           antlr4::Token *offendingToken = nullptr)
+                           antlr4::Token *offendingToken)
       : antlr4::RecognitionException("Duplicate symbol", recognizer,
                                      recognizer->getTokenStream(), ctx,
                                      offendingToken) {}
@@ -164,46 +164,9 @@ std::string GetStringValue(TypedefParser *parser, antlr4::Token *token);
 
 std::string GetRawString(TypedefParser *parser, antlr4::Token *token);
 
-// std::optional<td::SymbolTable::Symbol> MakeSymbol(
-//     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-//     std::string &id, TypedefParser::MaybeValuedTypeContext *ctx);
-
-// // std::optional<td::SymbolTable::Symbol> MakeSymbol(
-// //     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-// //     std::string &id, TypedefParser::ValuedTypeContext *ctx);
-
-// std::optional<td::SymbolTable::Symbol> MakeSymbol(
-//     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-//     std::string &id, TypedefParser::UnvaluedTypeContext *ctx);
-
-// std::optional<td::SymbolTable::Value> MakeVector(
-//     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-//     TypedefParser::UnvaluedTypeContext *ctx);
-
-// std::optional<td::SymbolTable::Value> MakeMap(
-//     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-//     TypedefParser::PrimitiveTypeContext *key_ctx,
-//     TypedefParser::UnvaluedTypeContext *val_ctx);
-
 std::optional<td::SymbolRef> CheckIdentifierExists(
     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
     TypedefParser::IdentifierContext *ctx);
-
-// Insert fields into symbol tables.
-// void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
-//                  TypedefParser::MaybeValuedSymbolDeclarationContext *ctx);
-
-// void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
-//                  TypedefParser::StructDeclarationContext *ctx);
-
-// void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
-//                  TypedefParser::VariantDeclarationContext *ctx);
-
-// void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
-//                  TypedefParser::VectorDeclarationContext *ctx);
-
-// void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
-//                  TypedefParser::MapDeclarationContext *ctx);
 
 void TryInsert(td::SymbolTable &dstTable,
                TypedefParser::TypeDeclarationContext *src,

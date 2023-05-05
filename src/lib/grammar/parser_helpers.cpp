@@ -183,70 +183,6 @@ std::string GetRawString(TypedefParser* parser, antlr4::Token* token) {
   return std::string(literal);
 }
 
-// std::optional<td::SymbolTable::Symbol> MakeSymbol(
-//     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
-//     std::string& id, TypedefParser::MaybeValuedTypeContext* ctx) {
-//   if (ctx->valuedType()) {
-//     return MakeSymbol(recognizer, global_symbol_table, id,
-//     ctx->valuedType());
-//   } else if (ctx->unvaluedType()) {
-//     return MakeSymbol(recognizer, global_symbol_table, id,
-//     ctx->unvaluedType());
-//   }
-//   // pretty sure we would have already thrown an error.
-//   return std::nullopt;
-// }
-
-// std::optional<td::SymbolTable::Symbol> MakeSymbol(
-//     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
-//     std::string& id, TypedefParser::ValuedTypeContext* ctx) {
-//   if (ctx->valuedPrimitiveType()) {
-//     auto valuedPrimitiveType = ctx->valuedPrimitiveType();
-//     if (valuedPrimitiveType->maybe_val) {
-//       return std::make_pair(id, valuedPrimitiveType->maybe_val.value());
-//     }
-//   }
-//   // pretty sure we would have already thrown an error.
-//   return std::nullopt;
-// }
-
-// std::optional<td::SymbolTable::Symbol> MakeSymbol(
-//     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
-//     std::string& id, TypedefParser::UnvaluedTypeContext* ctx) {
-//   if (ctx->identifier()) {
-//     auto identifier = ctx->identifier();
-//     std::string referencedSymbol =
-//         identifier->NON_KEYWORD_IDENTIFIER()->getSymbol()->getText();
-//     auto maybe_symbol = global_symbol_table.Get(referencedSymbol);
-//     if (maybe_symbol) {
-//       return std::make_pair(id, td::SymbolRef(referencedSymbol));
-//     } else {
-//       throw SymbolNotFoundException(
-//           recognizer, ctx,
-//           identifier->NON_KEYWORD_IDENTIFIER()->getSymbol());
-//     }
-//   } else if (ctx->maybe_val) {
-//     return std::make_pair(id, *ctx->maybe_val);
-//   }
-//   // pretty sure we would have already thrown an error.
-//   return std::nullopt;
-// }
-
-// std::optional<td::SymbolTable::Value> MakeVector(
-//     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
-//     TypedefParser::UnvaluedTypeContext* ctx) {
-//   // TODO this.
-//   return std::make_shared<td::Vector>(*ctx->maybe_val);
-// }
-
-// std::optional<td::SymbolTable::Value> MakeMap(
-//     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
-//     TypedefParser::PrimitiveTypeContext* key_ctx,
-//     TypedefParser::UnvaluedTypeContext* val_ctx) {
-//   // TODO this.
-//   return std::make_shared<td::Map>();
-// }
-
 std::optional<td::SymbolRef> CheckIdentifierExists(
     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
     TypedefParser::IdentifierContext* ctx) {
@@ -259,69 +195,26 @@ std::optional<td::SymbolRef> CheckIdentifierExists(
   }
 }
 
-// void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,
-//                  TypedefParser::MaybeValuedSymbolDeclarationContext* ctx) {
-//   if (ctx->maybeValuedSymbol()->maybe_symbol) {
-//     if (!dstTable.TryInsert(*ctx->maybeValuedSymbol()->maybe_symbol)) {
-//       throw DuplicateSymbolException(recognizer, ctx,
-//                                      ctx->maybeValuedSymbol()
-//                                          ->identifier()
-//                                          ->NON_KEYWORD_IDENTIFIER()
-//                                          ->getSymbol());
-//     }
-//   }
-// }
-
-// void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,
-//                  TypedefParser::StructDeclarationContext* ctx) {
-//   if (ctx->maybe_symbol) {
-//     if (!dstTable.TryInsert(*ctx->maybe_symbol)) {
-//       throw DuplicateSymbolException(
-//           recognizer, ctx,
-//           ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
-//     }
-//   }
-// }
-
-// void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,
-//                  TypedefParser::VariantDeclarationContext* ctx) {
-//   if (ctx->maybe_symbol) {
-//     if (!dstTable.TryInsert(*ctx->maybe_symbol)) {
-//       throw DuplicateSymbolException(
-//           recognizer, ctx,
-//           ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
-//     }
-//   }
-// }
-
-// void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,
-//                  TypedefParser::VectorDeclarationContext* ctx) {
-//   if (ctx->maybe_symbol) {
-//     if (!dstTable.TryInsert(*ctx->maybe_symbol)) {
-//       throw DuplicateSymbolException(
-//           recognizer, ctx,
-//           ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
-//     }
-//   }
-// }
-
-// void InsertField(td::SymbolTable& dstTable, antlr4::Parser* recognizer,
-//                  TypedefParser::MapDeclarationContext* ctx) {
-//   if (ctx->maybe_symbol) {
-//     if (!dstTable.TryInsert(*ctx->maybe_symbol)) {
-//       throw DuplicateSymbolException(
-//           recognizer, ctx,
-//           ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
-//     }
-//   }
-// }
-
 void TryInsert(td::SymbolTable& dst_table,
                TypedefParser::TypeDeclarationContext* src,
                antlr4::Parser* recognizer) {
   if (src->maybe_symbol) {
     if (!dst_table.TryInsert(*src->maybe_symbol)) {
-      throw DuplicateSymbolException(recognizer, src);
+      TypedefParser::IdentifierContext* identifier;
+      if (src->structDeclaration()) {
+        identifier = src->structDeclaration()->identifier();
+      } else if (src->variantDeclaration()) {
+        identifier = src->structDeclaration()->identifier();
+      } else if (src->vectorDeclaration()) {
+        identifier = src->structDeclaration()->identifier();
+      } else if (src->mapDeclaration()) {
+        identifier = src->structDeclaration()->identifier();
+      } else {
+        assert(false);  // unhandled case.
+      }
+
+      throw DuplicateSymbolException(
+          recognizer, src, identifier->NON_KEYWORD_IDENTIFIER()->getSymbol());
     }
   }
 }
