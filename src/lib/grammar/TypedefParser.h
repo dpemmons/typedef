@@ -54,17 +54,17 @@ public:
     RuleStructDeclaration = 3, RuleVariantDeclaration = 4, RuleVectorDeclaration = 5, 
     RuleMapDeclaration = 6, RuleMaybeValuedSymbol = 7, RuleUnvaluedSymbol = 8, 
     RuleMaybeValuedType = 9, RuleValuedType = 10, RuleUnvaluedType = 11, 
-    RulePrimitiveType = 12, RuleValuedPrimitiveType = 13, RuleValuedBoolFragment = 14, 
-    RuleValuedCharFragment = 15, RuleValuedStringFragment = 16, RuleValuedF32Fragment = 17, 
-    RuleValuedF64Fragment = 18, RuleValuedU8Fragment = 19, RuleValuedU16Fragment = 20, 
-    RuleValuedU32Fragment = 21, RuleValuedU64Fragment = 22, RuleValuedI8Fragment = 23, 
-    RuleValuedI16Fragment = 24, RuleValuedI32Fragment = 25, RuleValuedI64Fragment = 26, 
-    RuleTypedefVersionDeclaration = 27, RuleModuleDeclaration = 28, RuleUseDeclaration = 29, 
-    RuleUseTree = 30, RuleSimplePath = 31, RuleBoolLiteral = 32, RuleCharLiteral = 33, 
-    RuleF32Literal = 34, RuleF64Literal = 35, RuleU8Literal = 36, RuleU16Literal = 37, 
-    RuleU32Literal = 38, RuleU64Literal = 39, RuleI8Literal = 40, RuleI16Literal = 41, 
-    RuleI32Literal = 42, RuleI64Literal = 43, RuleStringLiteral = 44, RuleIdentifier = 45, 
-    RuleKeyword = 46
+    RuleSymbolReference = 12, RulePrimitiveType = 13, RuleValuedPrimitiveType = 14, 
+    RuleValuedBoolFragment = 15, RuleValuedCharFragment = 16, RuleValuedStringFragment = 17, 
+    RuleValuedF32Fragment = 18, RuleValuedF64Fragment = 19, RuleValuedU8Fragment = 20, 
+    RuleValuedU16Fragment = 21, RuleValuedU32Fragment = 22, RuleValuedU64Fragment = 23, 
+    RuleValuedI8Fragment = 24, RuleValuedI16Fragment = 25, RuleValuedI32Fragment = 26, 
+    RuleValuedI64Fragment = 27, RuleTypedefVersionDeclaration = 28, RuleModuleDeclaration = 29, 
+    RuleUseDeclaration = 30, RuleUseTree = 31, RuleSimplePath = 32, RuleBoolLiteral = 33, 
+    RuleCharLiteral = 34, RuleF32Literal = 35, RuleF64Literal = 36, RuleU8Literal = 37, 
+    RuleU16Literal = 38, RuleU32Literal = 39, RuleU64Literal = 40, RuleI8Literal = 41, 
+    RuleI16Literal = 42, RuleI32Literal = 43, RuleI64Literal = 44, RuleStringLiteral = 45, 
+    RuleIdentifier = 46, RuleKeyword = 47
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -89,6 +89,7 @@ public:
   class MaybeValuedTypeContext;
   class ValuedTypeContext;
   class UnvaluedTypeContext;
+  class SymbolReferenceContext;
   class PrimitiveTypeContext;
   class ValuedPrimitiveTypeContext;
   class ValuedBoolFragmentContext;
@@ -392,11 +393,11 @@ public:
   public:
     std::optional<td::SymbolTable::Value> maybe_val;
     TypedefParser::PrimitiveTypeContext *primitiveTypeContext = nullptr;;
-    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    TypedefParser::SymbolReferenceContext *symbolReferenceContext = nullptr;;
     UnvaluedTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     PrimitiveTypeContext *primitiveType();
-    IdentifierContext *identifier();
+    SymbolReferenceContext *symbolReference();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -406,6 +407,23 @@ public:
   };
 
   UnvaluedTypeContext* unvaluedType();
+
+  class  SymbolReferenceContext : public antlr4::ParserRuleContext {
+  public:
+    std::optional<td::SymbolRef> maybe_symref;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    SymbolReferenceContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IdentifierContext *identifier();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  SymbolReferenceContext* symbolReference();
 
   class  PrimitiveTypeContext : public antlr4::ParserRuleContext {
   public:

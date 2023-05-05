@@ -55,6 +55,9 @@ public:
   virtual void enterUnvaluedType(TypedefParser::UnvaluedTypeContext * /*ctx*/) override { }
   virtual void exitUnvaluedType(TypedefParser::UnvaluedTypeContext * /*ctx*/) override { }
 
+  virtual void enterSymbolReference(TypedefParser::SymbolReferenceContext * /*ctx*/) override { }
+  virtual void exitSymbolReference(TypedefParser::SymbolReferenceContext * /*ctx*/) override { }
+
   virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
   virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
 

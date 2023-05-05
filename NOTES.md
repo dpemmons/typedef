@@ -4,10 +4,11 @@
 
 Items in ***bold*** are in-progress.
 
-- [ ] separate type declaration from field, value, etc. declaration
+- [x] separate type declaration from field, value, etc. declaration
+- [x] make symbol references independent of declaration order
 - [ ] optionals
 - [ ] inline types: structs, vectors, maps.
-- [ ] consider making cpp codegen more sane? (or hold off until tempalte language is done?)
+- [x] consider making cpp codegen more sane?
 - [ ] self-host symbol table
 - [ ] more types
   - [ ] fixed length arrays

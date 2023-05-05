@@ -24,9 +24,11 @@ compilationUnit
 	]:
 	typedefVersionDeclaration { $version = $typedefVersionDeclaration.ctx->version; } WS* (
 		moduleDeclaration { $module = $moduleDeclaration.ctx->module; }
-	)? (WS* useDeclaration)* (WS* typeDeclaration {
+	)? (WS* useDeclaration)* (
+		WS* typeDeclaration {
 		TryInsert($symbol_table, $typeDeclaration.ctx, this);
-	})* WS* EOF;
+	}
+	)* WS* EOF;
 
 maybeValuedSymbolDeclaration: maybeValuedSymbol WS* SEMI;
 
@@ -122,8 +124,12 @@ unvaluedType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
 	(
 		primitiveType {$maybe_val = $primitiveType.ctx->maybe_val;}
-		| identifier {$maybe_val = td::SymbolRef($identifier.ctx->id); }
+		| symbolReference {$maybe_val = $symbolReference.ctx->maybe_symref; }
 	);
+
+symbolReference
+	returns[std::optional<td::SymbolRef> maybe_symref]:
+	identifier {$maybe_symref = td::SymbolRef($identifier.ctx->id); };
 
 primitiveType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:

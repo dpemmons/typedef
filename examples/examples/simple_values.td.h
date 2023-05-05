@@ -616,7 +616,7 @@ class MutableVecD : public std::vector<std::unique_ptr<MutableMapA>> {
 
 // Maps
 
-class MutableMapA : public std::map<int32_t, std::string> {
+class MutableMapA : public std::map<int32_t, std::unique_ptr<MutableVariantB>> {
   public:
     MutableMapA() {};
     ~MutableMapA() {};

@@ -53,6 +53,9 @@ public:
   virtual void enterUnvaluedType(TypedefParser::UnvaluedTypeContext *ctx) = 0;
   virtual void exitUnvaluedType(TypedefParser::UnvaluedTypeContext *ctx) = 0;
 
+  virtual void enterSymbolReference(TypedefParser::SymbolReferenceContext *ctx) = 0;
+  virtual void exitSymbolReference(TypedefParser::SymbolReferenceContext *ctx) = 0;
+
   virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
   virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
 

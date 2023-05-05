@@ -46,6 +46,8 @@ public:
 
     virtual antlrcpp::Any visitUnvaluedType(TypedefParser::UnvaluedTypeContext *context) = 0;
 
+    virtual antlrcpp::Any visitSymbolReference(TypedefParser::SymbolReferenceContext *context) = 0;
+
     virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *context) = 0;
 
     virtual antlrcpp::Any visitValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext *context) = 0;

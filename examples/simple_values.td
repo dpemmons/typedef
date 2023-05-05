@@ -54,7 +54,8 @@ variant VariantA {
   a: bool;
   b: i8;
 };
-map MapA<i32, str>;
+// using something declared below
+map MapA<i32, VariantB>;
 
 variant VariantB {
   a: bool;

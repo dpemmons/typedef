@@ -66,6 +66,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitSymbolReference(TypedefParser::SymbolReferenceContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) override {
     return visitChildren(ctx);
   }
