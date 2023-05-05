@@ -132,19 +132,10 @@ class SymRefListener : public TypedefParserBaseListener {
       return FindSymbol(unresolved_symbol_ctx, search_ctx->parent);
     } else {
       // top of the tree.
-      auto s = unresolved_symbol_ctx->identifier()
-                   ->NON_KEYWORD_IDENTIFIER()
-                   ->getSymbol();
       errors_list_.emplace_back(
-          PEIBuilder()
-              .SetType(ParserErrorInfo::PARSE_ERROR)
-              .SetMessage("Unresolved symbol reference.")
-              .SetTokenType(s->getType())
-              .SetCharOffset(s->getStartIndex())
-              .SetLine(s->getLine())
-              .SetLineOffset(s->getCharPositionInLine())
-              .SetLength(s->getStopIndex() - s->getStartIndex() + 1)
-              .build());
+          ErrorFromContext(unresolved_symbol_ctx, ParserErrorInfo::PARSE_ERROR,
+                           "Unresolved symbol reference."));
+
       return false;
     }
   }
