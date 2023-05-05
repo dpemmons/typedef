@@ -16,33 +16,6 @@ namespace t {
 
 
 // Value declarations
-typedef std::string VAL;
-typedef char32_t ValB;
-typedef bool ValBool;
-typedef bool ValBool2;
-typedef char32_t ValC;
-typedef std::string ValD;
-typedef std::string ValE;
-typedef std::string ValRaw;
-typedef uint16_t Val_u16;
-typedef uint16_t Val_u16_suffix;
-typedef uint32_t Val_u32;
-typedef uint32_t Val_u32_suffix;
-typedef uint64_t Val_u64;
-typedef uint64_t Val_u64_suffix;
-typedef uint8_t Val_u8;
-typedef uint8_t Val_u8_suffix;
-typedef char32_t impliedChar;
-typedef std::string impliedStr;
-typedef float val_f32;
-typedef float val_f32_bare;
-typedef float val_f32_suffix;
-typedef double val_f64;
-typedef double val_f64_suffix;
-typedef int32_t val_i32;
-typedef int32_t val_i32_bare2;
-typedef int32_t val_i32_bare__2118;
-typedef int32_t _0440_0443_0441_0441_043a_0438_0439__0438_0434_0435_043d_0442_0438_0444_0438_043a_0430_0442_043e_0440;
 
 
 // Forward Declarations

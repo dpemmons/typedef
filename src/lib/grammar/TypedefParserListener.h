@@ -20,17 +20,23 @@ public:
   virtual void enterCompilationUnit(TypedefParser::CompilationUnitContext *ctx) = 0;
   virtual void exitCompilationUnit(TypedefParser::CompilationUnitContext *ctx) = 0;
 
-  virtual void enterItem(TypedefParser::ItemContext *ctx) = 0;
-  virtual void exitItem(TypedefParser::ItemContext *ctx) = 0;
-
   virtual void enterMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext *ctx) = 0;
   virtual void exitMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext *ctx) = 0;
+
+  virtual void enterTypeDeclaration(TypedefParser::TypeDeclarationContext *ctx) = 0;
+  virtual void exitTypeDeclaration(TypedefParser::TypeDeclarationContext *ctx) = 0;
+
+  virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
+  virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
 
   virtual void enterVariantDeclaration(TypedefParser::VariantDeclarationContext *ctx) = 0;
   virtual void exitVariantDeclaration(TypedefParser::VariantDeclarationContext *ctx) = 0;
 
-  virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
-  virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
+  virtual void enterVectorDeclaration(TypedefParser::VectorDeclarationContext *ctx) = 0;
+  virtual void exitVectorDeclaration(TypedefParser::VectorDeclarationContext *ctx) = 0;
+
+  virtual void enterMapDeclaration(TypedefParser::MapDeclarationContext *ctx) = 0;
+  virtual void exitMapDeclaration(TypedefParser::MapDeclarationContext *ctx) = 0;
 
   virtual void enterMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext *ctx) = 0;
   virtual void exitMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext *ctx) = 0;
@@ -46,12 +52,6 @@ public:
 
   virtual void enterUnvaluedType(TypedefParser::UnvaluedTypeContext *ctx) = 0;
   virtual void exitUnvaluedType(TypedefParser::UnvaluedTypeContext *ctx) = 0;
-
-  virtual void enterVectorType(TypedefParser::VectorTypeContext *ctx) = 0;
-  virtual void exitVectorType(TypedefParser::VectorTypeContext *ctx) = 0;
-
-  virtual void enterMapType(TypedefParser::MapTypeContext *ctx) = 0;
-  virtual void exitMapType(TypedefParser::MapTypeContext *ctx) = 0;
 
   virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
   virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;

@@ -1,6 +1,7 @@
 #include "typedef_parser.h"
 
 #include <stddef.h>
+
 #include <algorithm>
 #include <exception>
 #include <vector>
@@ -8,7 +9,6 @@
 #include "antlr4/antlr4-runtime.h"
 #include "grammar/TypedefLexer.h"
 #include "grammar/TypedefParser.h"
-
 #include "symbol_table.h"
 
 #define FMT_HEADER_ONLY
@@ -146,7 +146,6 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
       tokens.reset();
       parser.reset();
       errors.clear();
-      parser.global_symbol_table.Clear();
       parser.setErrorHandler(std::make_shared<antlr4::DefaultErrorStrategy>());
       parser.getInterpreter<antlr4::atn::ParserATNSimulator>()
           ->setPredictionMode(antlr4::atn::PredictionMode::LL);
@@ -155,10 +154,11 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
   }
 
   ParsedFileBuilder builder;
-  if (errors.empty()) {
-    builder.SetLanguageVersion(LangaugeVersionFromString(parser.global_version));
-    builder.SetModule(parser.global_module);
-    builder.AddSymbols2(parser.global_symbol_table);
+  if (errors.empty() && compilation_unit != nullptr) {
+    builder.SetLanguageVersion(
+        LangaugeVersionFromString(compilation_unit->version));
+    builder.SetModule(compilation_unit->module);
+    builder.AddSymbols2(compilation_unit->symbol_table);
   }
   builder.AddErrors(errors);
 

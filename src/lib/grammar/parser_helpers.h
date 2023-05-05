@@ -30,7 +30,7 @@ class DuplicateSymbolException : public antlr4::RecognitionException {
  public:
   DuplicateSymbolException(antlr4::Parser *recognizer,
                            antlr4::ParserRuleContext *ctx,
-                           antlr4::Token *offendingToken)
+                           antlr4::Token *offendingToken = nullptr)
       : antlr4::RecognitionException("Duplicate symbol", recognizer,
                                      recognizer->getTokenStream(), ctx,
                                      offendingToken) {}
@@ -190,14 +190,24 @@ std::optional<td::SymbolRef> CheckIdentifierExists(
     TypedefParser::IdentifierContext *ctx);
 
 // Insert fields into symbol tables.
-void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
-                 TypedefParser::MaybeValuedSymbolDeclarationContext *ctx);
+// void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
+//                  TypedefParser::MaybeValuedSymbolDeclarationContext *ctx);
 
-void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
-                 TypedefParser::StructDeclarationContext *ctx);
+// void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
+//                  TypedefParser::StructDeclarationContext *ctx);
 
-void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
-                 TypedefParser::VariantDeclarationContext *ctx);
+// void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
+//                  TypedefParser::VariantDeclarationContext *ctx);
+
+// void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
+//                  TypedefParser::VectorDeclarationContext *ctx);
+
+// void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
+//                  TypedefParser::MapDeclarationContext *ctx);
+
+void TryInsert(td::SymbolTable &dstTable,
+               TypedefParser::TypeDeclarationContext *src,
+               antlr4::Parser *recognizer);
 
 void TryInsertSymbol(std::shared_ptr<td::Struct> &s, antlr4::Parser *recognizer,
                      TypedefParser::MaybeValuedSymbolContext *ctx);
