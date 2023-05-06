@@ -46,6 +46,18 @@ public:
   virtual void enterUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext * /*ctx*/) override { }
   virtual void exitUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext * /*ctx*/) override { }
 
+  virtual void enterInlineStruct(TypedefParser::InlineStructContext * /*ctx*/) override { }
+  virtual void exitInlineStruct(TypedefParser::InlineStructContext * /*ctx*/) override { }
+
+  virtual void enterInlineVariant(TypedefParser::InlineVariantContext * /*ctx*/) override { }
+  virtual void exitInlineVariant(TypedefParser::InlineVariantContext * /*ctx*/) override { }
+
+  virtual void enterInlineVector(TypedefParser::InlineVectorContext * /*ctx*/) override { }
+  virtual void exitInlineVector(TypedefParser::InlineVectorContext * /*ctx*/) override { }
+
+  virtual void enterInlineMap(TypedefParser::InlineMapContext * /*ctx*/) override { }
+  virtual void exitInlineMap(TypedefParser::InlineMapContext * /*ctx*/) override { }
+
   virtual void enterMaybeValuedType(TypedefParser::MaybeValuedTypeContext * /*ctx*/) override { }
   virtual void exitMaybeValuedType(TypedefParser::MaybeValuedTypeContext * /*ctx*/) override { }
 

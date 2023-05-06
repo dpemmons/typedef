@@ -40,6 +40,14 @@ public:
 
     virtual antlrcpp::Any visitUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext *context) = 0;
 
+    virtual antlrcpp::Any visitInlineStruct(TypedefParser::InlineStructContext *context) = 0;
+
+    virtual antlrcpp::Any visitInlineVariant(TypedefParser::InlineVariantContext *context) = 0;
+
+    virtual antlrcpp::Any visitInlineVector(TypedefParser::InlineVectorContext *context) = 0;
+
+    virtual antlrcpp::Any visitInlineMap(TypedefParser::InlineMapContext *context) = 0;
+
     virtual antlrcpp::Any visitMaybeValuedType(TypedefParser::MaybeValuedTypeContext *context) = 0;
 
     virtual antlrcpp::Any visitValuedType(TypedefParser::ValuedTypeContext *context) = 0;

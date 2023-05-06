@@ -44,6 +44,18 @@ public:
   virtual void enterUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext *ctx) = 0;
   virtual void exitUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext *ctx) = 0;
 
+  virtual void enterInlineStruct(TypedefParser::InlineStructContext *ctx) = 0;
+  virtual void exitInlineStruct(TypedefParser::InlineStructContext *ctx) = 0;
+
+  virtual void enterInlineVariant(TypedefParser::InlineVariantContext *ctx) = 0;
+  virtual void exitInlineVariant(TypedefParser::InlineVariantContext *ctx) = 0;
+
+  virtual void enterInlineVector(TypedefParser::InlineVectorContext *ctx) = 0;
+  virtual void exitInlineVector(TypedefParser::InlineVectorContext *ctx) = 0;
+
+  virtual void enterInlineMap(TypedefParser::InlineMapContext *ctx) = 0;
+  virtual void exitInlineMap(TypedefParser::InlineMapContext *ctx) = 0;
+
   virtual void enterMaybeValuedType(TypedefParser::MaybeValuedTypeContext *ctx) = 0;
   virtual void exitMaybeValuedType(TypedefParser::MaybeValuedTypeContext *ctx) = 0;
 

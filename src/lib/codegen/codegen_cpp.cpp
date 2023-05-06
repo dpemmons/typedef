@@ -44,7 +44,8 @@ CodegenCpp::CppSymbol::CppSymbol(SymbolTable::Symbol const& s)
     : escaped_identifier_(escape_utf8_to_cpp_identifier(s.first)) {
   if (holds_alternative<shared_ptr<Struct>>(s.second) ||
       holds_alternative<shared_ptr<Variant>>(s.second) ||
-      holds_alternative<shared_ptr<Vector>>(s.second)) {
+      holds_alternative<shared_ptr<Vector>>(s.second) ||
+      holds_alternative<shared_ptr<Map>>(s.second)) {
     non_primitive_ = CppNonPrimitiveValue(s);
   } else if (holds_alternative<SymbolRef>(s.second)) {
     auto sr = get<SymbolRef>(s.second);
@@ -285,8 +286,14 @@ string CodegenCpp::StructAccessors(
     )",
                   store);
     } else if (m.IsNonPrimitive()) {
-      assert(false);  // not yet.
-    } else if (m.IsReference()) {
+      store.push_back(fmt::arg("type", m.NonPrimitive().CppType()));
+      fmt::vprint(ss, R"(
+    {type}& {identifier}() {{ return {identifier}_; }}
+    const {type}& {identifier}() const {{ return {identifier}_; }}
+    void {identifier}({type} _val) {{ {identifier}_ = std::move(_val); }}
+    )",
+                  store);
+    } else if (m.IsNonPrimitive() || m.IsReference()) {
       store.push_back(fmt::arg("type", m.Reference().ReferencedCppType()));
       fmt::vprint(ss, R"(
     {type}& {identifier}() {{ return {identifier}_; }}
@@ -338,19 +345,34 @@ string CodegenCpp::StructClasses(vector<StructViewModel> const& structs) const {
     store.push_back(fmt::arg("classname", s.struct_name));
     store.push_back(fmt::arg("accessors", StructAccessors(s.members)));
     store.push_back(fmt::arg("members", StructMembers(s.members)));
+    store.push_back(
+        fmt::arg("nested_structs", StructClasses(s.nested_structs)));
+    store.push_back(
+        fmt::arg("nested_variants", VariantClasses(s.nested_variants)));
+    store.push_back(
+        fmt::arg("nested_vectors", VectorClasses(s.nested_vectors)));
+    store.push_back(fmt::arg("nested_maps", MapClasses(s.nested_maps)));
     fmt::vprint(ss, R"(
 class {classname} {{
   public:
     {classname}() {{}};
     ~{classname}() {{}};
 
+    // Nested classes.
+{nested_structs}
+{nested_variants}
+{nested_vectors}
+{nested_maps}
+
+    // Accessors.
 {accessors}
 
     friend std::ostream& operator<<(std::ostream& os, const {classname}& obj);
 
   private:
+    // Members.
 {members}
-}};
+}};  // class {classname}
 )",
                 store);
   }
@@ -469,7 +491,7 @@ class {classname} {{
       }}
     }}
 
-}};
+}};  // class {classname}
 )",
                 store);
   }
@@ -498,7 +520,8 @@ class {classname} : public std::vector<{payload}> {{
     ~{classname}() {{}};
 
     friend std::ostream& operator<<(std::ostream& os, const {classname}& obj);
-}};
+
+}};  // class {classname}
 )",
                 store);
   }
@@ -539,7 +562,8 @@ class {classname} : public std::map<{key}, {value}> {{
     ~{classname}() {{}};
 
     friend std::ostream& operator<<(std::ostream& os, const {classname}& obj);
-}};
+
+}};  // class {classname}
 )",
                 store);
   }
@@ -635,7 +659,7 @@ CodegenCpp::ViewModel CodegenCpp::CreateViewModel(
 }
 
 vector<CodegenCpp::ValueViewModel> CodegenCpp::CreateValueViewModels(
-    vector<pair<string, SymbolTable::Value>> values) const {
+    vector<SymbolTable::Symbol> values) const {
   vector<ValueViewModel> view_models;
   for (auto s : values) {
     view_models.push_back(s);
@@ -643,62 +667,89 @@ vector<CodegenCpp::ValueViewModel> CodegenCpp::CreateValueViewModels(
   return view_models;
 }
 
+CodegenCpp::StructViewModel CodegenCpp::CreateStructViewModel(
+    SymbolTable::Symbol const& s) const {
+  StructViewModel svm;
+  svm.struct_name = string("Mutable") + escape_utf8_to_cpp_identifier(s.first);
+  // each member of the struct.
+  auto str = get<shared_ptr<Struct>>(s.second);
+  for (auto m : str->table.table_) {
+    svm.members.push_back(CppSymbol(m));
+    if (holds_alternative<shared_ptr<Struct>>(m.second)) {
+      svm.nested_structs.push_back(CreateStructViewModel(m));
+    } else if (holds_alternative<shared_ptr<Variant>>(m.second)) {
+      svm.nested_variants.push_back(CreateVaraintViewModel(m));
+    } else if (holds_alternative<shared_ptr<Vector>>(m.second)) {
+      svm.nested_vectors.push_back(CreateVectorViewModel(m));
+    } else if (holds_alternative<shared_ptr<Map>>(m.second)) {
+      svm.nested_maps.push_back(CreateMapViewModel(m));
+    }
+  }
+  return svm;
+}
+
 vector<CodegenCpp::StructViewModel> CodegenCpp::CreateStructViewModels(
-    vector<pair<string, SymbolTable::Value>> structs) const {
+    vector<SymbolTable::Symbol> structs) const {
   vector<StructViewModel> view_models;
   for (auto s : structs) {
-    // each struct.
-    StructViewModel svm;
-    svm.struct_name =
-        string("Mutable") + escape_utf8_to_cpp_identifier(s.first);
-    // each member of the struct.
-    auto str = get<shared_ptr<Struct>>(s.second);
-    for (auto m : str->table.table_) {
-      svm.members.push_back(CppSymbol(m));
-    }
-    view_models.push_back(svm);
+    view_models.push_back(CreateStructViewModel(s));
   }
   return view_models;
+}
+
+CodegenCpp::VariantViewModel CodegenCpp::CreateVaraintViewModel(
+    SymbolTable::Symbol variant) const {
+  VariantViewModel vvm;
+  vvm.struct_name =
+      string("Mutable") + escape_utf8_to_cpp_identifier(variant.first);
+  // each member of the variant.
+  auto str = get<shared_ptr<Variant>>(variant.second);
+  for (auto m : str->table.table_) {
+    vvm.members.push_back(CppSymbol(m));
+  }
+  return vvm;
 }
 
 vector<CodegenCpp::VariantViewModel> CodegenCpp::CreateVaraintViewModels(
-    vector<pair<string, SymbolTable::Value>> variants) const {
+    vector<SymbolTable::Symbol> variants) const {
   vector<VariantViewModel> view_models;
-  for (auto s : variants) {
-    VariantViewModel vvm;
-    vvm.struct_name =
-        string("Mutable") + escape_utf8_to_cpp_identifier(s.first);
-    // each member of the variant.
-    auto str = get<shared_ptr<Variant>>(s.second);
-    for (auto m : str->table.table_) {
-      vvm.members.push_back(CppSymbol(m));
-    }
-    view_models.push_back(vvm);
+  for (auto variant : variants) {
+    view_models.push_back(CreateVaraintViewModel(variant));
   }
   return view_models;
+}
+
+CodegenCpp::VectorViewModel CodegenCpp::CreateVectorViewModel(
+    SymbolTable::Symbol vector) const {
+  auto ptr = get<shared_ptr<Vector>>(vector.second);
+  return VectorViewModel(
+      string("Mutable") + escape_utf8_to_cpp_identifier(vector.first),
+      SymbolTable::Symbol(string(""), ptr->type));
 }
 
 vector<CodegenCpp::VectorViewModel> CodegenCpp::CreateVectorViewModels(
-    vector<pair<string, SymbolTable::Value>> vectors) const {
+    vector<SymbolTable::Symbol> vectors) const {
   vector<VectorViewModel> view_models;
-  for (auto s : vectors) {
-    auto ptr = get<shared_ptr<Vector>>(s.second);
-    view_models.push_back(VectorViewModel(
-        string("Mutable") + escape_utf8_to_cpp_identifier(s.first),
-        SymbolTable::Symbol(string(""), ptr->type)));
+  for (auto v : vectors) {
+    view_models.push_back(CreateVectorViewModel(v));
   }
   return view_models;
 }
 
+CodegenCpp::MapViewModel CodegenCpp::CreateMapViewModel(
+    SymbolTable::Symbol map) const {
+  auto ptr = get<shared_ptr<Map>>(map.second);
+  return MapViewModel(
+      string("Mutable") + escape_utf8_to_cpp_identifier(map.first),
+      SymbolTable::Symbol(string(""), ptr->key_type),
+      SymbolTable::Symbol(string(""), ptr->value_type));
+}
+
 vector<CodegenCpp::MapViewModel> CodegenCpp::CreateMapViewModels(
-    vector<pair<string, SymbolTable::Value>> maps) const {
+    vector<SymbolTable::Symbol> maps) const {
   vector<MapViewModel> view_models;
-  for (auto s : maps) {
-    auto ptr = get<shared_ptr<Map>>(s.second);
-    view_models.push_back(
-        MapViewModel(string("Mutable") + escape_utf8_to_cpp_identifier(s.first),
-                     SymbolTable::Symbol(string(""), ptr->key_type),
-                     SymbolTable::Symbol(string(""), ptr->value_type)));
+  for (auto m : maps) {
+    view_models.push_back(CreateMapViewModel(m));
   }
   return view_models;
 }

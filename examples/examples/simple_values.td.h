@@ -23,6 +23,7 @@ class MutableStructA;
 class MutableStructB;
 class MutableStructC;
 class MutableStructD;
+class MutableStructE;
 class MutableVariantA;
 class MutableVariantB;
 class MutableVecA;
@@ -42,6 +43,13 @@ class MutableStructA {
     MutableStructA() {};
     ~MutableStructA() {};
 
+    // Nested classes.
+
+
+
+
+
+    // Accessors.
 
     bool example_bool() const { return example_bool_; }
     void example_bool(bool _val) { example_bool_ = _val; }
@@ -86,6 +94,7 @@ class MutableStructA {
     friend std::ostream& operator<<(std::ostream& os, const MutableStructA& obj);
 
   private:
+    // Members.
     bool example_bool_;
     char32_t example_char_;
     float example_f32_;
@@ -100,13 +109,20 @@ class MutableStructA {
     uint64_t example_u64_;
     uint8_t example_u8_;
 
-};
+};  // class MutableStructA
 
 class MutableStructB {
   public:
     MutableStructB() {};
     ~MutableStructB() {};
 
+    // Nested classes.
+
+
+
+
+
+    // Accessors.
 
     bool example_bool() const { return example_bool_; }
     void example_bool(bool _val) { example_bool_ = _val; }
@@ -151,6 +167,7 @@ class MutableStructB {
     friend std::ostream& operator<<(std::ostream& os, const MutableStructB& obj);
 
   private:
+    // Members.
     bool example_bool_ = true;
     char32_t example_char_;
     float example_f32_;
@@ -165,13 +182,20 @@ class MutableStructB {
     uint64_t example_u64_;
     uint8_t example_u8_;
 
-};
+};  // class MutableStructB
 
 class MutableStructC {
   public:
     MutableStructC() {};
     ~MutableStructC() {};
 
+    // Nested classes.
+
+
+
+
+
+    // Accessors.
 
     std::unique_ptr<MutableStructA>& asdf() { return asdf_; }
     const std::unique_ptr<MutableStructA>& asdf() const { return asdf_; }
@@ -187,17 +211,25 @@ class MutableStructC {
     friend std::ostream& operator<<(std::ostream& os, const MutableStructC& obj);
 
   private:
+    // Members.
     std::unique_ptr<MutableStructA> asdf_;
     int32_t jkl_;
     int32_t zxcv_;
 
-};
+};  // class MutableStructC
 
 class MutableStructD {
   public:
     MutableStructD() {};
     ~MutableStructD() {};
 
+    // Nested classes.
+
+
+
+
+
+    // Accessors.
 
     std::unique_ptr<MutableStructA>& a_struct() { return a_struct_; }
     const std::unique_ptr<MutableStructA>& a_struct() const { return a_struct_; }
@@ -219,12 +251,153 @@ class MutableStructD {
     friend std::ostream& operator<<(std::ostream& os, const MutableStructD& obj);
 
   private:
+    // Members.
     std::unique_ptr<MutableStructA> a_struct_;
     std::unique_ptr<MutableVariantA> b_variant_;
     std::unique_ptr<MutableVecA> c_vec_;
     std::unique_ptr<MutableMapA> d_map_;
 
-};
+};  // class MutableStructD
+
+class MutableStructE {
+  public:
+    MutableStructE() {};
+    ~MutableStructE() {};
+
+    // Nested classes.
+
+class MutableinlineStruct {
+  public:
+    MutableinlineStruct() {};
+    ~MutableinlineStruct() {};
+
+    // Nested classes.
+
+
+
+
+
+    // Accessors.
+
+    int32_t a() const { return a_; }
+    void a(int32_t _val) { a_ = _val; }
+    
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableinlineStruct& obj);
+
+  private:
+    // Members.
+    int32_t a_;
+
+};  // class MutableinlineStruct
+
+
+class MutableinlineVariant {
+  public:
+    MutableinlineVariant() {};
+    ~MutableinlineVariant() {};
+
+    
+    bool Isva() const { return tag == Tag::TAG_va; }
+    int32_t va() const {
+      assert(tag == Tag::TAG_va);
+      return va_; 
+    }
+    void va(int32_t _val) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_va;
+      va_ = _val;
+    }
+    
+    bool Isvb() const { return tag == Tag::TAG_vb; }
+    std::string vb() const {
+      assert(tag == Tag::TAG_vb);
+      return vb_; 
+    }
+    void vb(std::string _val) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_vb;
+      vb_ = _val;
+    }
+    
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableinlineVariant& obj);
+
+  private:
+    enum class Tag {
+      __TAGS_BEGIN = 0,
+      TAG_va,
+      TAG_vb,
+
+      __TAGS_END
+    } tag = Tag::__TAGS_BEGIN;
+
+    union {
+    int32_t va_;
+    std::string vb_;
+
+    };  // union
+
+    void MaybeDeleteExistingMember() {
+      switch (tag) {
+
+        default:
+          return;
+      }
+    }
+
+};  // class MutableinlineVariant
+
+
+class MutableinlineVector : public std::vector<int32_t> {
+  public:
+    MutableinlineVector() {};
+    ~MutableinlineVector() {};
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableinlineVector& obj);
+
+};  // class MutableinlineVector
+
+
+class MutableinlineMap : public std::map<std::string, std::unique_ptr<MutableStructD>> {
+  public:
+    MutableinlineMap() {};
+    ~MutableinlineMap() {};
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableinlineMap& obj);
+
+};  // class MutableinlineMap
+
+
+    // Accessors.
+
+    std::unique_ptr<MutableinlineMap>& inlineMap() { return inlineMap_; }
+    const std::unique_ptr<MutableinlineMap>& inlineMap() const { return inlineMap_; }
+    void inlineMap(std::unique_ptr<MutableinlineMap> _val) { inlineMap_ = std::move(_val); }
+    
+    std::unique_ptr<MutableinlineStruct>& inlineStruct() { return inlineStruct_; }
+    const std::unique_ptr<MutableinlineStruct>& inlineStruct() const { return inlineStruct_; }
+    void inlineStruct(std::unique_ptr<MutableinlineStruct> _val) { inlineStruct_ = std::move(_val); }
+    
+    std::unique_ptr<MutableinlineVariant>& inlineVariant() { return inlineVariant_; }
+    const std::unique_ptr<MutableinlineVariant>& inlineVariant() const { return inlineVariant_; }
+    void inlineVariant(std::unique_ptr<MutableinlineVariant> _val) { inlineVariant_ = std::move(_val); }
+    
+    std::unique_ptr<MutableinlineVector>& inlineVector() { return inlineVector_; }
+    const std::unique_ptr<MutableinlineVector>& inlineVector() const { return inlineVector_; }
+    void inlineVector(std::unique_ptr<MutableinlineVector> _val) { inlineVector_ = std::move(_val); }
+    
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableStructE& obj);
+
+  private:
+    // Members.
+    std::unique_ptr<MutableinlineMap> inlineMap_;
+    std::unique_ptr<MutableinlineStruct> inlineStruct_;
+    std::unique_ptr<MutableinlineVariant> inlineVariant_;
+    std::unique_ptr<MutableinlineVector> inlineVector_;
+
+};  // class MutableStructE
 
 
 // Variants
@@ -283,7 +456,7 @@ class MutableVariantA {
       }
     }
 
-};
+};  // class MutableVariantA
 
 class MutableVariantB {
   public:
@@ -576,7 +749,7 @@ class MutableVariantB {
       }
     }
 
-};
+};  // class MutableVariantB
 
 
 // Vectors
@@ -587,7 +760,8 @@ class MutableVecA : public std::vector<uint8_t> {
     ~MutableVecA() {};
 
     friend std::ostream& operator<<(std::ostream& os, const MutableVecA& obj);
-};
+
+};  // class MutableVecA
 
 class MutableVecB : public std::vector<std::unique_ptr<MutableStructC>> {
   public:
@@ -595,7 +769,8 @@ class MutableVecB : public std::vector<std::unique_ptr<MutableStructC>> {
     ~MutableVecB() {};
 
     friend std::ostream& operator<<(std::ostream& os, const MutableVecB& obj);
-};
+
+};  // class MutableVecB
 
 class MutableVecC : public std::vector<std::unique_ptr<MutableVariantB>> {
   public:
@@ -603,7 +778,8 @@ class MutableVecC : public std::vector<std::unique_ptr<MutableVariantB>> {
     ~MutableVecC() {};
 
     friend std::ostream& operator<<(std::ostream& os, const MutableVecC& obj);
-};
+
+};  // class MutableVecC
 
 class MutableVecD : public std::vector<std::unique_ptr<MutableMapA>> {
   public:
@@ -611,7 +787,8 @@ class MutableVecD : public std::vector<std::unique_ptr<MutableMapA>> {
     ~MutableVecD() {};
 
     friend std::ostream& operator<<(std::ostream& os, const MutableVecD& obj);
-};
+
+};  // class MutableVecD
 
 
 // Maps
@@ -622,7 +799,8 @@ class MutableMapA : public std::map<int32_t, std::unique_ptr<MutableVariantB>> {
     ~MutableMapA() {};
 
     friend std::ostream& operator<<(std::ostream& os, const MutableMapA& obj);
-};
+
+};  // class MutableMapA
 
 class MutableMapB : public std::map<std::string, std::unique_ptr<MutableStructC>> {
   public:
@@ -630,7 +808,8 @@ class MutableMapB : public std::map<std::string, std::unique_ptr<MutableStructC>
     ~MutableMapB() {};
 
     friend std::ostream& operator<<(std::ostream& os, const MutableMapB& obj);
-};
+
+};  // class MutableMapB
 
 class MutableMapC : public std::map<std::string, std::unique_ptr<MutableVecA>> {
   public:
@@ -638,7 +817,8 @@ class MutableMapC : public std::map<std::string, std::unique_ptr<MutableVecA>> {
     ~MutableMapC() {};
 
     friend std::ostream& operator<<(std::ostream& os, const MutableMapC& obj);
-};
+
+};  // class MutableMapC
 
 class MutableMapD : public std::map<std::string, std::unique_ptr<MutableVariantA>> {
   public:
@@ -646,7 +826,8 @@ class MutableMapD : public std::map<std::string, std::unique_ptr<MutableVariantA
     ~MutableMapD() {};
 
     friend std::ostream& operator<<(std::ostream& os, const MutableMapD& obj);
-};
+
+};  // class MutableMapD
 
 
 }  // sv

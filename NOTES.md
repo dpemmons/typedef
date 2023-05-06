@@ -7,7 +7,7 @@ Items in ***bold*** are in-progress.
 - [x] separate type declaration from field, value, etc. declaration
 - [x] make symbol references independent of declaration order
 - [ ] optionals
-- [ ] inline types: structs, vectors, maps.
+- [ ] ***inline types: structs, vectors, maps.***
 - [x] consider making cpp codegen more sane?
 - [ ] self-host symbol table
 - [ ] more types

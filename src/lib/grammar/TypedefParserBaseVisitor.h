@@ -54,6 +54,22 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitInlineStruct(TypedefParser::InlineStructContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitInlineVariant(TypedefParser::InlineVariantContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitInlineVector(TypedefParser::InlineVectorContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitInlineMap(TypedefParser::InlineMapContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitMaybeValuedType(TypedefParser::MaybeValuedTypeContext *ctx) override {
     return visitChildren(ctx);
   }

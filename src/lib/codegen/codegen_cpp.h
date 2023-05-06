@@ -25,11 +25,11 @@ class CodegenCpp : public CodegenBase {
   string source_filename_;
 
   struct GroupedSymbols {
-    vector<pair<string, SymbolTable::Value>> values;
-    vector<pair<string, SymbolTable::Value>> structs;
-    vector<pair<string, SymbolTable::Value>> variants;
-    vector<pair<string, SymbolTable::Value>> vectors;
-    vector<pair<string, SymbolTable::Value>> maps;
+    vector<SymbolTable::Symbol> values;
+    vector<SymbolTable::Symbol> structs;
+    vector<SymbolTable::Symbol> variants;
+    vector<SymbolTable::Symbol> vectors;
+    vector<SymbolTable::Symbol> maps;
   };
 
   class CppPrimitiveValue {
@@ -104,9 +104,18 @@ class CodegenCpp : public CodegenBase {
     CppSymbol sym;
   };
 
+  struct StructViewModel;
+  struct VariantViewModel;
+  struct VectorViewModel;
+  struct MapViewModel;
+
   struct StructViewModel {
     string struct_name;
     vector<CppSymbol> members;
+    vector<StructViewModel> nested_structs;
+    vector<VariantViewModel> nested_variants;
+    vector<VectorViewModel> nested_vectors;
+    vector<MapViewModel> nested_maps;
   };
 
   struct VariantViewModel {
@@ -146,15 +155,24 @@ class CodegenCpp : public CodegenBase {
   ViewModel CreateViewModel(filesystem::path hdr_path, vector<string> module,
                             GroupedSymbols const& grouped_symbols) const;
   vector<ValueViewModel> CreateValueViewModels(
-      vector<pair<string, SymbolTable::Value>> values) const;
+      vector<SymbolTable::Symbol> values) const;
+
+  StructViewModel CreateStructViewModel(
+      SymbolTable::Symbol const& symbol) const;
   vector<StructViewModel> CreateStructViewModels(
-      vector<pair<string, SymbolTable::Value>> structs) const;
+      vector<SymbolTable::Symbol> structs) const;
+
+  VariantViewModel CreateVaraintViewModel(SymbolTable::Symbol variant) const;
   vector<VariantViewModel> CreateVaraintViewModels(
-      vector<pair<string, SymbolTable::Value>> variants) const;
+      vector<SymbolTable::Symbol> variants) const;
+
+  VectorViewModel CreateVectorViewModel(SymbolTable::Symbol vector) const;
   vector<VectorViewModel> CreateVectorViewModels(
-      vector<pair<string, SymbolTable::Value>> vectors) const;
+      vector<SymbolTable::Symbol> vectors) const;
+
+  MapViewModel CreateMapViewModel(SymbolTable::Symbol map) const;
   vector<MapViewModel> CreateMapViewModels(
-      vector<pair<string, SymbolTable::Value>> maps) const;
+      vector<SymbolTable::Symbol> maps) const;
 
   string HeaderGuard(filesystem::path source_filename) const;
 

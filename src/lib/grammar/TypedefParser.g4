@@ -48,11 +48,11 @@ structDeclaration
 	@init {
 		$s = std::make_shared<td::Struct>();
 	}:
-	KW_STRUCT WS* identifier WS* LBRACE (
-		WS* maybeValuedSymbol {
+	KW_STRUCT WS* identifier WS* LBRACE WS* (
+		maybeValuedSymbol {
 				TryInsertSymbol($s, this, $maybeValuedSymbol.ctx);
 			} WS* SEMI WS*
-	)* RBRACE {
+	)* WS* RBRACE {
 		$maybe_symbol = std::make_pair($identifier.ctx->id, $s);
 	};
 
@@ -96,20 +96,78 @@ mapDeclaration
 // ValA: i32 = 42;
 maybeValuedSymbol
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
-	identifier WS* maybeValuedType WS* {
+	(
+		identifier WS* maybeValuedType WS* {
 		if ($maybeValuedType.ctx->maybe_val) {
 			$maybe_symbol = std::make_pair($identifier.ctx->id, *$maybeValuedType.ctx->maybe_val);
 		}
-	};
+	}
+	)
+	| unvaluedSymbol {$maybe_symbol = $unvaluedSymbol.ctx->maybe_symbol; };
 
 // ValA: i32;
 unvaluedSymbol
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
-	identifier WS* COLON WS* unvaluedType WS* {
+	inlineStruct {$maybe_symbol = $inlineStruct.ctx->maybe_symbol; }
+	| inlineVariant {$maybe_symbol = $inlineVariant.ctx->maybe_symbol; }
+	| inlineVector {$maybe_symbol = $inlineVector.ctx->maybe_symbol; }
+	| inlineMap {$maybe_symbol = $inlineMap.ctx->maybe_symbol; }
+	| (
+		identifier WS* COLON WS* unvaluedType {
 		if ($unvaluedType.ctx->maybe_val) {
 			$maybe_symbol = std::make_pair($identifier.ctx->id, *$unvaluedType.ctx->maybe_val);
 		}
-};
+	}
+	);
+
+inlineStruct
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]
+	locals[std::shared_ptr<td::Struct> s]
+	@init {
+		$s = std::make_shared<td::Struct>();
+	}:
+	identifier WS* COLON WS* KW_STRUCT WS* LBRACE WS* (
+		maybeValuedSymbol {
+				TryInsertSymbol($s, this, $maybeValuedSymbol.ctx);
+			} WS* SEMI WS*
+	)* WS* RBRACE {
+		$maybe_symbol = std::make_pair($identifier.ctx->id, $s);
+	};
+
+inlineVariant
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]
+	locals[std::shared_ptr<td::Variant> v]
+	@init {
+		$v = std::make_shared<td::Variant>();
+	}:
+	identifier WS* COLON WS* KW_VARIANT WS* LBRACE (
+		WS* unvaluedSymbol {
+				TryInsertSymbol($v, this, $unvaluedSymbol.ctx);
+			} WS* SEMI WS*
+	)* RBRACE {
+		$maybe_symbol = std::make_pair($identifier.ctx->id, $v);
+	};
+
+inlineVector
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
+	identifier WS* COLON WS* KW_VECTOR WS* LT WS* val = unvaluedType WS* GT {
+		if ($unvaluedType.ctx->maybe_val) {
+			$maybe_symbol = std::make_pair($identifier.ctx->id,
+			  std::make_shared<td::Vector>(*$val.ctx->maybe_val));
+		}
+	};
+
+inlineMap
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
+	identifier WS* COLON WS* KW_MAP WS* LT WS* key = primitiveType WS* COMMA WS* val = unvaluedType
+		WS* GT {
+		// Map Declaration
+		if ($key.ctx->maybe_val && $val.ctx->maybe_val) {
+			$maybe_symbol = std::make_pair($identifier.ctx->id,
+			  std::make_shared<td::Map>(
+					*$key.ctx->maybe_val, *$val.ctx->maybe_val));
+		}
+	};
 
 maybeValuedType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:

@@ -94,4 +94,14 @@ struct StructD {
   d_map: MapA;
 };
 
-//ValArr: array<i32, 3> = "";
+struct StructE {
+  inlineStruct: struct {
+    a: i32;
+  };
+  inlineVariant: variant {
+    va: i32;
+    vb: str;
+  };
+  inlineVector: vector<i32>;
+  inlineMap: map<str, StructD>;
+};
