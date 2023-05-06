@@ -26,6 +26,7 @@ class MutableStructD;
 class MutableStructE;
 class MutableVariantA;
 class MutableVariantB;
+class MutableVariantC;
 class MutableVecA;
 class MutableVecB;
 class MutableVecC;
@@ -265,112 +266,122 @@ class MutableStructE {
     ~MutableStructE() {};
 
     // Nested classes.
+    
+    class MutableinlineStruct {
+      public:
+        MutableinlineStruct() {};
+        ~MutableinlineStruct() {};
+    
+        // Nested classes.
+    
+    
+    
+    
+    
+        // Accessors.
+    
+        int32_t a() const { return a_; }
+        void a(int32_t _val) { a_ = _val; }
+        
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableinlineStruct& obj);
+    
+      private:
+        // Members.
+        int32_t a_;
+    
+    };  // class MutableinlineStruct
 
-class MutableinlineStruct {
-  public:
-    MutableinlineStruct() {};
-    ~MutableinlineStruct() {};
+    
+    class MutableVariantB {
+      public:
+        MutableVariantB() {};
+        ~MutableVariantB() {};
+    
+        // Nested classes.
+    
+    
+    
+    
+    
+        
+        bool Isva() const { return tag == Tag::TAG_va; }
+        int32_t va() const {
+          assert(tag == Tag::TAG_va);
+          return va_; 
+        }
+        void va(int32_t _val) {
+          MaybeDeleteExistingMember();
+          tag = Tag::TAG_va;
+          va_ = _val;
+        }
+        
+        bool Isvb() const { return tag == Tag::TAG_vb; }
+        std::string vb() const {
+          assert(tag == Tag::TAG_vb);
+          return vb_; 
+        }
+        void vb(std::string _val) {
+          MaybeDeleteExistingMember();
+          tag = Tag::TAG_vb;
+          vb_ = _val;
+        }
+        
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableVariantB& obj);
+    
+      private:
+        enum class Tag {
+          __TAGS_BEGIN = 0,
+          TAG_va,
+          TAG_vb,
+    
+          __TAGS_END
+        } tag = Tag::__TAGS_BEGIN;
+    
+        union {
+        int32_t va_;
+        std::string vb_;
+    
+        };  // union
+    
+        void MaybeDeleteExistingMember() {
+          switch (tag) {
+    
+            default:
+              return;
+          }
+        }
+    
+    };  // class MutableVariantB
 
-    // Nested classes.
+    
+    class MutableinlineVector : public std::vector<int32_t> {
+      public:
+        MutableinlineVector() {};
+        ~MutableinlineVector() {};
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableinlineVector& obj);
+    
+    };  // class MutableinlineVector
 
-
-
+    
+    class MutableinlineMap : public std::map<std::string, std::unique_ptr<MutableStructD>> {
+      public:
+        MutableinlineMap() {};
+        ~MutableinlineMap() {};
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableinlineMap& obj);
+    
+    };  // class MutableinlineMap
 
 
     // Accessors.
 
-    int32_t a() const { return a_; }
-    void a(int32_t _val) { a_ = _val; }
+    std::unique_ptr<MutableVariantB>& VariantB() { return VariantB_; }
+    const std::unique_ptr<MutableVariantB>& VariantB() const { return VariantB_; }
+    void VariantB(std::unique_ptr<MutableVariantB> _val) { VariantB_ = std::move(_val); }
     
-
-    friend std::ostream& operator<<(std::ostream& os, const MutableinlineStruct& obj);
-
-  private:
-    // Members.
-    int32_t a_;
-
-};  // class MutableinlineStruct
-
-
-class MutableinlineVariant {
-  public:
-    MutableinlineVariant() {};
-    ~MutableinlineVariant() {};
-
-    
-    bool Isva() const { return tag == Tag::TAG_va; }
-    int32_t va() const {
-      assert(tag == Tag::TAG_va);
-      return va_; 
-    }
-    void va(int32_t _val) {
-      MaybeDeleteExistingMember();
-      tag = Tag::TAG_va;
-      va_ = _val;
-    }
-    
-    bool Isvb() const { return tag == Tag::TAG_vb; }
-    std::string vb() const {
-      assert(tag == Tag::TAG_vb);
-      return vb_; 
-    }
-    void vb(std::string _val) {
-      MaybeDeleteExistingMember();
-      tag = Tag::TAG_vb;
-      vb_ = _val;
-    }
-    
-
-    friend std::ostream& operator<<(std::ostream& os, const MutableinlineVariant& obj);
-
-  private:
-    enum class Tag {
-      __TAGS_BEGIN = 0,
-      TAG_va,
-      TAG_vb,
-
-      __TAGS_END
-    } tag = Tag::__TAGS_BEGIN;
-
-    union {
-    int32_t va_;
-    std::string vb_;
-
-    };  // union
-
-    void MaybeDeleteExistingMember() {
-      switch (tag) {
-
-        default:
-          return;
-      }
-    }
-
-};  // class MutableinlineVariant
-
-
-class MutableinlineVector : public std::vector<int32_t> {
-  public:
-    MutableinlineVector() {};
-    ~MutableinlineVector() {};
-
-    friend std::ostream& operator<<(std::ostream& os, const MutableinlineVector& obj);
-
-};  // class MutableinlineVector
-
-
-class MutableinlineMap : public std::map<std::string, std::unique_ptr<MutableStructD>> {
-  public:
-    MutableinlineMap() {};
-    ~MutableinlineMap() {};
-
-    friend std::ostream& operator<<(std::ostream& os, const MutableinlineMap& obj);
-
-};  // class MutableinlineMap
-
-
-    // Accessors.
-
     std::unique_ptr<MutableinlineMap>& inlineMap() { return inlineMap_; }
     const std::unique_ptr<MutableinlineMap>& inlineMap() const { return inlineMap_; }
     void inlineMap(std::unique_ptr<MutableinlineMap> _val) { inlineMap_ = std::move(_val); }
@@ -378,10 +389,6 @@ class MutableinlineMap : public std::map<std::string, std::unique_ptr<MutableStr
     std::unique_ptr<MutableinlineStruct>& inlineStruct() { return inlineStruct_; }
     const std::unique_ptr<MutableinlineStruct>& inlineStruct() const { return inlineStruct_; }
     void inlineStruct(std::unique_ptr<MutableinlineStruct> _val) { inlineStruct_ = std::move(_val); }
-    
-    std::unique_ptr<MutableinlineVariant>& inlineVariant() { return inlineVariant_; }
-    const std::unique_ptr<MutableinlineVariant>& inlineVariant() const { return inlineVariant_; }
-    void inlineVariant(std::unique_ptr<MutableinlineVariant> _val) { inlineVariant_ = std::move(_val); }
     
     std::unique_ptr<MutableinlineVector>& inlineVector() { return inlineVector_; }
     const std::unique_ptr<MutableinlineVector>& inlineVector() const { return inlineVector_; }
@@ -392,9 +399,9 @@ class MutableinlineMap : public std::map<std::string, std::unique_ptr<MutableStr
 
   private:
     // Members.
+    std::unique_ptr<MutableVariantB> VariantB_;
     std::unique_ptr<MutableinlineMap> inlineMap_;
     std::unique_ptr<MutableinlineStruct> inlineStruct_;
-    std::unique_ptr<MutableinlineVariant> inlineVariant_;
     std::unique_ptr<MutableinlineVector> inlineVector_;
 
 };  // class MutableStructE
@@ -406,6 +413,12 @@ class MutableVariantA {
   public:
     MutableVariantA() {};
     ~MutableVariantA() {};
+
+    // Nested classes.
+
+
+
+
 
     
     bool Isa() const { return tag == Tag::TAG_a; }
@@ -462,6 +475,12 @@ class MutableVariantB {
   public:
     MutableVariantB() {};
     ~MutableVariantB() {};
+
+    // Nested classes.
+
+
+
+
 
     
     bool Isa() const { return tag == Tag::TAG_a; }
@@ -750,6 +769,227 @@ class MutableVariantB {
     }
 
 };  // class MutableVariantB
+
+class MutableVariantC {
+  public:
+    MutableVariantC() {};
+    ~MutableVariantC() {};
+
+    // Nested classes.
+    
+    class MutableinlineStruct {
+      public:
+        MutableinlineStruct() {};
+        ~MutableinlineStruct() {};
+    
+        // Nested classes.
+    
+    
+    
+    
+    
+        // Accessors.
+    
+        int32_t a() const { return a_; }
+        void a(int32_t _val) { a_ = _val; }
+        
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableinlineStruct& obj);
+    
+      private:
+        // Members.
+        int32_t a_;
+    
+    };  // class MutableinlineStruct
+
+    
+    class MutableVariantB {
+      public:
+        MutableVariantB() {};
+        ~MutableVariantB() {};
+    
+        // Nested classes.
+    
+    
+    
+    
+    
+        
+        bool Isva() const { return tag == Tag::TAG_va; }
+        int32_t va() const {
+          assert(tag == Tag::TAG_va);
+          return va_; 
+        }
+        void va(int32_t _val) {
+          MaybeDeleteExistingMember();
+          tag = Tag::TAG_va;
+          va_ = _val;
+        }
+        
+        bool Isvb() const { return tag == Tag::TAG_vb; }
+        std::string vb() const {
+          assert(tag == Tag::TAG_vb);
+          return vb_; 
+        }
+        void vb(std::string _val) {
+          MaybeDeleteExistingMember();
+          tag = Tag::TAG_vb;
+          vb_ = _val;
+        }
+        
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableVariantB& obj);
+    
+      private:
+        enum class Tag {
+          __TAGS_BEGIN = 0,
+          TAG_va,
+          TAG_vb,
+    
+          __TAGS_END
+        } tag = Tag::__TAGS_BEGIN;
+    
+        union {
+        int32_t va_;
+        std::string vb_;
+    
+        };  // union
+    
+        void MaybeDeleteExistingMember() {
+          switch (tag) {
+    
+            default:
+              return;
+          }
+        }
+    
+    };  // class MutableVariantB
+
+    
+    class MutableinlineVector : public std::vector<int32_t> {
+      public:
+        MutableinlineVector() {};
+        ~MutableinlineVector() {};
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableinlineVector& obj);
+    
+    };  // class MutableinlineVector
+
+    
+    class MutableinlineMap : public std::map<std::string, std::unique_ptr<MutableStructD>> {
+      public:
+        MutableinlineMap() {};
+        ~MutableinlineMap() {};
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableinlineMap& obj);
+    
+    };  // class MutableinlineMap
+
+
+    
+    bool IsVariantB() const { return tag == Tag::TAG_VariantB; }
+    std::unique_ptr<MutableVariantB>& VariantB() {
+      assert(tag == Tag::TAG_VariantB);
+      return VariantB_;
+    }
+    const std::unique_ptr<MutableVariantB>& VariantB() const {
+      assert(tag == Tag::TAG_VariantB);
+      return VariantB_;
+    }
+    void VariantB(std::unique_ptr<MutableVariantB> _val) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_VariantB;
+      VariantB_ = std::move(_val);
+    }
+    
+    bool IsinlineMap() const { return tag == Tag::TAG_inlineMap; }
+    std::unique_ptr<MutableinlineMap>& inlineMap() {
+      assert(tag == Tag::TAG_inlineMap);
+      return inlineMap_;
+    }
+    const std::unique_ptr<MutableinlineMap>& inlineMap() const {
+      assert(tag == Tag::TAG_inlineMap);
+      return inlineMap_;
+    }
+    void inlineMap(std::unique_ptr<MutableinlineMap> _val) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_inlineMap;
+      inlineMap_ = std::move(_val);
+    }
+    
+    bool IsinlineStruct() const { return tag == Tag::TAG_inlineStruct; }
+    std::unique_ptr<MutableinlineStruct>& inlineStruct() {
+      assert(tag == Tag::TAG_inlineStruct);
+      return inlineStruct_;
+    }
+    const std::unique_ptr<MutableinlineStruct>& inlineStruct() const {
+      assert(tag == Tag::TAG_inlineStruct);
+      return inlineStruct_;
+    }
+    void inlineStruct(std::unique_ptr<MutableinlineStruct> _val) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_inlineStruct;
+      inlineStruct_ = std::move(_val);
+    }
+    
+    bool IsinlineVector() const { return tag == Tag::TAG_inlineVector; }
+    std::unique_ptr<MutableinlineVector>& inlineVector() {
+      assert(tag == Tag::TAG_inlineVector);
+      return inlineVector_;
+    }
+    const std::unique_ptr<MutableinlineVector>& inlineVector() const {
+      assert(tag == Tag::TAG_inlineVector);
+      return inlineVector_;
+    }
+    void inlineVector(std::unique_ptr<MutableinlineVector> _val) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_inlineVector;
+      inlineVector_ = std::move(_val);
+    }
+    
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableVariantC& obj);
+
+  private:
+    enum class Tag {
+      __TAGS_BEGIN = 0,
+      TAG_VariantB,
+      TAG_inlineMap,
+      TAG_inlineStruct,
+      TAG_inlineVector,
+
+      __TAGS_END
+    } tag = Tag::__TAGS_BEGIN;
+
+    union {
+    std::unique_ptr<MutableVariantB> VariantB_;
+    std::unique_ptr<MutableinlineMap> inlineMap_;
+    std::unique_ptr<MutableinlineStruct> inlineStruct_;
+    std::unique_ptr<MutableinlineVector> inlineVector_;
+
+    };  // union
+
+    void MaybeDeleteExistingMember() {
+      switch (tag) {
+        case Tag::TAG_VariantB:
+          VariantB_.reset(nullptr);
+          break;
+        case Tag::TAG_inlineMap:
+          inlineMap_.reset(nullptr);
+          break;
+        case Tag::TAG_inlineStruct:
+          inlineStruct_.reset(nullptr);
+          break;
+        case Tag::TAG_inlineVector:
+          inlineVector_.reset(nullptr);
+          break;
+
+        default:
+          return;
+      }
+    }
+
+};  // class MutableVariantC
 
 
 // Vectors

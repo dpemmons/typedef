@@ -36,6 +36,7 @@ int main() {
   sE.inlineMap()->emplace(
       std::string("hi"),
       std::make_unique<MutableStructD>());
+  sE.VariantB(std::make_unique<MutableStructE::MutableVariantB>());
 
   return 0;
 }

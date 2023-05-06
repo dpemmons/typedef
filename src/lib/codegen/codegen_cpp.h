@@ -121,6 +121,10 @@ class CodegenCpp : public CodegenBase {
   struct VariantViewModel {
     string struct_name;
     vector<CppSymbol> members;
+    vector<StructViewModel> nested_structs;
+    vector<VariantViewModel> nested_variants;
+    vector<VectorViewModel> nested_vectors;
+    vector<MapViewModel> nested_maps;
   };
 
   struct VectorViewModel {

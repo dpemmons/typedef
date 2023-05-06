@@ -19,6 +19,54 @@ namespace td {
 
 using namespace std;
 
+namespace {
+
+/**
+ * @brief Indents each line of the given input string with a specified number of
+ * spaces.
+ *
+ * This function processes the input string line by line and adds a specified
+ * number of spaces at the beginning of each line. The function uses string_view
+ * for efficient substring manipulation and fmt::print for formatting the
+ * output.
+ *
+ * @param input The input string to be indented.
+ * @param count The number of spaces to be added as indentation for each line.
+ * @return The indented output string.
+ *
+ * Usage:
+ *   string original_text = "line 1\nline 2\nline 3";
+ *   string indented_text = indent(original_text, 4);
+ *     returns "    line 1\n    line 2\n    line 3"
+ */
+string indent(const string& input, unsigned int count) {
+  string_view input_view(input);
+  size_t pos_start = 0;
+  size_t pos_end = 0;
+  ostringstream ss;
+
+  // Iterate through the input string, finding newline characters
+  while ((pos_end = input_view.find("\n", pos_start)) != string::npos) {
+    // Extract the line without the newline character
+    string_view token = input_view.substr(pos_start, pos_end - pos_start);
+    // Update the start position for the next iteration
+    pos_start = pos_end + 1;
+
+    // Print the indented line to the ostringstream
+    fmt::print(ss, "{: >{}}{}\n", "", count, token);
+  }
+
+  // Handle the last line if it doesn't end with a newline character
+  if (pos_start < input_view.length()) {
+    string_view token = input_view.substr(pos_start);
+    fmt::print(ss, "{: >{}}{}", "", count, token);
+  }
+
+  return ss.str();
+}
+
+}  // namespace
+
 CodegenCpp::CppSymRef::CppSymRef(string const& referenced_escaped_identifier) {
   referenced_cpp_type_ =
       fmt::format("std::unique_ptr<Mutable{}>", referenced_escaped_identifier);
@@ -343,15 +391,18 @@ string CodegenCpp::StructClasses(vector<StructViewModel> const& structs) const {
   for (auto s : structs) {
     fmt::dynamic_format_arg_store<fmt::format_context> store;
     store.push_back(fmt::arg("classname", s.struct_name));
+    // nested classes.
+    store.push_back(
+        fmt::arg("nested_structs", indent(StructClasses(s.nested_structs), 4)));
+    store.push_back(fmt::arg("nested_variants",
+                             indent(VariantClasses(s.nested_variants), 4)));
+    store.push_back(
+        fmt::arg("nested_vectors", indent(VectorClasses(s.nested_vectors), 4)));
+    store.push_back(
+        fmt::arg("nested_maps", indent(MapClasses(s.nested_maps), 4)));
+
     store.push_back(fmt::arg("accessors", StructAccessors(s.members)));
     store.push_back(fmt::arg("members", StructMembers(s.members)));
-    store.push_back(
-        fmt::arg("nested_structs", StructClasses(s.nested_structs)));
-    store.push_back(
-        fmt::arg("nested_variants", VariantClasses(s.nested_variants)));
-    store.push_back(
-        fmt::arg("nested_vectors", VectorClasses(s.nested_vectors)));
-    store.push_back(fmt::arg("nested_maps", MapClasses(s.nested_maps)));
     fmt::vprint(ss, R"(
 class {classname} {{
   public:
@@ -402,7 +453,24 @@ string CodegenCpp::VariantAccessors(
     )",
                   store);
     } else if (m.IsNonPrimitive()) {
-      assert(false);  // not yet.
+      store.push_back(fmt::arg("type", m.NonPrimitive().CppType()));
+      fmt::vprint(ss, R"(
+    bool Is{identifier}() const {{ return tag == Tag::TAG_{identifier}; }}
+    {type}& {identifier}() {{
+      assert(tag == Tag::TAG_{identifier});
+      return {identifier}_;
+    }}
+    const {type}& {identifier}() const {{
+      assert(tag == Tag::TAG_{identifier});
+      return {identifier}_;
+    }}
+    void {identifier}({type} _val) {{
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_{identifier};
+      {identifier}_ = std::move(_val);
+    }}
+    )",
+                  store);
     } else if (m.IsReference()) {
       store.push_back(fmt::arg("type", m.Reference().ReferencedCppType()));
       fmt::vprint(ss, R"(
@@ -456,6 +524,17 @@ string CodegenCpp::VariantClasses(
   for (auto v : variants) {
     fmt::dynamic_format_arg_store<fmt::format_context> store;
     store.push_back(fmt::arg("classname", v.struct_name));
+
+    // nested classes.
+    store.push_back(
+        fmt::arg("nested_structs", indent(StructClasses(v.nested_structs), 4)));
+    store.push_back(fmt::arg("nested_variants",
+                             indent(VariantClasses(v.nested_variants), 4)));
+    store.push_back(
+        fmt::arg("nested_vectors", indent(VectorClasses(v.nested_vectors), 4)));
+    store.push_back(
+        fmt::arg("nested_maps", indent(MapClasses(v.nested_maps), 4)));
+
     store.push_back(fmt::arg("accessors", VariantAccessors(v.members)));
     store.push_back(fmt::arg("members", StructMembers(v.members)));
     store.push_back(fmt::arg("tags", VariantTags(v.members)));
@@ -467,6 +546,12 @@ class {classname} {{
   public:
     {classname}() {{}};
     ~{classname}() {{}};
+
+    // Nested classes.
+{nested_structs}
+{nested_variants}
+{nested_vectors}
+{nested_maps}
 
     {accessors}
 
@@ -706,6 +791,15 @@ CodegenCpp::VariantViewModel CodegenCpp::CreateVaraintViewModel(
   auto str = get<shared_ptr<Variant>>(variant.second);
   for (auto m : str->table.table_) {
     vvm.members.push_back(CppSymbol(m));
+    if (holds_alternative<shared_ptr<Struct>>(m.second)) {
+      vvm.nested_structs.push_back(CreateStructViewModel(m));
+    } else if (holds_alternative<shared_ptr<Variant>>(m.second)) {
+      vvm.nested_variants.push_back(CreateVaraintViewModel(m));
+    } else if (holds_alternative<shared_ptr<Vector>>(m.second)) {
+      vvm.nested_vectors.push_back(CreateVectorViewModel(m));
+    } else if (holds_alternative<shared_ptr<Map>>(m.second)) {
+      vvm.nested_maps.push_back(CreateMapViewModel(m));
+    }
   }
   return vvm;
 }

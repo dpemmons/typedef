@@ -43,6 +43,11 @@ std::ostream& operator<<(std::ostream& os, const MutableVariantB& obj) {
   return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const MutableVariantC& obj) {
+  os << "variant MutableVariantC.\n";
+  return os;
+}
+
 
 
 std::ostream& operator<<(std::ostream& os, const MutableVecA& obj) {

@@ -98,7 +98,21 @@ struct StructE {
   inlineStruct: struct {
     a: i32;
   };
-  inlineVariant: variant {
+  // Test that name collisions don't happen.
+  VariantB: variant {
+    va: i32;
+    vb: str;
+  };
+  inlineVector: vector<i32>;
+  inlineMap: map<str, StructD>;
+};
+
+variant VariantC {
+  inlineStruct: struct {
+    a: i32;
+  };
+  // Test that name collisions don't happen.
+  VariantB: variant {
     va: i32;
     vb: str;
   };
