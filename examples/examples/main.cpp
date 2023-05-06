@@ -33,9 +33,9 @@ int main() {
 
   MutableStructE sE;
   sE.inlineMap(std::make_unique<MutableStructE::MutableinlineMap>());
-  auto m = *sE.inlineMap();
-  auto p = std::make_pair(std::string("hi"), std::make_unique<MutableStructD>());
-  m.insert(p); // why doesn't this work?
+  sE.inlineMap()->emplace(
+      std::string("hi"),
+      std::make_unique<MutableStructD>());
 
   return 0;
 }
