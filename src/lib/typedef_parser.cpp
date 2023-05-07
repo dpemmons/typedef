@@ -1,22 +1,21 @@
 #include "typedef_parser.h"
 
-#include <stddef.h>
+#include <antlr4/antlr4-runtime.h>
 
 #include <algorithm>
+#include <cstddef>
 #include <exception>
 #include <vector>
 
-#include "antlr4/antlr4-runtime.h"
+#define FMT_HEADER_ONLY
+#include <fmt/core.h>
+
 #include "grammar/TypedefLexer.h"
 #include "grammar/TypedefParser.h"
 #include "grammar/TypedefParserBaseListener.h"
-#include "symbol_table.h"
-
-#define FMT_HEADER_ONLY
-#include "fmt/core.h"
-#include "language_version.h"
 #include "parsed_file.h"
 #include "parser_error_info.h"
+#include "symbol_table.h"
 
 namespace td {
 
@@ -218,8 +217,7 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
 
   ParsedFileBuilder builder;
   if (errors.empty() && compilation_unit != nullptr) {
-    builder.SetLanguageVersion(
-        LangaugeVersionFromString(compilation_unit->version));
+    builder.SetLanguageVersion(compilation_unit->version);
     builder.SetModule(compilation_unit->module);
     builder.AddSymbols2(compilation_unit->symbol_table);
   }

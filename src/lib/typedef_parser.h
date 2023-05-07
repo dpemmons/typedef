@@ -1,8 +1,8 @@
 #ifndef SRC_LIB_TYPEDEF_PARSER_H_
 #define SRC_LIB_TYPEDEF_PARSER_H_
 
-#include <memory>
 #include <iosfwd>
+#include <memory>
 #include <string>
 
 #include "parsed_file.h"

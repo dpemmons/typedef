@@ -183,18 +183,6 @@ std::string GetRawString(TypedefParser* parser, antlr4::Token* token) {
   return std::string(literal);
 }
 
-// std::optional<td::SymbolRef> CheckIdentifierExists(
-//     antlr4::Parser* recognizer, td::SymbolTable& global_symbol_table,
-//     TypedefParser::IdentifierContext* ctx) {
-//   auto maybe_symbol = global_symbol_table.Get(ctx->id);
-//   if (maybe_symbol) {
-//     return td::SymbolRef(ctx->id);
-//   } else {
-//     throw SymbolNotFoundException(recognizer, ctx,
-//                                   ctx->NON_KEYWORD_IDENTIFIER()->getSymbol());
-//   }
-// }
-
 void TryInsert(td::SymbolTable& dst_table,
                TypedefParser::TypeDeclarationContext* src,
                antlr4::Parser* recognizer) {

@@ -164,10 +164,6 @@ std::string GetStringValue(TypedefParser *parser, antlr4::Token *token);
 
 std::string GetRawString(TypedefParser *parser, antlr4::Token *token);
 
-// std::optional<td::SymbolRef> CheckIdentifierExists(
-//     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-//     TypedefParser::IdentifierContext *ctx);
-
 void TryInsert(td::SymbolTable &dstTable,
                TypedefParser::TypeDeclarationContext *src,
                antlr4::Parser *recognizer);

@@ -1,16 +1,17 @@
 #include "parser_error_info.h"
 
+#include <antlr4/antlr4-runtime.h>
+
+#define FMT_HEADER_ONLY
+#include <fmt/core.h>
+#include <fmt/ostream.h>
+
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
 
-#include "antlr4/antlr4-runtime.h"
 #include "grammar/TypedefLexer.h"
 #include "grammar/TypedefParser.h"
-
-#define FMT_HEADER_ONLY
-#include "fmt/core.h"
-#include "fmt/ostream.h"
 
 namespace {
 const char *TokenToString(size_t token) {
