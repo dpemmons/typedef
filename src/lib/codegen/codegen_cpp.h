@@ -155,7 +155,7 @@ class CodegenCpp : public CodegenBase {
     vector<MapViewModel> maps;
   };
 
-  GroupedSymbols GroupSymbols(map<string, SymbolTable::Value> table) const;
+  GroupedSymbols GroupSymbols(SymbolTable::Table const& table) const;
   ViewModel CreateViewModel(filesystem::path hdr_path, vector<string> module,
                             GroupedSymbols const& grouped_symbols) const;
   vector<ValueViewModel> CreateValueViewModels(

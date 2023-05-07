@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 
+#include <cassert>
 #include <map>
 #include <memory>
 #include <optional>
@@ -20,8 +21,49 @@ struct Variant;
 struct Vector;
 struct Map;
 struct SymbolRef {
-  SymbolRef(const std::string &str) : id(str) {}
-  std::string id;
+  SymbolRef(const string &str) : id(str) {}
+  string id;
+};
+
+class Identifier {
+ public:
+  static Identifier TypeIdentifier(string const &id) {
+    return Identifier(id, Type::TYPE);
+  }
+  static Identifier AnonymousTypeIdentifier() { return Identifier(Type::TYPE); }
+  static Identifier ValueIdentifier(string const &id) {
+    return Identifier(id, Type::VALUE);
+  }
+
+  string const &id() const { return id_; }
+  bool IsType() const { return type_ == Type::TYPE; }
+  bool IsValue() const { return type_ == Type::VALUE; }
+  bool IsAnonymous() const { return id_.size() == 0; }
+
+  Identifier AsTypeIdentifier() const { return Identifier(id_, Type::TYPE); }
+  Identifier AsValueIdentifier() const { return Identifier(id_, Type::VALUE); }
+
+  bool operator<(const Identifier &o) const {
+    if (type_ != o.type_) {
+      return static_cast<int>(type_) < static_cast<int>(o.type_);
+    }
+    return id_ < o.id_;
+  }
+
+  friend ostream &operator<<(ostream &os, const Identifier &value);
+
+ private:
+  enum class Type {
+    UNKNOWN = 0,
+    TYPE = 1,
+    VALUE = 2,
+  } type_;
+  string id_;
+
+  Identifier(string const &id, Type type) : id_(id), type_(type) {}
+  // Anonymous symbol
+  Identifier(Type type) : id_(), type_(type) {}
+  Identifier() = delete;
 };
 
 class SymbolTable {
@@ -46,27 +88,49 @@ class SymbolTable {
                   SymbolRef             // reference to some other symbol.
                   >
       Value;
-  typedef pair<string, Value> Symbol;
+  using Symbol = pair<Identifier, Value>;
 
   SymbolTable() {}
   ~SymbolTable() {}
 
-  bool TryInsert(string name, Value &value) {
-    return table_.try_emplace(name, value).second;
+  bool TryInsert(Identifier const &identifier, Value const &value) {
+    if (IsIdentifierUsed(identifier)) {
+      return false;
+    }
+    Symbol s(identifier, value);
+    return table_.insert(s).second;
   }
-  bool TryInsert(Symbol &symbol) { return table_.insert(symbol).second; }
-  void Clear() { table_.clear(); }
+  bool TryInsert(Symbol const &symbol) {
+    if (IsIdentifierUsed(symbol.first)) {
+      return false;
+    }
+    return table_.insert(symbol).second;
+  }
 
-  friend ostream &operator<<(ostream &os, const SymbolTable &value);
-  bool HasSymbol(string &id) { return table_.count(id) > 0; }
-  optional<Value> Get(string &id) {
-    if (HasSymbol(id)) {
-      return table_.find(id)->second;
+  // Match both Type and Value identifiers.
+  bool IsIdentifierUsed(Identifier const &identifier) {
+    return table_.count(identifier.AsTypeIdentifier()) ||
+           table_.count(identifier.AsValueIdentifier());
+  }
+
+  bool IsIdentifierUsed(string const &identifier) {
+    return table_.count(Identifier::TypeIdentifier(identifier)) ||
+           table_.count(Identifier::ValueIdentifier(identifier));
+  }
+
+  optional<Value> Get(Identifier const &identifier) {
+    if (table_.count(identifier)) {
+      return table_.find(identifier)->second;
     }
     return nullopt;
   }
 
-  map<string, Value> table_;
+  void Clear() { table_.clear(); }
+
+  friend ostream &operator<<(ostream &os, const SymbolTable &value);
+
+  using Table = map<Identifier, Value>;
+  Table table_;
 };
 
 class Struct {

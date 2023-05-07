@@ -119,8 +119,18 @@ void MaybePrintValue(ostream& os, const SymbolTable::Value& v) {
   }
 }
 
+ostream& operator<<(ostream& os, const Identifier& value) {
+  if (value.IsType()) {
+    fmt::print(os, "{}(type)", value.id());
+  } else if (value.IsValue()) {
+    fmt::print(os, "{}(value)", value.id());
+  } else {
+    fmt::print(os, "(anonymous)", value.id());
+  }
+}
+
 void PrintField(ostream& os, const SymbolTable::Symbol& s) {
-  fmt::print(os, "{} : ", s.first);
+  fmt::print(os, "{} : ", fmt::streamed(s.first));
   PrintType(os, s.second);
   fmt::print(os, " = ");
   MaybePrintValue(os, s.second);

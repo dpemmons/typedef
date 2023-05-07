@@ -102,10 +102,10 @@ class SymRefListener : public TypedefParserBaseListener {
   SymRefListener(std::vector<ParserErrorInfo> &errors_list)
       : errors_list_(errors_list) {}
 
-  bool HasSymbolInTable(td::SymbolTable const &table,
-                        std::string const &identifier) const {
-    return table.table_.count(identifier) > 0;
-  }
+  // bool HasSymbolInTable(td::SymbolTable const &table,
+  //                       std::string const &identifier) const {
+  //   return table.table_.count(identifier) > 0;
+  // }
 
   // Walk up the tree looking for nodes that may contain the referenced symbol.
   bool FindSymbol(TypedefParser::SymbolReferenceContext *unresolved_symbol_ctx,
@@ -119,13 +119,13 @@ class SymRefListener : public TypedefParserBaseListener {
     TypedefParser::CompilationUnitContext *maybeCompilationUnit =
         dynamic_cast<TypedefParser::CompilationUnitContext *>(search_ctx);
 
-    if (maybeStruct && maybeStruct->s->table.table_.count(identifier) > 0) {
+    if (maybeStruct && maybeStruct->s->table.IsIdentifierUsed(identifier) > 0) {
       return true;
     } else if (maybeVariant &&
-               maybeVariant->v->table.table_.count(identifier) > 0) {
+               maybeVariant->v->table.IsIdentifierUsed(identifier) > 0) {
       return true;
     } else if (maybeCompilationUnit &&
-               maybeCompilationUnit->symbol_table.table_.count(identifier) >
+               maybeCompilationUnit->symbol_table.IsIdentifierUsed(identifier) >
                    0) {
       return true;
     } else if (search_ctx->parent != nullptr) {

@@ -7,7 +7,7 @@
 namespace td {
 
 struct UseDeclaration {
-  Identifier qualified_identifier;
+  OutIdentifier qualified_identifier;
   std::string alias;
   bool is_wildcard;
 };

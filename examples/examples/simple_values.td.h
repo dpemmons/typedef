@@ -267,6 +267,31 @@ class MutableStructE {
 
     // Nested classes.
     
+    class MutableNestedStruct {
+      public:
+        MutableNestedStruct() {};
+        ~MutableNestedStruct() {};
+    
+        // Nested classes.
+    
+    
+    
+    
+    
+        // Accessors.
+    
+        int32_t a() const { return a_; }
+        void a(int32_t _val) { a_ = _val; }
+        
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableNestedStruct& obj);
+    
+      private:
+        // Members.
+        int32_t a_;
+    
+    };  // class MutableNestedStruct
+    
     class MutableinlineStruct {
       public:
         MutableinlineStruct() {};
@@ -292,6 +317,55 @@ class MutableStructE {
     
     };  // class MutableinlineStruct
 
+    
+    class MutableNestedVariant {
+      public:
+        MutableNestedVariant() {};
+        ~MutableNestedVariant() {};
+    
+        // Nested classes.
+    
+    
+    
+    
+    
+        
+        bool Isa() const { return tag == Tag::TAG_a; }
+        int64_t a() const {
+          assert(tag == Tag::TAG_a);
+          return a_; 
+        }
+        void a(int64_t _val) {
+          MaybeDeleteExistingMember();
+          tag = Tag::TAG_a;
+          a_ = _val;
+        }
+        
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableNestedVariant& obj);
+    
+      private:
+        enum class Tag {
+          __TAGS_BEGIN = 0,
+          TAG_a,
+    
+          __TAGS_END
+        } tag = Tag::__TAGS_BEGIN;
+    
+        union {
+        int64_t a_;
+    
+        };  // union
+    
+        void MaybeDeleteExistingMember() {
+          switch (tag) {
+    
+            default:
+              return;
+          }
+        }
+    
+    };  // class MutableNestedVariant
     
     class MutableVariantB {
       public:
@@ -356,6 +430,15 @@ class MutableStructE {
     };  // class MutableVariantB
 
     
+    class MutableNestedVector : public std::vector<int32_t> {
+      public:
+        MutableNestedVector() {};
+        ~MutableNestedVector() {};
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableNestedVector& obj);
+    
+    };  // class MutableNestedVector
+    
     class MutableinlineVector : public std::vector<int32_t> {
       public:
         MutableinlineVector() {};
@@ -365,6 +448,15 @@ class MutableStructE {
     
     };  // class MutableinlineVector
 
+    
+    class MutableNestedMap : public std::map<int32_t, std::unique_ptr<MutableNestedVariant>> {
+      public:
+        MutableNestedMap() {};
+        ~MutableNestedMap() {};
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableNestedMap& obj);
+    
+    };  // class MutableNestedMap
     
     class MutableinlineMap : public std::map<std::string, std::unique_ptr<MutableStructD>> {
       public:
@@ -378,6 +470,10 @@ class MutableStructE {
 
     // Accessors.
 
+    std::unique_ptr<MutableNestedMap>& NestedMap() { return NestedMap_; }
+    const std::unique_ptr<MutableNestedMap>& NestedMap() const { return NestedMap_; }
+    void NestedMap(std::unique_ptr<MutableNestedMap> _val) { NestedMap_ = std::move(_val); }
+    
     std::unique_ptr<MutableVariantB>& VariantB() { return VariantB_; }
     const std::unique_ptr<MutableVariantB>& VariantB() const { return VariantB_; }
     void VariantB(std::unique_ptr<MutableVariantB> _val) { VariantB_ = std::move(_val); }
@@ -394,15 +490,36 @@ class MutableStructE {
     const std::unique_ptr<MutableinlineVector>& inlineVector() const { return inlineVector_; }
     void inlineVector(std::unique_ptr<MutableinlineVector> _val) { inlineVector_ = std::move(_val); }
     
+    std::unique_ptr<MutableNestedMap>& nestedMapField() { return nestedMapField_; }
+    const std::unique_ptr<MutableNestedMap>& nestedMapField() const { return nestedMapField_; }
+    void nestedMapField(std::unique_ptr<MutableNestedMap> _val) { nestedMapField_ = std::move(_val); }
+    
+    std::unique_ptr<MutableNestedStruct>& nestedStructField() { return nestedStructField_; }
+    const std::unique_ptr<MutableNestedStruct>& nestedStructField() const { return nestedStructField_; }
+    void nestedStructField(std::unique_ptr<MutableNestedStruct> _val) { nestedStructField_ = std::move(_val); }
+    
+    std::unique_ptr<MutableNestedVariant>& nestedVariantField() { return nestedVariantField_; }
+    const std::unique_ptr<MutableNestedVariant>& nestedVariantField() const { return nestedVariantField_; }
+    void nestedVariantField(std::unique_ptr<MutableNestedVariant> _val) { nestedVariantField_ = std::move(_val); }
+    
+    std::unique_ptr<MutableNestedVector>& nestedVectorField() { return nestedVectorField_; }
+    const std::unique_ptr<MutableNestedVector>& nestedVectorField() const { return nestedVectorField_; }
+    void nestedVectorField(std::unique_ptr<MutableNestedVector> _val) { nestedVectorField_ = std::move(_val); }
+    
 
     friend std::ostream& operator<<(std::ostream& os, const MutableStructE& obj);
 
   private:
     // Members.
+    std::unique_ptr<MutableNestedMap> NestedMap_;
     std::unique_ptr<MutableVariantB> VariantB_;
     std::unique_ptr<MutableinlineMap> inlineMap_;
     std::unique_ptr<MutableinlineStruct> inlineStruct_;
     std::unique_ptr<MutableinlineVector> inlineVector_;
+    std::unique_ptr<MutableNestedMap> nestedMapField_;
+    std::unique_ptr<MutableNestedStruct> nestedStructField_;
+    std::unique_ptr<MutableNestedVariant> nestedVariantField_;
+    std::unique_ptr<MutableNestedVector> nestedVectorField_;
 
 };  // class MutableStructE
 
@@ -777,6 +894,31 @@ class MutableVariantC {
 
     // Nested classes.
     
+    class MutableNestedStruct {
+      public:
+        MutableNestedStruct() {};
+        ~MutableNestedStruct() {};
+    
+        // Nested classes.
+    
+    
+    
+    
+    
+        // Accessors.
+    
+        int32_t a() const { return a_; }
+        void a(int32_t _val) { a_ = _val; }
+        
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableNestedStruct& obj);
+    
+      private:
+        // Members.
+        int32_t a_;
+    
+    };  // class MutableNestedStruct
+    
     class MutableinlineStruct {
       public:
         MutableinlineStruct() {};
@@ -802,6 +944,55 @@ class MutableVariantC {
     
     };  // class MutableinlineStruct
 
+    
+    class MutableNestedVariant {
+      public:
+        MutableNestedVariant() {};
+        ~MutableNestedVariant() {};
+    
+        // Nested classes.
+    
+    
+    
+    
+    
+        
+        bool Isa() const { return tag == Tag::TAG_a; }
+        int64_t a() const {
+          assert(tag == Tag::TAG_a);
+          return a_; 
+        }
+        void a(int64_t _val) {
+          MaybeDeleteExistingMember();
+          tag = Tag::TAG_a;
+          a_ = _val;
+        }
+        
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableNestedVariant& obj);
+    
+      private:
+        enum class Tag {
+          __TAGS_BEGIN = 0,
+          TAG_a,
+    
+          __TAGS_END
+        } tag = Tag::__TAGS_BEGIN;
+    
+        union {
+        int64_t a_;
+    
+        };  // union
+    
+        void MaybeDeleteExistingMember() {
+          switch (tag) {
+    
+            default:
+              return;
+          }
+        }
+    
+    };  // class MutableNestedVariant
     
     class MutableVariantB {
       public:
@@ -866,6 +1057,15 @@ class MutableVariantC {
     };  // class MutableVariantB
 
     
+    class MutableNestedVector : public std::vector<int32_t> {
+      public:
+        MutableNestedVector() {};
+        ~MutableNestedVector() {};
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableNestedVector& obj);
+    
+    };  // class MutableNestedVector
+    
     class MutableinlineVector : public std::vector<int32_t> {
       public:
         MutableinlineVector() {};
@@ -875,6 +1075,15 @@ class MutableVariantC {
     
     };  // class MutableinlineVector
 
+    
+    class MutableNestedMap : public std::map<int32_t, std::unique_ptr<MutableNestedVariant>> {
+      public:
+        MutableNestedMap() {};
+        ~MutableNestedMap() {};
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableNestedMap& obj);
+    
+    };  // class MutableNestedMap
     
     class MutableinlineMap : public std::map<std::string, std::unique_ptr<MutableStructD>> {
       public:
@@ -886,6 +1095,21 @@ class MutableVariantC {
     };  // class MutableinlineMap
 
 
+    
+    bool IsNestedMap() const { return tag == Tag::TAG_NestedMap; }
+    std::unique_ptr<MutableNestedMap>& NestedMap() {
+      assert(tag == Tag::TAG_NestedMap);
+      return NestedMap_;
+    }
+    const std::unique_ptr<MutableNestedMap>& NestedMap() const {
+      assert(tag == Tag::TAG_NestedMap);
+      return NestedMap_;
+    }
+    void NestedMap(std::unique_ptr<MutableNestedMap> _val) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_NestedMap;
+      NestedMap_ = std::move(_val);
+    }
     
     bool IsVariantB() const { return tag == Tag::TAG_VariantB; }
     std::unique_ptr<MutableVariantB>& VariantB() {
@@ -947,30 +1171,103 @@ class MutableVariantC {
       inlineVector_ = std::move(_val);
     }
     
+    bool IsnestedMapField() const { return tag == Tag::TAG_nestedMapField; }
+    std::unique_ptr<MutableNestedMap>& nestedMapField() {
+      assert(tag == Tag::TAG_nestedMapField);
+      return nestedMapField_;
+    }
+    const std::unique_ptr<MutableNestedMap>& nestedMapField() const {
+      assert(tag == Tag::TAG_nestedMapField);
+      return nestedMapField_;
+    }
+    void nestedMapField(std::unique_ptr<MutableNestedMap> _val) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_nestedMapField;
+      nestedMapField_ = std::move(_val);
+    }
+    
+    bool IsnestedStructField() const { return tag == Tag::TAG_nestedStructField; }
+    std::unique_ptr<MutableNestedStruct>& nestedStructField() {
+      assert(tag == Tag::TAG_nestedStructField);
+      return nestedStructField_;
+    }
+    const std::unique_ptr<MutableNestedStruct>& nestedStructField() const {
+      assert(tag == Tag::TAG_nestedStructField);
+      return nestedStructField_;
+    }
+    void nestedStructField(std::unique_ptr<MutableNestedStruct> _val) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_nestedStructField;
+      nestedStructField_ = std::move(_val);
+    }
+    
+    bool IsnestedVariantField() const { return tag == Tag::TAG_nestedVariantField; }
+    std::unique_ptr<MutableNestedVariant>& nestedVariantField() {
+      assert(tag == Tag::TAG_nestedVariantField);
+      return nestedVariantField_;
+    }
+    const std::unique_ptr<MutableNestedVariant>& nestedVariantField() const {
+      assert(tag == Tag::TAG_nestedVariantField);
+      return nestedVariantField_;
+    }
+    void nestedVariantField(std::unique_ptr<MutableNestedVariant> _val) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_nestedVariantField;
+      nestedVariantField_ = std::move(_val);
+    }
+    
+    bool IsnestedVectorField() const { return tag == Tag::TAG_nestedVectorField; }
+    std::unique_ptr<MutableNestedVector>& nestedVectorField() {
+      assert(tag == Tag::TAG_nestedVectorField);
+      return nestedVectorField_;
+    }
+    const std::unique_ptr<MutableNestedVector>& nestedVectorField() const {
+      assert(tag == Tag::TAG_nestedVectorField);
+      return nestedVectorField_;
+    }
+    void nestedVectorField(std::unique_ptr<MutableNestedVector> _val) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_nestedVectorField;
+      nestedVectorField_ = std::move(_val);
+    }
+    
 
     friend std::ostream& operator<<(std::ostream& os, const MutableVariantC& obj);
 
   private:
     enum class Tag {
       __TAGS_BEGIN = 0,
+      TAG_NestedMap,
       TAG_VariantB,
       TAG_inlineMap,
       TAG_inlineStruct,
       TAG_inlineVector,
+      TAG_nestedMapField,
+      TAG_nestedStructField,
+      TAG_nestedVariantField,
+      TAG_nestedVectorField,
 
       __TAGS_END
     } tag = Tag::__TAGS_BEGIN;
 
     union {
+    std::unique_ptr<MutableNestedMap> NestedMap_;
     std::unique_ptr<MutableVariantB> VariantB_;
     std::unique_ptr<MutableinlineMap> inlineMap_;
     std::unique_ptr<MutableinlineStruct> inlineStruct_;
     std::unique_ptr<MutableinlineVector> inlineVector_;
+    std::unique_ptr<MutableNestedMap> nestedMapField_;
+    std::unique_ptr<MutableNestedStruct> nestedStructField_;
+    std::unique_ptr<MutableNestedVariant> nestedVariantField_;
+    std::unique_ptr<MutableNestedVector> nestedVectorField_;
 
     };  // union
 
     void MaybeDeleteExistingMember() {
       switch (tag) {
+        case Tag::TAG_NestedMap:
+          NestedMap_.reset(nullptr);
+          break;
         case Tag::TAG_VariantB:
           VariantB_.reset(nullptr);
           break;
@@ -982,6 +1279,18 @@ class MutableVariantC {
           break;
         case Tag::TAG_inlineVector:
           inlineVector_.reset(nullptr);
+          break;
+        case Tag::TAG_nestedMapField:
+          nestedMapField_.reset(nullptr);
+          break;
+        case Tag::TAG_nestedStructField:
+          nestedStructField_.reset(nullptr);
+          break;
+        case Tag::TAG_nestedVariantField:
+          nestedVariantField_.reset(nullptr);
+          break;
+        case Tag::TAG_nestedVectorField:
+          nestedVectorField_.reset(nullptr);
           break;
 
         default:

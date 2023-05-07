@@ -164,9 +164,9 @@ std::string GetStringValue(TypedefParser *parser, antlr4::Token *token);
 
 std::string GetRawString(TypedefParser *parser, antlr4::Token *token);
 
-std::optional<td::SymbolRef> CheckIdentifierExists(
-    antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-    TypedefParser::IdentifierContext *ctx);
+// std::optional<td::SymbolRef> CheckIdentifierExists(
+//     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
+//     TypedefParser::IdentifierContext *ctx);
 
 void TryInsert(td::SymbolTable &dstTable,
                TypedefParser::TypeDeclarationContext *src,
@@ -178,5 +178,17 @@ void TryInsertSymbol(std::shared_ptr<td::Struct> &s, antlr4::Parser *recognizer,
 void TryInsertSymbol(std::shared_ptr<td::Variant> &s,
                      antlr4::Parser *recognizer,
                      TypedefParser::UnvaluedSymbolContext *ctx);
+
+template <class Destination, class SourceParserContext>
+void TryInsertNested(std::shared_ptr<Destination> &dst,
+                     antlr4::Parser *recognizer, SourceParserContext *ctx) {
+  if (ctx->maybe_symbol) {
+    if (!dst->TryInsert(*ctx->maybe_symbol)) {
+      throw DuplicateSymbolException(
+          recognizer, ctx,
+          ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
+    }
+  }
+}
 
 #endif  // LIB_GRAMMAR_PARSER_HELPERS_H__

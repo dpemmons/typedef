@@ -105,6 +105,23 @@ struct StructE {
   };
   inlineVector: vector<i32>;
   inlineMap: map<str, StructD>;
+
+
+  struct NestedStruct {
+    a: i32;
+  };
+  nestedStructField: NestedStruct;
+
+  variant NestedVariant {
+    a: i64;
+  };
+  nestedVariantField: NestedVariant;
+
+  map NestedMap<i32, NestedVariant>;
+  nestedMapField: NestedMap;
+
+  vector NestedVector<i32>;
+  nestedVectorField: NestedVector;
 };
 
 variant VariantC {
@@ -118,4 +135,22 @@ variant VariantC {
   };
   inlineVector: vector<i32>;
   inlineMap: map<str, StructD>;
+
+
+  struct NestedStruct {
+    a: i32;
+  };
+  nestedStructField: NestedStruct;
+
+  variant NestedVariant {
+    a: i64;
+  };
+  nestedVariantField: NestedVariant;
+
+  map NestedMap<i32, NestedVariant>;
+  nestedMapField: NestedMap;
+
+  vector NestedVector<i32>;
+  nestedVectorField: NestedVector;
+  
 };

@@ -49,11 +49,26 @@ structDeclaration
 		$s = std::make_shared<td::Struct>();
 	}:
 	KW_STRUCT WS* identifier WS* LBRACE WS* (
-		maybeValuedSymbol {
+		(
+			maybeValuedSymbol {
 				TryInsertSymbol($s, this, $maybeValuedSymbol.ctx);
-			} WS* SEMI WS*
+			}
+			| structDeclaration {
+				TryInsertNested($s, this, $structDeclaration.ctx);
+			}
+			| variantDeclaration {
+				TryInsertNested($s, this, $variantDeclaration.ctx);
+			}
+			| vectorDeclaration {
+				TryInsertNested($s, this, $vectorDeclaration.ctx);
+			}
+			| mapDeclaration {
+				TryInsertNested($s, this, $mapDeclaration.ctx);
+			}
+		) WS* SEMI WS*
 	)* WS* RBRACE {
-		$maybe_symbol = std::make_pair($identifier.ctx->id, $s);
+		$maybe_symbol = std::make_pair(
+			td::Identifier::TypeIdentifier($identifier.ctx->id), $s);
 	};
 
 // variant SomeVariant { optionA: i32; optionB: str; }
@@ -64,11 +79,26 @@ variantDeclaration
 		$v = std::make_shared<td::Variant>();
 	}:
 	KW_VARIANT WS* identifier WS* LBRACE (
-		WS* unvaluedSymbol {
+		WS* (
+			unvaluedSymbol {
 				TryInsertSymbol($v, this, $unvaluedSymbol.ctx);
-			} WS* SEMI WS*
+			}
+			| structDeclaration {
+				TryInsertNested($v, this, $structDeclaration.ctx);
+			}
+			| variantDeclaration {
+				TryInsertNested($v, this, $variantDeclaration.ctx);
+			}
+			| vectorDeclaration {
+				TryInsertNested($v, this, $vectorDeclaration.ctx);
+			}
+			| mapDeclaration {
+				TryInsertNested($v, this, $mapDeclaration.ctx);
+			}
+		) WS* SEMI WS*
 	)* RBRACE {
-		$maybe_symbol = std::make_pair($identifier.ctx->id, $v);
+		$maybe_symbol = std::make_pair(
+			td::Identifier::TypeIdentifier($identifier.ctx->id), $v);
 	};
 
 // vector SomeVector<i32>
@@ -76,7 +106,8 @@ vectorDeclaration
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
 	KW_VECTOR WS* identifier WS* LT WS* val = unvaluedType WS* GT {
 		if ($unvaluedType.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair($identifier.ctx->id,
+			$maybe_symbol = std::make_pair(
+				td::Identifier::TypeIdentifier($identifier.ctx->id),
 			  std::make_shared<td::Vector>(*$val.ctx->maybe_val));
 		}
 	};
@@ -87,7 +118,8 @@ mapDeclaration
 	KW_MAP WS* identifier WS* LT WS* key = primitiveType WS* COMMA WS* val = unvaluedType WS* GT {
 		// Map Declaration
 		if ($key.ctx->maybe_val && $val.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair($identifier.ctx->id,
+			$maybe_symbol = std::make_pair(
+				td::Identifier::ValueIdentifier($identifier.ctx->id),
 			  std::make_shared<td::Map>(
 					*$key.ctx->maybe_val, *$val.ctx->maybe_val));
 		}
@@ -99,7 +131,9 @@ maybeValuedSymbol
 	(
 		identifier WS* maybeValuedType WS* {
 		if ($maybeValuedType.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair($identifier.ctx->id, *$maybeValuedType.ctx->maybe_val);
+			$maybe_symbol = std::make_pair(
+				td::Identifier::ValueIdentifier($identifier.ctx->id),
+				*$maybeValuedType.ctx->maybe_val);
 		}
 	}
 	)
@@ -115,7 +149,9 @@ unvaluedSymbol
 	| (
 		identifier WS* COLON WS* unvaluedType {
 		if ($unvaluedType.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair($identifier.ctx->id, *$unvaluedType.ctx->maybe_val);
+			$maybe_symbol = std::make_pair(
+				td::Identifier::ValueIdentifier($identifier.ctx->id),
+				*$unvaluedType.ctx->maybe_val);
 		}
 	}
 	);
@@ -131,7 +167,8 @@ inlineStruct
 				TryInsertSymbol($s, this, $maybeValuedSymbol.ctx);
 			} WS* SEMI WS*
 	)* WS* RBRACE {
-		$maybe_symbol = std::make_pair($identifier.ctx->id, $s);
+		$maybe_symbol = std::make_pair(
+			td::Identifier::ValueIdentifier($identifier.ctx->id), $s);
 	};
 
 inlineVariant
@@ -145,14 +182,16 @@ inlineVariant
 				TryInsertSymbol($v, this, $unvaluedSymbol.ctx);
 			} WS* SEMI WS*
 	)* RBRACE {
-		$maybe_symbol = std::make_pair($identifier.ctx->id, $v);
+		$maybe_symbol = std::make_pair(
+			td::Identifier::ValueIdentifier($identifier.ctx->id), $v);
 	};
 
 inlineVector
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
 	identifier WS* COLON WS* KW_VECTOR WS* LT WS* val = unvaluedType WS* GT {
 		if ($unvaluedType.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair($identifier.ctx->id,
+			$maybe_symbol = std::make_pair(
+				td::Identifier::ValueIdentifier($identifier.ctx->id),
 			  std::make_shared<td::Vector>(*$val.ctx->maybe_val));
 		}
 	};
@@ -163,7 +202,8 @@ inlineMap
 		WS* GT {
 		// Map Declaration
 		if ($key.ctx->maybe_val && $val.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair($identifier.ctx->id,
+			$maybe_symbol = std::make_pair(
+				td::Identifier::ValueIdentifier($identifier.ctx->id),
 			  std::make_shared<td::Map>(
 					*$key.ctx->maybe_val, *$val.ctx->maybe_val));
 		}

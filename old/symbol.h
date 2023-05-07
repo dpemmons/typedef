@@ -10,10 +10,10 @@ namespace td {
 
 class Symbol {
  public:
-  Symbol(std::unique_ptr<Identifier> identifier, std::unique_ptr<Type> type)
+  Symbol(std::unique_ptr<OutIdentifier> identifier, std::unique_ptr<Type> type)
       : identifier_(std::move(identifier)), type_(std::move(type)) {}
 
-  std::shared_ptr<Identifier> GetIdentifier() const { return identifier_; }
+  std::shared_ptr<OutIdentifier> GetIdentifier() const { return identifier_; }
   std::shared_ptr<Type> GetType() const { return type_; }
 
   friend std::ostream &operator<<(std::ostream &os, const Symbol &value);
@@ -25,7 +25,7 @@ class Symbol {
   bool operator!=(Symbol const &other) const;
 
  private:
-  std::shared_ptr<Identifier> identifier_;
+  std::shared_ptr<OutIdentifier> identifier_;
   std::shared_ptr<Type> type_;
 };
 

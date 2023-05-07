@@ -7,18 +7,18 @@
 
 namespace td {
 
-class Identifier {
+class OutIdentifier {
  public:
-  Identifier() {}
-  Identifier(const char *str) { id_.emplace_back(std::string(str)); }
-  Identifier(std::string str) { id_.emplace_back(str); }
+  OutIdentifier() {}
+  OutIdentifier(const char *str) { id_.emplace_back(std::string(str)); }
+  OutIdentifier(std::string str) { id_.emplace_back(str); }
   bool IsSimple() const { return id_.size() == 1; }
   std::string GetSimple() const { return id_.back(); }
 
-  friend std::ostream &operator<<(std::ostream &os, const Identifier &value);
+  friend std::ostream &operator<<(std::ostream &os, const OutIdentifier &value);
 
-  bool operator==(Identifier const &other) const;
-  bool operator!=(Identifier const &other) const;
+  bool operator==(OutIdentifier const &other) const;
+  bool operator!=(OutIdentifier const &other) const;
 
  private:
   std::vector<std::string> id_;

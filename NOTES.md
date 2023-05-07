@@ -8,7 +8,7 @@ Items in ***bold*** are in-progress.
 - [x] make symbol references independent of declaration order
 - [ ] optionals
 - [x] inline types: structs, vectors, maps.
-- [ ] nested types
+- [x] nested types
 - [x] consider making cpp codegen more sane?
 - [ ] self-host symbol table
 - [ ] more types
@@ -24,6 +24,7 @@ Items in ***bold*** are in-progress.
   - [ ] move semantics
   - [ ] print methods
   - [ ] comparison operators
+  - [ ] prevent keyword collisions
 
 Currently using this to test...
 

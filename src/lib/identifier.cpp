@@ -8,7 +8,7 @@
 
 namespace td {
 
-std::ostream &operator<<(std::ostream &os, const Identifier &value) {
+std::ostream &operator<<(std::ostream &os, const OutIdentifier &value) {
   if (value.id_.empty()) {
     return os;
   }
@@ -24,7 +24,7 @@ std::ostream &operator<<(std::ostream &os, const Identifier &value) {
   return os;
 }
 
-bool Identifier::operator==(Identifier const &other) const {
+bool OutIdentifier::operator==(OutIdentifier const &other) const {
   bool is_equal = false;
   if (id_.size() == other.id_.size()) {
     is_equal = std::equal(id_.begin(), id_.end(), other.id_.begin());
@@ -32,7 +32,7 @@ bool Identifier::operator==(Identifier const &other) const {
   return is_equal;
 }
 
-bool Identifier::operator!=(Identifier const &other) const {
+bool OutIdentifier::operator!=(OutIdentifier const &other) const {
   return !(*this == other);
 }
 
