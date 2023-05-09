@@ -1,5 +1,7 @@
 include ${CURDIR}/common.mk
 
+.DEFAULT_GOAL := all
+
 BASE_BUILD_DIR := ${CURDIR}/build/${BUILD}
 
 ###############################################################################
@@ -110,12 +112,12 @@ antlr4: $(ANTLR4_LIB)
 clean:
 	rm -rf $(BASE_BUILD_DIR)/lib $(BASE_BUILD_DIR)/cmd $(BASE_BUILD_DIR)/test
 
-.PHONY: clean-test
-clean-test:
+.PHONY: test-clean
+test-clean:
 	rm -rf $(BASE_BUILD_DIR)/test
 
-.PHONY: clean-all
-clean-all:
+.PHONY: all-clean
+all-clean:
 	rm -rf $(BASE_BUILD_DIR)
 
 
@@ -132,6 +134,8 @@ test: $(TEST_EXEC)
 lib: $(LIB_STATIC_OBJ)
 cmd: lib $(CMD_EXEC)
 test-bin: $(TEST_EXEC)
+
+all: test-bin cmd
 
 # Include the .d makefiles. The - at the front suppresses the errors of missing
 # Makefiles. Initially, all the .d files will be missing, and we don't want those
