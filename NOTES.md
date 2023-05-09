@@ -86,3 +86,4 @@ Modes:
 - Useful ANTLR4 example: https://github.com/mysql/mysql-workbench/blob/8.0/modules/db.mysql.parser/src/mysql_parser_module.cpp
 - https://github.com/antlr/grammars-v4/blob/master/rust/RustParser.g4
 - Use the Pitchfork layout: https://api.csswg.org/bikeshed/?force=1&url=https://raw.githubusercontent.com/vector-of-bool/pitchfork/develop/data/spec.bs
+- this seems like a good idea: https://matklad.github.io//2021/02/06/ARCHITECTURE.md.html
