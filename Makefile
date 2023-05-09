@@ -11,7 +11,7 @@ LIB_STATIC_OBJ := $(LIB_BUILD_DIR)/libtypedef.a
 LIB_SRCS := $(shell find $(LIB_SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
 LIB_OBJS := $(LIB_SRCS:%=$(LIB_BUILD_DIR)/%.o)
 LIB_DEPS := $(LIB_OBJS:.o=.d)
-LIB_INC_DIRS := $(shell find $(LIB_SRC_DIRS) -type d) ./
+LIB_INC_DIRS := $(shell find $(LIB_SRC_DIRS) -type d) ./ ./external/ ./external/antlr4
 LIB_INC_FLAGS := $(addprefix -I,$(LIB_INC_DIRS))
 LIB_CPPFLAGS := $(GLOBAL_CPPFLAGS) $(LIB_INC_FLAGS)
 
@@ -49,8 +49,8 @@ $(CMD_BUILD_DIR)/%.cpp.o: %.cpp
 	mkdir -p $(dir $@)
 	$(CXX) $(CMD_CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-$(CMD_EXEC): $(CMD_OBJS) $(LIB_STATIC_OBJ)
-	$(CXX) $(CMD_OBJS) $(LIB_STATIC_OBJ) -o $@ $(LDFLAGS)
+$(CMD_EXEC): $(CMD_OBJS) $(LIB_STATIC_OBJ) antlr4
+	$(CXX) $(CMD_OBJS) $(LIB_STATIC_OBJ) $(ANTLR4_LIB) -o $@ $(LDFLAGS)
 #
 ###############################################################################
 
@@ -96,10 +96,14 @@ grammar: ./src/lib/grammar/TypedefLexer.cpp ./src/lib/grammar/TypedefParser.cpp
 #
 ###############################################################################
 
-# .PHONY: catch2
 CATCH2_LIB := $(BASE_BUILD_DIR)/external/catch2/libcatch2.a
 catch2: $(CATCH2_LIB)
 	$(MAKE) -C external/catch2 catch2
+
+ANTLR4_LIB := $(BASE_BUILD_DIR)/external/antlr4/libantlr4.a
+$(ANTLR4_LIB):
+	$(MAKE) -C external/antlr4 antlr4
+antlr4: $(ANTLR4_LIB)
 
 .PHONY: clean
 clean:

@@ -9,8 +9,8 @@
 #include <utility>
 #include <variant>
 
-#include "TerminalNode.h"
-#include "Token.h"
+#include "external/antlr4/Token.h"
+#include "external/antlr4/tree/TerminalNode.h"
 
 char32_t GetCharValue(TypedefParser* parser,
                       TypedefParser::CharLiteralContext* ctx) {

@@ -1,10 +1,10 @@
 #include "parser_error_info.h"
 
-#include <antlr4/antlr4-runtime.h>
-
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
+
+#include "external/antlr4/antlr4-runtime.h"
 
 #define FMT_HEADER_ONLY
 #include "external/fmt/core.h"

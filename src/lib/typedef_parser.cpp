@@ -1,6 +1,6 @@
 #include "typedef_parser.h"
 
-#include <antlr4/antlr4-runtime.h>
+#include "external/antlr4/antlr4-runtime.h"
 
 #include <algorithm>
 #include <cstddef>
