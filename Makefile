@@ -1,22 +1,6 @@
-BUILD := debug
-COMPILER=gcc
+include ${CURDIR}/common.mk
+
 BASE_BUILD_DIR := ${CURDIR}/build/${BUILD}
-
-CXXFLAGS.gcc.debug := -DDEBUG -g3 -ggdb -Og -fstack-protector-all
-CXXFLAGS.gcc.release := -O3 -march=native -DNDEBUG
-CXXFLAGS.gcc := -pthread -std=gnu++17 -march=native -g -MMD -MP -fmessage-length=0 ${CXXFLAGS.gcc.${BUILD}}
-
-CXXFLAGS.clang.debug := -O0 -fstack-protector-all
-CXXFLAGS.clang.release := -O3 -march=native -DNDEBUG
-CXXFLAGS.clang := -pthread -std=gnu++17 -march=native -g -MMD -MP -fmessage-length=0 ${CXXFLAGS.clang.${BUILD}}
-
-CXXFLAGS := ${CXXFLAGS.${COMPILER}}
-CFLAGS := ${CFLAGS.${COMPILER}}
-
-LDFLAGS.debug := -ggdb3
-LDFLAGS.release :=
-LDFLAGS := -fuse-ld=gold -pthread -g ${LDFLAGS.${BUILD}}
-LDLIBS := -ldl
 
 ###############################################################################
 # LIB Rules
@@ -114,8 +98,7 @@ grammar: ./src/lib/grammar/TypedefLexer.cpp ./src/lib/grammar/TypedefParser.cpp
 
 # .PHONY: catch2
 CATCH2_LIB := $(BASE_BUILD_DIR)/external/catch2/libcatch2.a
-.PHONY: catch2
-catch2:
+catch2: $(CATCH2_LIB)
 	$(MAKE) -C external/catch2 catch2
 
 .PHONY: clean
