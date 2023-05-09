@@ -118,7 +118,7 @@ test-clean:
 
 .PHONY: all-clean
 all-clean:
-	rm -rf $(BASE_BUILD_DIR)
+	rm -rf build
 
 
 .PHONY: run
