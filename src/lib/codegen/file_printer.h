@@ -28,10 +28,12 @@ class FilePrinter : public FilePrinterBase {
 
 class OutPath : public OutPathBase {
  public:
-  OutPath(std::filesystem::path out_base) : OutPathBase(), out_base_(out_base) {}
+  OutPath(std::filesystem::path out_base)
+      : OutPathBase(), out_base_(out_base) {}
   ~OutPath() {}
 
-  virtual std::shared_ptr<FilePrinterBase> OpenOutputFile(std::filesystem::path out_file);
+  virtual std::shared_ptr<FilePrinterBase> OpenOutputFile(
+      std::filesystem::path out_file);
 
  protected:
   std::filesystem::path out_base_;

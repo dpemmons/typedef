@@ -22,11 +22,15 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitItem(TypedefParser::ItemContext *ctx) override {
+  virtual antlrcpp::Any visitMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext *ctx) override {
+  virtual antlrcpp::Any visitTypeDeclaration(TypedefParser::TypeDeclarationContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -34,7 +38,11 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) override {
+  virtual antlrcpp::Any visitVectorDeclaration(TypedefParser::VectorDeclarationContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitMapDeclaration(TypedefParser::MapDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -43,6 +51,22 @@ public:
   }
 
   virtual antlrcpp::Any visitUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitInlineStruct(TypedefParser::InlineStructContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitInlineVariant(TypedefParser::InlineVariantContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitInlineVector(TypedefParser::InlineVectorContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitInlineMap(TypedefParser::InlineMapContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -58,11 +82,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitVectorType(TypedefParser::VectorTypeContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitMapType(TypedefParser::MapTypeContext *ctx) override {
+  virtual antlrcpp::Any visitSymbolReference(TypedefParser::SymbolReferenceContext *ctx) override {
     return visitChildren(ctx);
   }
 

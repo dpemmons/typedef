@@ -1,7 +1,8 @@
 #include "file_printer.h"
 
-#include <iostream>
+#include <cassert>
 #include <filesystem>
+#include <iostream>
 
 namespace td {
 
@@ -14,7 +15,6 @@ FilePrinter::FilePrinter(std::filesystem::path out_file,
                          std::filesystem::path out_base) {
   out_path_ = (out_base / out_file).lexically_normal();
   out_parent_ = out_path_.parent_path();
-
 }
 
 void FilePrinter::Open() {
@@ -23,14 +23,12 @@ void FilePrinter::Open() {
   }
   out_.open(out_path_);
   if (!out_.is_open()) {
-    abort();
+    assert(false);  // unreachable
   }
 }
 
 void FilePrinter::Close() { out_.close(); }
 
-std::filesystem::path FilePrinter::GetPath() const {
-  return out_path_;
-}
+std::filesystem::path FilePrinter::GetPath() const { return out_path_; }
 
 }  // namespace td

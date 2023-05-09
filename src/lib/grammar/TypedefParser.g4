@@ -16,81 +16,206 @@ options {
 #include "parser_helpers.h"
 }
 
-@parser::members {
-	td::SymbolTable global_symbol_table;
-}
-
-compilationUnit:
-	typedefVersionDeclaration WS* moduleDeclaration? (
-		WS* useDeclaration
-	)* (WS* item)* WS* EOF;
-
-item:
-	maybeValuedSymbolDeclaration {
-		InsertField(global_symbol_table, this, $maybeValuedSymbolDeclaration.ctx);
-}
-	| structDeclaration {
-		InsertField(global_symbol_table, this, $structDeclaration.ctx);
-}
-	| variantDeclaration {
-		InsertField(global_symbol_table, this, $variantDeclaration.ctx);
-};
+compilationUnit
+	returns[
+		td::SymbolTable symbol_table,
+		std::string version,
+		std::vector<std::string> module
+	]:
+	typedefVersionDeclaration { $version = $typedefVersionDeclaration.ctx->version; } WS* (
+		moduleDeclaration { $module = $moduleDeclaration.ctx->module; }
+	)? (WS* useDeclaration)* (
+		WS* typeDeclaration {
+		TryInsert($symbol_table, $typeDeclaration.ctx, this);
+	}
+	)* WS* EOF;
 
 maybeValuedSymbolDeclaration: maybeValuedSymbol WS* SEMI;
 
-variantDeclaration
-	returns[
-		std::optional<td::SymbolTable::Symbol> maybe_symbol,
-		std::shared_ptr<td::Variant> v
-	]
-	@init {
-		$v = std::make_shared<td::Variant>();
-	}:
+typeDeclaration
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
 	(
-		identifier WS* COLON WS* KW_VARIANT WS* LBRACE (
-			WS* unvaluedSymbol {
-				TryInsertSymbol($v, this, $unvaluedSymbol.ctx);
-			} WS* SEMI WS*
-		)* RBRACE WS* SEMI
-	) {
-		$maybe_symbol = std::make_pair($identifier.ctx->id, $v);
-	};
+		structDeclaration { $maybe_symbol = $structDeclaration.ctx->maybe_symbol; }
+		| variantDeclaration { $maybe_symbol = $variantDeclaration.ctx->maybe_symbol; }
+		| vectorDeclaration { $maybe_symbol = $vectorDeclaration.ctx->maybe_symbol; }
+		| mapDeclaration { $maybe_symbol = $mapDeclaration.ctx->maybe_symbol; }
+	) WS* SEMI;
 
+// variant SomeVariant { optionA: i32; optionB: str; }
 structDeclaration
-	returns[
-		std::optional<td::SymbolTable::Symbol> maybe_symbol,
-		std::shared_ptr<td::Struct> s
-	]
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]
+	locals[std::shared_ptr<td::Struct> s]
 	@init {
 		$s = std::make_shared<td::Struct>();
 	}:
-	(
-		identifier WS* COLON WS* KW_STRUCT WS* LBRACE (
-			WS* maybeValuedSymbol {
+	KW_STRUCT WS* identifier WS* LBRACE WS* (
+		(
+			maybeValuedSymbol {
 				TryInsertSymbol($s, this, $maybeValuedSymbol.ctx);
-			} WS* SEMI WS*
-		)* RBRACE WS* SEMI
-	) {
-		$maybe_symbol = std::make_pair($identifier.ctx->id, $s);
+			}
+			| structDeclaration {
+				TryInsertNested($s, this, $structDeclaration.ctx);
+			}
+			| variantDeclaration {
+				TryInsertNested($s, this, $variantDeclaration.ctx);
+			}
+			| vectorDeclaration {
+				TryInsertNested($s, this, $vectorDeclaration.ctx);
+			}
+			| mapDeclaration {
+				TryInsertNested($s, this, $mapDeclaration.ctx);
+			}
+		) WS* SEMI WS*
+	)* WS* RBRACE {
+		$maybe_symbol = std::make_pair(
+			td::Identifier::TypeIdentifier($identifier.ctx->id), $s);
+	};
+
+// variant SomeVariant { optionA: i32; optionB: str; }
+variantDeclaration
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]
+	locals[std::shared_ptr<td::Variant> v]
+	@init {
+		$v = std::make_shared<td::Variant>();
+	}:
+	KW_VARIANT WS* identifier WS* LBRACE (
+		WS* (
+			unvaluedSymbol {
+				TryInsertSymbol($v, this, $unvaluedSymbol.ctx);
+			}
+			| structDeclaration {
+				TryInsertNested($v, this, $structDeclaration.ctx);
+			}
+			| variantDeclaration {
+				TryInsertNested($v, this, $variantDeclaration.ctx);
+			}
+			| vectorDeclaration {
+				TryInsertNested($v, this, $vectorDeclaration.ctx);
+			}
+			| mapDeclaration {
+				TryInsertNested($v, this, $mapDeclaration.ctx);
+			}
+		) WS* SEMI WS*
+	)* RBRACE {
+		$maybe_symbol = std::make_pair(
+			td::Identifier::TypeIdentifier($identifier.ctx->id), $v);
+	};
+
+// vector SomeVector<i32>
+vectorDeclaration
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
+	KW_VECTOR WS* identifier WS* LT WS* val = unvaluedType WS* GT {
+		if ($unvaluedType.ctx->maybe_val) {
+			$maybe_symbol = std::make_pair(
+				td::Identifier::TypeIdentifier($identifier.ctx->id),
+			  std::make_shared<td::Vector>(*$val.ctx->maybe_val));
+		}
+	};
+
+// map SomeMap<str, StructA>
+mapDeclaration
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
+	KW_MAP WS* identifier WS* LT WS* key = primitiveType WS* COMMA WS* val = unvaluedType WS* GT {
+		// Map Declaration
+		if ($key.ctx->maybe_val && $val.ctx->maybe_val) {
+			$maybe_symbol = std::make_pair(
+				td::Identifier::ValueIdentifier($identifier.ctx->id),
+			  std::make_shared<td::Map>(
+					*$key.ctx->maybe_val, *$val.ctx->maybe_val));
+		}
 	};
 
 // ValA: i32 = 42;
 maybeValuedSymbol
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
-	identifier WS* maybeValuedType WS* {
+	(
+		identifier WS* maybeValuedType WS* {
 		if ($maybeValuedType.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair($identifier.ctx->id, *$maybeValuedType.ctx->maybe_val);
+			$maybe_symbol = std::make_pair(
+				td::Identifier::ValueIdentifier($identifier.ctx->id),
+				*$maybeValuedType.ctx->maybe_val);
 		}
-};
+	}
+	)
+	| unvaluedSymbol {$maybe_symbol = $unvaluedSymbol.ctx->maybe_symbol; };
 
 // ValA: i32;
 unvaluedSymbol
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
-	identifier WS* COLON WS* unvaluedType WS* {
+	inlineStruct {$maybe_symbol = $inlineStruct.ctx->maybe_symbol; }
+	| inlineVariant {$maybe_symbol = $inlineVariant.ctx->maybe_symbol; }
+	| inlineVector {$maybe_symbol = $inlineVector.ctx->maybe_symbol; }
+	| inlineMap {$maybe_symbol = $inlineMap.ctx->maybe_symbol; }
+	| (
+		identifier WS* COLON WS* unvaluedType (
+			WS* optional = QUESTION
+		)? {
 		if ($unvaluedType.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair($identifier.ctx->id, *$unvaluedType.ctx->maybe_val);
+			$maybe_symbol = std::make_pair(
+				td::Identifier::ValueIdentifier($identifier.ctx->id),
+				*$unvaluedType.ctx->maybe_val);
 		}
-};
+	}
+	);
+
+inlineStruct
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]
+	locals[std::shared_ptr<td::Struct> s]
+	@init {
+		$s = std::make_shared<td::Struct>();
+	}:
+	identifier WS* COLON WS* KW_STRUCT WS* (
+		optional = QUESTION WS*
+	)? LBRACE WS* (
+		maybeValuedSymbol {
+				TryInsertSymbol($s, this, $maybeValuedSymbol.ctx);
+			} WS* SEMI WS*
+	)* WS* RBRACE {
+		$maybe_symbol = std::make_pair(
+			td::Identifier::ValueIdentifier($identifier.ctx->id), $s);
+	};
+
+inlineVariant
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]
+	locals[std::shared_ptr<td::Variant> v]
+	@init {
+		$v = std::make_shared<td::Variant>();
+	}:
+	identifier WS* COLON WS* KW_VARIANT WS* (
+		WS* optional = QUESTION
+	)? LBRACE (
+		WS* unvaluedSymbol {
+				TryInsertSymbol($v, this, $unvaluedSymbol.ctx);
+			} WS* SEMI WS*
+	)* RBRACE {
+		$maybe_symbol = std::make_pair(
+			td::Identifier::ValueIdentifier($identifier.ctx->id), $v);
+	};
+
+inlineVector
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
+	identifier WS* COLON WS* KW_VECTOR WS* LT WS* val = unvaluedType WS* GT (
+		WS* optional = QUESTION
+	)? {
+		if ($unvaluedType.ctx->maybe_val) {
+			$maybe_symbol = std::make_pair(
+				td::Identifier::ValueIdentifier($identifier.ctx->id),
+			  std::make_shared<td::Vector>(*$val.ctx->maybe_val));
+		}
+	};
+
+inlineMap
+	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
+	identifier WS* COLON WS* KW_MAP WS* LT WS* key = primitiveType WS* COMMA WS* val = unvaluedType
+		WS* GT (WS* optional = QUESTION)? {
+		// Map Declaration
+		if ($key.ctx->maybe_val && $val.ctx->maybe_val) {
+			$maybe_symbol = std::make_pair(
+				td::Identifier::ValueIdentifier($identifier.ctx->id),
+			  std::make_shared<td::Map>(
+					*$key.ctx->maybe_val, *$val.ctx->maybe_val));
+		}
+	};
 
 maybeValuedType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
@@ -105,25 +230,12 @@ unvaluedType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
 	(
 		primitiveType {$maybe_val = $primitiveType.ctx->maybe_val;}
-		| vectorType {$maybe_val = $vectorType.ctx->maybe_val;}
-		| mapType {$maybe_val = $mapType.ctx->maybe_val;}
-		| identifier {$maybe_val =
-		CheckIdentifierExists(this, global_symbol_table, $identifier.ctx);}
+		| symbolReference {$maybe_val = $symbolReference.ctx->maybe_symref; }
 	);
-vectorType
-	returns[std::optional<td::SymbolTable::Value> maybe_val]:
-	KW_VECTOR WS* LT WS* unvaluedType WS* GT {
-		if ($unvaluedType.ctx->maybe_val) {
-			$maybe_val = std::make_shared<td::Vector>(*$unvaluedType.ctx->maybe_val);
-		}
-	};
-mapType
-	returns[std::optional<td::SymbolTable::Value> maybe_val]:
-	KW_MAP WS* LT WS* primitiveType WS* COMMA WS* unvaluedType WS* GT {
-		if ($primitiveType.ctx->maybe_val && $unvaluedType.ctx->maybe_val) {
-			$maybe_val = std::make_shared<td::Map>(*$primitiveType.ctx->maybe_val, *$unvaluedType.ctx->maybe_val);
-		}
-	};
+
+symbolReference
+	returns[std::optional<td::SymbolRef> maybe_symref]:
+	identifier {$maybe_symref = td::SymbolRef($identifier.ctx->id); };
 
 primitiveType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
@@ -207,11 +319,13 @@ valuedI64Fragment: (
 	)
 	| (EQ WS* literal = i64Literal 'i64');
 
-// thing < arg2, 42 > parameterizedType: identifier LT (identifier | u64Literal)+ GT;
+typedefVersionDeclaration
+	returns[std::string version]:
+	KW_TYPEDEF WS* EQ WS* identifier WS* SEMI { $version = $identifier.ctx->id; };
 
-typedefVersionDeclaration:
-	KW_TYPEDEF WS* EQ WS* identifier WS* SEMI;
-moduleDeclaration: KW_MODULE simplePath SEMI;
+moduleDeclaration
+	returns[std::vector<std::string> module]:
+	KW_MODULE WS+ simplePath WS* SEMI { $module = $simplePath.ctx->path; };
 
 useDeclaration: 'use' useTree ';';
 useTree: (simplePath? '::')? (
@@ -220,19 +334,11 @@ useTree: (simplePath? '::')? (
 	)
 	| simplePath ('as' identifier)?;
 
-// Enums enumDeclaration: KW_ENUM (LT integerLiteral GT)? identifier LBRACE enumBody RBRACE SEMI;
-// enumBody: ( identifier COMMA)+ (identifier COMMA?)?;
-
-// Struct structDeclaration: KW_STRUCT identifier LBRACE structBody RBRACE SEMI; structBody:
-// structFieldDeclaration*; structFieldDeclaration: identifier COLON identifier (EQ value)? SEMI;
-
-// Value definitions ---------------------------------------------------------- value:
-// literalExpression | array | map | identifier; value: literalExpression;
-
-// array: LBRACK (value (COMMA value)*)? COMMA? RBRACK; map: LBRACE (keyValue (COMMA keyValue)*
-// COMMA?)? RBRACE; keyValue: identifier COLON value;
-
-simplePath: '::'? identifier ('::' identifier)*;
+simplePath
+	returns[std::vector<std::string> path]:
+	'::'? identifier {$path.push_back($identifier.ctx->id);} (
+		'::' identifier {$path.push_back($identifier.ctx->id);}
+	)*;
 
 boolLiteral
 	returns[std::optional<bool> maybe_val]

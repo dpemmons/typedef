@@ -4,66 +4,30 @@
 
 Items in ***bold*** are in-progress.
 
-- [ ] Basics (build and lib)
-  - [x] change over to using normal VS.Code tasks, instead of makefile extension.
-  - [x] build parser with makefile
-  - [x] Use error matching in unit tests
-  - [x] proper(ish) debug makefile targets
-  - [ ] parse module import statements
-  - [ ] ***parse primitive value statements***
-    - [x] scalars
-      - [x] booleans
-      - [x] chars
-      - [x] integers
-      - [x] floats
-    - [x] strings
-      - [x] raw strings
-        - [ ] (needs tests)
-    - [ ] parameterized types
-      - [ ] list types
-        - [ ] arrays (which are fixed length)
-        - [ ] vectors
-    - [ ] product types
-      - [x] basic struct
-      - [ ] complex struct
-      - [ ] message
-    - [ ] sum types
-      - [ ] enum
-      - [x] variant
-    - [ ] byte literals
-    - [ ] byte strings
-    - [ ] raw byte strings
-  - [ ] handle raw identifiers
-  - [x] parse a very basic struct statement
-  - [ ] inline structs, vectors and maps.
-
-- [ ] Command line util basics
-  - [x] write basic errors
-  - [ ] print default formatting to stdout
-    - [ ] scalars
-  - [ ] write and read a baisc serialized blob, and print to stdout
-  - [ ] print a basic struct ito json stdout
-  - [ ] input json to basic struct
-
-- [ ] ***Codegen basics***
-  - [x] ***cpp: mutable classes***
-  - [ ] copy constructors
-  - [ ] move constructors
-  - [ ] serialize
-  - [ ] deserialize
-  - [ ] views?
-
-- [ ] ***Self hosting***
-  - [x] generate basic mutable classes
-    - [x] struct members
-  - [ ] generate views
-  - [x] variants
-    - [x] parse
-    - [x] generate
-  - [x] collections
-    - [x] vector
-    - [x] map
-  - [ ] use those in cpp generation
+- [x] separate type declaration from field, value, etc. declaration
+- [x] make symbol references independent of declaration order
+- [ ] ***optionals***
+- [x] inline types: structs, vectors, maps.
+- [x] nested types
+- [x] consider making cpp codegen more sane?
+- [ ] pitchfork repo layout
+- [ ] text templates?
+- [ ] self-host symbol table
+- [ ] tests...
+- [ ] more types
+  - [ ] fixed length arrays
+  - [ ] message
+  - [ ] enum
+- [ ] more literals
+  - [ ] byte literals
+  - [ ] byte strings
+  - [ ] raw byte strings
+- [ ] raw identifiers (do they just work?)
+- [ ] generated cpp features
+  - [ ] move semantics
+  - [ ] print methods
+  - [ ] comparison operators
+  - [ ] prevent keyword collisions
 
 Currently using this to test...
 
@@ -121,3 +85,5 @@ Modes:
 - Try to follow Google's CPP design guide: https://google.github.io/styleguide/cppguide.html
 - Useful ANTLR4 example: https://github.com/mysql/mysql-workbench/blob/8.0/modules/db.mysql.parser/src/mysql_parser_module.cpp
 - https://github.com/antlr/grammars-v4/blob/master/rust/RustParser.g4
+- Use the Pitchfork layout: https://api.csswg.org/bikeshed/?force=1&url=https://raw.githubusercontent.com/vector-of-bool/pitchfork/develop/data/spec.bs
+- this seems like a good idea: https://matklad.github.io//2021/02/06/ARCHITECTURE.md.html

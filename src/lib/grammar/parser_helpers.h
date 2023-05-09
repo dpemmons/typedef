@@ -1,9 +1,9 @@
 #ifndef LIB_GRAMMAR_PARSER_HELPERS_H__
 #define LIB_GRAMMAR_PARSER_HELPERS_H__
 
-#include <stdlib.h>
-
+#include <cassert>
 #include <charconv>
+#include <cstdlib>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -134,7 +134,7 @@ T GetIntValue(TypedefParser *parser, CTX *ctx) {
     remove_underscores = true;
   } else {
     // Grammar shouldn't let us get here...
-    abort();
+    assert(false);  // unreachable
   }
 
   if (remove_underscores) {
@@ -164,40 +164,9 @@ std::string GetStringValue(TypedefParser *parser, antlr4::Token *token);
 
 std::string GetRawString(TypedefParser *parser, antlr4::Token *token);
 
-// std::optional<td::SymbolTable::Symbol> MakeSymbol(
-//     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-//     std::string &id, TypedefParser::MaybeValuedTypeContext *ctx);
-
-// // std::optional<td::SymbolTable::Symbol> MakeSymbol(
-// //     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-// //     std::string &id, TypedefParser::ValuedTypeContext *ctx);
-
-// std::optional<td::SymbolTable::Symbol> MakeSymbol(
-//     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-//     std::string &id, TypedefParser::UnvaluedTypeContext *ctx);
-
-// std::optional<td::SymbolTable::Value> MakeVector(
-//     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-//     TypedefParser::UnvaluedTypeContext *ctx);
-
-// std::optional<td::SymbolTable::Value> MakeMap(
-//     antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-//     TypedefParser::PrimitiveTypeContext *key_ctx,
-//     TypedefParser::UnvaluedTypeContext *val_ctx);
-
-std::optional<td::SymbolRef> CheckIdentifierExists(
-    antlr4::Parser *recognizer, td::SymbolTable &global_symbol_table,
-    TypedefParser::IdentifierContext *ctx);
-
-// Insert fields into symbol tables.
-void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
-                 TypedefParser::MaybeValuedSymbolDeclarationContext *ctx);
-
-void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
-                 TypedefParser::StructDeclarationContext *ctx);
-
-void InsertField(td::SymbolTable &dstTable, antlr4::Parser *recognizer,
-                 TypedefParser::VariantDeclarationContext *ctx);
+void TryInsert(td::SymbolTable &dstTable,
+               TypedefParser::TypeDeclarationContext *src,
+               antlr4::Parser *recognizer);
 
 void TryInsertSymbol(std::shared_ptr<td::Struct> &s, antlr4::Parser *recognizer,
                      TypedefParser::MaybeValuedSymbolContext *ctx);
@@ -205,5 +174,17 @@ void TryInsertSymbol(std::shared_ptr<td::Struct> &s, antlr4::Parser *recognizer,
 void TryInsertSymbol(std::shared_ptr<td::Variant> &s,
                      antlr4::Parser *recognizer,
                      TypedefParser::UnvaluedSymbolContext *ctx);
+
+template <class Destination, class SourceParserContext>
+void TryInsertNested(std::shared_ptr<Destination> &dst,
+                     antlr4::Parser *recognizer, SourceParserContext *ctx) {
+  if (ctx->maybe_symbol) {
+    if (!dst->TryInsert(*ctx->maybe_symbol)) {
+      throw DuplicateSymbolException(
+          recognizer, ctx,
+          ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
+    }
+  }
+}
 
 #endif  // LIB_GRAMMAR_PARSER_HELPERS_H__

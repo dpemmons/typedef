@@ -24,17 +24,29 @@ public:
    */
     virtual antlrcpp::Any visitCompilationUnit(TypedefParser::CompilationUnitContext *context) = 0;
 
-    virtual antlrcpp::Any visitItem(TypedefParser::ItemContext *context) = 0;
-
     virtual antlrcpp::Any visitMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext *context) = 0;
+
+    virtual antlrcpp::Any visitTypeDeclaration(TypedefParser::TypeDeclarationContext *context) = 0;
+
+    virtual antlrcpp::Any visitStructDeclaration(TypedefParser::StructDeclarationContext *context) = 0;
 
     virtual antlrcpp::Any visitVariantDeclaration(TypedefParser::VariantDeclarationContext *context) = 0;
 
-    virtual antlrcpp::Any visitStructDeclaration(TypedefParser::StructDeclarationContext *context) = 0;
+    virtual antlrcpp::Any visitVectorDeclaration(TypedefParser::VectorDeclarationContext *context) = 0;
+
+    virtual antlrcpp::Any visitMapDeclaration(TypedefParser::MapDeclarationContext *context) = 0;
 
     virtual antlrcpp::Any visitMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext *context) = 0;
 
     virtual antlrcpp::Any visitUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext *context) = 0;
+
+    virtual antlrcpp::Any visitInlineStruct(TypedefParser::InlineStructContext *context) = 0;
+
+    virtual antlrcpp::Any visitInlineVariant(TypedefParser::InlineVariantContext *context) = 0;
+
+    virtual antlrcpp::Any visitInlineVector(TypedefParser::InlineVectorContext *context) = 0;
+
+    virtual antlrcpp::Any visitInlineMap(TypedefParser::InlineMapContext *context) = 0;
 
     virtual antlrcpp::Any visitMaybeValuedType(TypedefParser::MaybeValuedTypeContext *context) = 0;
 
@@ -42,9 +54,7 @@ public:
 
     virtual antlrcpp::Any visitUnvaluedType(TypedefParser::UnvaluedTypeContext *context) = 0;
 
-    virtual antlrcpp::Any visitVectorType(TypedefParser::VectorTypeContext *context) = 0;
-
-    virtual antlrcpp::Any visitMapType(TypedefParser::MapTypeContext *context) = 0;
+    virtual antlrcpp::Any visitSymbolReference(TypedefParser::SymbolReferenceContext *context) = 0;
 
     virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *context) = 0;
 

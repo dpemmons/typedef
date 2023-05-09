@@ -50,20 +50,22 @@ public:
   };
 
   enum {
-    RuleCompilationUnit = 0, RuleItem = 1, RuleMaybeValuedSymbolDeclaration = 2, 
-    RuleVariantDeclaration = 3, RuleStructDeclaration = 4, RuleMaybeValuedSymbol = 5, 
-    RuleUnvaluedSymbol = 6, RuleMaybeValuedType = 7, RuleValuedType = 8, 
-    RuleUnvaluedType = 9, RuleVectorType = 10, RuleMapType = 11, RulePrimitiveType = 12, 
-    RuleValuedPrimitiveType = 13, RuleValuedBoolFragment = 14, RuleValuedCharFragment = 15, 
-    RuleValuedStringFragment = 16, RuleValuedF32Fragment = 17, RuleValuedF64Fragment = 18, 
-    RuleValuedU8Fragment = 19, RuleValuedU16Fragment = 20, RuleValuedU32Fragment = 21, 
-    RuleValuedU64Fragment = 22, RuleValuedI8Fragment = 23, RuleValuedI16Fragment = 24, 
-    RuleValuedI32Fragment = 25, RuleValuedI64Fragment = 26, RuleTypedefVersionDeclaration = 27, 
-    RuleModuleDeclaration = 28, RuleUseDeclaration = 29, RuleUseTree = 30, 
-    RuleSimplePath = 31, RuleBoolLiteral = 32, RuleCharLiteral = 33, RuleF32Literal = 34, 
-    RuleF64Literal = 35, RuleU8Literal = 36, RuleU16Literal = 37, RuleU32Literal = 38, 
-    RuleU64Literal = 39, RuleI8Literal = 40, RuleI16Literal = 41, RuleI32Literal = 42, 
-    RuleI64Literal = 43, RuleStringLiteral = 44, RuleIdentifier = 45, RuleKeyword = 46
+    RuleCompilationUnit = 0, RuleMaybeValuedSymbolDeclaration = 1, RuleTypeDeclaration = 2, 
+    RuleStructDeclaration = 3, RuleVariantDeclaration = 4, RuleVectorDeclaration = 5, 
+    RuleMapDeclaration = 6, RuleMaybeValuedSymbol = 7, RuleUnvaluedSymbol = 8, 
+    RuleInlineStruct = 9, RuleInlineVariant = 10, RuleInlineVector = 11, 
+    RuleInlineMap = 12, RuleMaybeValuedType = 13, RuleValuedType = 14, RuleUnvaluedType = 15, 
+    RuleSymbolReference = 16, RulePrimitiveType = 17, RuleValuedPrimitiveType = 18, 
+    RuleValuedBoolFragment = 19, RuleValuedCharFragment = 20, RuleValuedStringFragment = 21, 
+    RuleValuedF32Fragment = 22, RuleValuedF64Fragment = 23, RuleValuedU8Fragment = 24, 
+    RuleValuedU16Fragment = 25, RuleValuedU32Fragment = 26, RuleValuedU64Fragment = 27, 
+    RuleValuedI8Fragment = 28, RuleValuedI16Fragment = 29, RuleValuedI32Fragment = 30, 
+    RuleValuedI64Fragment = 31, RuleTypedefVersionDeclaration = 32, RuleModuleDeclaration = 33, 
+    RuleUseDeclaration = 34, RuleUseTree = 35, RuleSimplePath = 36, RuleBoolLiteral = 37, 
+    RuleCharLiteral = 38, RuleF32Literal = 39, RuleF64Literal = 40, RuleU8Literal = 41, 
+    RuleU16Literal = 42, RuleU32Literal = 43, RuleU64Literal = 44, RuleI8Literal = 45, 
+    RuleI16Literal = 46, RuleI32Literal = 47, RuleI64Literal = 48, RuleStringLiteral = 49, 
+    RuleIdentifier = 50, RuleKeyword = 51
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -76,21 +78,23 @@ public:
   virtual antlr4::dfa::Vocabulary& getVocabulary() const override;
 
 
-  	td::SymbolTable global_symbol_table;
-
-
   class CompilationUnitContext;
-  class ItemContext;
   class MaybeValuedSymbolDeclarationContext;
-  class VariantDeclarationContext;
+  class TypeDeclarationContext;
   class StructDeclarationContext;
+  class VariantDeclarationContext;
+  class VectorDeclarationContext;
+  class MapDeclarationContext;
   class MaybeValuedSymbolContext;
   class UnvaluedSymbolContext;
+  class InlineStructContext;
+  class InlineVariantContext;
+  class InlineVectorContext;
+  class InlineMapContext;
   class MaybeValuedTypeContext;
   class ValuedTypeContext;
   class UnvaluedTypeContext;
-  class VectorTypeContext;
-  class MapTypeContext;
+  class SymbolReferenceContext;
   class PrimitiveTypeContext;
   class ValuedPrimitiveTypeContext;
   class ValuedBoolFragmentContext;
@@ -129,6 +133,12 @@ public:
 
   class  CompilationUnitContext : public antlr4::ParserRuleContext {
   public:
+    td::SymbolTable symbol_table;
+    std::string version;
+    std::vector<std::string> module;
+    TypedefParser::TypedefVersionDeclarationContext *typedefVersionDeclarationContext = nullptr;;
+    TypedefParser::ModuleDeclarationContext *moduleDeclarationContext = nullptr;;
+    TypedefParser::TypeDeclarationContext *typeDeclarationContext = nullptr;;
     CompilationUnitContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     TypedefVersionDeclarationContext *typedefVersionDeclaration();
@@ -138,8 +148,8 @@ public:
     ModuleDeclarationContext *moduleDeclaration();
     std::vector<UseDeclarationContext *> useDeclaration();
     UseDeclarationContext* useDeclaration(size_t i);
-    std::vector<ItemContext *> item();
-    ItemContext* item(size_t i);
+    std::vector<TypeDeclarationContext *> typeDeclaration();
+    TypeDeclarationContext* typeDeclaration(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -149,26 +159,6 @@ public:
   };
 
   CompilationUnitContext* compilationUnit();
-
-  class  ItemContext : public antlr4::ParserRuleContext {
-  public:
-    TypedefParser::MaybeValuedSymbolDeclarationContext *maybeValuedSymbolDeclarationContext = nullptr;;
-    TypedefParser::StructDeclarationContext *structDeclarationContext = nullptr;;
-    TypedefParser::VariantDeclarationContext *variantDeclarationContext = nullptr;;
-    ItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    MaybeValuedSymbolDeclarationContext *maybeValuedSymbolDeclaration();
-    StructDeclarationContext *structDeclaration();
-    VariantDeclarationContext *variantDeclaration();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  ItemContext* item();
 
   class  MaybeValuedSymbolDeclarationContext : public antlr4::ParserRuleContext {
   public:
@@ -188,25 +178,22 @@ public:
 
   MaybeValuedSymbolDeclarationContext* maybeValuedSymbolDeclaration();
 
-  class  VariantDeclarationContext : public antlr4::ParserRuleContext {
+  class  TypeDeclarationContext : public antlr4::ParserRuleContext {
   public:
     std::optional<td::SymbolTable::Symbol> maybe_symbol;
-    std::shared_ptr<td::Variant> v;
-    TypedefParser::IdentifierContext *identifierContext = nullptr;;
-    TypedefParser::UnvaluedSymbolContext *unvaluedSymbolContext = nullptr;;
-    VariantDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    TypedefParser::StructDeclarationContext *structDeclarationContext = nullptr;;
+    TypedefParser::VariantDeclarationContext *variantDeclarationContext = nullptr;;
+    TypedefParser::VectorDeclarationContext *vectorDeclarationContext = nullptr;;
+    TypedefParser::MapDeclarationContext *mapDeclarationContext = nullptr;;
+    TypeDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    IdentifierContext *identifier();
-    antlr4::tree::TerminalNode *COLON();
-    antlr4::tree::TerminalNode *KW_VARIANT();
-    antlr4::tree::TerminalNode *LBRACE();
-    antlr4::tree::TerminalNode *RBRACE();
-    std::vector<antlr4::tree::TerminalNode *> SEMI();
-    antlr4::tree::TerminalNode* SEMI(size_t i);
+    antlr4::tree::TerminalNode *SEMI();
+    StructDeclarationContext *structDeclaration();
+    VariantDeclarationContext *variantDeclaration();
+    VectorDeclarationContext *vectorDeclaration();
+    MapDeclarationContext *mapDeclaration();
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
-    std::vector<UnvaluedSymbolContext *> unvaluedSymbol();
-    UnvaluedSymbolContext* unvaluedSymbol(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -215,7 +202,7 @@ public:
    
   };
 
-  VariantDeclarationContext* variantDeclaration();
+  TypeDeclarationContext* typeDeclaration();
 
   class  StructDeclarationContext : public antlr4::ParserRuleContext {
   public:
@@ -223,19 +210,30 @@ public:
     std::shared_ptr<td::Struct> s;
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
     TypedefParser::MaybeValuedSymbolContext *maybeValuedSymbolContext = nullptr;;
+    TypedefParser::StructDeclarationContext *structDeclarationContext = nullptr;;
+    TypedefParser::VariantDeclarationContext *variantDeclarationContext = nullptr;;
+    TypedefParser::VectorDeclarationContext *vectorDeclarationContext = nullptr;;
+    TypedefParser::MapDeclarationContext *mapDeclarationContext = nullptr;;
     StructDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    IdentifierContext *identifier();
-    antlr4::tree::TerminalNode *COLON();
     antlr4::tree::TerminalNode *KW_STRUCT();
+    IdentifierContext *identifier();
     antlr4::tree::TerminalNode *LBRACE();
     antlr4::tree::TerminalNode *RBRACE();
-    std::vector<antlr4::tree::TerminalNode *> SEMI();
-    antlr4::tree::TerminalNode* SEMI(size_t i);
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> SEMI();
+    antlr4::tree::TerminalNode* SEMI(size_t i);
     std::vector<MaybeValuedSymbolContext *> maybeValuedSymbol();
     MaybeValuedSymbolContext* maybeValuedSymbol(size_t i);
+    std::vector<StructDeclarationContext *> structDeclaration();
+    StructDeclarationContext* structDeclaration(size_t i);
+    std::vector<VariantDeclarationContext *> variantDeclaration();
+    VariantDeclarationContext* variantDeclaration(size_t i);
+    std::vector<VectorDeclarationContext *> vectorDeclaration();
+    VectorDeclarationContext* vectorDeclaration(size_t i);
+    std::vector<MapDeclarationContext *> mapDeclaration();
+    MapDeclarationContext* mapDeclaration(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -246,17 +244,111 @@ public:
 
   StructDeclarationContext* structDeclaration();
 
+  class  VariantDeclarationContext : public antlr4::ParserRuleContext {
+  public:
+    std::optional<td::SymbolTable::Symbol> maybe_symbol;
+    std::shared_ptr<td::Variant> v;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    TypedefParser::UnvaluedSymbolContext *unvaluedSymbolContext = nullptr;;
+    TypedefParser::StructDeclarationContext *structDeclarationContext = nullptr;;
+    TypedefParser::VariantDeclarationContext *variantDeclarationContext = nullptr;;
+    TypedefParser::VectorDeclarationContext *vectorDeclarationContext = nullptr;;
+    TypedefParser::MapDeclarationContext *mapDeclarationContext = nullptr;;
+    VariantDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *KW_VARIANT();
+    IdentifierContext *identifier();
+    antlr4::tree::TerminalNode *LBRACE();
+    antlr4::tree::TerminalNode *RBRACE();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> SEMI();
+    antlr4::tree::TerminalNode* SEMI(size_t i);
+    std::vector<UnvaluedSymbolContext *> unvaluedSymbol();
+    UnvaluedSymbolContext* unvaluedSymbol(size_t i);
+    std::vector<StructDeclarationContext *> structDeclaration();
+    StructDeclarationContext* structDeclaration(size_t i);
+    std::vector<VariantDeclarationContext *> variantDeclaration();
+    VariantDeclarationContext* variantDeclaration(size_t i);
+    std::vector<VectorDeclarationContext *> vectorDeclaration();
+    VectorDeclarationContext* vectorDeclaration(size_t i);
+    std::vector<MapDeclarationContext *> mapDeclaration();
+    MapDeclarationContext* mapDeclaration(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  VariantDeclarationContext* variantDeclaration();
+
+  class  VectorDeclarationContext : public antlr4::ParserRuleContext {
+  public:
+    std::optional<td::SymbolTable::Symbol> maybe_symbol;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    TypedefParser::UnvaluedTypeContext *val = nullptr;;
+    TypedefParser::UnvaluedTypeContext *unvaluedTypeContext = nullptr;;
+    VectorDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *KW_VECTOR();
+    IdentifierContext *identifier();
+    antlr4::tree::TerminalNode *LT();
+    antlr4::tree::TerminalNode *GT();
+    UnvaluedTypeContext *unvaluedType();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  VectorDeclarationContext* vectorDeclaration();
+
+  class  MapDeclarationContext : public antlr4::ParserRuleContext {
+  public:
+    std::optional<td::SymbolTable::Symbol> maybe_symbol;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    TypedefParser::PrimitiveTypeContext *key = nullptr;;
+    TypedefParser::UnvaluedTypeContext *val = nullptr;;
+    MapDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *KW_MAP();
+    IdentifierContext *identifier();
+    antlr4::tree::TerminalNode *LT();
+    antlr4::tree::TerminalNode *COMMA();
+    antlr4::tree::TerminalNode *GT();
+    PrimitiveTypeContext *primitiveType();
+    UnvaluedTypeContext *unvaluedType();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  MapDeclarationContext* mapDeclaration();
+
   class  MaybeValuedSymbolContext : public antlr4::ParserRuleContext {
   public:
     std::optional<td::SymbolTable::Symbol> maybe_symbol;
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
     TypedefParser::MaybeValuedTypeContext *maybeValuedTypeContext = nullptr;;
+    TypedefParser::UnvaluedSymbolContext *unvaluedSymbolContext = nullptr;;
     MaybeValuedSymbolContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     IdentifierContext *identifier();
     MaybeValuedTypeContext *maybeValuedType();
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
+    UnvaluedSymbolContext *unvaluedSymbol();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -270,15 +362,25 @@ public:
   class  UnvaluedSymbolContext : public antlr4::ParserRuleContext {
   public:
     std::optional<td::SymbolTable::Symbol> maybe_symbol;
+    TypedefParser::InlineStructContext *inlineStructContext = nullptr;;
+    TypedefParser::InlineVariantContext *inlineVariantContext = nullptr;;
+    TypedefParser::InlineVectorContext *inlineVectorContext = nullptr;;
+    TypedefParser::InlineMapContext *inlineMapContext = nullptr;;
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
     TypedefParser::UnvaluedTypeContext *unvaluedTypeContext = nullptr;;
+    antlr4::Token *optional = nullptr;;
     UnvaluedSymbolContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    InlineStructContext *inlineStruct();
+    InlineVariantContext *inlineVariant();
+    InlineVectorContext *inlineVector();
+    InlineMapContext *inlineMap();
     IdentifierContext *identifier();
     antlr4::tree::TerminalNode *COLON();
     UnvaluedTypeContext *unvaluedType();
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
+    antlr4::tree::TerminalNode *QUESTION();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -288,6 +390,126 @@ public:
   };
 
   UnvaluedSymbolContext* unvaluedSymbol();
+
+  class  InlineStructContext : public antlr4::ParserRuleContext {
+  public:
+    std::optional<td::SymbolTable::Symbol> maybe_symbol;
+    std::shared_ptr<td::Struct> s;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    antlr4::Token *optional = nullptr;;
+    TypedefParser::MaybeValuedSymbolContext *maybeValuedSymbolContext = nullptr;;
+    InlineStructContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IdentifierContext *identifier();
+    antlr4::tree::TerminalNode *COLON();
+    antlr4::tree::TerminalNode *KW_STRUCT();
+    antlr4::tree::TerminalNode *LBRACE();
+    antlr4::tree::TerminalNode *RBRACE();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
+    std::vector<MaybeValuedSymbolContext *> maybeValuedSymbol();
+    MaybeValuedSymbolContext* maybeValuedSymbol(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> SEMI();
+    antlr4::tree::TerminalNode* SEMI(size_t i);
+    antlr4::tree::TerminalNode *QUESTION();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  InlineStructContext* inlineStruct();
+
+  class  InlineVariantContext : public antlr4::ParserRuleContext {
+  public:
+    std::optional<td::SymbolTable::Symbol> maybe_symbol;
+    std::shared_ptr<td::Variant> v;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    antlr4::Token *optional = nullptr;;
+    TypedefParser::UnvaluedSymbolContext *unvaluedSymbolContext = nullptr;;
+    InlineVariantContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IdentifierContext *identifier();
+    antlr4::tree::TerminalNode *COLON();
+    antlr4::tree::TerminalNode *KW_VARIANT();
+    antlr4::tree::TerminalNode *LBRACE();
+    antlr4::tree::TerminalNode *RBRACE();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
+    std::vector<UnvaluedSymbolContext *> unvaluedSymbol();
+    UnvaluedSymbolContext* unvaluedSymbol(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> SEMI();
+    antlr4::tree::TerminalNode* SEMI(size_t i);
+    antlr4::tree::TerminalNode *QUESTION();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  InlineVariantContext* inlineVariant();
+
+  class  InlineVectorContext : public antlr4::ParserRuleContext {
+  public:
+    std::optional<td::SymbolTable::Symbol> maybe_symbol;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    TypedefParser::UnvaluedTypeContext *val = nullptr;;
+    TypedefParser::UnvaluedTypeContext *unvaluedTypeContext = nullptr;;
+    antlr4::Token *optional = nullptr;;
+    InlineVectorContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IdentifierContext *identifier();
+    antlr4::tree::TerminalNode *COLON();
+    antlr4::tree::TerminalNode *KW_VECTOR();
+    antlr4::tree::TerminalNode *LT();
+    antlr4::tree::TerminalNode *GT();
+    UnvaluedTypeContext *unvaluedType();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
+    antlr4::tree::TerminalNode *QUESTION();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  InlineVectorContext* inlineVector();
+
+  class  InlineMapContext : public antlr4::ParserRuleContext {
+  public:
+    std::optional<td::SymbolTable::Symbol> maybe_symbol;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    TypedefParser::PrimitiveTypeContext *key = nullptr;;
+    TypedefParser::UnvaluedTypeContext *val = nullptr;;
+    antlr4::Token *optional = nullptr;;
+    InlineMapContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IdentifierContext *identifier();
+    antlr4::tree::TerminalNode *COLON();
+    antlr4::tree::TerminalNode *KW_MAP();
+    antlr4::tree::TerminalNode *LT();
+    antlr4::tree::TerminalNode *COMMA();
+    antlr4::tree::TerminalNode *GT();
+    PrimitiveTypeContext *primitiveType();
+    UnvaluedTypeContext *unvaluedType();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
+    antlr4::tree::TerminalNode *QUESTION();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  InlineMapContext* inlineMap();
 
   class  MaybeValuedTypeContext : public antlr4::ParserRuleContext {
   public:
@@ -332,15 +554,11 @@ public:
   public:
     std::optional<td::SymbolTable::Value> maybe_val;
     TypedefParser::PrimitiveTypeContext *primitiveTypeContext = nullptr;;
-    TypedefParser::VectorTypeContext *vectorTypeContext = nullptr;;
-    TypedefParser::MapTypeContext *mapTypeContext = nullptr;;
-    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    TypedefParser::SymbolReferenceContext *symbolReferenceContext = nullptr;;
     UnvaluedTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     PrimitiveTypeContext *primitiveType();
-    VectorTypeContext *vectorType();
-    MapTypeContext *mapType();
-    IdentifierContext *identifier();
+    SymbolReferenceContext *symbolReference();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -351,18 +569,13 @@ public:
 
   UnvaluedTypeContext* unvaluedType();
 
-  class  VectorTypeContext : public antlr4::ParserRuleContext {
+  class  SymbolReferenceContext : public antlr4::ParserRuleContext {
   public:
-    std::optional<td::SymbolTable::Value> maybe_val;
-    TypedefParser::UnvaluedTypeContext *unvaluedTypeContext = nullptr;;
-    VectorTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    std::optional<td::SymbolRef> maybe_symref;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    SymbolReferenceContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *KW_VECTOR();
-    antlr4::tree::TerminalNode *LT();
-    UnvaluedTypeContext *unvaluedType();
-    antlr4::tree::TerminalNode *GT();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
+    IdentifierContext *identifier();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -371,32 +584,7 @@ public:
    
   };
 
-  VectorTypeContext* vectorType();
-
-  class  MapTypeContext : public antlr4::ParserRuleContext {
-  public:
-    std::optional<td::SymbolTable::Value> maybe_val;
-    TypedefParser::PrimitiveTypeContext *primitiveTypeContext = nullptr;;
-    TypedefParser::UnvaluedTypeContext *unvaluedTypeContext = nullptr;;
-    MapTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *KW_MAP();
-    antlr4::tree::TerminalNode *LT();
-    PrimitiveTypeContext *primitiveType();
-    antlr4::tree::TerminalNode *COMMA();
-    UnvaluedTypeContext *unvaluedType();
-    antlr4::tree::TerminalNode *GT();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  MapTypeContext* mapType();
+  SymbolReferenceContext* symbolReference();
 
   class  PrimitiveTypeContext : public antlr4::ParserRuleContext {
   public:
@@ -752,6 +940,8 @@ public:
 
   class  TypedefVersionDeclarationContext : public antlr4::ParserRuleContext {
   public:
+    std::string version;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
     TypedefVersionDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_TYPEDEF();
@@ -772,11 +962,15 @@ public:
 
   class  ModuleDeclarationContext : public antlr4::ParserRuleContext {
   public:
+    std::vector<std::string> module;
+    TypedefParser::SimplePathContext *simplePathContext = nullptr;;
     ModuleDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_MODULE();
     SimplePathContext *simplePath();
     antlr4::tree::TerminalNode *SEMI();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -831,6 +1025,8 @@ public:
 
   class  SimplePathContext : public antlr4::ParserRuleContext {
   public:
+    std::vector<std::string> path;
+    TypedefParser::IdentifierContext *identifierContext = nullptr;;
     SimplePathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<IdentifierContext *> identifier();

@@ -1,5 +1,6 @@
 #include "symbol_table.h"
 
+#include <cassert>
 #include <charconv>
 #include <codecvt>
 #include <cstdint>
@@ -9,8 +10,8 @@
 #include <variant>
 
 #define FMT_HEADER_ONLY
-#include "fmt/core.h"
-#include "fmt/ostream.h"
+#include <fmt/core.h>
+#include <fmt/ostream.h>
 
 namespace td {
 
@@ -65,7 +66,7 @@ void PrintType(ostream& os, const SymbolTable::Value& v) {
     auto id = get<SymbolRef>(v);
     fmt::print(os, "ref to {}", id.id);
   } else {
-    abort();
+    assert(false);  // unreachable
   }
 }
 
@@ -114,12 +115,22 @@ void MaybePrintValue(ostream& os, const SymbolTable::Value& v) {
     auto maybe_val = get<SymbolRef>(v);
     fmt::print(os, "{}", maybe_val.id);
   } else {
-    abort();
+    assert(false);  // unreachable
+  }
+}
+
+ostream& operator<<(ostream& os, const Identifier& value) {
+  if (value.IsType()) {
+    fmt::print(os, "{}(type)", value.id());
+  } else if (value.IsValue()) {
+    fmt::print(os, "{}(value)", value.id());
+  } else {
+    fmt::print(os, "(anonymous)", value.id());
   }
 }
 
 void PrintField(ostream& os, const SymbolTable::Symbol& s) {
-  fmt::print(os, "{} : ", s.first);
+  fmt::print(os, "{} : ", fmt::streamed(s.first));
   PrintType(os, s.second);
   fmt::print(os, " = ");
   MaybePrintValue(os, s.second);

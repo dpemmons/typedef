@@ -3,6 +3,7 @@
 #include "simple_values.td.h"
 
 int main() {
+  using namespace sv::t;
   MutableStructA sA;
   MutableStructB sB;
 
@@ -29,6 +30,13 @@ int main() {
   std::cout << mapA << std::endl;
   std::cout << variantA << std::endl;
   std::cout << sD1 << std::endl;
+
+  MutableStructE sE;
+  sE.inlineMap(std::make_unique<MutableStructE::MutableinlineMap>());
+  sE.inlineMap()->emplace(
+      std::string("hi"),
+      std::make_unique<MutableStructD>());
+  sE.VariantB(std::make_unique<MutableStructE::MutableVariantB>());
 
   return 0;
 }

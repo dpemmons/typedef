@@ -22,23 +22,41 @@ public:
   virtual void enterCompilationUnit(TypedefParser::CompilationUnitContext * /*ctx*/) override { }
   virtual void exitCompilationUnit(TypedefParser::CompilationUnitContext * /*ctx*/) override { }
 
-  virtual void enterItem(TypedefParser::ItemContext * /*ctx*/) override { }
-  virtual void exitItem(TypedefParser::ItemContext * /*ctx*/) override { }
-
   virtual void enterMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext * /*ctx*/) override { }
   virtual void exitMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext * /*ctx*/) override { }
+
+  virtual void enterTypeDeclaration(TypedefParser::TypeDeclarationContext * /*ctx*/) override { }
+  virtual void exitTypeDeclaration(TypedefParser::TypeDeclarationContext * /*ctx*/) override { }
+
+  virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
+  virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
 
   virtual void enterVariantDeclaration(TypedefParser::VariantDeclarationContext * /*ctx*/) override { }
   virtual void exitVariantDeclaration(TypedefParser::VariantDeclarationContext * /*ctx*/) override { }
 
-  virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
-  virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
+  virtual void enterVectorDeclaration(TypedefParser::VectorDeclarationContext * /*ctx*/) override { }
+  virtual void exitVectorDeclaration(TypedefParser::VectorDeclarationContext * /*ctx*/) override { }
+
+  virtual void enterMapDeclaration(TypedefParser::MapDeclarationContext * /*ctx*/) override { }
+  virtual void exitMapDeclaration(TypedefParser::MapDeclarationContext * /*ctx*/) override { }
 
   virtual void enterMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext * /*ctx*/) override { }
   virtual void exitMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext * /*ctx*/) override { }
 
   virtual void enterUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext * /*ctx*/) override { }
   virtual void exitUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext * /*ctx*/) override { }
+
+  virtual void enterInlineStruct(TypedefParser::InlineStructContext * /*ctx*/) override { }
+  virtual void exitInlineStruct(TypedefParser::InlineStructContext * /*ctx*/) override { }
+
+  virtual void enterInlineVariant(TypedefParser::InlineVariantContext * /*ctx*/) override { }
+  virtual void exitInlineVariant(TypedefParser::InlineVariantContext * /*ctx*/) override { }
+
+  virtual void enterInlineVector(TypedefParser::InlineVectorContext * /*ctx*/) override { }
+  virtual void exitInlineVector(TypedefParser::InlineVectorContext * /*ctx*/) override { }
+
+  virtual void enterInlineMap(TypedefParser::InlineMapContext * /*ctx*/) override { }
+  virtual void exitInlineMap(TypedefParser::InlineMapContext * /*ctx*/) override { }
 
   virtual void enterMaybeValuedType(TypedefParser::MaybeValuedTypeContext * /*ctx*/) override { }
   virtual void exitMaybeValuedType(TypedefParser::MaybeValuedTypeContext * /*ctx*/) override { }
@@ -49,11 +67,8 @@ public:
   virtual void enterUnvaluedType(TypedefParser::UnvaluedTypeContext * /*ctx*/) override { }
   virtual void exitUnvaluedType(TypedefParser::UnvaluedTypeContext * /*ctx*/) override { }
 
-  virtual void enterVectorType(TypedefParser::VectorTypeContext * /*ctx*/) override { }
-  virtual void exitVectorType(TypedefParser::VectorTypeContext * /*ctx*/) override { }
-
-  virtual void enterMapType(TypedefParser::MapTypeContext * /*ctx*/) override { }
-  virtual void exitMapType(TypedefParser::MapTypeContext * /*ctx*/) override { }
+  virtual void enterSymbolReference(TypedefParser::SymbolReferenceContext * /*ctx*/) override { }
+  virtual void exitSymbolReference(TypedefParser::SymbolReferenceContext * /*ctx*/) override { }
 
   virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
   virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }

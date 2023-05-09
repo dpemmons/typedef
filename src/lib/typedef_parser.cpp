@@ -1,21 +1,21 @@
 #include "typedef_parser.h"
 
-#include <stddef.h>
+#include <antlr4/antlr4-runtime.h>
+
 #include <algorithm>
+#include <cstddef>
 #include <exception>
 #include <vector>
 
-#include "antlr4/antlr4-runtime.h"
+#define FMT_HEADER_ONLY
+#include <fmt/core.h>
+
 #include "grammar/TypedefLexer.h"
 #include "grammar/TypedefParser.h"
-
-#include "symbol_table.h"
-
-#define FMT_HEADER_ONLY
-#include "fmt/core.h"
-#include "language_version.h"
+#include "grammar/TypedefParserBaseListener.h"
 #include "parsed_file.h"
 #include "parser_error_info.h"
+#include "symbol_table.h"
 
 namespace td {
 
@@ -96,6 +96,62 @@ class ParserErrorListener : public antlr4::BaseErrorListener {
   std::vector<ParserErrorInfo> *const errors_list_;
 };
 
+class SymRefListener : public TypedefParserBaseListener {
+ public:
+  SymRefListener(std::vector<ParserErrorInfo> &errors_list)
+      : errors_list_(errors_list) {}
+
+  // bool HasSymbolInTable(td::SymbolTable const &table,
+  //                       std::string const &identifier) const {
+  //   return table.table_.count(identifier) > 0;
+  // }
+
+  // Walk up the tree looking for nodes that may contain the referenced symbol.
+  bool FindSymbol(TypedefParser::SymbolReferenceContext *unresolved_symbol_ctx,
+                  antlr4::tree::ParseTree *search_ctx) {
+    const string &identifier = unresolved_symbol_ctx->maybe_symref->id;
+
+    TypedefParser::StructDeclarationContext *maybeStruct =
+        dynamic_cast<TypedefParser::StructDeclarationContext *>(search_ctx);
+    TypedefParser::VariantDeclarationContext *maybeVariant =
+        dynamic_cast<TypedefParser::VariantDeclarationContext *>(search_ctx);
+    TypedefParser::CompilationUnitContext *maybeCompilationUnit =
+        dynamic_cast<TypedefParser::CompilationUnitContext *>(search_ctx);
+
+    if (maybeStruct && maybeStruct->s->table.IsIdentifierUsed(identifier) > 0) {
+      return true;
+    } else if (maybeVariant &&
+               maybeVariant->v->table.IsIdentifierUsed(identifier) > 0) {
+      return true;
+    } else if (maybeCompilationUnit &&
+               maybeCompilationUnit->symbol_table.IsIdentifierUsed(identifier) >
+                   0) {
+      return true;
+    } else if (search_ctx->parent != nullptr) {
+      return FindSymbol(unresolved_symbol_ctx, search_ctx->parent);
+    } else {
+      // top of the tree.
+      errors_list_.emplace_back(
+          ErrorFromContext(unresolved_symbol_ctx, ParserErrorInfo::PARSE_ERROR,
+                           "Unresolved symbol reference."));
+
+      return false;
+    }
+  }
+
+  virtual void exitSymbolReference(
+      TypedefParser::SymbolReferenceContext *ctx) override {
+    // walk up the tree to see if the symbol exists.
+    const string &identifier = ctx->maybe_symref->id;
+    if (ctx->parent) {
+      FindSymbol(ctx, ctx->parent);
+    }
+  }
+
+ private:
+  std::vector<ParserErrorInfo> &errors_list_;
+};
+
 }  // namespace
 
 std::shared_ptr<ParsedFile> Parse(const std::string &s) {
@@ -146,7 +202,6 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
       tokens.reset();
       parser.reset();
       errors.clear();
-      parser.global_symbol_table.Clear();
       parser.setErrorHandler(std::make_shared<antlr4::DefaultErrorStrategy>());
       parser.getInterpreter<antlr4::atn::ParserATNSimulator>()
           ->setPredictionMode(antlr4::atn::PredictionMode::LL);
@@ -154,17 +209,17 @@ std::shared_ptr<ParsedFile> Parse(std::istream &input) {
     }
   }
 
-  ParsedFileBuilder builder;
-  // ProcessLanguageVersion(compilation_unit, builder, errors);
-  // ProcessModuleDeclaration(compilation_unit, builder, errors);
-  // ProcessUseDeclarations(compilation_unit, builder, errors);
-  // ProcessValueDefinitions(compilation_unit, builder, errors);
+  if (compilation_unit != nullptr) {
+    SymRefListener symRefListener(errors);
+    antlr4::tree::ParseTreeWalker::DEFAULT.walk(&symRefListener,
+                                                compilation_unit);
+  }
 
-  // AddValueDefinitions(compilation_unit, builder, errors);
-  if (errors.empty()) {
-    builder.SetLanguageVersion(LangaugeVersionFromString(
-        compilation_unit->typedefVersionDeclaration()->identifier()->id));
-    builder.AddSymbols2(parser.global_symbol_table);
+  ParsedFileBuilder builder;
+  if (errors.empty() && compilation_unit != nullptr) {
+    builder.SetLanguageVersion(compilation_unit->version);
+    builder.SetModule(compilation_unit->module);
+    builder.AddSymbols2(compilation_unit->symbol_table);
   }
   builder.AddErrors(errors);
 

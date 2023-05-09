@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>name</key>
+    <string>Typedef</string>
     <key>scope</key>
     <string>source.typedef</string>
     <key>settings</key>
@@ -26,15 +28,27 @@
                 <key>value</key>
                 <string>*/</string>
             </dict>
+            <dict>
+                <key>name</key>
+                <string>TM_COMMENT_DISABLE_INDENT</string>
+                <key>value</key>
+                <string>yes</string>
+            </dict>
+            <dict>
+                <key>name</key>
+                <string>TM_COMMENT_MODE</string>
+                <key>value</key>
+                <string>line</string>
+            </dict>
         </array>
-        <key>bracketIndentNextLinePattern</key>
-        <string>^\s*\{</string>
         <key>increaseIndentPattern</key>
-        <string>(?x)^\s*(\{(?!\s*\}))|((?&lt;!\{)\})</string>
+        <string>^\s*(typedef|struct)\b.*\{[^\}]*$</string>
         <key>decreaseIndentPattern</key>
         <string>^\s*\}</string>
+        <key>bracketIndentNextLinePattern</key>
+        <string>^\s*\{[^\}]*$</string>
     </dict>
     <key>uuid</key>
-    <string>70eacea2-de51-11ed-b5ea-0242ac120002</string>
+    <string>964793a0-edf7-11ed-a05b-0242ac120003</string>
 </dict>
 </plist>

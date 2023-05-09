@@ -1,22 +1,23 @@
 #include <stdio.h>
+
 #include <fstream>
-#include <string>
 #include <map>
 #include <memory>
+#include <string>
 #include <variant>
 #include <vector>
 
+#define FMT_HEADER_ONLY
+#include <fmt/core.h>
+#include <fmt/ostream.h>
+
 #include "args.h"
-#include "typedef_parser.h"
+#include "codegen/codegen_cpp.h"
+#include "codegen/file_printer.h"
 #include "parsed_file.h"
 #include "parser_error_info.h"
 #include "symbol_table.h"
-#include "codegen/codegen_cpp.h"
-#include "codegen/file_printer.h"
-
-#define FMT_HEADER_ONLY
-#include "fmt/core.h"
-#include "fmt/ostream.h"
+#include "typedef_parser.h"
 
 int main(int argc, const char** argv) {
   // Parse args, or die trying.

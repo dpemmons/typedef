@@ -1,16 +1,17 @@
 #include "parser_error_info.h"
 
-#include <stdlib.h>
-
-#include <algorithm>
-
-#include "antlr4/antlr4-runtime.h"
-#include "grammar/TypedefLexer.h"
-#include "grammar/TypedefParser.h"
+#include <antlr4/antlr4-runtime.h>
 
 #define FMT_HEADER_ONLY
-#include "fmt/core.h"
-#include "fmt/ostream.h"
+#include <fmt/core.h>
+#include <fmt/ostream.h>
+
+#include <algorithm>
+#include <cassert>
+#include <cstdlib>
+
+#include "grammar/TypedefLexer.h"
+#include "grammar/TypedefParser.h"
 
 namespace {
 const char *TokenToString(size_t token) {
@@ -307,7 +308,7 @@ const char *TokenToString(size_t token) {
     case TypedefParser::RPAREN:
       return "RPAREN";
     default:
-      abort();
+      assert(false);  // unreachable
   }
 }
 }  // namespace
@@ -351,7 +352,7 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
     case INVALID_STRING_LITERAL:
       return "INVALID_STRING_LITERAL";
     default:
-      abort();
+      assert(false);  // unreachable
   }
 }
 
