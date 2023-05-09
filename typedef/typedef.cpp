@@ -11,13 +11,13 @@
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 
-#include "args.h"
-#include "codegen/codegen_cpp.h"
-#include "codegen/file_printer.h"
-#include "parsed_file.h"
-#include "parser_error_info.h"
-#include "symbol_table.h"
-#include "typedef_parser.h"
+#include "libtypedef/codegen/codegen_cpp.h"
+#include "libtypedef/codegen/file_printer.h"
+#include "libtypedef/parser/parsed_file.h"
+#include "libtypedef/parser/parser_error_info.h"
+#include "libtypedef/parser/symbol_table.h"
+#include "libtypedef/parser/typedef_parser.h"
+#include "typedef/args.h"
 
 int main(int argc, const char** argv) {
   // Parse args, or die trying.
