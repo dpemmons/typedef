@@ -6,11 +6,14 @@ Items in ***bold*** are in-progress.
 
 - [x] separate type declaration from field, value, etc. declaration
 - [x] make symbol references independent of declaration order
-- [ ] optionals
+- [ ] ***optionals***
 - [x] inline types: structs, vectors, maps.
 - [x] nested types
 - [x] consider making cpp codegen more sane?
+- [ ] pitchfork repo layout
+- [ ] text templates?
 - [ ] self-host symbol table
+- [ ] tests...
 - [ ] more types
   - [ ] fixed length arrays
   - [ ] message
@@ -82,3 +85,4 @@ Modes:
 - Try to follow Google's CPP design guide: https://google.github.io/styleguide/cppguide.html
 - Useful ANTLR4 example: https://github.com/mysql/mysql-workbench/blob/8.0/modules/db.mysql.parser/src/mysql_parser_module.cpp
 - https://github.com/antlr/grammars-v4/blob/master/rust/RustParser.g4
+- Use the Pitchfork layout: https://api.csswg.org/bikeshed/?force=1&url=https://raw.githubusercontent.com/vector-of-bool/pitchfork/develop/data/spec.bs
