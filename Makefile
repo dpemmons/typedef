@@ -31,28 +31,28 @@ $(LIB_STATIC_OBJ): $(LIB_OBJS)
 ###############################################################################
 
 ###############################################################################
-# CMD Rules
-CMD_SRC_DIRS := ./src/cmd
-CMD_BUILD_DIR := $(BASE_BUILD_DIR)/cmd
-CMD_EXEC := $(CMD_BUILD_DIR)/typedef
+# typedef binary rules
+TYPEDEF_SRC_DIRS := ./typedef
+TYPEDEF_BUILD_DIR := $(BASE_BUILD_DIR)
+TYPEDEF_EXEC := $(TYPEDEF_BUILD_DIR)/typedef/typedef
 
-CMD_SRCS := $(shell find $(CMD_SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
-CMD_OBJS := $(CMD_SRCS:%=$(CMD_BUILD_DIR)/%.o)
-CMD_DEPS := $(CMD_OBJS:.o=.d)
-CMD_INC_DIRS := $(shell find $(CMD_SRC_DIRS) -type d) $(CLI_LIB_HEADERS)
-CMD_INC_FLAGS := $(addprefix -I,$(CMD_INC_DIRS))
-CMD_CPPFLAGS := $(GLOBAL_CPPFLAGS) $(CMD_INC_FLAGS) $(LIB_INC_FLAGS)
+TYPEDEF_SRCS := $(shell find $(TYPEDEF_SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
+TYPEDEF_OBJS := $(TYPEDEF_SRCS:%=$(TYPEDEF_BUILD_DIR)/%.o)
+TYPEDEF_DEPS := $(TYPEDEF_OBJS:.o=.d)
+TYPEDEF_INC_DIRS := $(shell find $(TYPEDEF_SRC_DIRS) -type d) $(CLI_LIB_HEADERS)
+TYPEDEF_INC_FLAGS := $(addprefix -I,$(TYPEDEF_INC_DIRS))
+TYPEDEF_CPPFLAGS := $(GLOBAL_CPPFLAGS) $(TYPEDEF_INC_FLAGS) $(LIB_INC_FLAGS)
 
-$(CMD_BUILD_DIR)/%.c.o: %.c
+$(TYPEDEF_BUILD_DIR)/%.c.o: %.c
 	mkdir -p $(dir $@)
-	$(CC) $(CMD_CPPFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) $(TYPEDEF_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-$(CMD_BUILD_DIR)/%.cpp.o: %.cpp
+$(TYPEDEF_BUILD_DIR)/%.cpp.o: %.cpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CMD_CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(TYPEDEF_CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-$(CMD_EXEC): $(CMD_OBJS) $(LIB_STATIC_OBJ) antlr4-runtime
-	$(CXX) $(CMD_OBJS) $(LIB_STATIC_OBJ) $(ANTLR4_LIB) -o $@ $(LDFLAGS)
+$(TYPEDEF_EXEC): $(TYPEDEF_OBJS) $(LIB_STATIC_OBJ) antlr4-runtime
+	$(CXX) $(TYPEDEF_OBJS) $(LIB_STATIC_OBJ) $(ANTLR4_LIB) -o $@ $(LDFLAGS)
 #
 ###############################################################################
 
@@ -112,6 +112,10 @@ antlr4-runtime: $(ANTLR4_LIB)
 clean:
 	rm -rf $(BASE_BUILD_DIR)/lib $(BASE_BUILD_DIR)/cmd $(BASE_BUILD_DIR)/test
 
+.PHONY: typedef-clean
+typedef-clean:
+	rm -rf $(BASE_BUILD_DIR)/typedef
+
 .PHONY: test-clean
 test-clean:
 	rm -rf $(BASE_BUILD_DIR)/test
@@ -132,10 +136,10 @@ test: $(TEST_EXEC)
 # 	$(TEST_EXEC) "[bool]"
 
 lib: $(LIB_STATIC_OBJ)
-cmd: lib $(CMD_EXEC)
+typedef: lib $(TYPEDEF_EXEC)
 test-bin: $(TEST_EXEC)
 
-all: test-bin cmd
+all: test-bin typedef
 
 # Include the .d makefiles. The - at the front suppresses the errors of missing
 # Makefiles. Initially, all the .d files will be missing, and we don't want those
