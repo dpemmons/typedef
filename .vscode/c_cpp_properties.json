@@ -4,6 +4,9 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/external",
+                "${workspaceFolder}/external/CLI",
+                "${workspaceFolder}/external/fmt",
                 "${workspaceFolder}/src/lib",
                 "${workspaceFolder}/src/lib/antlr4",
                 "${workspaceFolder}/src/test",

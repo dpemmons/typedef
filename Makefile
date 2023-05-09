@@ -43,7 +43,7 @@ CMD_EXEC := $(CMD_BUILD_DIR)/typedef
 CMD_SRCS := $(shell find $(CMD_SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
 CMD_OBJS := $(CMD_SRCS:%=$(CMD_BUILD_DIR)/%.o)
 CMD_DEPS := $(CMD_OBJS:.o=.d)
-CMD_INC_DIRS := $(shell find $(CMD_SRC_DIRS) -type d)
+CMD_INC_DIRS := $(shell find $(CMD_SRC_DIRS) -type d) ./external
 CMD_INC_FLAGS := $(addprefix -I,$(CMD_INC_DIRS))
 CMD_CPPFLAGS := $(GLOBAL_CPPFLAGS) $(CMD_INC_FLAGS) $(LIB_INC_FLAGS)
 
