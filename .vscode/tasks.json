@@ -30,7 +30,7 @@
       "type": "shell",
       "command": "/usr/bin/make",
       "args": [
-        "debug",
+        "cmd",
         "-f",
         "${workspaceFolder}/Makefile",
         "-j4"
