@@ -1,5 +1,8 @@
 #include "parser_helpers.h"
 
+#include <antlr4/Token.h>
+#include <antlr4/tree/TerminalNode.h>
+
 #include <codecvt>
 #include <cstddef>
 #include <cstdint>
@@ -8,9 +11,6 @@
 #include <optional>
 #include <utility>
 #include <variant>
-
-#include "external/antlr4/Token.h"
-#include "external/antlr4/tree/TerminalNode.h"
 
 char32_t GetCharValue(TypedefParser* parser,
                       TypedefParser::CharLiteralContext* ctx) {

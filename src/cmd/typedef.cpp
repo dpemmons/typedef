@@ -7,12 +7,13 @@
 #include <variant>
 #include <vector>
 
+#define FMT_HEADER_ONLY
+#include <fmt/core.h>
+#include <fmt/ostream.h>
+
 #include "args.h"
 #include "codegen/codegen_cpp.h"
 #include "codegen/file_printer.h"
-#define FMT_HEADER_ONLY
-#include "external/fmt/core.h"
-#include "external/fmt/ostream.h"
 #include "parsed_file.h"
 #include "parser_error_info.h"
 #include "symbol_table.h"

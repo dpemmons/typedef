@@ -5,12 +5,11 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/external",
-                "${workspaceFolder}/external/CLI",
-                "${workspaceFolder}/external/fmt",
+                "${workspaceFolder}/external/CLI-2.3.2",
+                "${workspaceFolder}/external/fmtlib-9.1.0",
+                "${workspaceFolder}/external/antlr4-runtime-4.7.2",
                 "${workspaceFolder}/src/lib",
-                "${workspaceFolder}/src/lib/antlr4",
                 "${workspaceFolder}/src/test",
-                "${workspaceFolder}/src/test/catch2"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",

@@ -1,3 +1,5 @@
+#include <antlr4/antlr4-runtime.h>
+
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_all.hpp>
 #include <memory>
@@ -5,11 +7,10 @@
 #include <string>
 #include <utility>
 #include <vector>
-
-#include "antlr4/antlr4-runtime.h"
 #define FMT_HEADER_ONLY
-#include "external/fmt/core.h"
-#include "external/fmt/ostream.h"
+#include <fmt/core.h>
+#include <fmt/ostream.h>
+
 #include "grammar/TypedefLexer.h"
 #include "grammar/TypedefParser.h"
 #include "typedef_parser.h"

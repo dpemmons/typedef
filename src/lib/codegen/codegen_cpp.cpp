@@ -7,11 +7,12 @@
 #include <string>
 #include <variant>
 
-#include "codegen_cpp_helpers.h"
 #define FMT_HEADER_ONLY
-#include "external/fmt/args.h"
-#include "external/fmt/core.h"
-#include "external/fmt/ostream.h"
+#include <fmt/args.h>
+#include <fmt/core.h>
+#include <fmt/ostream.h>
+
+#include "codegen_cpp_helpers.h"
 #include "symbol_table.h"
 
 namespace td {

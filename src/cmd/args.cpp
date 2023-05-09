@@ -2,9 +2,9 @@
 
 #include <stdexcept>
 
-#include "external/CLI/App.hpp"
-#include "external/CLI/Config.hpp"
-#include "external/CLI/Formatter.hpp"
+#include <CLI/App.hpp>
+#include <CLI/Config.hpp>
+#include <CLI/Formatter.hpp>
 
 std::variant<Args, int> Args::ParseArgs(int argc, const char* argv[]) {
   Args args;

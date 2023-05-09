@@ -2,11 +2,11 @@ include ${CURDIR}/../../common.mk
 
 BUILD := debug
 COMPILER=gcc
-BASE_BUILD_DIR := ${CURDIR}/../../build/${BUILD}/external/antlr4
+BASE_BUILD_DIR := ${CURDIR}/../../build/${BUILD}/external/catch2-3.3.1
 
 LIB_SRC_DIRS := .
 LIB_BUILD_DIR = $(BASE_BUILD_DIR)
-LIB_STATIC_OBJ := $(LIB_BUILD_DIR)/libantlr4.a
+LIB_STATIC_OBJ := $(LIB_BUILD_DIR)/libcatch2.a
 
 LIB_SRCS := $(shell find $(LIB_SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
 LIB_OBJS := $(LIB_SRCS:%=$(LIB_BUILD_DIR)/%.o)
@@ -26,7 +26,7 @@ $(LIB_BUILD_DIR)/%.cpp.o: %.cpp
 $(LIB_STATIC_OBJ): $(LIB_OBJS)
 	ar $(ARFLAGS) $@ $^
 
-antlr4: $(LIB_STATIC_OBJ)
+catch2: $(LIB_STATIC_OBJ)
 
 .PHONY: clean
 clean:

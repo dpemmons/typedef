@@ -1,6 +1,6 @@
 #include "typedef_parser.h"
 
-#include "external/antlr4/antlr4-runtime.h"
+#include <antlr4/antlr4-runtime.h>
 
 #include <algorithm>
 #include <cstddef>
@@ -8,7 +8,8 @@
 #include <vector>
 
 #define FMT_HEADER_ONLY
-#include "external/fmt/core.h"
+#include <fmt/core.h>
+
 #include "grammar/TypedefLexer.h"
 #include "grammar/TypedefParser.h"
 #include "grammar/TypedefParserBaseListener.h"
