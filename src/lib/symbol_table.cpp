@@ -10,8 +10,8 @@
 #include <variant>
 
 #define FMT_HEADER_ONLY
-#include <fmt/core.h>
-#include <fmt/ostream.h>
+#include "external/fmt/core.h"
+#include "external/fmt/ostream.h"
 
 namespace td {
 

@@ -17,7 +17,7 @@ LIB_STATIC_OBJ := $(LIB_BUILD_DIR)/libtypedef.a
 LIB_SRCS := $(shell find $(LIB_SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
 LIB_OBJS := $(LIB_SRCS:%=$(LIB_BUILD_DIR)/%.o)
 LIB_DEPS := $(LIB_OBJS:.o=.d)
-LIB_INC_DIRS := $(shell find $(LIB_SRC_DIRS) -type d)
+LIB_INC_DIRS := $(shell find $(LIB_SRC_DIRS) -type d) ./
 LIB_INC_FLAGS := $(addprefix -I,$(LIB_INC_DIRS))
 LIB_CPPFLAGS := $(GLOBAL_CPPFLAGS) $(LIB_INC_FLAGS)
 
@@ -69,7 +69,7 @@ TEST_EXEC := $(TEST_BUILD_DIR)/testmain
 TEST_SRCS := $(shell find $(TEST_SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
 TEST_OBJS := $(TEST_SRCS:%=$(TEST_BUILD_DIR)/%.o)
 TEST_DEPS := $(TEST_OBJS:.o=.d)
-TEST_INC_DIRS := $(shell find $(TEST_SRC_DIRS) -type d)
+TEST_INC_DIRS := $(shell find $(TEST_SRC_DIRS) -type d) ./
 TEST_INC_FLAGS := $(addprefix -I,$(TEST_INC_DIRS))
 TEST_CPPFLAGS := $(GLOBAL_CPPFLAGS) $(TEST_INC_FLAGS) $(LIB_INC_FLAGS)
 

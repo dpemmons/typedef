@@ -8,8 +8,7 @@
 #include <vector>
 
 #define FMT_HEADER_ONLY
-#include <fmt/core.h>
-
+#include "external/fmt/core.h"
 #include "grammar/TypedefLexer.h"
 #include "grammar/TypedefParser.h"
 #include "grammar/TypedefParserBaseListener.h"

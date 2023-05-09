@@ -1,8 +1,7 @@
 #include "parser_helpers.h"
 
-#include <stddef.h>
-
 #include <codecvt>
+#include <cstddef>
 #include <cstdint>
 #include <istream>
 #include <locale>

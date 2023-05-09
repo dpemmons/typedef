@@ -6,10 +6,10 @@
 #include <utility>
 #include <vector>
 
-#define FMT_HEADER_ONLY
 #include "antlr4/antlr4-runtime.h"
-#include "fmt/core.h"
-#include "fmt/ostream.h"
+#define FMT_HEADER_ONLY
+#include "external/fmt/core.h"
+#include "external/fmt/ostream.h"
 #include "grammar/TypedefLexer.h"
 #include "grammar/TypedefParser.h"
 #include "typedef_parser.h"
