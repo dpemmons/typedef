@@ -142,7 +142,6 @@ class SymRefListener : public TypedefParserBaseListener {
   virtual void exitSymbolReference(
       TypedefParser::SymbolReferenceContext *ctx) override {
     // walk up the tree to see if the symbol exists.
-    const string &identifier = ctx->maybe_symref->id;
     if (ctx->parent) {
       FindSymbol(ctx, ctx->parent);
     }

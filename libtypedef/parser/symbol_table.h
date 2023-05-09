@@ -59,9 +59,9 @@ class Identifier {
   } type_;
   string id_;
 
-  Identifier(string const &id, Type type) : id_(id), type_(type) {}
+  Identifier(string const &id, Type type) : type_(type), id_(id) {}
   // Anonymous symbol
-  Identifier(Type type) : id_(), type_(type) {}
+  Identifier(Type type) : type_(type), id_() {}
   Identifier() = delete;
 };
 
