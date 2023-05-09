@@ -8,8 +8,9 @@
                 "${workspaceFolder}/external/CLI-2.3.2",
                 "${workspaceFolder}/external/fmtlib-9.1.0",
                 "${workspaceFolder}/external/antlr4-runtime-4.7.2",
-                "${workspaceFolder}/src/lib",
-                "${workspaceFolder}/src/test",
+                "${workspaceFolder}/libtypedef",
+                "${workspaceFolder}/typedef",
+                "${workspaceFolder}/tests"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",
