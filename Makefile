@@ -1,12 +1,22 @@
-.DEFAULT_GOAL := debug
+BUILD := debug
+COMPILER=gcc
+BASE_BUILD_DIR := ${CURDIR}/build/${BUILD}
 
-BASE_BUILD_DIR := ./build
+CXXFLAGS.gcc.debug := -DDEBUG -g3 -ggdb -Og -fstack-protector-all
+CXXFLAGS.gcc.release := -O3 -march=native -DNDEBUG
+CXXFLAGS.gcc := -pthread -std=gnu++17 -march=native -g -MMD -MP -fmessage-length=0 ${CXXFLAGS.gcc.${BUILD}}
 
-DEBUG_FLAGS := -DDEBUG -g3 -ggdb
-RELEASE_FLAGS := -O2
-DEBUG_LDFLAGS := -ggdb3
+CXXFLAGS.clang.debug := -O0 -fstack-protector-all
+CXXFLAGS.clang.release := -O3 -march=native -DNDEBUG
+CXXFLAGS.clang := -pthread -std=gnu++17 -march=native -g -MMD -MP -fmessage-length=0 ${CXXFLAGS.clang.${BUILD}}
 
-GLOBAL_CPPFLAGS := -std=c++17 -w -MMD -MP
+CXXFLAGS := ${CXXFLAGS.${COMPILER}}
+CFLAGS := ${CFLAGS.${COMPILER}}
+
+LDFLAGS.debug := -ggdb3
+LDFLAGS.release :=
+LDFLAGS := -fuse-ld=gold -pthread -g ${LDFLAGS.${BUILD}}
+LDLIBS := -ldl
 
 ###############################################################################
 # LIB Rules
@@ -69,7 +79,7 @@ TEST_EXEC := $(TEST_BUILD_DIR)/testmain
 TEST_SRCS := $(shell find $(TEST_SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
 TEST_OBJS := $(TEST_SRCS:%=$(TEST_BUILD_DIR)/%.o)
 TEST_DEPS := $(TEST_OBJS:.o=.d)
-TEST_INC_DIRS := $(shell find $(TEST_SRC_DIRS) -type d) ./
+TEST_INC_DIRS := $(shell find $(TEST_SRC_DIRS) -type d) ./external
 TEST_INC_FLAGS := $(addprefix -I,$(TEST_INC_DIRS))
 TEST_CPPFLAGS := $(GLOBAL_CPPFLAGS) $(TEST_INC_FLAGS) $(LIB_INC_FLAGS)
 
@@ -81,8 +91,8 @@ $(TEST_BUILD_DIR)/%.cpp.o: %.cpp
 	mkdir -p $(dir $@)
 	$(CXX) $(TEST_CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-$(TEST_EXEC): $(TEST_OBJS) $(LIB_STATIC_OBJ)
-	$(CXX) $(TEST_OBJS) $(LIB_STATIC_OBJ) -o $@ $(LDFLAGS)
+$(TEST_EXEC): $(TEST_OBJS) $(LIB_STATIC_OBJ) catch2
+	$(CXX) $(TEST_OBJS) $(LIB_STATIC_OBJ) $(CATCH2_LIB) -o $@ $(LDFLAGS)
 #
 ###############################################################################
 
@@ -101,6 +111,12 @@ $(TEST_EXEC): $(TEST_OBJS) $(LIB_STATIC_OBJ)
 grammar: ./src/lib/grammar/TypedefLexer.cpp ./src/lib/grammar/TypedefParser.cpp
 #
 ###############################################################################
+
+# .PHONY: catch2
+CATCH2_LIB := $(BASE_BUILD_DIR)/external/catch2/libcatch2.a
+.PHONY: catch2
+catch2:
+	$(MAKE) -C external/catch2 catch2
 
 .PHONY: clean
 clean:
@@ -121,17 +137,8 @@ test: $(TEST_EXEC)
 # 	$(TEST_EXEC) "[bool]"
 
 lib: $(LIB_STATIC_OBJ)
-cmd: $(CMD_EXEC)
+cmd: lib $(CMD_EXEC)
 test-bin: $(TEST_EXEC)
-
-debug: CXXFLAGS += $(DEBUG_FLAGS)
-debug: CCFLAGS += $(DEBUG_FLAGS)
-debug: LDFLAGS += $(DEBUG_LDFLAGS)
-debug: lib cmd test-bin
-
-release: CXXFLAGS += $(RELEASE_FLAGS)
-release: CCFLAGS += $(RELEASE_FLAGS)
-release: lib cmd
 
 # Include the .d makefiles. The - at the front suppresses the errors of missing
 # Makefiles. Initially, all the .d files will be missing, and we don't want those

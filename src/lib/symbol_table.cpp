@@ -127,6 +127,7 @@ ostream& operator<<(ostream& os, const Identifier& value) {
   } else {
     fmt::print(os, "(anonymous)", value.id());
   }
+  return os;
 }
 
 void PrintField(ostream& os, const SymbolTable::Symbol& s) {
