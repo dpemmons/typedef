@@ -1,5 +1,8 @@
-#ifndef LIB_GRAMMAR_PARSER_HELPERS_H__
-#define LIB_GRAMMAR_PARSER_HELPERS_H__
+#ifndef PARSER_PARSER_HELPERS_H__
+#define PARSER_PARSER_HELPERS_H__
+
+#include <antlr4/antlr4-common.h>
+#include <antlr4/antlr4-runtime.h>
 
 #include <cassert>
 #include <charconv>
@@ -10,15 +13,8 @@
 #include <system_error>
 #include <utility>
 
-#include "InputMismatchException.h"
-#include "Parser.h"
-#include "ParserRuleContext.h"
-#include "RecognitionException.h"
-#include "Token.h"
-#include "TokenStream.h"
-#include "TypedefParser.h"
-#include "atn/ATNConfigSet.h"
-#include "symbol_table.h"
+#include "libtypedef/parser/grammar/TypedefParser.h"
+#include "libtypedef/parser/symbol_table.h"
 
 class TypedefParser;
 namespace antlr4 {
@@ -187,4 +183,4 @@ void TryInsertNested(std::shared_ptr<Destination> &dst,
   }
 }
 
-#endif  // LIB_GRAMMAR_PARSER_HELPERS_H__
+#endif  // PARSER_PARSER_HELPERS_H__

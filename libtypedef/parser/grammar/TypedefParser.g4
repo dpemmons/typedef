@@ -13,7 +13,7 @@ options {
 #include <memory>
 #include <optional>
 #include <string>
-#include "libtypedef/parser/grammar/parser_helpers.h"
+#include "libtypedef/parser/parser_helpers.h"
 }
 
 compilationUnit
