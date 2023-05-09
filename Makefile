@@ -75,8 +75,8 @@ $(TEST_BUILD_DIR)/%.cpp.o: %.cpp
 	mkdir -p $(dir $@)
 	$(CXX) $(TEST_CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-$(TEST_EXEC): $(TEST_OBJS) $(LIB_STATIC_OBJ) catch2
-	$(CXX) $(TEST_OBJS) $(LIB_STATIC_OBJ) $(CATCH2_LIB) -o $@ $(LDFLAGS)
+$(TEST_EXEC): $(TEST_OBJS) $(LIB_STATIC_OBJ) catch2 antlr4
+	$(CXX) $(TEST_OBJS) $(LIB_STATIC_OBJ) $(CATCH2_LIB) $(ANTLR4_LIB) -o $@ $(LDFLAGS)
 #
 ###############################################################################
 
@@ -97,8 +97,9 @@ grammar: ./src/lib/grammar/TypedefLexer.cpp ./src/lib/grammar/TypedefParser.cpp
 ###############################################################################
 
 CATCH2_LIB := $(BASE_BUILD_DIR)/external/catch2/libcatch2.a
-catch2: $(CATCH2_LIB)
+$(CATCH2_LIB):
 	$(MAKE) -C external/catch2 catch2
+catch2: $(CATCH2_LIB)
 
 ANTLR4_LIB := $(BASE_BUILD_DIR)/external/antlr4/libantlr4.a
 $(ANTLR4_LIB):
@@ -107,11 +108,16 @@ antlr4: $(ANTLR4_LIB)
 
 .PHONY: clean
 clean:
-	rm -rf $(BASE_BUILD_DIR)
+	rm -rf $(BASE_BUILD_DIR)/lib $(BASE_BUILD_DIR)/cmd $(BASE_BUILD_DIR)/test
 
 .PHONY: clean-test
 clean-test:
 	rm -rf $(BASE_BUILD_DIR)/test
+
+.PHONY: clean-all
+clean-all:
+	rm -rf $(BASE_BUILD_DIR)
+
 
 .PHONY: run
 test: CXXFLAGS += $(DEBUG_FLAGS)
