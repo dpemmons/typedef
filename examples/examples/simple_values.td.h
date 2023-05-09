@@ -1231,6 +1231,17 @@ class MutableVariantC {
       nestedVectorField_ = std::move(_val);
     }
     
+    bool IsoptionalField() const { return tag == Tag::TAG_optionalField; }
+    int32_t optionalField() const {
+      assert(tag == Tag::TAG_optionalField);
+      return optionalField_; 
+    }
+    void optionalField(int32_t _val) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_optionalField;
+      optionalField_ = _val;
+    }
+    
 
     friend std::ostream& operator<<(std::ostream& os, const MutableVariantC& obj);
 
@@ -1246,6 +1257,7 @@ class MutableVariantC {
       TAG_nestedStructField,
       TAG_nestedVariantField,
       TAG_nestedVectorField,
+      TAG_optionalField,
 
       __TAGS_END
     } tag = Tag::__TAGS_BEGIN;
@@ -1260,6 +1272,7 @@ class MutableVariantC {
     std::unique_ptr<MutableNestedStruct> nestedStructField_;
     std::unique_ptr<MutableNestedVariant> nestedVariantField_;
     std::unique_ptr<MutableNestedVector> nestedVectorField_;
+    int32_t optionalField_;
 
     };  // union
 

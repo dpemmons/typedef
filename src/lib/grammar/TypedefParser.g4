@@ -147,7 +147,9 @@ unvaluedSymbol
 	| inlineVector {$maybe_symbol = $inlineVector.ctx->maybe_symbol; }
 	| inlineMap {$maybe_symbol = $inlineMap.ctx->maybe_symbol; }
 	| (
-		identifier WS* COLON WS* unvaluedType {
+		identifier WS* COLON WS* unvaluedType (
+			WS* optional = QUESTION
+		)? {
 		if ($unvaluedType.ctx->maybe_val) {
 			$maybe_symbol = std::make_pair(
 				td::Identifier::ValueIdentifier($identifier.ctx->id),
@@ -162,7 +164,9 @@ inlineStruct
 	@init {
 		$s = std::make_shared<td::Struct>();
 	}:
-	identifier WS* COLON WS* KW_STRUCT WS* LBRACE WS* (
+	identifier WS* COLON WS* KW_STRUCT WS* (
+		optional = QUESTION WS*
+	)? LBRACE WS* (
 		maybeValuedSymbol {
 				TryInsertSymbol($s, this, $maybeValuedSymbol.ctx);
 			} WS* SEMI WS*
@@ -177,7 +181,9 @@ inlineVariant
 	@init {
 		$v = std::make_shared<td::Variant>();
 	}:
-	identifier WS* COLON WS* KW_VARIANT WS* LBRACE (
+	identifier WS* COLON WS* KW_VARIANT WS* (
+		WS* optional = QUESTION
+	)? LBRACE (
 		WS* unvaluedSymbol {
 				TryInsertSymbol($v, this, $unvaluedSymbol.ctx);
 			} WS* SEMI WS*
@@ -188,7 +194,9 @@ inlineVariant
 
 inlineVector
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
-	identifier WS* COLON WS* KW_VECTOR WS* LT WS* val = unvaluedType WS* GT {
+	identifier WS* COLON WS* KW_VECTOR WS* LT WS* val = unvaluedType WS* GT (
+		WS* optional = QUESTION
+	)? {
 		if ($unvaluedType.ctx->maybe_val) {
 			$maybe_symbol = std::make_pair(
 				td::Identifier::ValueIdentifier($identifier.ctx->id),
@@ -199,7 +207,7 @@ inlineVector
 inlineMap
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
 	identifier WS* COLON WS* KW_MAP WS* LT WS* key = primitiveType WS* COMMA WS* val = unvaluedType
-		WS* GT {
+		WS* GT (WS* optional = QUESTION)? {
 		// Map Declaration
 		if ($key.ctx->maybe_val && $val.ctx->maybe_val) {
 			$maybe_symbol = std::make_pair(
@@ -311,8 +319,6 @@ valuedI64Fragment: (
 	)
 	| (EQ WS* literal = i64Literal 'i64');
 
-// thing < arg2, 42 > parameterizedType: identifier LT (identifier | u64Literal)+ GT;
-
 typedefVersionDeclaration
 	returns[std::string version]:
 	KW_TYPEDEF WS* EQ WS* identifier WS* SEMI { $version = $identifier.ctx->id; };
@@ -327,18 +333,6 @@ useTree: (simplePath? '::')? (
 		| '{' ( useTree (',' useTree)* ','?)? '}'
 	)
 	| simplePath ('as' identifier)?;
-
-// Enums enumDeclaration: KW_ENUM (LT integerLiteral GT)? identifier LBRACE enumBody RBRACE SEMI;
-// enumBody: ( identifier COMMA)+ (identifier COMMA?)?;
-
-// Struct structDeclaration: KW_STRUCT identifier LBRACE structBody RBRACE SEMI; structBody:
-// structFieldDeclaration*; structFieldDeclaration: identifier COLON identifier (EQ value)? SEMI;
-
-// Value definitions ---------------------------------------------------------- value:
-// literalExpression | array | map | identifier; value: literalExpression;
-
-// array: LBRACK (value (COMMA value)*)? COMMA? RBRACK; map: LBRACE (keyValue (COMMA keyValue)*
-// COMMA?)? RBRACE; keyValue: identifier COLON value;
 
 simplePath
 	returns[std::vector<std::string> path]:

@@ -152,5 +152,6 @@ variant VariantC {
 
   vector NestedVector<i32>;
   nestedVectorField: NestedVector;
-  
+
+  optionalField: i32?;
 };

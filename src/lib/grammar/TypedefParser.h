@@ -368,6 +368,7 @@ public:
     TypedefParser::InlineMapContext *inlineMapContext = nullptr;;
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
     TypedefParser::UnvaluedTypeContext *unvaluedTypeContext = nullptr;;
+    antlr4::Token *optional = nullptr;;
     UnvaluedSymbolContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     InlineStructContext *inlineStruct();
@@ -379,6 +380,7 @@ public:
     UnvaluedTypeContext *unvaluedType();
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
+    antlr4::tree::TerminalNode *QUESTION();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -394,6 +396,7 @@ public:
     std::optional<td::SymbolTable::Symbol> maybe_symbol;
     std::shared_ptr<td::Struct> s;
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    antlr4::Token *optional = nullptr;;
     TypedefParser::MaybeValuedSymbolContext *maybeValuedSymbolContext = nullptr;;
     InlineStructContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
@@ -408,6 +411,7 @@ public:
     MaybeValuedSymbolContext* maybeValuedSymbol(size_t i);
     std::vector<antlr4::tree::TerminalNode *> SEMI();
     antlr4::tree::TerminalNode* SEMI(size_t i);
+    antlr4::tree::TerminalNode *QUESTION();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -423,6 +427,7 @@ public:
     std::optional<td::SymbolTable::Symbol> maybe_symbol;
     std::shared_ptr<td::Variant> v;
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    antlr4::Token *optional = nullptr;;
     TypedefParser::UnvaluedSymbolContext *unvaluedSymbolContext = nullptr;;
     InlineVariantContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
@@ -437,6 +442,7 @@ public:
     UnvaluedSymbolContext* unvaluedSymbol(size_t i);
     std::vector<antlr4::tree::TerminalNode *> SEMI();
     antlr4::tree::TerminalNode* SEMI(size_t i);
+    antlr4::tree::TerminalNode *QUESTION();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -453,6 +459,7 @@ public:
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
     TypedefParser::UnvaluedTypeContext *val = nullptr;;
     TypedefParser::UnvaluedTypeContext *unvaluedTypeContext = nullptr;;
+    antlr4::Token *optional = nullptr;;
     InlineVectorContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     IdentifierContext *identifier();
@@ -463,6 +470,7 @@ public:
     UnvaluedTypeContext *unvaluedType();
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
+    antlr4::tree::TerminalNode *QUESTION();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -479,6 +487,7 @@ public:
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
     TypedefParser::PrimitiveTypeContext *key = nullptr;;
     TypedefParser::UnvaluedTypeContext *val = nullptr;;
+    antlr4::Token *optional = nullptr;;
     InlineMapContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     IdentifierContext *identifier();
@@ -491,6 +500,7 @@ public:
     UnvaluedTypeContext *unvaluedType();
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
+    antlr4::tree::TerminalNode *QUESTION();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
