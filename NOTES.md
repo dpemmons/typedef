@@ -1,33 +1,5 @@
 # Typdedef Development Notes
 
-## TODO
-
-Items in ***bold*** are in-progress.
-
-- [x] separate type declaration from field, value, etc. declaration
-- [x] make symbol references independent of declaration order
-- [ ] ***optionals***
-- [x] inline types: structs, vectors, maps.
-- [x] nested types
-- [x] consider making cpp codegen more sane?
-- [ ] pitchfork repo layout
-- [ ] text templates?
-- [ ] self-host symbol table
-- [ ] tests...
-- [ ] more types
-  - [ ] fixed length arrays
-  - [ ] message
-  - [ ] enum
-- [ ] more literals
-  - [ ] byte literals
-  - [ ] byte strings
-  - [ ] raw byte strings
-- [ ] raw identifiers (do they just work?)
-- [ ] generated cpp features
-  - [ ] move semantics
-  - [ ] print methods
-  - [ ] comparison operators
-  - [ ] prevent keyword collisions
 
 Currently using this to test...
 
@@ -85,7 +57,3 @@ Modes:
 - Try to follow Google's CPP design guide: https://google.github.io/styleguide/cppguide.html
 - Useful ANTLR4 example: https://github.com/mysql/mysql-workbench/blob/8.0/modules/db.mysql.parser/src/mysql_parser_module.cpp
 - https://github.com/antlr/grammars-v4/blob/master/rust/RustParser.g4
-- Use the Pitchfork layout: https://api.csswg.org/bikeshed/?force=1&url=https://raw.githubusercontent.com/vector-of-bool/pitchfork/develop/data/spec.bs
-- Layout:
-  - this seems like a good idea: https://matklad.github.io//2021/02/06/ARCHITECTURE.md.html
-  - also consider: https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1204r0.html
