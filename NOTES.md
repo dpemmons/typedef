@@ -1,6 +1,5 @@
 # Typdedef Development Notes
 
-
 Currently using this to test...
 
 ```sh
