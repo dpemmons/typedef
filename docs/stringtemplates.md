@@ -19,6 +19,13 @@ struct TemplateExample {
     };
     friends: vector<Person>;
     sayHi: stringTemplate<Person> = "Hi <name>!";
+
+    // but does this make sense then?
+    stringTemplate SomeTempl<Person> = "Hi <name>!";
+    sayYo: SomeTempl<Person>;
+
+    // or should it be:
+    sayHi: stringTemplate<Person>("Hi <name>!");
   }
 
   simple: stringTemplate<Person> = "Hello <name>!";
