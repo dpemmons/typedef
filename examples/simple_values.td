@@ -155,3 +155,12 @@ variant VariantC {
 
   optionalField: i32?;
 };
+
+struct TemplateExample {
+
+  struct TemplateData {
+    name: str;
+  };
+
+  tmpl: str_template<TemplateData> = "Hello <% name %>!";
+};

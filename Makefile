@@ -89,13 +89,23 @@ $(TESTS_EXEC): $(TESTS_OBJS) $(LIBTYPEDEF_STATIC_OBJ) catch2 antlr4-runtime
 # Note that because the resulting code is checked in, this target is *NOT* run
 # automatically with the other rules. You must run it  manually if you change
 # the grammar.
-./libtypedef/parser/grammar/TypedefParser.cpp: ./libtypedef/parser/grammar/TypedefLexer.cpp ./libtypedef/parser/grammar/TypedefParser.g4 
-	/usr/bin/antlr4 -Dlanguage=Cpp -visitor ./libtypedef/parser/grammar/TypedefParser.g4 
+TYPEDEF_PARSER_CPP := ./libtypedef/parser/grammar/TypedefParser.cpp
+TYPEDEF_PARSER_G4 := ./libtypedef/parser/grammar/TypedefParser.g4
 
-./libtypedef/parser/grammar/TypedefLexer.cpp: ./libtypedef/parser/grammar/TypedefLexer.g4
-	/usr/bin/antlr4 -Dlanguage=Cpp ./libtypedef/parser/grammar/TypedefLexer.g4
+TYPEDEF_LEXER_CPP := ./libtypedef/parser/grammar/TypedefLexer.cpp
+TYPEDEF_LEXER_G4 := ./libtypedef/parser/grammar/TypedefLexer.g4
 
-grammar: ./libtypedef/parser/grammar/TypedefLexer.cpp ./libtypedef/parser/grammar/TypedefParser.cpp
+STRINGTEMPLATE_CPP := ./libtypedef/parser/grammar/StringTemplate.cpp
+STRINGTEMPLATE_G4 := ./libtypedef/parser/grammar/StringTemplate.g4
+
+$(TYPEDEF_PARSER_CPP): $(TYPEDEF_LEXER_CPP) $(TYPEDEF_PARSER_G4)
+	/usr/bin/antlr4 -Dlanguage=Cpp -visitor $(TYPEDEF_PARSER_G4)
+$(TYPEDEF_LEXER_CPP): $(TYPEDEF_LEXER_G4)
+	/usr/bin/antlr4 -Dlanguage=Cpp $(TYPEDEF_LEXER_G4)
+$(STRINGTEMPLATE_CPP): $(STRINGTEMPLATE_G4)
+	/usr/bin/antlr4 -Dlanguage=Cpp -visitor $(STRINGTEMPLATE_G4)
+
+grammar: $(TYPEDEF_LEXER_CPP) $(TYPEDEF_PARSER_CPP) $(STRINGTEMPLATE_CPP)
 #
 ###############################################################################
 
@@ -111,7 +121,7 @@ antlr4-runtime: $(ANTLR4_LIB)
 
 .PHONY: clean
 clean:
-	rm -rf $(BASE_BUILD_DIR)/lib $(BASE_BUILD_DIR)/cmd $(BASE_BUILD_DIR)/test
+	rm -rf $(BASE_BUILD_DIR)/libtypedef $(BASE_BUILD_DIR)/typedef $(BASE_BUILD_DIR)/test
 
 .PHONY: typedef-clean
 typedef-clean:

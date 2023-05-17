@@ -10,8 +10,8 @@
 namespace td {
 class ParsedFile;
 
-std::shared_ptr<ParsedFile> Parse(const std::string& s);
-std::shared_ptr<ParsedFile> Parse(std::istream& input);
+std::shared_ptr<ParsedFile> ParseTypedef(const std::string& s);
+std::shared_ptr<ParsedFile> ParseTypedef(std::istream& input);
 
 }  // namespace td
 

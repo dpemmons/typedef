@@ -73,6 +73,9 @@ public:
   virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
   virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
 
+  virtual void enterValuedStringTemplateType(TypedefParser::ValuedStringTemplateTypeContext * /*ctx*/) override { }
+  virtual void exitValuedStringTemplateType(TypedefParser::ValuedStringTemplateTypeContext * /*ctx*/) override { }
+
   virtual void enterValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext * /*ctx*/) override { }
   virtual void exitValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext * /*ctx*/) override { }
 

@@ -31,6 +31,11 @@ std::ostream& operator<<(std::ostream& os, const MutableStructE& obj) {
   return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const MutableTemplateExample& obj) {
+  os << "struct MutableTemplateExample.\n";
+  return os;
+}
+
 
 
 std::ostream& operator<<(std::ostream& os, const MutableVariantA& obj) {

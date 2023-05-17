@@ -58,6 +58,8 @@ public:
 
     virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *context) = 0;
 
+    virtual antlrcpp::Any visitValuedStringTemplateType(TypedefParser::ValuedStringTemplateTypeContext *context) = 0;
+
     virtual antlrcpp::Any visitValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext *context) = 0;
 
     virtual antlrcpp::Any visitValuedBoolFragment(TypedefParser::ValuedBoolFragmentContext *context) = 0;

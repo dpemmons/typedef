@@ -164,6 +164,13 @@ ostream& operator<<(ostream& os, const Map& s) {
   return os;
 }
 
+ostream& operator<<(ostream& os, const StrTemplate& s) {
+  fmt::print(os, "str_template<");
+  PrintType(os, s.arg_type);
+  fmt::print(os, ">");
+  return os;
+}
+
 ostream& operator<<(ostream& os, const SymbolTable& value) {
   for (auto kv : value.table_) {
     PrintField(os, kv);

@@ -18,35 +18,36 @@ public:
     KW_ARRAY = 1, KW_AS = 2, KW_ENUM = 3, KW_FALSE = 4, KW_FN = 5, KW_IMPL = 6, 
     KW_MESSAGE = 7, KW_MODULE = 8, KW_STRUCT = 9, KW_TRUE = 10, KW_TYPE = 11, 
     KW_TYPEDEF = 12, KW_USE = 13, KW_VARIANT = 14, KW_VECTOR = 15, KW_MAP = 16, 
-    KW_AND = 17, KW_IN = 18, KW_LET = 19, KW_NOT = 20, KW_OR = 21, KW_SIZEOF = 22, 
-    KW_THIS = 23, KW_TRAIT = 24, KW_WHERE = 25, KW_XOR = 26, KW_BREAK = 27, 
-    KW_CONTINUE = 28, KW_DEFAULT = 29, KW_DO = 30, KW_ELSE = 31, KW_FOR = 32, 
-    KW_GOTO = 33, KW_IF = 34, KW_LOOP = 35, KW_MATCH = 36, KW_MOVE = 37, 
-    KW_RETURN = 38, KW_TRY = 39, KW_WHILE = 40, KW_YIELD = 41, KW_ABSTRACT = 42, 
-    KW_AUTO = 43, KW_CONST = 44, KW_DOUBLE = 45, KW_EXTERN = 46, KW_FINAL = 47, 
-    KW_FLOAT = 48, KW_INT = 49, KW_LONG = 50, KW_MACRO = 51, KW_MUT = 52, 
-    KW_OVERRIDE = 53, KW_PRIVATE = 54, KW_PUB = 55, KW_REF = 56, KW_SELFTYPE = 57, 
-    KW_SELFVALUE = 58, KW_SIGNED = 59, KW_STATIC = 60, KW_SUPER = 61, KW_SWITCH = 62, 
-    KW_TYPEOF = 63, KW_UNION = 64, KW_UNSAFE = 65, KW_UNSIGNED = 66, KW_UNSIZED = 67, 
-    KW_VIRTUAL = 68, KW_VOID = 69, KW_VOLATILE = 70, KW_BOOL = 71, KW_CHAR = 72, 
-    KW_STRING = 73, KW_F32 = 74, KW_F64 = 75, KW_U8 = 76, KW_U16 = 77, KW_U32 = 78, 
-    KW_U64 = 79, KW_I8 = 80, KW_I16 = 81, KW_I32 = 82, KW_I64 = 83, NON_KEYWORD_IDENTIFIER = 84, 
-    LINE_COMMENT = 85, BLOCK_COMMENT = 86, INNER_LINE_DOC = 87, INNER_BLOCK_DOC = 88, 
-    OUTER_LINE_DOC = 89, OUTER_BLOCK_DOC = 90, BLOCK_COMMENT_OR_DOC = 91, 
-    SHEBANG = 92, WS = 93, CHAR_LITERAL = 94, STRING_LITERAL = 95, RAW_STRING_LITERAL = 96, 
-    DEC_DIGITS = 97, DEC_DIGITS_UNDERSCORE = 98, HEX_DIGITS = 99, HEX_DIGITS_UNDERSCORE = 100, 
-    OCT_DIGITS = 101, OCT_DIGITS_UNDERSCORE = 102, BIN_DIGITS = 103, BIN_DIGITS_UNDERSCORE = 104, 
-    FLOAT_LITERAL = 105, OCT_DIGIT = 106, DEC_DIGIT = 107, HEX_DIGIT = 108, 
-    HEX_PREFIX = 109, OCT_PREFIX = 110, BIN_PREFIX = 111, RAW_ESCAPE = 112, 
-    PLUS = 113, MINUS = 114, STAR = 115, SLASH = 116, PERCENT = 117, CARET = 118, 
-    NOT = 119, AND = 120, OR = 121, ANDAND = 122, OROR = 123, PLUSEQ = 124, 
-    MINUSEQ = 125, STAREQ = 126, SLASHEQ = 127, PERCENTEQ = 128, CARETEQ = 129, 
-    ANDEQ = 130, OREQ = 131, SHLEQ = 132, SHREQ = 133, EQ = 134, EQEQ = 135, 
-    NE = 136, GT = 137, LT = 138, GE = 139, LE = 140, AT = 141, UNDERSCORE = 142, 
-    DOT = 143, DOTDOT = 144, DOTDOTDOT = 145, COMMA = 146, SEMI = 147, COLON = 148, 
-    PATHSEP = 149, RARROW = 150, FATARROW = 151, POUND = 152, DOLLAR = 153, 
-    QUESTION = 154, LBRACE = 155, RBRACE = 156, LBRACK = 157, RBRACK = 158, 
-    LPAREN = 159, RPAREN = 160
+    KW_STRINGTEMPLATE = 17, KW_AND = 18, KW_IN = 19, KW_LET = 20, KW_NOT = 21, 
+    KW_OR = 22, KW_SIZEOF = 23, KW_THIS = 24, KW_TRAIT = 25, KW_WHERE = 26, 
+    KW_XOR = 27, KW_BREAK = 28, KW_CONTINUE = 29, KW_DEFAULT = 30, KW_DO = 31, 
+    KW_ELSE = 32, KW_FOR = 33, KW_GOTO = 34, KW_IF = 35, KW_LOOP = 36, KW_MATCH = 37, 
+    KW_MOVE = 38, KW_RETURN = 39, KW_TRY = 40, KW_WHILE = 41, KW_YIELD = 42, 
+    KW_ABSTRACT = 43, KW_AUTO = 44, KW_CONST = 45, KW_DOUBLE = 46, KW_EXTERN = 47, 
+    KW_FINAL = 48, KW_FLOAT = 49, KW_INT = 50, KW_LONG = 51, KW_MACRO = 52, 
+    KW_MUT = 53, KW_OVERRIDE = 54, KW_PRIVATE = 55, KW_PUB = 56, KW_REF = 57, 
+    KW_SELFTYPE = 58, KW_SELFVALUE = 59, KW_SIGNED = 60, KW_STATIC = 61, 
+    KW_SUPER = 62, KW_SWITCH = 63, KW_TYPEOF = 64, KW_UNION = 65, KW_UNSAFE = 66, 
+    KW_UNSIGNED = 67, KW_UNSIZED = 68, KW_VIRTUAL = 69, KW_VOID = 70, KW_VOLATILE = 71, 
+    KW_BOOL = 72, KW_CHAR = 73, KW_STRING = 74, KW_F32 = 75, KW_F64 = 76, 
+    KW_U8 = 77, KW_U16 = 78, KW_U32 = 79, KW_U64 = 80, KW_I8 = 81, KW_I16 = 82, 
+    KW_I32 = 83, KW_I64 = 84, NON_KEYWORD_IDENTIFIER = 85, LINE_COMMENT = 86, 
+    BLOCK_COMMENT = 87, INNER_LINE_DOC = 88, INNER_BLOCK_DOC = 89, OUTER_LINE_DOC = 90, 
+    OUTER_BLOCK_DOC = 91, BLOCK_COMMENT_OR_DOC = 92, SHEBANG = 93, WS = 94, 
+    CHAR_LITERAL = 95, STRING_LITERAL = 96, RAW_STRING_LITERAL = 97, DEC_DIGITS = 98, 
+    DEC_DIGITS_UNDERSCORE = 99, HEX_DIGITS = 100, HEX_DIGITS_UNDERSCORE = 101, 
+    OCT_DIGITS = 102, OCT_DIGITS_UNDERSCORE = 103, BIN_DIGITS = 104, BIN_DIGITS_UNDERSCORE = 105, 
+    FLOAT_LITERAL = 106, OCT_DIGIT = 107, DEC_DIGIT = 108, HEX_DIGIT = 109, 
+    HEX_PREFIX = 110, OCT_PREFIX = 111, BIN_PREFIX = 112, RAW_ESCAPE = 113, 
+    PLUS = 114, MINUS = 115, STAR = 116, SLASH = 117, PERCENT = 118, CARET = 119, 
+    NOT = 120, AND = 121, OR = 122, ANDAND = 123, OROR = 124, PLUSEQ = 125, 
+    MINUSEQ = 126, STAREQ = 127, SLASHEQ = 128, PERCENTEQ = 129, CARETEQ = 130, 
+    ANDEQ = 131, OREQ = 132, SHLEQ = 133, SHREQ = 134, EQ = 135, EQEQ = 136, 
+    NE = 137, GT = 138, LT = 139, GE = 140, LE = 141, AT = 142, UNDERSCORE = 143, 
+    DOT = 144, DOTDOT = 145, DOTDOTDOT = 146, COMMA = 147, SEMI = 148, COLON = 149, 
+    PATHSEP = 150, RARROW = 151, FATARROW = 152, POUND = 153, DOLLAR = 154, 
+    QUESTION = 155, LBRACE = 156, RBRACE = 157, LBRACK = 158, RBRACK = 159, 
+    LPAREN = 160, RPAREN = 161
   };
 
   enum {
@@ -55,17 +56,17 @@ public:
     RuleMapDeclaration = 6, RuleMaybeValuedSymbol = 7, RuleUnvaluedSymbol = 8, 
     RuleInlineStruct = 9, RuleInlineVariant = 10, RuleInlineVector = 11, 
     RuleInlineMap = 12, RuleMaybeValuedType = 13, RuleValuedType = 14, RuleUnvaluedType = 15, 
-    RuleSymbolReference = 16, RulePrimitiveType = 17, RuleValuedPrimitiveType = 18, 
-    RuleValuedBoolFragment = 19, RuleValuedCharFragment = 20, RuleValuedStringFragment = 21, 
-    RuleValuedF32Fragment = 22, RuleValuedF64Fragment = 23, RuleValuedU8Fragment = 24, 
-    RuleValuedU16Fragment = 25, RuleValuedU32Fragment = 26, RuleValuedU64Fragment = 27, 
-    RuleValuedI8Fragment = 28, RuleValuedI16Fragment = 29, RuleValuedI32Fragment = 30, 
-    RuleValuedI64Fragment = 31, RuleTypedefVersionDeclaration = 32, RuleModuleDeclaration = 33, 
-    RuleUseDeclaration = 34, RuleUseTree = 35, RuleSimplePath = 36, RuleBoolLiteral = 37, 
-    RuleCharLiteral = 38, RuleF32Literal = 39, RuleF64Literal = 40, RuleU8Literal = 41, 
-    RuleU16Literal = 42, RuleU32Literal = 43, RuleU64Literal = 44, RuleI8Literal = 45, 
-    RuleI16Literal = 46, RuleI32Literal = 47, RuleI64Literal = 48, RuleStringLiteral = 49, 
-    RuleIdentifier = 50, RuleKeyword = 51
+    RuleSymbolReference = 16, RulePrimitiveType = 17, RuleValuedStringTemplateType = 18, 
+    RuleValuedPrimitiveType = 19, RuleValuedBoolFragment = 20, RuleValuedCharFragment = 21, 
+    RuleValuedStringFragment = 22, RuleValuedF32Fragment = 23, RuleValuedF64Fragment = 24, 
+    RuleValuedU8Fragment = 25, RuleValuedU16Fragment = 26, RuleValuedU32Fragment = 27, 
+    RuleValuedU64Fragment = 28, RuleValuedI8Fragment = 29, RuleValuedI16Fragment = 30, 
+    RuleValuedI32Fragment = 31, RuleValuedI64Fragment = 32, RuleTypedefVersionDeclaration = 33, 
+    RuleModuleDeclaration = 34, RuleUseDeclaration = 35, RuleUseTree = 36, 
+    RuleSimplePath = 37, RuleBoolLiteral = 38, RuleCharLiteral = 39, RuleF32Literal = 40, 
+    RuleF64Literal = 41, RuleU8Literal = 42, RuleU16Literal = 43, RuleU32Literal = 44, 
+    RuleU64Literal = 45, RuleI8Literal = 46, RuleI16Literal = 47, RuleI32Literal = 48, 
+    RuleI64Literal = 49, RuleStringLiteral = 50, RuleIdentifier = 51, RuleKeyword = 52
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -96,6 +97,7 @@ public:
   class UnvaluedTypeContext;
   class SymbolReferenceContext;
   class PrimitiveTypeContext;
+  class ValuedStringTemplateTypeContext;
   class ValuedPrimitiveTypeContext;
   class ValuedBoolFragmentContext;
   class ValuedCharFragmentContext;
@@ -537,9 +539,11 @@ public:
   public:
     std::optional<td::SymbolTable::Value> maybe_val;
     TypedefParser::ValuedPrimitiveTypeContext *valuedPrimitiveTypeContext = nullptr;;
+    TypedefParser::ValuedStringTemplateTypeContext *valuedStringTemplateTypeContext = nullptr;;
     ValuedTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ValuedPrimitiveTypeContext *valuedPrimitiveType();
+    ValuedStringTemplateTypeContext *valuedStringTemplateType();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -613,6 +617,32 @@ public:
   };
 
   PrimitiveTypeContext* primitiveType();
+
+  class  ValuedStringTemplateTypeContext : public antlr4::ParserRuleContext {
+  public:
+    std::optional<td::SymbolTable::Value> maybe_val;
+    TypedefParser::UnvaluedTypeContext *unvaluedTypeContext = nullptr;;
+    TypedefParser::StringLiteralContext *stringLiteralContext = nullptr;;
+    ValuedStringTemplateTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *COLON();
+    antlr4::tree::TerminalNode *KW_STRINGTEMPLATE();
+    antlr4::tree::TerminalNode *LT();
+    UnvaluedTypeContext *unvaluedType();
+    antlr4::tree::TerminalNode *GT();
+    antlr4::tree::TerminalNode *EQ();
+    StringLiteralContext *stringLiteral();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ValuedStringTemplateTypeContext* valuedStringTemplateType();
 
   class  ValuedPrimitiveTypeContext : public antlr4::ParserRuleContext {
   public:

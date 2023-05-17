@@ -33,7 +33,7 @@ int main(int argc, const char** argv) {
     return 1;
   }
 
-  auto parser = td::Parse(inputStream);
+  auto parser = td::ParseTypedef(inputStream);
   if (!parser) {
     fmt::print("Unknown error.\n");
     return 1;

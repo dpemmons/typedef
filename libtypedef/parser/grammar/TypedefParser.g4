@@ -224,7 +224,8 @@ maybeValuedType
 
 valuedType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
-	valuedPrimitiveType {$maybe_val = $valuedPrimitiveType.ctx->maybe_val;};
+	valuedPrimitiveType {$maybe_val = $valuedPrimitiveType.ctx->maybe_val;}
+	| valuedStringTemplateType {$maybe_val = $valuedStringTemplateType.ctx->maybe_val;};
 
 unvaluedType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
@@ -252,6 +253,13 @@ primitiveType
 	| KW_I16 { $maybe_val = std::optional<int16_t>(); }
 	| KW_I32 { $maybe_val = std::optional<int32_t>(); }
 	| KW_I64 { $maybe_val = std::optional<int64_t>(); };
+
+valuedStringTemplateType
+	returns[std::optional<td::SymbolTable::Value> maybe_val]:
+	COLON WS* KW_STRINGTEMPLATE WS* LT WS* unvaluedType WS* GT WS* EQ WS* stringLiteral {
+		$maybe_val = std::make_shared<td::StrTemplate>(
+		  *$unvaluedType.ctx->maybe_val, $stringLiteral.ctx->maybe_val);
+	};
 
 // Matches " : bool = literal"
 valuedPrimitiveType

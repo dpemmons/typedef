@@ -24,6 +24,7 @@ class MutableStructB;
 class MutableStructC;
 class MutableStructD;
 class MutableStructE;
+class MutableTemplateExample;
 class MutableVariantA;
 class MutableVariantB;
 class MutableVariantC;
@@ -522,6 +523,52 @@ class MutableStructE {
     std::unique_ptr<MutableNestedVector> nestedVectorField_;
 
 };  // class MutableStructE
+
+class MutableTemplateExample {
+  public:
+    MutableTemplateExample() {};
+    ~MutableTemplateExample() {};
+
+    // Nested classes.
+    
+    class MutableTemplateData {
+      public:
+        MutableTemplateData() {};
+        ~MutableTemplateData() {};
+    
+        // Nested classes.
+    
+    
+    
+    
+    
+        // Accessors.
+    
+        std::string name() const { return name_; }
+        void name(std::string _val) { name_ = _val; }
+        
+    
+        friend std::ostream& operator<<(std::ostream& os, const MutableTemplateData& obj);
+    
+      private:
+        // Members.
+        std::string name_;
+    
+    };  // class MutableTemplateData
+
+
+
+
+
+    // Accessors.
+
+
+    friend std::ostream& operator<<(std::ostream& os, const MutableTemplateExample& obj);
+
+  private:
+    // Members.
+
+};  // class MutableTemplateExample
 
 
 // Variants
