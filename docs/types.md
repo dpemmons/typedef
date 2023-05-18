@@ -19,7 +19,8 @@
   - [Template String](#template-string)
 - [Binary Data Types](#binary-data-types)
 - [Composite Types](#composite-types)
-  - [Structs](#structs)
+  - [Message](#message)
+  - [Struct](#struct)
   - [Variant](#variant)
   - [Vector](#vector)
   - [Array](#array)
@@ -120,9 +121,15 @@ Template Strings allow Typedef to be used as a strongly-typed text templating en
 
 ## Composite Types
 
-### Structs
+### Message
 
-Structs in Typedef are a basic collection type. They can hold any other type in *fields*, and are analogous to [compound data types](https://rosettacode.org/wiki/Compound_data_type) in many other languages. Their storage format is efficient but not forwards or backwards compatible with previous versions of the same struct. Eg. structs written with an 
+*(Not yet implemented)*
+
+### Struct
+
+Structs in Typedef are a basic collection type. They can hold any other type in *fields*, and are analogous to [compound data types](https://rosettacode.org/wiki/Compound_data_type) in many other languages. Their storage format is efficient but not forwards or backwards compatibile, fields may not be added or deprecated.
+
+Structs are best to be used for simple objects where you are confident no changes will be made, or for which binary compatibility is not important, ie situations in which serialized data is not stored or transferred over the wire between process built with different versions of the struct.
 
 The following example defines a struct containing three fields, of type `bool`, `char`, and `str`.
 
