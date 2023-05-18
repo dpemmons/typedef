@@ -1,5 +1,15 @@
 # Template Strings
 
+- [Overview](#overview)
+- [Synopsis](#synopsis)
+- [Overview](#overview-1)
+  - [Simple Replacement](#simple-replacement)
+  - [Control Flow](#control-flow)
+    - [If / Else](#if--else)
+    - [Loops](#loops)
+  - [Calls](#calls)
+  - [Recursion](#recursion)
+
 ## Overview
 
 Typedef implements a string template engine that includes replacement, control flow (if/loops), calls and recursion.
