@@ -1,5 +1,5 @@
 
-// Generated from ./libtypedef/parser/grammar/StringTemplate.g4 by ANTLR 4.7.2
+// Generated from ./libtypedef/parser/grammar/TemplateString.g4 by ANTLR 4.7.2
 
 #pragma once
 
@@ -9,7 +9,7 @@
 
 
 
-class  StringTemplateParser : public antlr4::Parser {
+class  TemplateStringParser : public antlr4::Parser {
 public:
   enum {
     T__0 = 1, T__1 = 2, NON_KEYWORD_IDENTIFIER = 3, RAW_ESCAPE = 4, COMMENT = 5, 
@@ -21,8 +21,8 @@ public:
     RuleIdentifier = 4
   };
 
-  StringTemplateParser(antlr4::TokenStream *input);
-  ~StringTemplateParser();
+  TemplateStringParser(antlr4::TokenStream *input);
+  ~TemplateStringParser();
 
   virtual std::string getGrammarFileName() const override;
   virtual const antlr4::atn::ATN& getATN() const override { return _atn; };

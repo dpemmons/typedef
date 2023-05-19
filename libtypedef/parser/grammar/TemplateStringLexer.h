@@ -1,5 +1,5 @@
 
-// Generated from ./libtypedef/parser/grammar/StringTemplate.g4 by ANTLR 4.7.2
+// Generated from ./libtypedef/parser/grammar/TemplateString.g4 by ANTLR 4.7.2
 
 #pragma once
 
@@ -9,15 +9,15 @@
 
 
 
-class  StringTemplateLexer : public antlr4::Lexer {
+class  TemplateStringLexer : public antlr4::Lexer {
 public:
   enum {
     T__0 = 1, T__1 = 2, NON_KEYWORD_IDENTIFIER = 3, RAW_ESCAPE = 4, COMMENT = 5, 
     TAG = 6, TEXT = 7
   };
 
-  StringTemplateLexer(antlr4::CharStream *input);
-  ~StringTemplateLexer();
+  TemplateStringLexer(antlr4::CharStream *input);
+  ~TemplateStringLexer();
 
   virtual std::string getGrammarFileName() const override;
   virtual const std::vector<std::string>& getRuleNames() const override;

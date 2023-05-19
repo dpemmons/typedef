@@ -2522,8 +2522,8 @@ TypedefParser::ValuedPrimitiveTypeContext* TypedefParser::ValuedTypeContext::val
   return getRuleContext<TypedefParser::ValuedPrimitiveTypeContext>(0);
 }
 
-TypedefParser::ValuedStringTemplateTypeContext* TypedefParser::ValuedTypeContext::valuedStringTemplateType() {
-  return getRuleContext<TypedefParser::ValuedStringTemplateTypeContext>(0);
+TypedefParser::ValuedTemplateStringTypeContext* TypedefParser::ValuedTypeContext::valuedTemplateStringType() {
+  return getRuleContext<TypedefParser::ValuedTemplateStringTypeContext>(0);
 }
 
 
@@ -2573,8 +2573,8 @@ TypedefParser::ValuedTypeContext* TypedefParser::valuedType() {
     case 2: {
       enterOuterAlt(_localctx, 2);
       setState(698);
-      dynamic_cast<ValuedTypeContext *>(_localctx)->valuedStringTemplateTypeContext = valuedStringTemplateType();
-      dynamic_cast<ValuedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<ValuedTypeContext *>(_localctx)->valuedStringTemplateTypeContext->maybe_val;
+      dynamic_cast<ValuedTypeContext *>(_localctx)->valuedTemplateStringTypeContext = valuedTemplateStringType();
+      dynamic_cast<ValuedTypeContext *>(_localctx)->maybe_val =  dynamic_cast<ValuedTypeContext *>(_localctx)->valuedTemplateStringTypeContext->maybe_val;
       break;
     }
 
@@ -2952,76 +2952,76 @@ TypedefParser::PrimitiveTypeContext* TypedefParser::primitiveType() {
   return _localctx;
 }
 
-//----------------- ValuedStringTemplateTypeContext ------------------------------------------------------------------
+//----------------- ValuedTemplateStringTypeContext ------------------------------------------------------------------
 
-TypedefParser::ValuedStringTemplateTypeContext::ValuedStringTemplateTypeContext(ParserRuleContext *parent, size_t invokingState)
+TypedefParser::ValuedTemplateStringTypeContext::ValuedTemplateStringTypeContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TypedefParser::ValuedStringTemplateTypeContext::COLON() {
+tree::TerminalNode* TypedefParser::ValuedTemplateStringTypeContext::COLON() {
   return getToken(TypedefParser::COLON, 0);
 }
 
-tree::TerminalNode* TypedefParser::ValuedStringTemplateTypeContext::KW_STRINGTEMPLATE() {
-  return getToken(TypedefParser::KW_STRINGTEMPLATE, 0);
+tree::TerminalNode* TypedefParser::ValuedTemplateStringTypeContext::KW_TEMPLATESTRING() {
+  return getToken(TypedefParser::KW_TEMPLATESTRING, 0);
 }
 
-tree::TerminalNode* TypedefParser::ValuedStringTemplateTypeContext::LT() {
+tree::TerminalNode* TypedefParser::ValuedTemplateStringTypeContext::LT() {
   return getToken(TypedefParser::LT, 0);
 }
 
-TypedefParser::UnvaluedTypeContext* TypedefParser::ValuedStringTemplateTypeContext::unvaluedType() {
+TypedefParser::UnvaluedTypeContext* TypedefParser::ValuedTemplateStringTypeContext::unvaluedType() {
   return getRuleContext<TypedefParser::UnvaluedTypeContext>(0);
 }
 
-tree::TerminalNode* TypedefParser::ValuedStringTemplateTypeContext::GT() {
+tree::TerminalNode* TypedefParser::ValuedTemplateStringTypeContext::GT() {
   return getToken(TypedefParser::GT, 0);
 }
 
-tree::TerminalNode* TypedefParser::ValuedStringTemplateTypeContext::EQ() {
+tree::TerminalNode* TypedefParser::ValuedTemplateStringTypeContext::EQ() {
   return getToken(TypedefParser::EQ, 0);
 }
 
-TypedefParser::StringLiteralContext* TypedefParser::ValuedStringTemplateTypeContext::stringLiteral() {
+TypedefParser::StringLiteralContext* TypedefParser::ValuedTemplateStringTypeContext::stringLiteral() {
   return getRuleContext<TypedefParser::StringLiteralContext>(0);
 }
 
-std::vector<tree::TerminalNode *> TypedefParser::ValuedStringTemplateTypeContext::WS() {
+std::vector<tree::TerminalNode *> TypedefParser::ValuedTemplateStringTypeContext::WS() {
   return getTokens(TypedefParser::WS);
 }
 
-tree::TerminalNode* TypedefParser::ValuedStringTemplateTypeContext::WS(size_t i) {
+tree::TerminalNode* TypedefParser::ValuedTemplateStringTypeContext::WS(size_t i) {
   return getToken(TypedefParser::WS, i);
 }
 
 
-size_t TypedefParser::ValuedStringTemplateTypeContext::getRuleIndex() const {
-  return TypedefParser::RuleValuedStringTemplateType;
+size_t TypedefParser::ValuedTemplateStringTypeContext::getRuleIndex() const {
+  return TypedefParser::RuleValuedTemplateStringType;
 }
 
-void TypedefParser::ValuedStringTemplateTypeContext::enterRule(tree::ParseTreeListener *listener) {
+void TypedefParser::ValuedTemplateStringTypeContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterValuedStringTemplateType(this);
+    parserListener->enterValuedTemplateStringType(this);
 }
 
-void TypedefParser::ValuedStringTemplateTypeContext::exitRule(tree::ParseTreeListener *listener) {
+void TypedefParser::ValuedTemplateStringTypeContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<TypedefParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitValuedStringTemplateType(this);
+    parserListener->exitValuedTemplateStringType(this);
 }
 
 
-antlrcpp::Any TypedefParser::ValuedStringTemplateTypeContext::accept(tree::ParseTreeVisitor *visitor) {
+antlrcpp::Any TypedefParser::ValuedTemplateStringTypeContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<TypedefParserVisitor*>(visitor))
-    return parserVisitor->visitValuedStringTemplateType(this);
+    return parserVisitor->visitValuedTemplateStringType(this);
   else
     return visitor->visitChildren(this);
 }
 
-TypedefParser::ValuedStringTemplateTypeContext* TypedefParser::valuedStringTemplateType() {
-  ValuedStringTemplateTypeContext *_localctx = _tracker.createInstance<ValuedStringTemplateTypeContext>(_ctx, getState());
-  enterRule(_localctx, 36, TypedefParser::RuleValuedStringTemplateType);
+TypedefParser::ValuedTemplateStringTypeContext* TypedefParser::valuedTemplateStringType() {
+  ValuedTemplateStringTypeContext *_localctx = _tracker.createInstance<ValuedTemplateStringTypeContext>(_ctx, getState());
+  enterRule(_localctx, 36, TypedefParser::RuleValuedTemplateStringType);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -3042,7 +3042,7 @@ TypedefParser::ValuedStringTemplateTypeContext* TypedefParser::valuedStringTempl
       _la = _input->LA(1);
     }
     setState(749);
-    match(TypedefParser::KW_STRINGTEMPLATE);
+    match(TypedefParser::KW_TEMPLATESTRING);
     setState(753);
     _errHandler->sync(this);
     _la = _input->LA(1);
@@ -3066,7 +3066,7 @@ TypedefParser::ValuedStringTemplateTypeContext* TypedefParser::valuedStringTempl
       _la = _input->LA(1);
     }
     setState(763);
-    dynamic_cast<ValuedStringTemplateTypeContext *>(_localctx)->unvaluedTypeContext = unvaluedType();
+    dynamic_cast<ValuedTemplateStringTypeContext *>(_localctx)->unvaluedTypeContext = unvaluedType();
     setState(767);
     _errHandler->sync(this);
     _la = _input->LA(1);
@@ -3102,10 +3102,10 @@ TypedefParser::ValuedStringTemplateTypeContext* TypedefParser::valuedStringTempl
       _la = _input->LA(1);
     }
     setState(784);
-    dynamic_cast<ValuedStringTemplateTypeContext *>(_localctx)->stringLiteralContext = stringLiteral();
+    dynamic_cast<ValuedTemplateStringTypeContext *>(_localctx)->stringLiteralContext = stringLiteral();
 
-    		dynamic_cast<ValuedStringTemplateTypeContext *>(_localctx)->maybe_val =  std::make_shared<td::StrTemplate>(
-    		  *dynamic_cast<ValuedStringTemplateTypeContext *>(_localctx)->unvaluedTypeContext->maybe_val, dynamic_cast<ValuedStringTemplateTypeContext *>(_localctx)->stringLiteralContext->maybe_val);
+    		dynamic_cast<ValuedTemplateStringTypeContext *>(_localctx)->maybe_val =  std::make_shared<td::TmplStr>(
+    		  *dynamic_cast<ValuedTemplateStringTypeContext *>(_localctx)->unvaluedTypeContext->maybe_val, dynamic_cast<ValuedTemplateStringTypeContext *>(_localctx)->stringLiteralContext->maybe_val);
     	
    
   }
@@ -8157,7 +8157,7 @@ std::vector<std::string> TypedefParser::_ruleNames = {
   "structDeclaration", "variantDeclaration", "vectorDeclaration", "mapDeclaration", 
   "maybeValuedSymbol", "unvaluedSymbol", "inlineStruct", "inlineVariant", 
   "inlineVector", "inlineMap", "maybeValuedType", "valuedType", "unvaluedType", 
-  "symbolReference", "primitiveType", "valuedStringTemplateType", "valuedPrimitiveType", 
+  "symbolReference", "primitiveType", "valuedTemplateStringType", "valuedPrimitiveType", 
   "valuedBoolFragment", "valuedCharFragment", "valuedStringFragment", "valuedF32Fragment", 
   "valuedF64Fragment", "valuedU8Fragment", "valuedU16Fragment", "valuedU32Fragment", 
   "valuedU64Fragment", "valuedI8Fragment", "valuedI16Fragment", "valuedI32Fragment", 
@@ -8171,7 +8171,7 @@ std::vector<std::string> TypedefParser::_ruleNames = {
 std::vector<std::string> TypedefParser::_literalNames = {
   "", "'array'", "'as'", "'enum'", "'false'", "'fn'", "'impl'", "'message'", 
   "'module'", "'struct'", "'true'", "'type'", "'typedef'", "'use'", "'variant'", 
-  "'vector'", "'map'", "'str_template'", "'and'", "'in'", "'let'", "'not'", 
+  "'vector'", "'map'", "'tmpl_str'", "'and'", "'in'", "'let'", "'not'", 
   "'or'", "'sizeof'", "'this'", "'trait'", "'where'", "'xor'", "'break'", 
   "'continue'", "'default'", "'do'", "'else'", "'for'", "'goto'", "'if'", 
   "'loop'", "'match'", "'move'", "'return'", "'try'", "'while'", "'yield'", 
@@ -8193,7 +8193,7 @@ std::vector<std::string> TypedefParser::_literalNames = {
 std::vector<std::string> TypedefParser::_symbolicNames = {
   "", "KW_ARRAY", "KW_AS", "KW_ENUM", "KW_FALSE", "KW_FN", "KW_IMPL", "KW_MESSAGE", 
   "KW_MODULE", "KW_STRUCT", "KW_TRUE", "KW_TYPE", "KW_TYPEDEF", "KW_USE", 
-  "KW_VARIANT", "KW_VECTOR", "KW_MAP", "KW_STRINGTEMPLATE", "KW_AND", "KW_IN", 
+  "KW_VARIANT", "KW_VECTOR", "KW_MAP", "KW_TEMPLATESTRING", "KW_AND", "KW_IN", 
   "KW_LET", "KW_NOT", "KW_OR", "KW_SIZEOF", "KW_THIS", "KW_TRAIT", "KW_WHERE", 
   "KW_XOR", "KW_BREAK", "KW_CONTINUE", "KW_DEFAULT", "KW_DO", "KW_ELSE", 
   "KW_FOR", "KW_GOTO", "KW_IF", "KW_LOOP", "KW_MATCH", "KW_MOVE", "KW_RETURN", 

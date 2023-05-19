@@ -95,17 +95,17 @@ TYPEDEF_PARSER_G4 := ./libtypedef/parser/grammar/TypedefParser.g4
 TYPEDEF_LEXER_CPP := ./libtypedef/parser/grammar/TypedefLexer.cpp
 TYPEDEF_LEXER_G4 := ./libtypedef/parser/grammar/TypedefLexer.g4
 
-STRINGTEMPLATE_CPP := ./libtypedef/parser/grammar/StringTemplate.cpp
-STRINGTEMPLATE_G4 := ./libtypedef/parser/grammar/StringTemplate.g4
+TEMPLATESTRING_CPP := ./libtypedef/parser/grammar/TemplateString.cpp
+TEMPLATESTRING_G4 := ./libtypedef/parser/grammar/TemplateString.g4
 
 $(TYPEDEF_PARSER_CPP): $(TYPEDEF_LEXER_CPP) $(TYPEDEF_PARSER_G4)
 	/usr/bin/antlr4 -Dlanguage=Cpp -visitor $(TYPEDEF_PARSER_G4)
 $(TYPEDEF_LEXER_CPP): $(TYPEDEF_LEXER_G4)
 	/usr/bin/antlr4 -Dlanguage=Cpp $(TYPEDEF_LEXER_G4)
-$(STRINGTEMPLATE_CPP): $(STRINGTEMPLATE_G4)
-	/usr/bin/antlr4 -Dlanguage=Cpp -visitor $(STRINGTEMPLATE_G4)
+$(TEMPLATESTRING_CPP): $(TEMPLATESTRING_G4)
+	/usr/bin/antlr4 -Dlanguage=Cpp -visitor $(TEMPLATESTRING_G4)
 
-grammar: $(TYPEDEF_LEXER_CPP) $(TYPEDEF_PARSER_CPP) $(STRINGTEMPLATE_CPP)
+grammar: $(TYPEDEF_LEXER_CPP) $(TYPEDEF_PARSER_CPP) $(TEMPLATESTRING_CPP)
 #
 ###############################################################################
 

@@ -71,8 +71,8 @@ public:
   virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
   virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
 
-  virtual void enterValuedStringTemplateType(TypedefParser::ValuedStringTemplateTypeContext *ctx) = 0;
-  virtual void exitValuedStringTemplateType(TypedefParser::ValuedStringTemplateTypeContext *ctx) = 0;
+  virtual void enterValuedTemplateStringType(TypedefParser::ValuedTemplateStringTypeContext *ctx) = 0;
+  virtual void exitValuedTemplateStringType(TypedefParser::ValuedTemplateStringTypeContext *ctx) = 0;
 
   virtual void enterValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext *ctx) = 0;
   virtual void exitValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext *ctx) = 0;

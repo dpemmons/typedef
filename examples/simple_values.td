@@ -162,5 +162,5 @@ struct TemplateExample {
     name: str;
   };
 
-  tmpl: str_template<TemplateData> = "Hello <% name %>!";
+  tmpl: tmpl_str<TemplateData> = "Hello <% name %>!";
 };

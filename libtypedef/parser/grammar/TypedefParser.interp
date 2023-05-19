@@ -16,7 +16,7 @@ null
 'variant'
 'vector'
 'map'
-'str_template'
+'tmpl_str'
 'and'
 'in'
 'let'
@@ -180,7 +180,7 @@ KW_USE
 KW_VARIANT
 KW_VECTOR
 KW_MAP
-KW_STRINGTEMPLATE
+KW_TEMPLATESTRING
 KW_AND
 KW_IN
 KW_LET
@@ -345,7 +345,7 @@ valuedType
 unvaluedType
 symbolReference
 primitiveType
-valuedStringTemplateType
+valuedTemplateStringType
 valuedPrimitiveType
 valuedBoolFragment
 valuedCharFragment

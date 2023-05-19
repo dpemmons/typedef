@@ -225,7 +225,7 @@ maybeValuedType
 valuedType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
 	valuedPrimitiveType {$maybe_val = $valuedPrimitiveType.ctx->maybe_val;}
-	| valuedStringTemplateType {$maybe_val = $valuedStringTemplateType.ctx->maybe_val;};
+	| valuedTemplateStringType {$maybe_val = $valuedTemplateStringType.ctx->maybe_val;};
 
 unvaluedType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
@@ -254,10 +254,10 @@ primitiveType
 	| KW_I32 { $maybe_val = std::optional<int32_t>(); }
 	| KW_I64 { $maybe_val = std::optional<int64_t>(); };
 
-valuedStringTemplateType
+valuedTemplateStringType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]:
-	COLON WS* KW_STRINGTEMPLATE WS* LT WS* unvaluedType WS* GT WS* EQ WS* stringLiteral {
-		$maybe_val = std::make_shared<td::StrTemplate>(
+	COLON WS* KW_TEMPLATESTRING WS* LT WS* unvaluedType WS* GT WS* EQ WS* stringLiteral {
+		$maybe_val = std::make_shared<td::TmplStr>(
 		  *$unvaluedType.ctx->maybe_val, $stringLiteral.ctx->maybe_val);
 	};
 

@@ -18,7 +18,7 @@ public:
     KW_ARRAY = 1, KW_AS = 2, KW_ENUM = 3, KW_FALSE = 4, KW_FN = 5, KW_IMPL = 6, 
     KW_MESSAGE = 7, KW_MODULE = 8, KW_STRUCT = 9, KW_TRUE = 10, KW_TYPE = 11, 
     KW_TYPEDEF = 12, KW_USE = 13, KW_VARIANT = 14, KW_VECTOR = 15, KW_MAP = 16, 
-    KW_STRINGTEMPLATE = 17, KW_AND = 18, KW_IN = 19, KW_LET = 20, KW_NOT = 21, 
+    KW_TEMPLATESTRING = 17, KW_AND = 18, KW_IN = 19, KW_LET = 20, KW_NOT = 21, 
     KW_OR = 22, KW_SIZEOF = 23, KW_THIS = 24, KW_TRAIT = 25, KW_WHERE = 26, 
     KW_XOR = 27, KW_BREAK = 28, KW_CONTINUE = 29, KW_DEFAULT = 30, KW_DO = 31, 
     KW_ELSE = 32, KW_FOR = 33, KW_GOTO = 34, KW_IF = 35, KW_LOOP = 36, KW_MATCH = 37, 
@@ -56,7 +56,7 @@ public:
     RuleMapDeclaration = 6, RuleMaybeValuedSymbol = 7, RuleUnvaluedSymbol = 8, 
     RuleInlineStruct = 9, RuleInlineVariant = 10, RuleInlineVector = 11, 
     RuleInlineMap = 12, RuleMaybeValuedType = 13, RuleValuedType = 14, RuleUnvaluedType = 15, 
-    RuleSymbolReference = 16, RulePrimitiveType = 17, RuleValuedStringTemplateType = 18, 
+    RuleSymbolReference = 16, RulePrimitiveType = 17, RuleValuedTemplateStringType = 18, 
     RuleValuedPrimitiveType = 19, RuleValuedBoolFragment = 20, RuleValuedCharFragment = 21, 
     RuleValuedStringFragment = 22, RuleValuedF32Fragment = 23, RuleValuedF64Fragment = 24, 
     RuleValuedU8Fragment = 25, RuleValuedU16Fragment = 26, RuleValuedU32Fragment = 27, 
@@ -97,7 +97,7 @@ public:
   class UnvaluedTypeContext;
   class SymbolReferenceContext;
   class PrimitiveTypeContext;
-  class ValuedStringTemplateTypeContext;
+  class ValuedTemplateStringTypeContext;
   class ValuedPrimitiveTypeContext;
   class ValuedBoolFragmentContext;
   class ValuedCharFragmentContext;
@@ -539,11 +539,11 @@ public:
   public:
     std::optional<td::SymbolTable::Value> maybe_val;
     TypedefParser::ValuedPrimitiveTypeContext *valuedPrimitiveTypeContext = nullptr;;
-    TypedefParser::ValuedStringTemplateTypeContext *valuedStringTemplateTypeContext = nullptr;;
+    TypedefParser::ValuedTemplateStringTypeContext *valuedTemplateStringTypeContext = nullptr;;
     ValuedTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ValuedPrimitiveTypeContext *valuedPrimitiveType();
-    ValuedStringTemplateTypeContext *valuedStringTemplateType();
+    ValuedTemplateStringTypeContext *valuedTemplateStringType();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -618,15 +618,15 @@ public:
 
   PrimitiveTypeContext* primitiveType();
 
-  class  ValuedStringTemplateTypeContext : public antlr4::ParserRuleContext {
+  class  ValuedTemplateStringTypeContext : public antlr4::ParserRuleContext {
   public:
     std::optional<td::SymbolTable::Value> maybe_val;
     TypedefParser::UnvaluedTypeContext *unvaluedTypeContext = nullptr;;
     TypedefParser::StringLiteralContext *stringLiteralContext = nullptr;;
-    ValuedStringTemplateTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ValuedTemplateStringTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
-    antlr4::tree::TerminalNode *KW_STRINGTEMPLATE();
+    antlr4::tree::TerminalNode *KW_TEMPLATESTRING();
     antlr4::tree::TerminalNode *LT();
     UnvaluedTypeContext *unvaluedType();
     antlr4::tree::TerminalNode *GT();
@@ -642,7 +642,7 @@ public:
    
   };
 
-  ValuedStringTemplateTypeContext* valuedStringTemplateType();
+  ValuedTemplateStringTypeContext* valuedTemplateStringType();
 
   class  ValuedPrimitiveTypeContext : public antlr4::ParserRuleContext {
   public:

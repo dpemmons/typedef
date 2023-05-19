@@ -78,6 +78,16 @@ class CodegenCpp : public CodegenBase {
     string referenced_cpp_type_;
   };
 
+  class CppTmplStr {
+   public:
+    CppTmplStr(const string& tmpl);
+    string ArgCppType() const { return arg_cpp_typpe_; }
+
+   private:
+    string arg_cpp_typpe_;
+    string tmpl_;
+  };
+
   class CppSymbol {
    public:
     CppSymbol(SymbolTable::Symbol const& s);
@@ -92,11 +102,15 @@ class CodegenCpp : public CodegenBase {
     bool IsReference() const { return reference_.has_value(); }
     CppSymRef const& Reference() const { return *reference_; }
 
+    bool IsTmplStr() const { return tmpl_str_.has_value(); }
+    CppTmplStr const& TmplStr() const { return *tmpl_str_; }
+
    private:
     string escaped_identifier_;  // eg. BoolValA or StructA
     std::optional<CppPrimitiveValue> primitive_;
     std::optional<CppNonPrimitiveValue> non_primitive_;
     std::optional<CppSymRef> reference_;
+    std::optional<CppTmplStr> tmpl_str_;
   };
 
   struct ValueViewModel {

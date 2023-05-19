@@ -12,6 +12,7 @@
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 
+#include "codegen_cpp.h"
 #include "codegen_cpp_helpers.h"
 #include "symbol_table.h"
 
@@ -72,6 +73,8 @@ CodegenCpp::CppSymRef::CppSymRef(string const& referenced_escaped_identifier) {
       fmt::format("std::unique_ptr<Mutable{}>", referenced_escaped_identifier);
 }
 
+td::CodegenCpp::CppTmplStr::CppTmplStr() {}
+
 CodegenCpp::CppNonPrimitiveValue::CppNonPrimitiveValue(
     SymbolTable::Symbol const& s)
     : class_name_(escape_utf8_to_cpp_identifier(s.first.id())),
@@ -98,6 +101,9 @@ CodegenCpp::CppSymbol::CppSymbol(SymbolTable::Symbol const& s)
   } else if (holds_alternative<SymbolRef>(s.second)) {
     auto sr = get<SymbolRef>(s.second);
     reference_ = CppSymRef(escape_utf8_to_cpp_identifier(sr.id));
+  } else if (holds_alternative<shared_ptr<td::TmplStr>>(s.second)) {
+    auto sr = get<shared_ptr<td::TmplStr>>(s.second);
+    tmpl_str_ = CppTmplStr();
   } else {
     primitive_ = CppPrimitiveValue(s.second);
   }
@@ -349,6 +355,12 @@ string CodegenCpp::StructAccessors(
     void {identifier}({type} _val) {{ {identifier}_ = std::move(_val); }}
     )",
                   store);
+    } else if (m.IsTmplStr()) {
+      store.push_back(fmt::arg("arg_type", m.Reference().ReferencedCppType()));
+      fmt::vprint(ss, R"(
+    std::string {identifier}(const {arg_type}& arg) {{ return "tmpl_str"; }}
+    )",
+                  store);
     } else {
       assert(false);
     }
@@ -372,6 +384,8 @@ string CodegenCpp::StructMembers(
       store.push_back(fmt::arg("type", m.NonPrimitive().CppType()));
     } else if (m.IsReference()) {
       store.push_back(fmt::arg("type", m.Reference().ReferencedCppType()));
+    } else if (m.IsTmplStr()) {
+      // TODO: tmpl_str
     } else {
       assert(false);
     }
@@ -490,6 +504,8 @@ string CodegenCpp::VariantAccessors(
     }}
     )",
                   store);
+    } else if (m.IsTmplStr()) {
+      // TODO: tmpl_str
     } else {
       assert(false);
     }

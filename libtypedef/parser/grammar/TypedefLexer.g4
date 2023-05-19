@@ -45,7 +45,7 @@ KW_USE: 'use';
 KW_VARIANT: 'variant';
 KW_VECTOR: 'vector';
 KW_MAP: 'map';
-KW_STRINGTEMPLATE: 'str_template';
+KW_TEMPLATESTRING: 'tmpl_str';
 
 // reserved misc
 KW_AND: 'and';

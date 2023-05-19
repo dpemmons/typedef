@@ -164,8 +164,8 @@ ostream& operator<<(ostream& os, const Map& s) {
   return os;
 }
 
-ostream& operator<<(ostream& os, const StrTemplate& s) {
-  fmt::print(os, "str_template<");
+ostream& operator<<(ostream& os, const TmplStr& s) {
+  fmt::print(os, "tmpl_str<");
   PrintType(os, s.arg_type);
   fmt::print(os, ">");
   return os;

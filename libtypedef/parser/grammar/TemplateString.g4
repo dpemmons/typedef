@@ -1,4 +1,4 @@
-grammar StringTemplate;
+grammar TemplateString;
 
 tmpl: (text taggedStatement text?)*;
 

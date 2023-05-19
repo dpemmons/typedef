@@ -90,7 +90,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitValuedStringTemplateType(TypedefParser::ValuedStringTemplateTypeContext *ctx) override {
+  virtual antlrcpp::Any visitValuedTemplateStringType(TypedefParser::ValuedTemplateStringTypeContext *ctx) override {
     return visitChildren(ctx);
   }
 

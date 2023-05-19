@@ -21,7 +21,7 @@ public class TypedefParser extends Parser {
 	public static final int
 		KW_ARRAY=1, KW_AS=2, KW_ENUM=3, KW_FALSE=4, KW_FN=5, KW_IMPL=6, KW_MESSAGE=7, 
 		KW_MODULE=8, KW_STRUCT=9, KW_TRUE=10, KW_TYPE=11, KW_TYPEDEF=12, KW_USE=13, 
-		KW_VARIANT=14, KW_VECTOR=15, KW_MAP=16, KW_STRINGTEMPLATE=17, KW_AND=18, 
+		KW_VARIANT=14, KW_VECTOR=15, KW_MAP=16, KW_TEMPLATESTRING=17, KW_AND=18, 
 		KW_IN=19, KW_LET=20, KW_NOT=21, KW_OR=22, KW_SIZEOF=23, KW_THIS=24, KW_TRAIT=25, 
 		KW_WHERE=26, KW_XOR=27, KW_BREAK=28, KW_CONTINUE=29, KW_DEFAULT=30, KW_DO=31, 
 		KW_ELSE=32, KW_FOR=33, KW_GOTO=34, KW_IF=35, KW_LOOP=36, KW_MATCH=37, 
@@ -54,7 +54,7 @@ public class TypedefParser extends Parser {
 		RULE_inlineStruct = 9, RULE_inlineVariant = 10, RULE_inlineVector = 11, 
 		RULE_inlineMap = 12, RULE_maybeValuedType = 13, RULE_valuedType = 14, 
 		RULE_unvaluedType = 15, RULE_symbolReference = 16, RULE_primitiveType = 17, 
-		RULE_valuedStringTemplateType = 18, RULE_valuedPrimitiveType = 19, RULE_valuedBoolFragment = 20, 
+		RULE_valuedTemplateStringType = 18, RULE_valuedPrimitiveType = 19, RULE_valuedBoolFragment = 20, 
 		RULE_valuedCharFragment = 21, RULE_valuedStringFragment = 22, RULE_valuedF32Fragment = 23, 
 		RULE_valuedF64Fragment = 24, RULE_valuedU8Fragment = 25, RULE_valuedU16Fragment = 26, 
 		RULE_valuedU32Fragment = 27, RULE_valuedU64Fragment = 28, RULE_valuedI8Fragment = 29, 
@@ -71,7 +71,7 @@ public class TypedefParser extends Parser {
 			"structDeclaration", "variantDeclaration", "vectorDeclaration", "mapDeclaration", 
 			"maybeValuedSymbol", "unvaluedSymbol", "inlineStruct", "inlineVariant", 
 			"inlineVector", "inlineMap", "maybeValuedType", "valuedType", "unvaluedType", 
-			"symbolReference", "primitiveType", "valuedStringTemplateType", "valuedPrimitiveType", 
+			"symbolReference", "primitiveType", "valuedTemplateStringType", "valuedPrimitiveType", 
 			"valuedBoolFragment", "valuedCharFragment", "valuedStringFragment", "valuedF32Fragment", 
 			"valuedF64Fragment", "valuedU8Fragment", "valuedU16Fragment", "valuedU32Fragment", 
 			"valuedU64Fragment", "valuedI8Fragment", "valuedI16Fragment", "valuedI32Fragment", 
@@ -88,7 +88,7 @@ public class TypedefParser extends Parser {
 		return new String[] {
 			null, "'array'", "'as'", "'enum'", "'false'", "'fn'", "'impl'", "'message'", 
 			"'module'", "'struct'", "'true'", "'type'", "'typedef'", "'use'", "'variant'", 
-			"'vector'", "'map'", "'str_template'", "'and'", "'in'", "'let'", "'not'", 
+			"'vector'", "'map'", "'tmpl_str'", "'and'", "'in'", "'let'", "'not'", 
 			"'or'", "'sizeof'", "'this'", "'trait'", "'where'", "'xor'", "'break'", 
 			"'continue'", "'default'", "'do'", "'else'", "'for'", "'goto'", "'if'", 
 			"'loop'", "'match'", "'move'", "'return'", "'try'", "'while'", "'yield'", 
@@ -113,7 +113,7 @@ public class TypedefParser extends Parser {
 		return new String[] {
 			null, "KW_ARRAY", "KW_AS", "KW_ENUM", "KW_FALSE", "KW_FN", "KW_IMPL", 
 			"KW_MESSAGE", "KW_MODULE", "KW_STRUCT", "KW_TRUE", "KW_TYPE", "KW_TYPEDEF", 
-			"KW_USE", "KW_VARIANT", "KW_VECTOR", "KW_MAP", "KW_STRINGTEMPLATE", "KW_AND", 
+			"KW_USE", "KW_VARIANT", "KW_VECTOR", "KW_MAP", "KW_TEMPLATESTRING", "KW_AND", 
 			"KW_IN", "KW_LET", "KW_NOT", "KW_OR", "KW_SIZEOF", "KW_THIS", "KW_TRAIT", 
 			"KW_WHERE", "KW_XOR", "KW_BREAK", "KW_CONTINUE", "KW_DEFAULT", "KW_DO", 
 			"KW_ELSE", "KW_FOR", "KW_GOTO", "KW_IF", "KW_LOOP", "KW_MATCH", "KW_MOVE", 
@@ -2386,12 +2386,12 @@ public class TypedefParser extends Parser {
 	public static class ValuedTypeContext extends ParserRuleContext {
 		public std::optional<td::SymbolTable::Value> maybe_val;
 		public ValuedPrimitiveTypeContext valuedPrimitiveType;
-		public ValuedStringTemplateTypeContext valuedStringTemplateType;
+		public ValuedTemplateStringTypeContext valuedTemplateStringType;
 		public ValuedPrimitiveTypeContext valuedPrimitiveType() {
 			return getRuleContext(ValuedPrimitiveTypeContext.class,0);
 		}
-		public ValuedStringTemplateTypeContext valuedStringTemplateType() {
-			return getRuleContext(ValuedStringTemplateTypeContext.class,0);
+		public ValuedTemplateStringTypeContext valuedTemplateStringType() {
+			return getRuleContext(ValuedTemplateStringTypeContext.class,0);
 		}
 		public ValuedTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2418,8 +2418,8 @@ public class TypedefParser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(698);
-				((ValuedTypeContext)_localctx).valuedStringTemplateType = valuedStringTemplateType();
-				((ValuedTypeContext)_localctx).maybe_val =  ((ValuedTypeContext)_localctx).valuedStringTemplateType->maybe_val;
+				((ValuedTypeContext)_localctx).valuedTemplateStringType = valuedTemplateStringType();
+				((ValuedTypeContext)_localctx).maybe_val =  ((ValuedTypeContext)_localctx).valuedTemplateStringType->maybe_val;
 				}
 				break;
 			}
@@ -2684,12 +2684,12 @@ public class TypedefParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ValuedStringTemplateTypeContext extends ParserRuleContext {
+	public static class ValuedTemplateStringTypeContext extends ParserRuleContext {
 		public std::optional<td::SymbolTable::Value> maybe_val;
 		public UnvaluedTypeContext unvaluedType;
 		public StringLiteralContext stringLiteral;
 		public TerminalNode COLON() { return getToken(TypedefParser.COLON, 0); }
-		public TerminalNode KW_STRINGTEMPLATE() { return getToken(TypedefParser.KW_STRINGTEMPLATE, 0); }
+		public TerminalNode KW_TEMPLATESTRING() { return getToken(TypedefParser.KW_TEMPLATESTRING, 0); }
 		public TerminalNode LT() { return getToken(TypedefParser.LT, 0); }
 		public UnvaluedTypeContext unvaluedType() {
 			return getRuleContext(UnvaluedTypeContext.class,0);
@@ -2703,15 +2703,15 @@ public class TypedefParser extends Parser {
 		public TerminalNode WS(int i) {
 			return getToken(TypedefParser.WS, i);
 		}
-		public ValuedStringTemplateTypeContext(ParserRuleContext parent, int invokingState) {
+		public ValuedTemplateStringTypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_valuedStringTemplateType; }
+		@Override public int getRuleIndex() { return RULE_valuedTemplateStringType; }
 	}
 
-	public final ValuedStringTemplateTypeContext valuedStringTemplateType() throws RecognitionException {
-		ValuedStringTemplateTypeContext _localctx = new ValuedStringTemplateTypeContext(_ctx, getState());
-		enterRule(_localctx, 36, RULE_valuedStringTemplateType);
+	public final ValuedTemplateStringTypeContext valuedTemplateStringType() throws RecognitionException {
+		ValuedTemplateStringTypeContext _localctx = new ValuedTemplateStringTypeContext(_ctx, getState());
+		enterRule(_localctx, 36, RULE_valuedTemplateStringType);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -2733,7 +2733,7 @@ public class TypedefParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(749);
-			match(KW_STRINGTEMPLATE);
+			match(KW_TEMPLATESTRING);
 			setState(753);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -2765,7 +2765,7 @@ public class TypedefParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(763);
-			((ValuedStringTemplateTypeContext)_localctx).unvaluedType = unvaluedType();
+			((ValuedTemplateStringTypeContext)_localctx).unvaluedType = unvaluedType();
 			setState(767);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -2813,10 +2813,10 @@ public class TypedefParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(784);
-			((ValuedStringTemplateTypeContext)_localctx).stringLiteral = stringLiteral();
+			((ValuedTemplateStringTypeContext)_localctx).stringLiteral = stringLiteral();
 
-					((ValuedStringTemplateTypeContext)_localctx).maybe_val =  std::make_shared<td::StrTemplate>(
-					  *((ValuedStringTemplateTypeContext)_localctx).unvaluedType->maybe_val, ((ValuedStringTemplateTypeContext)_localctx).stringLiteral->maybe_val);
+					((ValuedTemplateStringTypeContext)_localctx).maybe_val =  std::make_shared<td::TmplStr>(
+					  *((ValuedTemplateStringTypeContext)_localctx).unvaluedType->maybe_val, ((ValuedTemplateStringTypeContext)_localctx).stringLiteral->maybe_val);
 				
 			}
 		}

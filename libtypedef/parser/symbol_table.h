@@ -19,7 +19,7 @@ class Struct;
 class Variant;
 class Vector;
 class Map;
-class StrTemplate;
+class TmplStr;
 
 struct SymbolRef {
   SymbolRef(const string &str) : id(str) {}
@@ -87,7 +87,7 @@ class SymbolTable {
                   shared_ptr<Variant>,      // variant
                   shared_ptr<Vector>,       // vector
                   shared_ptr<Map>,          // map
-                  shared_ptr<StrTemplate>,  // str_template
+                  shared_ptr<TmplStr>,  // str_template
                   SymbolRef                 // reference to some other symbol.
                   >
       Value;
@@ -176,11 +176,11 @@ class Map {
   SymbolTable::Value value_type;
 };
 
-class StrTemplate {
+class TmplStr {
  public:
-  StrTemplate(SymbolTable::Value arg_type, SymbolTable::Value str)
+  TmplStr(SymbolTable::Value arg_type, SymbolTable::Value str)
       : arg_type(arg_type), str(str) {}
-  friend ostream &operator<<(ostream &os, const StrTemplate &s);
+  friend ostream &operator<<(ostream &os, const TmplStr &s);
 
   SymbolTable::Value arg_type;
   SymbolTable::Value str;
