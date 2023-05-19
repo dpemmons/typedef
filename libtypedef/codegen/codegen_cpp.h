@@ -15,7 +15,7 @@ using namespace td;
 
 class CodegenCpp : public CodegenBase {
  public:
-  CodegenCpp(string source_filename, shared_ptr<ParsedFile> parser,
+  CodegenCpp(const string& source_filename, shared_ptr<ParsedFile> parser,
              shared_ptr<OutPathBase> out_path)
       : CodegenBase(parser, out_path), source_filename_(source_filename) {}
 
@@ -34,13 +34,13 @@ class CodegenCpp : public CodegenBase {
 
   class CppPrimitiveValue {
    public:
-    CppPrimitiveValue(SymbolTable::Value const& v);
-    string CppType() const { return cpp_type_; }
+    CppPrimitiveValue(const SymbolTable::Value& v);
+    const string& CppType() const { return cpp_type_; }
 
     bool IsChar() const { return is_char_; }
     bool IsString() const { return is_string_; }
 
-    string Value() const { return val_; }
+    const string& Value() const { return val_; }
 
    private:
     string cpp_type_;
@@ -58,7 +58,7 @@ class CodegenCpp : public CodegenBase {
     bool IsVariant() const { return is_variant_; }
     bool IsVector() const { return is_vector_; }
 
-    string CppType() const { return cpp_type_; }
+    const string& CppType() const { return cpp_type_; }
 
    private:
     string class_name_;
@@ -71,8 +71,8 @@ class CodegenCpp : public CodegenBase {
 
   class CppSymRef {
    public:
-    CppSymRef(string const& referenced_escaped_identifier);
-    string ReferencedCppType() const { return referenced_cpp_type_; }
+    CppSymRef(const string& referenced_escaped_identifier);
+    const string& ReferencedCppType() const { return referenced_cpp_type_; }
 
    private:
     string referenced_cpp_type_;
@@ -80,8 +80,9 @@ class CodegenCpp : public CodegenBase {
 
   class CppTmplStr {
    public:
-    CppTmplStr(const string& tmpl);
-    string ArgCppType() const { return arg_cpp_typpe_; }
+    CppTmplStr(const string& arg_cpp_type, const string& tmpl);
+    const string& ArgCppType() const { return arg_cpp_typpe_; }
+    const string& TmplStr() const { return tmpl_; }  // temporary...
 
    private:
     string arg_cpp_typpe_;
@@ -90,20 +91,20 @@ class CodegenCpp : public CodegenBase {
 
   class CppSymbol {
    public:
-    CppSymbol(SymbolTable::Symbol const& s);
-    string EscapedIdentifier() { return escaped_identifier_; }
+    CppSymbol(const SymbolTable::Symbol& s);
+    const string& EscapedIdentifier() { return escaped_identifier_; }
 
     bool IsPrimitive() const { return primitive_.has_value(); }
-    CppPrimitiveValue const& Primitive() const { return *primitive_; }
+    const CppPrimitiveValue& Primitive() const { return *primitive_; }
 
     bool IsNonPrimitive() const { return non_primitive_.has_value(); }
-    CppNonPrimitiveValue const& NonPrimitive() const { return *non_primitive_; }
+    const CppNonPrimitiveValue& NonPrimitive() const { return *non_primitive_; }
 
     bool IsReference() const { return reference_.has_value(); }
-    CppSymRef const& Reference() const { return *reference_; }
+    const CppSymRef& Reference() const { return *reference_; }
 
     bool IsTmplStr() const { return tmpl_str_.has_value(); }
-    CppTmplStr const& TmplStr() const { return *tmpl_str_; }
+    const CppTmplStr& TmplStr() const { return *tmpl_str_; }
 
    private:
     string escaped_identifier_;  // eg. BoolValA or StructA
@@ -114,7 +115,7 @@ class CodegenCpp : public CodegenBase {
   };
 
   struct ValueViewModel {
-    ValueViewModel(SymbolTable::Symbol const& s) : sym(s){};
+    ValueViewModel(const SymbolTable::Symbol& s) : sym(s){};
     CppSymbol sym;
   };
 
@@ -142,15 +143,16 @@ class CodegenCpp : public CodegenBase {
   };
 
   struct VectorViewModel {
-    VectorViewModel(string struct_name, SymbolTable::Symbol const& payload)
+    VectorViewModel(const string& struct_name,
+                    const SymbolTable::Symbol& payload)
         : struct_name(struct_name), payload(payload){};
     string struct_name;
     CppSymbol payload;
   };
 
   struct MapViewModel {
-    MapViewModel(string struct_name, SymbolTable::Symbol const& key,
-                 SymbolTable::Symbol const& value)
+    MapViewModel(const string& struct_name, const SymbolTable::Symbol& key,
+                 const SymbolTable::Symbol& value)
         : struct_name(struct_name), key(key), value(value) {}
     string struct_name;
     CppSymbol key;
@@ -169,56 +171,61 @@ class CodegenCpp : public CodegenBase {
     vector<MapViewModel> maps;
   };
 
-  GroupedSymbols GroupSymbols(SymbolTable::Table const& table) const;
-  ViewModel CreateViewModel(filesystem::path hdr_path, vector<string> module,
-                            GroupedSymbols const& grouped_symbols) const;
-  vector<ValueViewModel> CreateValueViewModels(
-      vector<SymbolTable::Symbol> values) const;
+  static GroupedSymbols GroupSymbols(const SymbolTable::Table& table);
+  static ViewModel CreateViewModel(const filesystem::path& hdr_path,
+                                   const vector<string>& module,
+                                   const GroupedSymbols& grouped_symbols);
+  static vector<ValueViewModel> CreateValueViewModels(
+      const vector<SymbolTable::Symbol>& values);
 
-  StructViewModel CreateStructViewModel(
-      SymbolTable::Symbol const& symbol) const;
-  vector<StructViewModel> CreateStructViewModels(
-      vector<SymbolTable::Symbol> structs) const;
+  static StructViewModel CreateStructViewModel(
+      const SymbolTable::Symbol& symbol);
+  static vector<StructViewModel> CreateStructViewModels(
+      const vector<SymbolTable::Symbol>& structs);
 
-  VariantViewModel CreateVaraintViewModel(SymbolTable::Symbol variant) const;
-  vector<VariantViewModel> CreateVaraintViewModels(
-      vector<SymbolTable::Symbol> variants) const;
+  static VariantViewModel CreateVaraintViewModel(
+      const SymbolTable::Symbol& variant);
+  static vector<VariantViewModel> CreateVaraintViewModels(
+      const vector<SymbolTable::Symbol>& variants);
 
-  VectorViewModel CreateVectorViewModel(SymbolTable::Symbol vector) const;
-  vector<VectorViewModel> CreateVectorViewModels(
-      vector<SymbolTable::Symbol> vectors) const;
+  static VectorViewModel CreateVectorViewModel(
+      const SymbolTable::Symbol& vector);
+  static vector<VectorViewModel> CreateVectorViewModels(
+      const vector<SymbolTable::Symbol>& vectors);
 
-  MapViewModel CreateMapViewModel(SymbolTable::Symbol map) const;
-  vector<MapViewModel> CreateMapViewModels(
-      vector<SymbolTable::Symbol> maps) const;
+  static MapViewModel CreateMapViewModel(const SymbolTable::Symbol& map);
+  static vector<MapViewModel> CreateMapViewModels(
+      const vector<SymbolTable::Symbol>& maps);
 
-  string HeaderGuard(filesystem::path source_filename) const;
+  static CppTmplStr CreateTmplStr(const SymbolTable::Symbol& tmpl_str);
 
-  void PrintHeader(ostream& os, ViewModel const& vm) const;
-  void PrintSource(ostream& os, ViewModel const& vm) const;
+  static string HeaderGuard(const filesystem::path& source_filename);
 
-  string NamespaceOpen(vector<string> namespaces) const;
-  string NamespaceClose(vector<string> namespaces) const;
+  static void PrintHeader(ostream& os, const ViewModel& vm);
+  static void PrintSource(ostream& os, const ViewModel& vm);
 
-  string ValueDeclarations(vector<ValueViewModel> const& values) const;
-  string ForwardDeclarations(ViewModel const& vm) const;
+  static string NamespaceOpen(const vector<string>& namespaces);
+  static string NamespaceClose(const vector<string>& namespaces);
 
-  string StructAccessors(vector<CppSymbol> const& members) const;
-  string StructMembers(vector<CppSymbol> const& members) const;
-  string StructClasses(vector<StructViewModel> const& structs) const;
+  static string ValueDeclarations(const vector<ValueViewModel>& values);
+  static string ForwardDeclarations(const ViewModel& vm);
 
-  string VariantAccessors(vector<CppSymbol> const& members) const;
-  string VariantTags(vector<CppSymbol> const& members) const;
-  string VariantMemberDeletionCases(vector<CppSymbol> const& members) const;
-  string VariantClasses(vector<VariantViewModel> const& variants) const;
+  static string StructAccessors(const vector<CppSymbol>& members);
+  static string StructMembers(const vector<CppSymbol>& members);
+  static string StructClasses(const vector<StructViewModel>& structs);
 
-  string VectorClasses(vector<VectorViewModel> const& vectors) const;
-  string MapClasses(vector<MapViewModel> const& maps) const;
+  static string VariantAccessors(const vector<CppSymbol>& members);
+  static string VariantTags(const vector<CppSymbol>& members);
+  static string VariantMemberDeletionCases(const vector<CppSymbol>& members);
+  static string VariantClasses(const vector<VariantViewModel>& variants);
 
-  string StructMethods(vector<StructViewModel> const& structs) const;
-  string VariantMethods(vector<VariantViewModel> const& variants) const;
-  string VectorMethods(vector<VectorViewModel> const& vectors) const;
-  string MapMethods(vector<MapViewModel> const& maps) const;
+  static string VectorClasses(const vector<VectorViewModel>& vectors);
+  static string MapClasses(const vector<MapViewModel>& maps);
+
+  static string StructMethods(const vector<StructViewModel>& structs);
+  static string VariantMethods(const vector<VariantViewModel>& variants);
+  static string VectorMethods(const vector<VectorViewModel>& vectors);
+  static string MapMethods(const vector<MapViewModel>& maps);
 };
 
 }  // namespace td

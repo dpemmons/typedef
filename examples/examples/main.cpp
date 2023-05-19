@@ -23,20 +23,23 @@ int main() {
   sD1.c_vec(std::make_unique<MutableVecA>());
   sD1.d_map(std::make_unique<MutableMapA>());
 
-  std::cout << sA << std::endl;
-  std::cout << sB << std::endl;
-  std::cout << sC << std::endl;
-  std::cout << vectorA << std::endl;
-  std::cout << mapA << std::endl;
-  std::cout << variantA << std::endl;
-  std::cout << sD1 << std::endl;
+  // std::cout << sA << std::endl;
+  // std::cout << sB << std::endl;
+  // std::cout << sC << std::endl;
+  // std::cout << vectorA << std::endl;
+  // std::cout << mapA << std::endl;
+  // std::cout << variantA << std::endl;
+  // std::cout << sD1 << std::endl;
 
   MutableStructE sE;
   sE.inlineMap(std::make_unique<MutableStructE::MutableinlineMap>());
-  sE.inlineMap()->emplace(
-      std::string("hi"),
-      std::make_unique<MutableStructD>());
+  sE.inlineMap()->emplace(std::string("hi"),
+                          std::make_unique<MutableStructD>());
   sE.VariantB(std::make_unique<MutableStructE::MutableVariantB>());
+
+  MutableTemplateExample::MutableTemplateData tmpl_data;
+  tmpl_data.name("John");
+  std::cout << MutableTemplateExample::tmpl(tmpl_data) << std::endl;
 
   return 0;
 }

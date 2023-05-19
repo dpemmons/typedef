@@ -68,15 +68,17 @@ string indent(const string& input, unsigned int count) {
 
 }  // namespace
 
-CodegenCpp::CppSymRef::CppSymRef(string const& referenced_escaped_identifier) {
+CodegenCpp::CppSymRef::CppSymRef(const string& referenced_escaped_identifier) {
   referenced_cpp_type_ =
       fmt::format("std::unique_ptr<Mutable{}>", referenced_escaped_identifier);
 }
 
-td::CodegenCpp::CppTmplStr::CppTmplStr() {}
+CodegenCpp::CppTmplStr::CppTmplStr(const string& arg_cpp_type,
+                                   const string& tmpl)
+    : arg_cpp_typpe_(arg_cpp_type), tmpl_(tmpl) {}
 
 CodegenCpp::CppNonPrimitiveValue::CppNonPrimitiveValue(
-    SymbolTable::Symbol const& s)
+    const SymbolTable::Symbol& s)
     : class_name_(escape_utf8_to_cpp_identifier(s.first.id())),
       is_struct_(false),
       is_variant_(false),
@@ -91,7 +93,7 @@ CodegenCpp::CppNonPrimitiveValue::CppNonPrimitiveValue(
   cpp_type_ = fmt::format("std::unique_ptr<Mutable{}>", class_name_);
 }
 
-CodegenCpp::CppSymbol::CppSymbol(SymbolTable::Symbol const& s)
+CodegenCpp::CppSymbol::CppSymbol(const SymbolTable::Symbol& s)
     : escaped_identifier_(escape_utf8_to_cpp_identifier(s.first.id())) {
   if (holds_alternative<shared_ptr<Struct>>(s.second) ||
       holds_alternative<shared_ptr<Variant>>(s.second) ||
@@ -102,14 +104,13 @@ CodegenCpp::CppSymbol::CppSymbol(SymbolTable::Symbol const& s)
     auto sr = get<SymbolRef>(s.second);
     reference_ = CppSymRef(escape_utf8_to_cpp_identifier(sr.id));
   } else if (holds_alternative<shared_ptr<td::TmplStr>>(s.second)) {
-    auto sr = get<shared_ptr<td::TmplStr>>(s.second);
-    tmpl_str_ = CppTmplStr();
+    tmpl_str_ = CodegenCpp::CreateTmplStr(s);
   } else {
     primitive_ = CppPrimitiveValue(s.second);
   }
 }
 
-CodegenCpp::CppPrimitiveValue::CppPrimitiveValue(SymbolTable::Value const& v)
+CodegenCpp::CppPrimitiveValue::CppPrimitiveValue(const SymbolTable::Value& v)
     : is_char_(false), is_string_(false) {
   if (holds_alternative<optional<bool>>(v)) {
     cpp_type_ = "bool";
@@ -174,7 +175,7 @@ void CodegenCpp::Generate() {
 }
 
 CodegenCpp::GroupedSymbols CodegenCpp::GroupSymbols(
-    SymbolTable::Table const& table) const {
+    const SymbolTable::Table& table) {
   GroupedSymbols symbols;
   for (auto s : table) {
     if (holds_alternative<shared_ptr<Struct>>(s.second)) {
@@ -192,7 +193,7 @@ CodegenCpp::GroupedSymbols CodegenCpp::GroupSymbols(
   return symbols;
 }
 
-string CodegenCpp::HeaderGuard(filesystem::path source_filename) const {
+string CodegenCpp::HeaderGuard(const filesystem::path& source_filename) {
   string hdr_guard = source_filename.string() + "_H__";
   replace(hdr_guard.begin(), hdr_guard.end(), '.', '_');
   replace(hdr_guard.begin(), hdr_guard.end(), ' ', '_');
@@ -201,7 +202,7 @@ string CodegenCpp::HeaderGuard(filesystem::path source_filename) const {
   return hdr_guard;
 }
 
-void CodegenCpp::PrintHeader(ostream& os, ViewModel const& vm) const {
+void CodegenCpp::PrintHeader(ostream& os, const ViewModel& vm) {
   fmt::dynamic_format_arg_store<fmt::format_context> store;
   store.push_back(fmt::arg("header_guard", vm.header_guard));
   store.push_back(fmt::arg("namespaces_open", NamespaceOpen(vm.namesapces)));
@@ -254,7 +255,7 @@ void CodegenCpp::PrintHeader(ostream& os, ViewModel const& vm) const {
               store);
 }
 
-void CodegenCpp::PrintSource(ostream& os, ViewModel const& vm) const {
+void CodegenCpp::PrintSource(ostream& os, const ViewModel& vm) {
   fmt::dynamic_format_arg_store<fmt::format_context> store;
   store.push_back(fmt::arg("hdr_filename", vm.hdr_filename.c_str()));
   store.push_back(fmt::arg("namespaces_open", NamespaceOpen(vm.namesapces)));
@@ -282,7 +283,7 @@ void CodegenCpp::PrintSource(ostream& os, ViewModel const& vm) const {
               store);
 }
 
-string CodegenCpp::NamespaceOpen(vector<string> namespaces) const {
+string CodegenCpp::NamespaceOpen(const vector<string>& namespaces) {
   stringstream ss;
   for (auto ns : namespaces) {
     fmt::print(ss, "namespace {} {{\n", ns);
@@ -290,7 +291,7 @@ string CodegenCpp::NamespaceOpen(vector<string> namespaces) const {
   return ss.str();
 }
 
-string CodegenCpp::NamespaceClose(vector<string> namespaces) const {
+string CodegenCpp::NamespaceClose(const vector<string>& namespaces) {
   stringstream ss;
   for (auto ns : namespaces) {
     fmt::print(ss, "}}  // {}\n", ns);
@@ -298,8 +299,7 @@ string CodegenCpp::NamespaceClose(vector<string> namespaces) const {
   return ss.str();
 }
 
-string CodegenCpp::ValueDeclarations(
-    vector<ValueViewModel> const& values) const {
+string CodegenCpp::ValueDeclarations(const vector<ValueViewModel>& values) {
   stringstream ss;
   for (auto v : values) {
     fmt::print(ss, "typedef {} {};\n", v.sym.Primitive().CppType(),
@@ -308,7 +308,7 @@ string CodegenCpp::ValueDeclarations(
   return ss.str();
 }
 
-string CodegenCpp::ForwardDeclarations(ViewModel const& vm) const {
+string CodegenCpp::ForwardDeclarations(const ViewModel& vm) {
   stringstream ss;
   for (auto s : vm.structs) {
     fmt::print(ss, "class {};\n", s.struct_name);
@@ -326,7 +326,7 @@ string CodegenCpp::ForwardDeclarations(ViewModel const& vm) const {
 }
 
 string CodegenCpp::StructAccessors(
-    vector<CodegenCpp::CppSymbol> const& members) const {
+    const vector<CodegenCpp::CppSymbol>& members) {
   stringstream ss;
   for (auto m : members) {
     fmt::dynamic_format_arg_store<fmt::format_context> store;
@@ -356,9 +356,9 @@ string CodegenCpp::StructAccessors(
     )",
                   store);
     } else if (m.IsTmplStr()) {
-      store.push_back(fmt::arg("arg_type", m.Reference().ReferencedCppType()));
+      store.push_back(fmt::arg("arg_type", m.TmplStr().ArgCppType()));
       fmt::vprint(ss, R"(
-    std::string {identifier}(const {arg_type}& arg) {{ return "tmpl_str"; }}
+    static std::string {identifier}(const {arg_type}& arg) {{ return "tmpl_str"; }}
     )",
                   store);
     } else {
@@ -368,8 +368,7 @@ string CodegenCpp::StructAccessors(
   return ss.str();
 }
 
-string CodegenCpp::StructMembers(
-    vector<CodegenCpp::CppSymbol> const& members) const {
+string CodegenCpp::StructMembers(const vector<CodegenCpp::CppSymbol>& members) {
   stringstream ss;
   for (auto m : members) {
     fmt::dynamic_format_arg_store<fmt::format_context> store;
@@ -393,14 +392,14 @@ string CodegenCpp::StructMembers(
 
     if (has_value) {
       fmt::vprint(ss, "    {type} {identifier}_ = {value};\n", store);
-    } else {
+    } else if (!m.IsTmplStr()) {
       fmt::vprint(ss, "    {type} {identifier}_;\n", store);
     }
   }
   return ss.str();
 }
 
-string CodegenCpp::StructClasses(vector<StructViewModel> const& structs) const {
+string CodegenCpp::StructClasses(const vector<StructViewModel>& structs) {
   stringstream ss;
   for (auto s : structs) {
     fmt::dynamic_format_arg_store<fmt::format_context> store;
@@ -445,7 +444,7 @@ class {classname} {{
 }
 
 string CodegenCpp::VariantAccessors(
-    vector<CodegenCpp::CppSymbol> const& members) const {
+    const vector<CodegenCpp::CppSymbol>& members) {
   stringstream ss;
   for (auto m : members) {
     fmt::dynamic_format_arg_store<fmt::format_context> store;
@@ -513,7 +512,7 @@ string CodegenCpp::VariantAccessors(
   return ss.str();
 }
 
-string CodegenCpp::VariantTags(vector<CppSymbol> const& members) const {
+string CodegenCpp::VariantTags(const vector<CppSymbol>& members) {
   stringstream ss;
   for (auto m : members) {
     fmt::print(ss, "      TAG_{},\n", m.EscapedIdentifier());
@@ -522,7 +521,7 @@ string CodegenCpp::VariantTags(vector<CppSymbol> const& members) const {
 }
 
 string CodegenCpp::VariantMemberDeletionCases(
-    vector<CppSymbol> const& members) const {
+    const vector<CppSymbol>& members) {
   stringstream ss;
   for (auto m : members) {
     if (!m.IsPrimitive()) {
@@ -534,8 +533,7 @@ string CodegenCpp::VariantMemberDeletionCases(
   return ss.str();
 }
 
-string CodegenCpp::VariantClasses(
-    vector<VariantViewModel> const& variants) const {
+string CodegenCpp::VariantClasses(const vector<VariantViewModel>& variants) {
   stringstream ss;
   for (auto v : variants) {
     fmt::dynamic_format_arg_store<fmt::format_context> store;
@@ -599,7 +597,7 @@ class {classname} {{
   return ss.str();
 }
 
-string CodegenCpp::VectorClasses(vector<VectorViewModel> const& vectors) const {
+string CodegenCpp::VectorClasses(const vector<VectorViewModel>& vectors) {
   stringstream ss;
   for (auto v : vectors) {
     fmt::dynamic_format_arg_store<fmt::format_context> store;
@@ -629,7 +627,7 @@ class {classname} : public std::vector<{payload}> {{
   return ss.str();
 }
 
-string CodegenCpp::MapClasses(vector<MapViewModel> const& maps) const {
+string CodegenCpp::MapClasses(const vector<MapViewModel>& maps) {
   stringstream ss;
   for (auto v : maps) {
     fmt::dynamic_format_arg_store<fmt::format_context> store;
@@ -671,7 +669,7 @@ class {classname} : public std::map<{key}, {value}> {{
   return ss.str();
 }
 
-string CodegenCpp::StructMethods(vector<StructViewModel> const& structs) const {
+string CodegenCpp::StructMethods(const vector<StructViewModel>& structs) {
   stringstream ss;
   for (auto s : structs) {
     fmt::dynamic_format_arg_store<fmt::format_context> store;
@@ -688,8 +686,7 @@ std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
   return ss.str();
 }
 
-string CodegenCpp::VariantMethods(
-    vector<VariantViewModel> const& variants) const {
+string CodegenCpp::VariantMethods(const vector<VariantViewModel>& variants) {
   stringstream ss;
   for (auto v : variants) {
     fmt::dynamic_format_arg_store<fmt::format_context> store;
@@ -706,7 +703,7 @@ std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
   return ss.str();
 }
 
-string CodegenCpp::VectorMethods(vector<VectorViewModel> const& vectors) const {
+string CodegenCpp::VectorMethods(const vector<VectorViewModel>& vectors) {
   stringstream ss;
   for (auto v : vectors) {
     fmt::dynamic_format_arg_store<fmt::format_context> store;
@@ -723,7 +720,7 @@ std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
   return ss.str();
 }
 
-string CodegenCpp::MapMethods(vector<MapViewModel> const& maps) const {
+string CodegenCpp::MapMethods(const vector<MapViewModel>& maps) {
   stringstream ss;
   for (auto m : maps) {
     fmt::dynamic_format_arg_store<fmt::format_context> store;
@@ -741,8 +738,8 @@ std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
 }
 
 CodegenCpp::ViewModel CodegenCpp::CreateViewModel(
-    filesystem::path hdr_path, vector<string> module,
-    GroupedSymbols const& grouped_symbols) const {
+    const filesystem::path& hdr_path, const vector<string>& module,
+    const GroupedSymbols& grouped_symbols) {
   ViewModel view_model;
   view_model.hdr_filename = hdr_path.filename().string();
   view_model.header_guard = HeaderGuard(hdr_path);
@@ -760,7 +757,7 @@ CodegenCpp::ViewModel CodegenCpp::CreateViewModel(
 }
 
 vector<CodegenCpp::ValueViewModel> CodegenCpp::CreateValueViewModels(
-    vector<SymbolTable::Symbol> values) const {
+    const vector<SymbolTable::Symbol>& values) {
   vector<ValueViewModel> view_models;
   for (auto s : values) {
     view_models.push_back(s);
@@ -769,16 +766,15 @@ vector<CodegenCpp::ValueViewModel> CodegenCpp::CreateValueViewModels(
 }
 
 CodegenCpp::StructViewModel CodegenCpp::CreateStructViewModel(
-    SymbolTable::Symbol const& s) const {
+    const SymbolTable::Symbol& s) {
   StructViewModel svm;
   svm.struct_name =
       string("Mutable") + escape_utf8_to_cpp_identifier(s.first.id());
   // each member of the struct.
   auto str = get<shared_ptr<Struct>>(s.second);
   for (auto m : str->table.table_) {
-    if (m.first.IsValue()) {
-      svm.members.push_back(CppSymbol(m));
-    }
+    // first handle embedded type definitions - may be
+    // either nested or inline.
     if (holds_alternative<shared_ptr<Struct>>(m.second)) {
       svm.nested_structs.push_back(CreateStructViewModel(m));
     } else if (holds_alternative<shared_ptr<Variant>>(m.second)) {
@@ -788,12 +784,16 @@ CodegenCpp::StructViewModel CodegenCpp::CreateStructViewModel(
     } else if (holds_alternative<shared_ptr<Map>>(m.second)) {
       svm.nested_maps.push_back(CreateMapViewModel(m));
     }
+    // handle value types.
+    if (m.first.IsValue()) {
+      svm.members.push_back(CppSymbol(m));
+    }
   }
   return svm;
 }
 
 vector<CodegenCpp::StructViewModel> CodegenCpp::CreateStructViewModels(
-    vector<SymbolTable::Symbol> structs) const {
+    const vector<SymbolTable::Symbol>& structs) {
   vector<StructViewModel> view_models;
   for (auto s : structs) {
     view_models.push_back(CreateStructViewModel(s));
@@ -802,16 +802,15 @@ vector<CodegenCpp::StructViewModel> CodegenCpp::CreateStructViewModels(
 }
 
 CodegenCpp::VariantViewModel CodegenCpp::CreateVaraintViewModel(
-    SymbolTable::Symbol variant) const {
+    const SymbolTable::Symbol& variant) {
   VariantViewModel vvm;
   vvm.struct_name =
       string("Mutable") + escape_utf8_to_cpp_identifier(variant.first.id());
   // each member of the variant.
   auto str = get<shared_ptr<Variant>>(variant.second);
   for (auto m : str->table.table_) {
-    if (m.first.IsValue()) {
-      vvm.members.push_back(CppSymbol(m));
-    }
+    // first handle embedded type definitions - may be
+    // either nested or inline.
     if (holds_alternative<shared_ptr<Struct>>(m.second)) {
       vvm.nested_structs.push_back(CreateStructViewModel(m));
     } else if (holds_alternative<shared_ptr<Variant>>(m.second)) {
@@ -821,12 +820,16 @@ CodegenCpp::VariantViewModel CodegenCpp::CreateVaraintViewModel(
     } else if (holds_alternative<shared_ptr<Map>>(m.second)) {
       vvm.nested_maps.push_back(CreateMapViewModel(m));
     }
+    // handle value types.
+    if (m.first.IsValue()) {
+      vvm.members.push_back(CppSymbol(m));
+    }
   }
   return vvm;
 }
 
 vector<CodegenCpp::VariantViewModel> CodegenCpp::CreateVaraintViewModels(
-    vector<SymbolTable::Symbol> variants) const {
+    const vector<SymbolTable::Symbol>& variants) {
   vector<VariantViewModel> view_models;
   for (auto variant : variants) {
     view_models.push_back(CreateVaraintViewModel(variant));
@@ -835,7 +838,7 @@ vector<CodegenCpp::VariantViewModel> CodegenCpp::CreateVaraintViewModels(
 }
 
 CodegenCpp::VectorViewModel CodegenCpp::CreateVectorViewModel(
-    SymbolTable::Symbol vector) const {
+    const SymbolTable::Symbol& vector) {
   auto ptr = get<shared_ptr<Vector>>(vector.second);
   return VectorViewModel(
       string("Mutable") + escape_utf8_to_cpp_identifier(vector.first.id()),
@@ -843,7 +846,7 @@ CodegenCpp::VectorViewModel CodegenCpp::CreateVectorViewModel(
 }
 
 vector<CodegenCpp::VectorViewModel> CodegenCpp::CreateVectorViewModels(
-    vector<SymbolTable::Symbol> vectors) const {
+    const vector<SymbolTable::Symbol>& vectors) {
   vector<VectorViewModel> view_models;
   for (auto v : vectors) {
     view_models.push_back(CreateVectorViewModel(v));
@@ -852,7 +855,7 @@ vector<CodegenCpp::VectorViewModel> CodegenCpp::CreateVectorViewModels(
 }
 
 CodegenCpp::MapViewModel CodegenCpp::CreateMapViewModel(
-    SymbolTable::Symbol map) const {
+    const SymbolTable::Symbol& map) {
   auto ptr = get<shared_ptr<Map>>(map.second);
   return MapViewModel(
       string("Mutable") + escape_utf8_to_cpp_identifier(map.first.id()),
@@ -862,12 +865,21 @@ CodegenCpp::MapViewModel CodegenCpp::CreateMapViewModel(
 }
 
 vector<CodegenCpp::MapViewModel> CodegenCpp::CreateMapViewModels(
-    vector<SymbolTable::Symbol> maps) const {
+    const vector<SymbolTable::Symbol>& maps) {
   vector<MapViewModel> view_models;
   for (auto m : maps) {
     view_models.push_back(CreateMapViewModel(m));
   }
   return view_models;
+}
+
+CodegenCpp::CppTmplStr CodegenCpp::CreateTmplStr(
+    const SymbolTable::Symbol& tmpl_str) {
+  auto ptr = get<shared_ptr<TmplStr>>(tmpl_str.second);
+  auto arg_sym_ref = get<SymbolRef>(ptr->arg_type);
+  return CppTmplStr(
+      string("Mutable") + escape_utf8_to_cpp_identifier(arg_sym_ref.id),
+      *get<optional<string>>(ptr->str));
 }
 
 }  // namespace td
