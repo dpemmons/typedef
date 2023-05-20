@@ -1,87 +1,87 @@
 
-// Generated from ./libtypedef/parser/grammar/TemplateString.g4 by ANTLR 4.7.2
+// Generated from ./libtypedef/parser/grammar/TmplStr.g4 by ANTLR 4.7.2
 
 
-#include "TemplateStringListener.h"
-#include "TemplateStringVisitor.h"
+#include "TmplStrListener.h"
+#include "TmplStrVisitor.h"
 
-#include "TemplateStringParser.h"
+#include "TmplStrParser.h"
 
 
 using namespace antlrcpp;
 using namespace antlr4;
 
-TemplateStringParser::TemplateStringParser(TokenStream *input) : Parser(input) {
+TmplStrParser::TmplStrParser(TokenStream *input) : Parser(input) {
   _interpreter = new atn::ParserATNSimulator(this, _atn, _decisionToDFA, _sharedContextCache);
 }
 
-TemplateStringParser::~TemplateStringParser() {
+TmplStrParser::~TmplStrParser() {
   delete _interpreter;
 }
 
-std::string TemplateStringParser::getGrammarFileName() const {
-  return "TemplateString.g4";
+std::string TmplStrParser::getGrammarFileName() const {
+  return "TmplStr.g4";
 }
 
-const std::vector<std::string>& TemplateStringParser::getRuleNames() const {
+const std::vector<std::string>& TmplStrParser::getRuleNames() const {
   return _ruleNames;
 }
 
-dfa::Vocabulary& TemplateStringParser::getVocabulary() const {
+dfa::Vocabulary& TmplStrParser::getVocabulary() const {
   return _vocabulary;
 }
 
 
 //----------------- TmplContext ------------------------------------------------------------------
 
-TemplateStringParser::TmplContext::TmplContext(ParserRuleContext *parent, size_t invokingState)
+TmplStrParser::TmplContext::TmplContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-std::vector<TemplateStringParser::TextContext *> TemplateStringParser::TmplContext::text() {
-  return getRuleContexts<TemplateStringParser::TextContext>();
+std::vector<TmplStrParser::TextContext *> TmplStrParser::TmplContext::text() {
+  return getRuleContexts<TmplStrParser::TextContext>();
 }
 
-TemplateStringParser::TextContext* TemplateStringParser::TmplContext::text(size_t i) {
-  return getRuleContext<TemplateStringParser::TextContext>(i);
+TmplStrParser::TextContext* TmplStrParser::TmplContext::text(size_t i) {
+  return getRuleContext<TmplStrParser::TextContext>(i);
 }
 
-std::vector<TemplateStringParser::TaggedStatementContext *> TemplateStringParser::TmplContext::taggedStatement() {
-  return getRuleContexts<TemplateStringParser::TaggedStatementContext>();
+std::vector<TmplStrParser::TaggedStatementContext *> TmplStrParser::TmplContext::taggedStatement() {
+  return getRuleContexts<TmplStrParser::TaggedStatementContext>();
 }
 
-TemplateStringParser::TaggedStatementContext* TemplateStringParser::TmplContext::taggedStatement(size_t i) {
-  return getRuleContext<TemplateStringParser::TaggedStatementContext>(i);
+TmplStrParser::TaggedStatementContext* TmplStrParser::TmplContext::taggedStatement(size_t i) {
+  return getRuleContext<TmplStrParser::TaggedStatementContext>(i);
 }
 
 
-size_t TemplateStringParser::TmplContext::getRuleIndex() const {
-  return TemplateStringParser::RuleTmpl;
+size_t TmplStrParser::TmplContext::getRuleIndex() const {
+  return TmplStrParser::RuleTmpl;
 }
 
-void TemplateStringParser::TmplContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TemplateStringListener *>(listener);
+void TmplStrParser::TmplContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
   if (parserListener != nullptr)
     parserListener->enterTmpl(this);
 }
 
-void TemplateStringParser::TmplContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TemplateStringListener *>(listener);
+void TmplStrParser::TmplContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
   if (parserListener != nullptr)
     parserListener->exitTmpl(this);
 }
 
 
-antlrcpp::Any TemplateStringParser::TmplContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<TemplateStringVisitor*>(visitor))
+antlrcpp::Any TmplStrParser::TmplContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TmplStrVisitor*>(visitor))
     return parserVisitor->visitTmpl(this);
   else
     return visitor->visitChildren(this);
 }
 
-TemplateStringParser::TmplContext* TemplateStringParser::tmpl() {
+TmplStrParser::TmplContext* TmplStrParser::tmpl() {
   TmplContext *_localctx = _tracker.createInstance<TmplContext>(_ctx, getState());
-  enterRule(_localctx, 0, TemplateStringParser::RuleTmpl);
+  enterRule(_localctx, 0, TmplStrParser::RuleTmpl);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -92,7 +92,7 @@ TemplateStringParser::TmplContext* TemplateStringParser::tmpl() {
     setState(17);
     _errHandler->sync(this);
     _la = _input->LA(1);
-    while (_la == TemplateStringParser::TEXT) {
+    while (_la == TmplStrParser::TEXT) {
       setState(10);
       text();
       setState(11);
@@ -125,42 +125,42 @@ TemplateStringParser::TmplContext* TemplateStringParser::tmpl() {
 
 //----------------- TaggedStatementContext ------------------------------------------------------------------
 
-TemplateStringParser::TaggedStatementContext::TaggedStatementContext(ParserRuleContext *parent, size_t invokingState)
+TmplStrParser::TaggedStatementContext::TaggedStatementContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-TemplateStringParser::StatementContext* TemplateStringParser::TaggedStatementContext::statement() {
-  return getRuleContext<TemplateStringParser::StatementContext>(0);
+TmplStrParser::StatementContext* TmplStrParser::TaggedStatementContext::statement() {
+  return getRuleContext<TmplStrParser::StatementContext>(0);
 }
 
 
-size_t TemplateStringParser::TaggedStatementContext::getRuleIndex() const {
-  return TemplateStringParser::RuleTaggedStatement;
+size_t TmplStrParser::TaggedStatementContext::getRuleIndex() const {
+  return TmplStrParser::RuleTaggedStatement;
 }
 
-void TemplateStringParser::TaggedStatementContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TemplateStringListener *>(listener);
+void TmplStrParser::TaggedStatementContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
   if (parserListener != nullptr)
     parserListener->enterTaggedStatement(this);
 }
 
-void TemplateStringParser::TaggedStatementContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TemplateStringListener *>(listener);
+void TmplStrParser::TaggedStatementContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
   if (parserListener != nullptr)
     parserListener->exitTaggedStatement(this);
 }
 
 
-antlrcpp::Any TemplateStringParser::TaggedStatementContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<TemplateStringVisitor*>(visitor))
+antlrcpp::Any TmplStrParser::TaggedStatementContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TmplStrVisitor*>(visitor))
     return parserVisitor->visitTaggedStatement(this);
   else
     return visitor->visitChildren(this);
 }
 
-TemplateStringParser::TaggedStatementContext* TemplateStringParser::taggedStatement() {
+TmplStrParser::TaggedStatementContext* TmplStrParser::taggedStatement() {
   TaggedStatementContext *_localctx = _tracker.createInstance<TaggedStatementContext>(_ctx, getState());
-  enterRule(_localctx, 2, TemplateStringParser::RuleTaggedStatement);
+  enterRule(_localctx, 2, TmplStrParser::RuleTaggedStatement);
 
   auto onExit = finally([=] {
     exitRule();
@@ -168,11 +168,11 @@ TemplateStringParser::TaggedStatementContext* TemplateStringParser::taggedStatem
   try {
     enterOuterAlt(_localctx, 1);
     setState(20);
-    match(TemplateStringParser::T__0);
+    match(TmplStrParser::T__0);
     setState(21);
     statement();
     setState(22);
-    match(TemplateStringParser::T__1);
+    match(TmplStrParser::T__1);
    
   }
   catch (RecognitionException &e) {
@@ -186,42 +186,42 @@ TemplateStringParser::TaggedStatementContext* TemplateStringParser::taggedStatem
 
 //----------------- StatementContext ------------------------------------------------------------------
 
-TemplateStringParser::StatementContext::StatementContext(ParserRuleContext *parent, size_t invokingState)
+TmplStrParser::StatementContext::StatementContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-TemplateStringParser::IdentifierContext* TemplateStringParser::StatementContext::identifier() {
-  return getRuleContext<TemplateStringParser::IdentifierContext>(0);
+TmplStrParser::IdentifierContext* TmplStrParser::StatementContext::identifier() {
+  return getRuleContext<TmplStrParser::IdentifierContext>(0);
 }
 
 
-size_t TemplateStringParser::StatementContext::getRuleIndex() const {
-  return TemplateStringParser::RuleStatement;
+size_t TmplStrParser::StatementContext::getRuleIndex() const {
+  return TmplStrParser::RuleStatement;
 }
 
-void TemplateStringParser::StatementContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TemplateStringListener *>(listener);
+void TmplStrParser::StatementContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
   if (parserListener != nullptr)
     parserListener->enterStatement(this);
 }
 
-void TemplateStringParser::StatementContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TemplateStringListener *>(listener);
+void TmplStrParser::StatementContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
   if (parserListener != nullptr)
     parserListener->exitStatement(this);
 }
 
 
-antlrcpp::Any TemplateStringParser::StatementContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<TemplateStringVisitor*>(visitor))
+antlrcpp::Any TmplStrParser::StatementContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TmplStrVisitor*>(visitor))
     return parserVisitor->visitStatement(this);
   else
     return visitor->visitChildren(this);
 }
 
-TemplateStringParser::StatementContext* TemplateStringParser::statement() {
+TmplStrParser::StatementContext* TmplStrParser::statement() {
   StatementContext *_localctx = _tracker.createInstance<StatementContext>(_ctx, getState());
-  enterRule(_localctx, 4, TemplateStringParser::RuleStatement);
+  enterRule(_localctx, 4, TmplStrParser::RuleStatement);
 
   auto onExit = finally([=] {
     exitRule();
@@ -243,42 +243,42 @@ TemplateStringParser::StatementContext* TemplateStringParser::statement() {
 
 //----------------- TextContext ------------------------------------------------------------------
 
-TemplateStringParser::TextContext::TextContext(ParserRuleContext *parent, size_t invokingState)
+TmplStrParser::TextContext::TextContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TemplateStringParser::TextContext::TEXT() {
-  return getToken(TemplateStringParser::TEXT, 0);
+tree::TerminalNode* TmplStrParser::TextContext::TEXT() {
+  return getToken(TmplStrParser::TEXT, 0);
 }
 
 
-size_t TemplateStringParser::TextContext::getRuleIndex() const {
-  return TemplateStringParser::RuleText;
+size_t TmplStrParser::TextContext::getRuleIndex() const {
+  return TmplStrParser::RuleText;
 }
 
-void TemplateStringParser::TextContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TemplateStringListener *>(listener);
+void TmplStrParser::TextContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
   if (parserListener != nullptr)
     parserListener->enterText(this);
 }
 
-void TemplateStringParser::TextContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TemplateStringListener *>(listener);
+void TmplStrParser::TextContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
   if (parserListener != nullptr)
     parserListener->exitText(this);
 }
 
 
-antlrcpp::Any TemplateStringParser::TextContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<TemplateStringVisitor*>(visitor))
+antlrcpp::Any TmplStrParser::TextContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TmplStrVisitor*>(visitor))
     return parserVisitor->visitText(this);
   else
     return visitor->visitChildren(this);
 }
 
-TemplateStringParser::TextContext* TemplateStringParser::text() {
+TmplStrParser::TextContext* TmplStrParser::text() {
   TextContext *_localctx = _tracker.createInstance<TextContext>(_ctx, getState());
-  enterRule(_localctx, 6, TemplateStringParser::RuleText);
+  enterRule(_localctx, 6, TmplStrParser::RuleText);
 
   auto onExit = finally([=] {
     exitRule();
@@ -286,7 +286,7 @@ TemplateStringParser::TextContext* TemplateStringParser::text() {
   try {
     enterOuterAlt(_localctx, 1);
     setState(26);
-    match(TemplateStringParser::TEXT);
+    match(TmplStrParser::TEXT);
    
   }
   catch (RecognitionException &e) {
@@ -300,46 +300,46 @@ TemplateStringParser::TextContext* TemplateStringParser::text() {
 
 //----------------- IdentifierContext ------------------------------------------------------------------
 
-TemplateStringParser::IdentifierContext::IdentifierContext(ParserRuleContext *parent, size_t invokingState)
+TmplStrParser::IdentifierContext::IdentifierContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* TemplateStringParser::IdentifierContext::NON_KEYWORD_IDENTIFIER() {
-  return getToken(TemplateStringParser::NON_KEYWORD_IDENTIFIER, 0);
+tree::TerminalNode* TmplStrParser::IdentifierContext::NON_KEYWORD_IDENTIFIER() {
+  return getToken(TmplStrParser::NON_KEYWORD_IDENTIFIER, 0);
 }
 
-tree::TerminalNode* TemplateStringParser::IdentifierContext::RAW_ESCAPE() {
-  return getToken(TemplateStringParser::RAW_ESCAPE, 0);
+tree::TerminalNode* TmplStrParser::IdentifierContext::RAW_ESCAPE() {
+  return getToken(TmplStrParser::RAW_ESCAPE, 0);
 }
 
 
-size_t TemplateStringParser::IdentifierContext::getRuleIndex() const {
-  return TemplateStringParser::RuleIdentifier;
+size_t TmplStrParser::IdentifierContext::getRuleIndex() const {
+  return TmplStrParser::RuleIdentifier;
 }
 
-void TemplateStringParser::IdentifierContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TemplateStringListener *>(listener);
+void TmplStrParser::IdentifierContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
   if (parserListener != nullptr)
     parserListener->enterIdentifier(this);
 }
 
-void TemplateStringParser::IdentifierContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TemplateStringListener *>(listener);
+void TmplStrParser::IdentifierContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
   if (parserListener != nullptr)
     parserListener->exitIdentifier(this);
 }
 
 
-antlrcpp::Any TemplateStringParser::IdentifierContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<TemplateStringVisitor*>(visitor))
+antlrcpp::Any TmplStrParser::IdentifierContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<TmplStrVisitor*>(visitor))
     return parserVisitor->visitIdentifier(this);
   else
     return visitor->visitChildren(this);
 }
 
-TemplateStringParser::IdentifierContext* TemplateStringParser::identifier() {
+TmplStrParser::IdentifierContext* TmplStrParser::identifier() {
   IdentifierContext *_localctx = _tracker.createInstance<IdentifierContext>(_ctx, getState());
-  enterRule(_localctx, 8, TemplateStringParser::RuleIdentifier);
+  enterRule(_localctx, 8, TmplStrParser::RuleIdentifier);
 
   auto onExit = finally([=] {
     exitRule();
@@ -348,19 +348,19 @@ TemplateStringParser::IdentifierContext* TemplateStringParser::identifier() {
     setState(31);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case TemplateStringParser::NON_KEYWORD_IDENTIFIER: {
+      case TmplStrParser::NON_KEYWORD_IDENTIFIER: {
         enterOuterAlt(_localctx, 1);
         setState(28);
-        dynamic_cast<IdentifierContext *>(_localctx)->nki = match(TemplateStringParser::NON_KEYWORD_IDENTIFIER);
+        dynamic_cast<IdentifierContext *>(_localctx)->nki = match(TmplStrParser::NON_KEYWORD_IDENTIFIER);
         break;
       }
 
-      case TemplateStringParser::RAW_ESCAPE: {
+      case TmplStrParser::RAW_ESCAPE: {
         enterOuterAlt(_localctx, 2);
         setState(29);
-        match(TemplateStringParser::RAW_ESCAPE);
+        match(TmplStrParser::RAW_ESCAPE);
         setState(30);
-        dynamic_cast<IdentifierContext *>(_localctx)->nki = match(TemplateStringParser::NON_KEYWORD_IDENTIFIER);
+        dynamic_cast<IdentifierContext *>(_localctx)->nki = match(TmplStrParser::NON_KEYWORD_IDENTIFIER);
         break;
       }
 
@@ -382,31 +382,31 @@ TemplateStringParser::IdentifierContext* TemplateStringParser::identifier() {
 }
 
 // Static vars and initialization.
-std::vector<dfa::DFA> TemplateStringParser::_decisionToDFA;
-atn::PredictionContextCache TemplateStringParser::_sharedContextCache;
+std::vector<dfa::DFA> TmplStrParser::_decisionToDFA;
+atn::PredictionContextCache TmplStrParser::_sharedContextCache;
 
 // We own the ATN which in turn owns the ATN states.
-atn::ATN TemplateStringParser::_atn;
-std::vector<uint16_t> TemplateStringParser::_serializedATN;
+atn::ATN TmplStrParser::_atn;
+std::vector<uint16_t> TmplStrParser::_serializedATN;
 
-std::vector<std::string> TemplateStringParser::_ruleNames = {
+std::vector<std::string> TmplStrParser::_ruleNames = {
   "tmpl", "taggedStatement", "statement", "text", "identifier"
 };
 
-std::vector<std::string> TemplateStringParser::_literalNames = {
+std::vector<std::string> TmplStrParser::_literalNames = {
   "", "'<%'", "'%>'", "", "'r#'"
 };
 
-std::vector<std::string> TemplateStringParser::_symbolicNames = {
+std::vector<std::string> TmplStrParser::_symbolicNames = {
   "", "", "", "NON_KEYWORD_IDENTIFIER", "RAW_ESCAPE", "COMMENT", "TAG", 
   "TEXT"
 };
 
-dfa::Vocabulary TemplateStringParser::_vocabulary(_literalNames, _symbolicNames);
+dfa::Vocabulary TmplStrParser::_vocabulary(_literalNames, _symbolicNames);
 
-std::vector<std::string> TemplateStringParser::_tokenNames;
+std::vector<std::string> TmplStrParser::_tokenNames;
 
-TemplateStringParser::Initializer::Initializer() {
+TmplStrParser::Initializer::Initializer() {
 	for (size_t i = 0; i < _symbolicNames.size(); ++i) {
 		std::string name = _vocabulary.getLiteralName(i);
 		if (name.empty()) {
@@ -455,4 +455,4 @@ TemplateStringParser::Initializer::Initializer() {
   }
 }
 
-TemplateStringParser::Initializer TemplateStringParser::_init;
+TmplStrParser::Initializer TmplStrParser::_init;

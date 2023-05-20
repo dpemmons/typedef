@@ -1,50 +1,50 @@
 
-// Generated from ./libtypedef/parser/grammar/TemplateString.g4 by ANTLR 4.7.2
+// Generated from ./libtypedef/parser/grammar/TmplStr.g4 by ANTLR 4.7.2
 
 
-#include "TemplateStringLexer.h"
+#include "TmplStrLexer.h"
 
 
 using namespace antlr4;
 
 
-TemplateStringLexer::TemplateStringLexer(CharStream *input) : Lexer(input) {
+TmplStrLexer::TmplStrLexer(CharStream *input) : Lexer(input) {
   _interpreter = new atn::LexerATNSimulator(this, _atn, _decisionToDFA, _sharedContextCache);
 }
 
-TemplateStringLexer::~TemplateStringLexer() {
+TmplStrLexer::~TmplStrLexer() {
   delete _interpreter;
 }
 
-std::string TemplateStringLexer::getGrammarFileName() const {
-  return "TemplateString.g4";
+std::string TmplStrLexer::getGrammarFileName() const {
+  return "TmplStr.g4";
 }
 
-const std::vector<std::string>& TemplateStringLexer::getRuleNames() const {
+const std::vector<std::string>& TmplStrLexer::getRuleNames() const {
   return _ruleNames;
 }
 
-const std::vector<std::string>& TemplateStringLexer::getChannelNames() const {
+const std::vector<std::string>& TmplStrLexer::getChannelNames() const {
   return _channelNames;
 }
 
-const std::vector<std::string>& TemplateStringLexer::getModeNames() const {
+const std::vector<std::string>& TmplStrLexer::getModeNames() const {
   return _modeNames;
 }
 
-const std::vector<std::string>& TemplateStringLexer::getTokenNames() const {
+const std::vector<std::string>& TmplStrLexer::getTokenNames() const {
   return _tokenNames;
 }
 
-dfa::Vocabulary& TemplateStringLexer::getVocabulary() const {
+dfa::Vocabulary& TmplStrLexer::getVocabulary() const {
   return _vocabulary;
 }
 
-const std::vector<uint16_t> TemplateStringLexer::getSerializedATN() const {
+const std::vector<uint16_t> TmplStrLexer::getSerializedATN() const {
   return _serializedATN;
 }
 
-const atn::ATN& TemplateStringLexer::getATN() const {
+const atn::ATN& TmplStrLexer::getATN() const {
   return _atn;
 }
 
@@ -52,41 +52,41 @@ const atn::ATN& TemplateStringLexer::getATN() const {
 
 
 // Static vars and initialization.
-std::vector<dfa::DFA> TemplateStringLexer::_decisionToDFA;
-atn::PredictionContextCache TemplateStringLexer::_sharedContextCache;
+std::vector<dfa::DFA> TmplStrLexer::_decisionToDFA;
+atn::PredictionContextCache TmplStrLexer::_sharedContextCache;
 
 // We own the ATN which in turn owns the ATN states.
-atn::ATN TemplateStringLexer::_atn;
-std::vector<uint16_t> TemplateStringLexer::_serializedATN;
+atn::ATN TmplStrLexer::_atn;
+std::vector<uint16_t> TmplStrLexer::_serializedATN;
 
-std::vector<std::string> TemplateStringLexer::_ruleNames = {
+std::vector<std::string> TmplStrLexer::_ruleNames = {
   u8"T__0", u8"T__1", u8"NON_KEYWORD_IDENTIFIER", u8"XID_Start", u8"XID_Continue", 
   u8"UNICODE_OIDS", u8"UNICODE_OIDC", u8"RAW_ESCAPE", u8"COMMENT", u8"TAG", 
   u8"TEXT"
 };
 
-std::vector<std::string> TemplateStringLexer::_channelNames = {
+std::vector<std::string> TmplStrLexer::_channelNames = {
   "DEFAULT_TOKEN_CHANNEL", "HIDDEN"
 };
 
-std::vector<std::string> TemplateStringLexer::_modeNames = {
+std::vector<std::string> TmplStrLexer::_modeNames = {
   u8"DEFAULT_MODE"
 };
 
-std::vector<std::string> TemplateStringLexer::_literalNames = {
+std::vector<std::string> TmplStrLexer::_literalNames = {
   "", u8"'<%'", u8"'%>'", "", u8"'r#'"
 };
 
-std::vector<std::string> TemplateStringLexer::_symbolicNames = {
+std::vector<std::string> TmplStrLexer::_symbolicNames = {
   "", "", "", u8"NON_KEYWORD_IDENTIFIER", u8"RAW_ESCAPE", u8"COMMENT", u8"TAG", 
   u8"TEXT"
 };
 
-dfa::Vocabulary TemplateStringLexer::_vocabulary(_literalNames, _symbolicNames);
+dfa::Vocabulary TmplStrLexer::_vocabulary(_literalNames, _symbolicNames);
 
-std::vector<std::string> TemplateStringLexer::_tokenNames;
+std::vector<std::string> TmplStrLexer::_tokenNames;
 
-TemplateStringLexer::Initializer::Initializer() {
+TmplStrLexer::Initializer::Initializer() {
   // This code could be in a static initializer lambda, but VS doesn't allow access to private class members from there.
 	for (size_t i = 0; i < _symbolicNames.size(); ++i) {
 		std::string name = _vocabulary.getLiteralName(i);
@@ -524,4 +524,4 @@ TemplateStringLexer::Initializer::Initializer() {
   }
 }
 
-TemplateStringLexer::Initializer TemplateStringLexer::_init;
+TmplStrLexer::Initializer TmplStrLexer::_init;

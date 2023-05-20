@@ -17,6 +17,7 @@
 #include "libtypedef/parser/parser_common.h"
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/symbol_table.h"
+#include "libtypedef/parser/tmpl_str_parser.h"
 
 namespace {
 
@@ -65,6 +66,31 @@ class SymRefListener : public TypedefParserBaseListener {
     // walk up the tree to see if the symbol exists.
     if (ctx->parent) {
       FindSymbol(ctx, ctx->parent);
+    }
+  }
+
+ private:
+  std::vector<ParserErrorInfo> &errors_list_;
+};
+
+class TmplStrListener : public TypedefParserBaseListener {
+ public:
+  TmplStrListener(std::vector<ParserErrorInfo> &errors_list)
+      : errors_list_(errors_list) {}
+
+  virtual void exitValuedTemplateStringType(
+      TypedefParser::ValuedTemplateStringTypeContext *ctx) override {
+    if (!ctx->stringLiteral()->maybe_val) {
+      errors_list_.emplace_back(
+          ErrorFromContext(ctx, ParserErrorInfo::INVALID_STRING_LITERAL,
+                           "Unexpected: missing string literal."));
+      return;
+    }
+    auto parsedTmplStr = ParseTmplStr(*ctx->stringLiteral()->maybe_val);
+    if (!parsedTmplStr->errors.empty()) {
+      errors_list_.emplace_back(
+          ErrorFromContext(ctx, ParserErrorInfo::INVALID_STRING_LITERAL,
+                           "Bad template string."));
     }
   }
 
@@ -131,21 +157,36 @@ std::shared_ptr<ParsedFile> ParseTypedef(std::istream &input) {
     }
   }
 
-  if (compilation_unit != nullptr) {
-    SymRefListener symRefListener(errors);
-    antlr4::tree::ParseTreeWalker::DEFAULT.walk(&symRefListener,
-                                                compilation_unit);
+  if (compilation_unit == nullptr) {
+    return std::make_shared<ParsedFile>(
+        ParsedFileBuilder().AddErrors(errors).build());
   }
 
-  ParsedFileBuilder builder;
-  if (errors.empty() && compilation_unit != nullptr) {
-    builder.SetLanguageVersion(compilation_unit->version);
-    builder.SetModule(compilation_unit->module);
-    builder.AddSymbols2(compilation_unit->symbol_table);
+  // Resolve symbol references.
+  SymRefListener symRefListener(errors);
+  antlr4::tree::ParseTreeWalker::DEFAULT.walk(&symRefListener,
+                                              compilation_unit);
+  if (!errors.empty()) {
+    return std::make_shared<ParsedFile>(
+        ParsedFileBuilder().AddErrors(errors).build());
   }
-  builder.AddErrors(errors);
 
-  return std::make_shared<ParsedFile>(builder.build());
+  // Parse template strings.
+  TmplStrListener tmplStrListener(errors);
+  antlr4::tree::ParseTreeWalker::DEFAULT.walk(&tmplStrListener,
+                                              compilation_unit);
+
+  if (!errors.empty()) {
+    return std::make_shared<ParsedFile>(
+        ParsedFileBuilder().AddErrors(errors).build());
+  }
+
+  return std::make_shared<ParsedFile>(
+      ParsedFileBuilder()
+          .SetLanguageVersion(compilation_unit->version)
+          .SetModule(compilation_unit->module)
+          .AddSymbols2(compilation_unit->symbol_table)
+          .build());
 }
 
 }  // namespace td

@@ -9,9 +9,9 @@
 
 namespace td {
 
-ParserErrorInfo ErrorFromContext(antlr4::ParserRuleContext *ctx,
-                                 ParserErrorInfo::Type type,
-                                 std::string message = "") {
+inline ParserErrorInfo ErrorFromContext(antlr4::ParserRuleContext *ctx,
+                                        ParserErrorInfo::Type type,
+                                        std::string message = "") {
   return PEIBuilder()
       .SetType(type)
       .SetMessage(message)

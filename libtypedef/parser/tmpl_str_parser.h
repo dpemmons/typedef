@@ -4,13 +4,18 @@
 #include <istream>
 #include <memory>
 #include <string>
+#include <vector>
+
+#include "libtypedef/parser/parser_error_info.h"
 
 namespace td {
 
-struct TmplStrTemplate {};
+struct TmplStrTemplate {
+  std::vector<ParserErrorInfo> errors;
+};
 
-std::unique_ptr<TmplStrTemplate> Parse(const std::string& s);
-std::unique_ptr<TmplStrTemplate> Parse(std::istream& input);
+std::unique_ptr<TmplStrTemplate> ParseTmplStr(const std::string& s);
+std::unique_ptr<TmplStrTemplate> ParseTmplStr(std::istream& input);
 
 }  // namespace td
 
