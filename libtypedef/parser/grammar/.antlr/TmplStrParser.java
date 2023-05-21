@@ -16,8 +16,8 @@ public class TmplStrParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, NON_KEYWORD_IDENTIFIER=3, RAW_ESCAPE=4, COMMENT=5, TAG=6, 
-		TEXT=7;
+		T__0=1, T__1=2, NON_KEYWORD_IDENTIFIER=3, RAW_ESCAPE=4, WS=5, COMMENT=6, 
+		TAG=7, TEXT=8;
 	public static final int
 		RULE_tmpl = 0, RULE_taggedStatement = 1, RULE_statement = 2, RULE_text = 3, 
 		RULE_identifier = 4;
@@ -30,13 +30,13 @@ public class TmplStrParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'<%'", "'%>'", null, "'r#'"
+			null, "'<'", "'>'", null, "'r#'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, "NON_KEYWORD_IDENTIFIER", "RAW_ESCAPE", "COMMENT", 
+			null, null, null, "NON_KEYWORD_IDENTIFIER", "RAW_ESCAPE", "WS", "COMMENT", 
 			"TAG", "TEXT"
 		};
 	}
@@ -160,6 +160,10 @@ public class TmplStrParser extends Parser {
 		public StatementContext statement() {
 			return getRuleContext(StatementContext.class,0);
 		}
+		public List<TerminalNode> WS() { return getTokens(TmplStrParser.WS); }
+		public TerminalNode WS(int i) {
+			return getToken(TmplStrParser.WS, i);
+		}
 		public TaggedStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -169,14 +173,43 @@ public class TmplStrParser extends Parser {
 	public final TaggedStatementContext taggedStatement() throws RecognitionException {
 		TaggedStatementContext _localctx = new TaggedStatementContext(_ctx, getState());
 		enterRule(_localctx, 2, RULE_taggedStatement);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(20);
 			match(T__0);
-			setState(21);
+			setState(24);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while (_la==WS) {
+				{
+				{
+				setState(21);
+				match(WS);
+				}
+				}
+				setState(26);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			setState(27);
 			statement();
-			setState(22);
+			setState(31);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while (_la==WS) {
+				{
+				{
+				setState(28);
+				match(WS);
+				}
+				}
+				setState(33);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			setState(34);
 			match(T__1);
 			}
 		}
@@ -207,7 +240,7 @@ public class TmplStrParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(24);
+			setState(36);
 			identifier();
 			}
 		}
@@ -236,7 +269,7 @@ public class TmplStrParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(26);
+			setState(38);
 			match(TEXT);
 			}
 		}
@@ -266,22 +299,22 @@ public class TmplStrParser extends Parser {
 		IdentifierContext _localctx = new IdentifierContext(_ctx, getState());
 		enterRule(_localctx, 8, RULE_identifier);
 		try {
-			setState(31);
+			setState(43);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case NON_KEYWORD_IDENTIFIER:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(28);
+				setState(40);
 				((IdentifierContext)_localctx).nki = match(NON_KEYWORD_IDENTIFIER);
 				}
 				break;
 			case RAW_ESCAPE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(29);
+				setState(41);
 				match(RAW_ESCAPE);
-				setState(30);
+				setState(42);
 				((IdentifierContext)_localctx).nki = match(NON_KEYWORD_IDENTIFIER);
 				}
 				break;
@@ -305,16 +338,19 @@ public class TmplStrParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\t$\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\3\2\5\2\20\n\2\7\2\22\n\2\f\2\16\2"+
-		"\25\13\2\3\3\3\3\3\3\3\3\3\4\3\4\3\5\3\5\3\6\3\6\3\6\5\6\"\n\6\3\6\2\2"+
-		"\7\2\4\6\b\n\2\2\2!\2\23\3\2\2\2\4\26\3\2\2\2\6\32\3\2\2\2\b\34\3\2\2"+
-		"\2\n!\3\2\2\2\f\r\5\b\5\2\r\17\5\4\3\2\16\20\5\b\5\2\17\16\3\2\2\2\17"+
-		"\20\3\2\2\2\20\22\3\2\2\2\21\f\3\2\2\2\22\25\3\2\2\2\23\21\3\2\2\2\23"+
-		"\24\3\2\2\2\24\3\3\2\2\2\25\23\3\2\2\2\26\27\7\3\2\2\27\30\5\6\4\2\30"+
-		"\31\7\4\2\2\31\5\3\2\2\2\32\33\5\n\6\2\33\7\3\2\2\2\34\35\7\t\2\2\35\t"+
-		"\3\2\2\2\36\"\7\5\2\2\37 \7\6\2\2 \"\7\5\2\2!\36\3\2\2\2!\37\3\2\2\2\""+
-		"\13\3\2\2\2\5\17\23!";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\n\60\4\2\t\2\4\3"+
+		"\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\3\2\5\2\20\n\2\7\2\22\n\2\f\2\16"+
+		"\2\25\13\2\3\3\3\3\7\3\31\n\3\f\3\16\3\34\13\3\3\3\3\3\7\3 \n\3\f\3\16"+
+		"\3#\13\3\3\3\3\3\3\4\3\4\3\5\3\5\3\6\3\6\3\6\5\6.\n\6\3\6\2\2\7\2\4\6"+
+		"\b\n\2\2\2/\2\23\3\2\2\2\4\26\3\2\2\2\6&\3\2\2\2\b(\3\2\2\2\n-\3\2\2\2"+
+		"\f\r\5\b\5\2\r\17\5\4\3\2\16\20\5\b\5\2\17\16\3\2\2\2\17\20\3\2\2\2\20"+
+		"\22\3\2\2\2\21\f\3\2\2\2\22\25\3\2\2\2\23\21\3\2\2\2\23\24\3\2\2\2\24"+
+		"\3\3\2\2\2\25\23\3\2\2\2\26\32\7\3\2\2\27\31\7\7\2\2\30\27\3\2\2\2\31"+
+		"\34\3\2\2\2\32\30\3\2\2\2\32\33\3\2\2\2\33\35\3\2\2\2\34\32\3\2\2\2\35"+
+		"!\5\6\4\2\36 \7\7\2\2\37\36\3\2\2\2 #\3\2\2\2!\37\3\2\2\2!\"\3\2\2\2\""+
+		"$\3\2\2\2#!\3\2\2\2$%\7\4\2\2%\5\3\2\2\2&\'\5\n\6\2\'\7\3\2\2\2()\7\n"+
+		"\2\2)\t\3\2\2\2*.\7\5\2\2+,\7\6\2\2,.\7\5\2\2-*\3\2\2\2-+\3\2\2\2.\13"+
+		"\3\2\2\2\7\17\23\32!-";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

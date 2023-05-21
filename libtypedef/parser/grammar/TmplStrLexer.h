@@ -12,8 +12,8 @@
 class  TmplStrLexer : public antlr4::Lexer {
 public:
   enum {
-    T__0 = 1, T__1 = 2, NON_KEYWORD_IDENTIFIER = 3, RAW_ESCAPE = 4, COMMENT = 5, 
-    TAG = 6, TEXT = 7
+    T__0 = 1, T__1 = 2, NON_KEYWORD_IDENTIFIER = 3, RAW_ESCAPE = 4, WS = 5, 
+    COMMENT = 6, TEXT = 7
   };
 
   TmplStrLexer(antlr4::CharStream *input);

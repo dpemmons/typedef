@@ -156,9 +156,17 @@ T GetIntValue(TypedefParser *parser, CTX *ctx) {
 char32_t GetCharValue(TypedefParser *parser,
                       TypedefParser::CharLiteralContext *ctx);
 
-std::string GetStringValue(TypedefParser *parser, antlr4::Token *token);
+struct StringContents {
+  std::string str;
+  // how many characters into the token did the actual strting contents start?
+  // Eg. for regular string "foo" it would be 1, for raw string r#"foo"# it
+  // would be 3.
+  uint32_t start_offset = 0;
+};
 
-std::string GetRawString(TypedefParser *parser, antlr4::Token *token);
+StringContents GetStringValue(TypedefParser *parser, antlr4::Token *token);
+
+StringContents GetRawString(TypedefParser *parser, antlr4::Token *token);
 
 void TryInsert(td::SymbolTable &dstTable,
                TypedefParser::TypeDeclarationContext *src,

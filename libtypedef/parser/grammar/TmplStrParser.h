@@ -12,8 +12,8 @@
 class  TmplStrParser : public antlr4::Parser {
 public:
   enum {
-    T__0 = 1, T__1 = 2, NON_KEYWORD_IDENTIFIER = 3, RAW_ESCAPE = 4, COMMENT = 5, 
-    TAG = 6, TEXT = 7
+    T__0 = 1, T__1 = 2, NON_KEYWORD_IDENTIFIER = 3, RAW_ESCAPE = 4, WS = 5, 
+    COMMENT = 6, TEXT = 7
   };
 
   enum {
@@ -60,6 +60,8 @@ public:
     TaggedStatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     StatementContext *statement();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

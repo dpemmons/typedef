@@ -2,7 +2,7 @@ grammar TmplStr;
 
 tmpl: (text taggedStatement text?)*;
 
-taggedStatement: '<%' statement '%>';
+taggedStatement: '<' WS* statement WS* '>';
 
 statement: identifier;
 text: TEXT;
@@ -42,6 +42,8 @@ fragment UNICODE_OIDC:
 	| '\u19da';
 
 RAW_ESCAPE: 'r#';
+
+WS: [\p{Zs}] | ('\r\n' | [\r\n]);
 
 COMMENT: '<!--' .*? '-->' -> skip;
 TAG: '<' .*? '>'; // must come after other tag-like structures

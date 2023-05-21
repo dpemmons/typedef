@@ -452,12 +452,16 @@ i64Literal
   };
 
 stringLiteral
-	returns[std::optional<std::string> maybe_val]:
+	returns[std::optional<std::string> maybe_val, int start_offset]:
 	STRING_LITERAL {
-		$maybe_val = GetStringValue(this, $STRING_LITERAL);
+		auto contents = GetStringValue(this, $STRING_LITERAL);
+		$maybe_val = contents.str;
+		$start_offset = contents.start_offset;
 	}
 	| RAW_STRING_LITERAL {
-		$maybe_val = GetRawString(this, $RAW_STRING_LITERAL);
+		auto contents = GetRawString(this, $RAW_STRING_LITERAL);
+		$maybe_val = contents.str;
+		$start_offset = contents.start_offset;
 	};
 
 identifier

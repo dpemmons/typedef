@@ -88,9 +88,30 @@ class TmplStrListener : public TypedefParserBaseListener {
     }
     auto parsedTmplStr = ParseTmplStr(*ctx->stringLiteral()->maybe_val);
     if (!parsedTmplStr->errors.empty()) {
-      errors_list_.emplace_back(
-          ErrorFromContext(ctx, ParserErrorInfo::INVALID_STRING_LITERAL,
-                           "Bad template string."));
+      antlr4::Token *token = nullptr;
+      int line_offset = 0;
+      if (ctx->stringLiteral()->STRING_LITERAL()) {
+        token = ctx->stringLiteral()->STRING_LITERAL()->getSymbol();
+        line_offset = ctx->stringLiteral()->start_offset;
+      } else if (ctx->stringLiteral()->RAW_STRING_LITERAL()) {
+        token = ctx->stringLiteral()->RAW_STRING_LITERAL()->getSymbol();
+        line_offset = ctx->stringLiteral()->start_offset;
+      } else {
+        token = ctx->getStart();
+      }
+      for (auto &err : parsedTmplStr->errors) {
+        errors_list_.emplace_back(
+            PEIBuilder()
+                .SetType(ParserErrorInfo::TEMPLATE_STRING_PARSE_ERROR)
+                .SetMessage(err.message)
+                .SetTokenType(antlr4::Token::INVALID_TYPE)
+                .SetCharOffset(token->getStartIndex() + err.char_offset)
+                .SetLine(token->getLine() + err.line - 1)
+                .SetLineOffset(token->getCharPositionInLine() +
+                               err.line_offset + line_offset)
+                .SetLength(err.length)
+                .build());
+      }
     }
   }
 

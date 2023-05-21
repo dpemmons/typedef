@@ -6314,6 +6314,7 @@ public class TypedefParser extends Parser {
 
 	public static class StringLiteralContext extends ParserRuleContext {
 		public std::optional<std::string> maybe_val;
+		public int start_offset;
 		public Token STRING_LITERAL;
 		public Token RAW_STRING_LITERAL;
 		public TerminalNode STRING_LITERAL() { return getToken(TypedefParser.STRING_LITERAL, 0); }
@@ -6337,7 +6338,9 @@ public class TypedefParser extends Parser {
 				setState(1487);
 				((StringLiteralContext)_localctx).STRING_LITERAL = match(STRING_LITERAL);
 
-						((StringLiteralContext)_localctx).maybe_val =  GetStringValue(this, ((StringLiteralContext)_localctx).STRING_LITERAL);
+						auto contents = GetStringValue(this, ((StringLiteralContext)_localctx).STRING_LITERAL);
+						((StringLiteralContext)_localctx).maybe_val =  contents.str;
+						((StringLiteralContext)_localctx).start_offset =  contents.start_offset;
 					
 				}
 				break;
@@ -6347,7 +6350,9 @@ public class TypedefParser extends Parser {
 				setState(1489);
 				((StringLiteralContext)_localctx).RAW_STRING_LITERAL = match(RAW_STRING_LITERAL);
 
-						((StringLiteralContext)_localctx).maybe_val =  GetRawString(this, ((StringLiteralContext)_localctx).RAW_STRING_LITERAL);
+						auto contents = GetRawString(this, ((StringLiteralContext)_localctx).RAW_STRING_LITERAL);
+						((StringLiteralContext)_localctx).maybe_val =  contents.str;
+						((StringLiteralContext)_localctx).start_offset =  contents.start_offset;
 					
 				}
 				break;

@@ -7631,7 +7631,9 @@ TypedefParser::StringLiteralContext* TypedefParser::stringLiteral() {
         setState(1487);
         dynamic_cast<StringLiteralContext *>(_localctx)->string_literalToken = match(TypedefParser::STRING_LITERAL);
 
-        		dynamic_cast<StringLiteralContext *>(_localctx)->maybe_val =  GetStringValue(this, dynamic_cast<StringLiteralContext *>(_localctx)->string_literalToken);
+        		auto contents = GetStringValue(this, dynamic_cast<StringLiteralContext *>(_localctx)->string_literalToken);
+        		dynamic_cast<StringLiteralContext *>(_localctx)->maybe_val =  contents.str;
+        		dynamic_cast<StringLiteralContext *>(_localctx)->start_offset =  contents.start_offset;
         	
         break;
       }
@@ -7641,7 +7643,9 @@ TypedefParser::StringLiteralContext* TypedefParser::stringLiteral() {
         setState(1489);
         dynamic_cast<StringLiteralContext *>(_localctx)->raw_string_literalToken = match(TypedefParser::RAW_STRING_LITERAL);
 
-        		dynamic_cast<StringLiteralContext *>(_localctx)->maybe_val =  GetRawString(this, dynamic_cast<StringLiteralContext *>(_localctx)->raw_string_literalToken);
+        		auto contents = GetRawString(this, dynamic_cast<StringLiteralContext *>(_localctx)->raw_string_literalToken);
+        		dynamic_cast<StringLiteralContext *>(_localctx)->maybe_val =  contents.str;
+        		dynamic_cast<StringLiteralContext *>(_localctx)->start_offset =  contents.start_offset;
         	
         break;
       }

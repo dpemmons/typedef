@@ -1357,6 +1357,7 @@ public:
   class  StringLiteralContext : public antlr4::ParserRuleContext {
   public:
     std::optional<std::string> maybe_val;
+    int start_offset;
     antlr4::Token *string_literalToken = nullptr;;
     antlr4::Token *raw_string_literalToken = nullptr;;
     StringLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);

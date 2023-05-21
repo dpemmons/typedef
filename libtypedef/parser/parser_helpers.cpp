@@ -69,7 +69,8 @@ char32_t GetCharValue(TypedefParser* parser,
   throw InvalidLiteralException("Invalid char literal", parser);
 }
 
-std::string GetStringValue(TypedefParser* parser, antlr4::Token* token) {
+StringContents GetStringValue(TypedefParser* parser, antlr4::Token* token) {
+  StringContents contents;
   std::string text = token->getText();
   std::string_view literal(text);
   if (literal.size() < 2) {
@@ -78,6 +79,7 @@ std::string GetStringValue(TypedefParser* parser, antlr4::Token* token) {
   if (literal.front() == '"' && literal.back() == '"') {
     literal.remove_prefix(1);
     literal.remove_suffix(1);
+    contents.start_offset = 1;
   } else {
     throw InvalidLiteralException("Invalid string literal", parser);
   }
@@ -150,11 +152,13 @@ std::string GetStringValue(TypedefParser* parser, antlr4::Token* token) {
       result << literal[i];
     }
   }
-  return result.str();
+  contents.str = result.str();
+  return contents;
 }
 
 // From example, from RAW_STRING_LITERAL tokens.
-std::string GetRawString(TypedefParser* parser, antlr4::Token* token) {
+StringContents GetRawString(TypedefParser* parser, antlr4::Token* token) {
+  StringContents contents;
   std::string text = token->getText();
   std::string_view literal(text);
   if (literal.empty() || literal.front() != 'r') {
@@ -163,11 +167,13 @@ std::string GetRawString(TypedefParser* parser, antlr4::Token* token) {
 
   // Resize the string_view to skip the initial 'r'
   literal.remove_prefix(1);
+  contents.start_offset++;
 
   // Remove matching '#'s from the prefix and suffix
   while (!literal.empty() && literal.front() == '#' && literal.back() == '#') {
     literal.remove_prefix(1);
     literal.remove_suffix(1);
+    contents.start_offset++;
   }
 
   // Check for matching '"'s and resize the string_view accordingly
@@ -175,11 +181,14 @@ std::string GetRawString(TypedefParser* parser, antlr4::Token* token) {
     throw InvalidLiteralException("Invalid raw string literal", parser);
   }
 
+  // remove leading and trailing quotes
   literal.remove_prefix(1);
   literal.remove_suffix(1);
+  contents.start_offset++;
 
   // Create a new Str instance with the remaining raw string content
-  return std::string(literal);
+  contents.str = literal;
+  return contents;
 }
 
 void TryInsert(td::SymbolTable& dst_table,
