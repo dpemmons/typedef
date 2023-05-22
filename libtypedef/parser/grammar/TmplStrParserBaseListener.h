@@ -1,19 +1,19 @@
 
-// Generated from ./libtypedef/parser/grammar/TmplStr.g4 by ANTLR 4.7.2
+// Generated from ./libtypedef/parser/grammar/TmplStrParser.g4 by ANTLR 4.7.2
 
 #pragma once
 
 
 #include "antlr4-runtime.h"
-#include "TmplStrListener.h"
+#include "TmplStrParserListener.h"
 
 
 /**
- * This class provides an empty implementation of TmplStrListener,
+ * This class provides an empty implementation of TmplStrParserListener,
  * which can be extended to create a listener which only needs to handle a subset
  * of the available methods.
  */
-class  TmplStrBaseListener : public TmplStrListener {
+class  TmplStrParserBaseListener : public TmplStrParserListener {
 public:
 
   virtual void enterTmpl(TmplStrParser::TmplContext * /*ctx*/) override { }

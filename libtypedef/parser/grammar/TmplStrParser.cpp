@@ -1,9 +1,9 @@
 
-// Generated from ./libtypedef/parser/grammar/TmplStr.g4 by ANTLR 4.7.2
+// Generated from ./libtypedef/parser/grammar/TmplStrParser.g4 by ANTLR 4.7.2
 
 
-#include "TmplStrListener.h"
-#include "TmplStrVisitor.h"
+#include "TmplStrParserListener.h"
+#include "TmplStrParserVisitor.h"
 
 #include "TmplStrParser.h"
 
@@ -20,7 +20,7 @@ TmplStrParser::~TmplStrParser() {
 }
 
 std::string TmplStrParser::getGrammarFileName() const {
-  return "TmplStr.g4";
+  return "TmplStrParser.g4";
 }
 
 const std::vector<std::string>& TmplStrParser::getRuleNames() const {
@@ -60,20 +60,20 @@ size_t TmplStrParser::TmplContext::getRuleIndex() const {
 }
 
 void TmplStrParser::TmplContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
+  auto parserListener = dynamic_cast<TmplStrParserListener *>(listener);
   if (parserListener != nullptr)
     parserListener->enterTmpl(this);
 }
 
 void TmplStrParser::TmplContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
+  auto parserListener = dynamic_cast<TmplStrParserListener *>(listener);
   if (parserListener != nullptr)
     parserListener->exitTmpl(this);
 }
 
 
 antlrcpp::Any TmplStrParser::TmplContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<TmplStrVisitor*>(visitor))
+  if (auto parserVisitor = dynamic_cast<TmplStrParserVisitor*>(visitor))
     return parserVisitor->visitTmpl(this);
   else
     return visitor->visitChildren(this);
@@ -89,26 +89,21 @@ TmplStrParser::TmplContext* TmplStrParser::tmpl() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(17);
+    setState(16);
     _errHandler->sync(this);
     _la = _input->LA(1);
     while (_la == TmplStrParser::TEXT) {
       setState(10);
       text();
-      setState(11);
-      taggedStatement();
-      setState(13);
+      setState(12);
       _errHandler->sync(this);
 
-      switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 0, _ctx)) {
-      case 1: {
-        setState(12);
-        text();
-        break;
+      _la = _input->LA(1);
+      if (_la == TmplStrParser::OPEN) {
+        setState(11);
+        taggedStatement();
       }
-
-      }
-      setState(19);
+      setState(18);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
@@ -129,16 +124,16 @@ TmplStrParser::TaggedStatementContext::TaggedStatementContext(ParserRuleContext 
   : ParserRuleContext(parent, invokingState) {
 }
 
+tree::TerminalNode* TmplStrParser::TaggedStatementContext::OPEN() {
+  return getToken(TmplStrParser::OPEN, 0);
+}
+
 TmplStrParser::StatementContext* TmplStrParser::TaggedStatementContext::statement() {
   return getRuleContext<TmplStrParser::StatementContext>(0);
 }
 
-std::vector<tree::TerminalNode *> TmplStrParser::TaggedStatementContext::WS() {
-  return getTokens(TmplStrParser::WS);
-}
-
-tree::TerminalNode* TmplStrParser::TaggedStatementContext::WS(size_t i) {
-  return getToken(TmplStrParser::WS, i);
+tree::TerminalNode* TmplStrParser::TaggedStatementContext::CLOSE() {
+  return getToken(TmplStrParser::CLOSE, 0);
 }
 
 
@@ -147,20 +142,20 @@ size_t TmplStrParser::TaggedStatementContext::getRuleIndex() const {
 }
 
 void TmplStrParser::TaggedStatementContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
+  auto parserListener = dynamic_cast<TmplStrParserListener *>(listener);
   if (parserListener != nullptr)
     parserListener->enterTaggedStatement(this);
 }
 
 void TmplStrParser::TaggedStatementContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
+  auto parserListener = dynamic_cast<TmplStrParserListener *>(listener);
   if (parserListener != nullptr)
     parserListener->exitTaggedStatement(this);
 }
 
 
 antlrcpp::Any TmplStrParser::TaggedStatementContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<TmplStrVisitor*>(visitor))
+  if (auto parserVisitor = dynamic_cast<TmplStrParserVisitor*>(visitor))
     return parserVisitor->visitTaggedStatement(this);
   else
     return visitor->visitChildren(this);
@@ -169,39 +164,18 @@ antlrcpp::Any TmplStrParser::TaggedStatementContext::accept(tree::ParseTreeVisit
 TmplStrParser::TaggedStatementContext* TmplStrParser::taggedStatement() {
   TaggedStatementContext *_localctx = _tracker.createInstance<TaggedStatementContext>(_ctx, getState());
   enterRule(_localctx, 2, TmplStrParser::RuleTaggedStatement);
-  size_t _la = 0;
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
     enterOuterAlt(_localctx, 1);
+    setState(19);
+    match(TmplStrParser::OPEN);
     setState(20);
-    match(TmplStrParser::T__0);
-    setState(24);
-    _errHandler->sync(this);
-    _la = _input->LA(1);
-    while (_la == TmplStrParser::WS) {
-      setState(21);
-      match(TmplStrParser::WS);
-      setState(26);
-      _errHandler->sync(this);
-      _la = _input->LA(1);
-    }
-    setState(27);
     statement();
-    setState(31);
-    _errHandler->sync(this);
-    _la = _input->LA(1);
-    while (_la == TmplStrParser::WS) {
-      setState(28);
-      match(TmplStrParser::WS);
-      setState(33);
-      _errHandler->sync(this);
-      _la = _input->LA(1);
-    }
-    setState(34);
-    match(TmplStrParser::T__1);
+    setState(21);
+    match(TmplStrParser::CLOSE);
    
   }
   catch (RecognitionException &e) {
@@ -229,20 +203,20 @@ size_t TmplStrParser::StatementContext::getRuleIndex() const {
 }
 
 void TmplStrParser::StatementContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
+  auto parserListener = dynamic_cast<TmplStrParserListener *>(listener);
   if (parserListener != nullptr)
     parserListener->enterStatement(this);
 }
 
 void TmplStrParser::StatementContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
+  auto parserListener = dynamic_cast<TmplStrParserListener *>(listener);
   if (parserListener != nullptr)
     parserListener->exitStatement(this);
 }
 
 
 antlrcpp::Any TmplStrParser::StatementContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<TmplStrVisitor*>(visitor))
+  if (auto parserVisitor = dynamic_cast<TmplStrParserVisitor*>(visitor))
     return parserVisitor->visitStatement(this);
   else
     return visitor->visitChildren(this);
@@ -257,7 +231,7 @@ TmplStrParser::StatementContext* TmplStrParser::statement() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(36);
+    setState(23);
     identifier();
    
   }
@@ -286,20 +260,20 @@ size_t TmplStrParser::TextContext::getRuleIndex() const {
 }
 
 void TmplStrParser::TextContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
+  auto parserListener = dynamic_cast<TmplStrParserListener *>(listener);
   if (parserListener != nullptr)
     parserListener->enterText(this);
 }
 
 void TmplStrParser::TextContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
+  auto parserListener = dynamic_cast<TmplStrParserListener *>(listener);
   if (parserListener != nullptr)
     parserListener->exitText(this);
 }
 
 
 antlrcpp::Any TmplStrParser::TextContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<TmplStrVisitor*>(visitor))
+  if (auto parserVisitor = dynamic_cast<TmplStrParserVisitor*>(visitor))
     return parserVisitor->visitText(this);
   else
     return visitor->visitChildren(this);
@@ -314,7 +288,7 @@ TmplStrParser::TextContext* TmplStrParser::text() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(38);
+    setState(25);
     match(TmplStrParser::TEXT);
    
   }
@@ -347,20 +321,20 @@ size_t TmplStrParser::IdentifierContext::getRuleIndex() const {
 }
 
 void TmplStrParser::IdentifierContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
+  auto parserListener = dynamic_cast<TmplStrParserListener *>(listener);
   if (parserListener != nullptr)
     parserListener->enterIdentifier(this);
 }
 
 void TmplStrParser::IdentifierContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<TmplStrListener *>(listener);
+  auto parserListener = dynamic_cast<TmplStrParserListener *>(listener);
   if (parserListener != nullptr)
     parserListener->exitIdentifier(this);
 }
 
 
 antlrcpp::Any TmplStrParser::IdentifierContext::accept(tree::ParseTreeVisitor *visitor) {
-  if (auto parserVisitor = dynamic_cast<TmplStrVisitor*>(visitor))
+  if (auto parserVisitor = dynamic_cast<TmplStrParserVisitor*>(visitor))
     return parserVisitor->visitIdentifier(this);
   else
     return visitor->visitChildren(this);
@@ -374,21 +348,21 @@ TmplStrParser::IdentifierContext* TmplStrParser::identifier() {
     exitRule();
   });
   try {
-    setState(43);
+    setState(30);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case TmplStrParser::NON_KEYWORD_IDENTIFIER: {
         enterOuterAlt(_localctx, 1);
-        setState(40);
+        setState(27);
         dynamic_cast<IdentifierContext *>(_localctx)->nki = match(TmplStrParser::NON_KEYWORD_IDENTIFIER);
         break;
       }
 
       case TmplStrParser::RAW_ESCAPE: {
         enterOuterAlt(_localctx, 2);
-        setState(41);
+        setState(28);
         match(TmplStrParser::RAW_ESCAPE);
-        setState(42);
+        setState(29);
         dynamic_cast<IdentifierContext *>(_localctx)->nki = match(TmplStrParser::NON_KEYWORD_IDENTIFIER);
         break;
       }
@@ -423,12 +397,12 @@ std::vector<std::string> TmplStrParser::_ruleNames = {
 };
 
 std::vector<std::string> TmplStrParser::_literalNames = {
-  "", "'<'", "'>'", "", "'r#'"
+  "", "'<'", "", "'>'", "'/'", "", "'r#'"
 };
 
 std::vector<std::string> TmplStrParser::_symbolicNames = {
-  "", "", "", "NON_KEYWORD_IDENTIFIER", "RAW_ESCAPE", "WS", "COMMENT", "TAG", 
-  "TEXT"
+  "", "OPEN", "TEXT", "CLOSE", "SLASH", "NON_KEYWORD_IDENTIFIER", "RAW_ESCAPE", 
+  "WS"
 };
 
 dfa::Vocabulary TmplStrParser::_vocabulary(_literalNames, _symbolicNames);
@@ -451,36 +425,26 @@ TmplStrParser::Initializer::Initializer() {
 
   _serializedATN = {
     0x3, 0x608b, 0xa72a, 0x8133, 0xb9ed, 0x417c, 0x3be7, 0x7786, 0x5964, 
-    0x3, 0xa, 0x30, 0x4, 0x2, 0x9, 0x2, 0x4, 0x3, 0x9, 0x3, 0x4, 0x4, 0x9, 
-    0x4, 0x4, 0x5, 0x9, 0x5, 0x4, 0x6, 0x9, 0x6, 0x3, 0x2, 0x3, 0x2, 0x3, 
-    0x2, 0x5, 0x2, 0x10, 0xa, 0x2, 0x7, 0x2, 0x12, 0xa, 0x2, 0xc, 0x2, 0xe, 
-    0x2, 0x15, 0xb, 0x2, 0x3, 0x3, 0x3, 0x3, 0x7, 0x3, 0x19, 0xa, 0x3, 0xc, 
-    0x3, 0xe, 0x3, 0x1c, 0xb, 0x3, 0x3, 0x3, 0x3, 0x3, 0x7, 0x3, 0x20, 0xa, 
-    0x3, 0xc, 0x3, 0xe, 0x3, 0x23, 0xb, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x4, 
-    0x3, 0x4, 0x3, 0x5, 0x3, 0x5, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x5, 0x6, 
-    0x2e, 0xa, 0x6, 0x3, 0x6, 0x2, 0x2, 0x7, 0x2, 0x4, 0x6, 0x8, 0xa, 0x2, 
-    0x2, 0x2, 0x2f, 0x2, 0x13, 0x3, 0x2, 0x2, 0x2, 0x4, 0x16, 0x3, 0x2, 
-    0x2, 0x2, 0x6, 0x26, 0x3, 0x2, 0x2, 0x2, 0x8, 0x28, 0x3, 0x2, 0x2, 0x2, 
-    0xa, 0x2d, 0x3, 0x2, 0x2, 0x2, 0xc, 0xd, 0x5, 0x8, 0x5, 0x2, 0xd, 0xf, 
-    0x5, 0x4, 0x3, 0x2, 0xe, 0x10, 0x5, 0x8, 0x5, 0x2, 0xf, 0xe, 0x3, 0x2, 
-    0x2, 0x2, 0xf, 0x10, 0x3, 0x2, 0x2, 0x2, 0x10, 0x12, 0x3, 0x2, 0x2, 
-    0x2, 0x11, 0xc, 0x3, 0x2, 0x2, 0x2, 0x12, 0x15, 0x3, 0x2, 0x2, 0x2, 
-    0x13, 0x11, 0x3, 0x2, 0x2, 0x2, 0x13, 0x14, 0x3, 0x2, 0x2, 0x2, 0x14, 
-    0x3, 0x3, 0x2, 0x2, 0x2, 0x15, 0x13, 0x3, 0x2, 0x2, 0x2, 0x16, 0x1a, 
-    0x7, 0x3, 0x2, 0x2, 0x17, 0x19, 0x7, 0x7, 0x2, 0x2, 0x18, 0x17, 0x3, 
-    0x2, 0x2, 0x2, 0x19, 0x1c, 0x3, 0x2, 0x2, 0x2, 0x1a, 0x18, 0x3, 0x2, 
-    0x2, 0x2, 0x1a, 0x1b, 0x3, 0x2, 0x2, 0x2, 0x1b, 0x1d, 0x3, 0x2, 0x2, 
-    0x2, 0x1c, 0x1a, 0x3, 0x2, 0x2, 0x2, 0x1d, 0x21, 0x5, 0x6, 0x4, 0x2, 
-    0x1e, 0x20, 0x7, 0x7, 0x2, 0x2, 0x1f, 0x1e, 0x3, 0x2, 0x2, 0x2, 0x20, 
-    0x23, 0x3, 0x2, 0x2, 0x2, 0x21, 0x1f, 0x3, 0x2, 0x2, 0x2, 0x21, 0x22, 
-    0x3, 0x2, 0x2, 0x2, 0x22, 0x24, 0x3, 0x2, 0x2, 0x2, 0x23, 0x21, 0x3, 
-    0x2, 0x2, 0x2, 0x24, 0x25, 0x7, 0x4, 0x2, 0x2, 0x25, 0x5, 0x3, 0x2, 
-    0x2, 0x2, 0x26, 0x27, 0x5, 0xa, 0x6, 0x2, 0x27, 0x7, 0x3, 0x2, 0x2, 
-    0x2, 0x28, 0x29, 0x7, 0xa, 0x2, 0x2, 0x29, 0x9, 0x3, 0x2, 0x2, 0x2, 
-    0x2a, 0x2e, 0x7, 0x5, 0x2, 0x2, 0x2b, 0x2c, 0x7, 0x6, 0x2, 0x2, 0x2c, 
-    0x2e, 0x7, 0x5, 0x2, 0x2, 0x2d, 0x2a, 0x3, 0x2, 0x2, 0x2, 0x2d, 0x2b, 
-    0x3, 0x2, 0x2, 0x2, 0x2e, 0xb, 0x3, 0x2, 0x2, 0x2, 0x7, 0xf, 0x13, 0x1a, 
-    0x21, 0x2d, 
+    0x3, 0x9, 0x23, 0x4, 0x2, 0x9, 0x2, 0x4, 0x3, 0x9, 0x3, 0x4, 0x4, 0x9, 
+    0x4, 0x4, 0x5, 0x9, 0x5, 0x4, 0x6, 0x9, 0x6, 0x3, 0x2, 0x3, 0x2, 0x5, 
+    0x2, 0xf, 0xa, 0x2, 0x7, 0x2, 0x11, 0xa, 0x2, 0xc, 0x2, 0xe, 0x2, 0x14, 
+    0xb, 0x2, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x4, 0x3, 0x4, 
+    0x3, 0x5, 0x3, 0x5, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x5, 0x6, 0x21, 0xa, 
+    0x6, 0x3, 0x6, 0x2, 0x2, 0x7, 0x2, 0x4, 0x6, 0x8, 0xa, 0x2, 0x2, 0x2, 
+    0x20, 0x2, 0x12, 0x3, 0x2, 0x2, 0x2, 0x4, 0x15, 0x3, 0x2, 0x2, 0x2, 
+    0x6, 0x19, 0x3, 0x2, 0x2, 0x2, 0x8, 0x1b, 0x3, 0x2, 0x2, 0x2, 0xa, 0x20, 
+    0x3, 0x2, 0x2, 0x2, 0xc, 0xe, 0x5, 0x8, 0x5, 0x2, 0xd, 0xf, 0x5, 0x4, 
+    0x3, 0x2, 0xe, 0xd, 0x3, 0x2, 0x2, 0x2, 0xe, 0xf, 0x3, 0x2, 0x2, 0x2, 
+    0xf, 0x11, 0x3, 0x2, 0x2, 0x2, 0x10, 0xc, 0x3, 0x2, 0x2, 0x2, 0x11, 
+    0x14, 0x3, 0x2, 0x2, 0x2, 0x12, 0x10, 0x3, 0x2, 0x2, 0x2, 0x12, 0x13, 
+    0x3, 0x2, 0x2, 0x2, 0x13, 0x3, 0x3, 0x2, 0x2, 0x2, 0x14, 0x12, 0x3, 
+    0x2, 0x2, 0x2, 0x15, 0x16, 0x7, 0x3, 0x2, 0x2, 0x16, 0x17, 0x5, 0x6, 
+    0x4, 0x2, 0x17, 0x18, 0x7, 0x5, 0x2, 0x2, 0x18, 0x5, 0x3, 0x2, 0x2, 
+    0x2, 0x19, 0x1a, 0x5, 0xa, 0x6, 0x2, 0x1a, 0x7, 0x3, 0x2, 0x2, 0x2, 
+    0x1b, 0x1c, 0x7, 0x4, 0x2, 0x2, 0x1c, 0x9, 0x3, 0x2, 0x2, 0x2, 0x1d, 
+    0x21, 0x7, 0x7, 0x2, 0x2, 0x1e, 0x1f, 0x7, 0x8, 0x2, 0x2, 0x1f, 0x21, 
+    0x7, 0x7, 0x2, 0x2, 0x20, 0x1d, 0x3, 0x2, 0x2, 0x2, 0x20, 0x1e, 0x3, 
+    0x2, 0x2, 0x2, 0x21, 0xb, 0x3, 0x2, 0x2, 0x2, 0x5, 0xe, 0x12, 0x20, 
   };
 
   atn::ATNDeserializer deserializer;

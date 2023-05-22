@@ -1,18 +1,18 @@
 
-// Generated from ./libtypedef/parser/grammar/TmplStr.g4 by ANTLR 4.7.2
+// Generated from ./libtypedef/parser/grammar/TmplStrParser.g4 by ANTLR 4.7.2
 
 #pragma once
 
 
 #include "antlr4-runtime.h"
-#include "TmplStrVisitor.h"
+#include "TmplStrParserVisitor.h"
 
 
 /**
- * This class provides an empty implementation of TmplStrVisitor, which can be
+ * This class provides an empty implementation of TmplStrParserVisitor, which can be
  * extended to create a visitor which only needs to handle a subset of the available methods.
  */
-class  TmplStrBaseVisitor : public TmplStrVisitor {
+class  TmplStrParserBaseVisitor : public TmplStrParserVisitor {
 public:
 
   virtual antlrcpp::Any visitTmpl(TmplStrParser::TmplContext *ctx) override {

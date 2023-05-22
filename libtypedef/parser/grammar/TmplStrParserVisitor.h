@@ -1,5 +1,5 @@
 
-// Generated from ./libtypedef/parser/grammar/TmplStr.g4 by ANTLR 4.7.2
+// Generated from ./libtypedef/parser/grammar/TmplStrParser.g4 by ANTLR 4.7.2
 
 #pragma once
 
@@ -13,7 +13,7 @@
  * This class defines an abstract visitor for a parse tree
  * produced by TmplStrParser.
  */
-class  TmplStrVisitor : public antlr4::tree::AbstractParseTreeVisitor {
+class  TmplStrParserVisitor : public antlr4::tree::AbstractParseTreeVisitor {
 public:
 
   /**

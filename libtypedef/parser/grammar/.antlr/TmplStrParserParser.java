@@ -9,15 +9,15 @@ import java.util.Iterator;
 import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
-public class TmplStrParser extends Parser {
+public class TmplStrParserParser extends Parser {
 	static { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		OPEN=1, TEXT=2, CLOSE=3, SLASH=4, NON_KEYWORD_IDENTIFIER=5, RAW_ESCAPE=6, 
-		WS=7;
+		T__0=1, T__1=2, NON_KEYWORD_IDENTIFIER=3, RAW_ESCAPE=4, WS=5, COMMENT=6, 
+		TAG=7, TEXT=8;
 	public static final int
 		RULE_tmpl = 0, RULE_taggedStatement = 1, RULE_statement = 2, RULE_text = 3, 
 		RULE_identifier = 4;
@@ -30,14 +30,14 @@ public class TmplStrParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'<'", null, "'>'", "'/'", null, "'r#'"
+			null, "'<'", "'>'", null, "'r#'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "OPEN", "TEXT", "CLOSE", "SLASH", "NON_KEYWORD_IDENTIFIER", "RAW_ESCAPE", 
-			"WS"
+			null, null, null, "NON_KEYWORD_IDENTIFIER", "RAW_ESCAPE", "WS", "COMMENT", 
+			"TAG", "TEXT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -86,7 +86,7 @@ public class TmplStrParser extends Parser {
 	@Override
 	public ATN getATN() { return _ATN; }
 
-	public TmplStrParser(TokenStream input) {
+	public TmplStrParserParser(TokenStream input) {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
@@ -128,7 +128,7 @@ public class TmplStrParser extends Parser {
 				setState(12);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (_la==OPEN) {
+				if (_la==T__0) {
 					{
 					setState(11);
 					taggedStatement();
@@ -155,11 +155,9 @@ public class TmplStrParser extends Parser {
 	}
 
 	public static class TaggedStatementContext extends ParserRuleContext {
-		public TerminalNode OPEN() { return getToken(TmplStrParser.OPEN, 0); }
 		public StatementContext statement() {
 			return getRuleContext(StatementContext.class,0);
 		}
-		public TerminalNode CLOSE() { return getToken(TmplStrParser.CLOSE, 0); }
 		public TaggedStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -173,11 +171,11 @@ public class TmplStrParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(19);
-			match(OPEN);
+			match(T__0);
 			setState(20);
 			statement();
 			setState(21);
-			match(CLOSE);
+			match(T__1);
 			}
 		}
 		catch (RecognitionException re) {
@@ -223,7 +221,7 @@ public class TmplStrParser extends Parser {
 	}
 
 	public static class TextContext extends ParserRuleContext {
-		public TerminalNode TEXT() { return getToken(TmplStrParser.TEXT, 0); }
+		public TerminalNode TEXT() { return getToken(TmplStrParserParser.TEXT, 0); }
 		public TextContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -254,8 +252,8 @@ public class TmplStrParser extends Parser {
 	public static class IdentifierContext extends ParserRuleContext {
 		public std::string id;
 		public Token nki;
-		public TerminalNode NON_KEYWORD_IDENTIFIER() { return getToken(TmplStrParser.NON_KEYWORD_IDENTIFIER, 0); }
-		public TerminalNode RAW_ESCAPE() { return getToken(TmplStrParser.RAW_ESCAPE, 0); }
+		public TerminalNode NON_KEYWORD_IDENTIFIER() { return getToken(TmplStrParserParser.NON_KEYWORD_IDENTIFIER, 0); }
+		public TerminalNode RAW_ESCAPE() { return getToken(TmplStrParserParser.RAW_ESCAPE, 0); }
 		public IdentifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -305,15 +303,15 @@ public class TmplStrParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\t#\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\n#\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\5\2\17\n\2\7\2\21\n\2\f\2\16\2\24\13"+
 		"\2\3\3\3\3\3\3\3\3\3\4\3\4\3\5\3\5\3\6\3\6\3\6\5\6!\n\6\3\6\2\2\7\2\4"+
 		"\6\b\n\2\2\2 \2\22\3\2\2\2\4\25\3\2\2\2\6\31\3\2\2\2\b\33\3\2\2\2\n \3"+
 		"\2\2\2\f\16\5\b\5\2\r\17\5\4\3\2\16\r\3\2\2\2\16\17\3\2\2\2\17\21\3\2"+
 		"\2\2\20\f\3\2\2\2\21\24\3\2\2\2\22\20\3\2\2\2\22\23\3\2\2\2\23\3\3\2\2"+
-		"\2\24\22\3\2\2\2\25\26\7\3\2\2\26\27\5\6\4\2\27\30\7\5\2\2\30\5\3\2\2"+
-		"\2\31\32\5\n\6\2\32\7\3\2\2\2\33\34\7\4\2\2\34\t\3\2\2\2\35!\7\7\2\2\36"+
-		"\37\7\b\2\2\37!\7\7\2\2 \35\3\2\2\2 \36\3\2\2\2!\13\3\2\2\2\5\16\22 ";
+		"\2\24\22\3\2\2\2\25\26\7\3\2\2\26\27\5\6\4\2\27\30\7\4\2\2\30\5\3\2\2"+
+		"\2\31\32\5\n\6\2\32\7\3\2\2\2\33\34\7\n\2\2\34\t\3\2\2\2\35!\7\5\2\2\36"+
+		"\37\7\6\2\2\37!\7\5\2\2 \35\3\2\2\2 \36\3\2\2\2!\13\3\2\2\2\5\16\22 ";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

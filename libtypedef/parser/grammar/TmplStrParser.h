@@ -1,5 +1,5 @@
 
-// Generated from ./libtypedef/parser/grammar/TmplStr.g4 by ANTLR 4.7.2
+// Generated from ./libtypedef/parser/grammar/TmplStrParser.g4 by ANTLR 4.7.2
 
 #pragma once
 
@@ -12,8 +12,8 @@
 class  TmplStrParser : public antlr4::Parser {
 public:
   enum {
-    T__0 = 1, T__1 = 2, NON_KEYWORD_IDENTIFIER = 3, RAW_ESCAPE = 4, WS = 5, 
-    COMMENT = 6, TAG = 7, TEXT = 8
+    OPEN = 1, TEXT = 2, CLOSE = 3, SLASH = 4, NON_KEYWORD_IDENTIFIER = 5, 
+    RAW_ESCAPE = 6, WS = 7
   };
 
   enum {
@@ -59,9 +59,9 @@ public:
   public:
     TaggedStatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *OPEN();
     StatementContext *statement();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
+    antlr4::tree::TerminalNode *CLOSE();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

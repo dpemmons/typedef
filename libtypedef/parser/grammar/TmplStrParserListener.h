@@ -1,5 +1,5 @@
 
-// Generated from ./libtypedef/parser/grammar/TmplStr.g4 by ANTLR 4.7.2
+// Generated from ./libtypedef/parser/grammar/TmplStrParser.g4 by ANTLR 4.7.2
 
 #pragma once
 
@@ -11,7 +11,7 @@
 /**
  * This interface defines an abstract listener for a parse tree produced by TmplStrParser.
  */
-class  TmplStrListener : public antlr4::tree::ParseTreeListener {
+class  TmplStrParserListener : public antlr4::tree::ParseTreeListener {
 public:
 
   virtual void enterTmpl(TmplStrParser::TmplContext *ctx) = 0;

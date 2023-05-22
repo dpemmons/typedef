@@ -564,6 +564,8 @@ class MutableTemplateExample {
 
     static std::string tmpl(const MutableTemplateData& arg) { return "tmpl_str"; }
     
+    static std::string tmpl2(const MutableTemplateData& arg) { return "tmpl_str"; }
+    
 
     friend std::ostream& operator<<(std::ostream& os, const MutableTemplateExample& obj);
 
