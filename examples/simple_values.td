@@ -153,17 +153,35 @@ variant VariantC {
   vector NestedVector<i32>;
   nestedVectorField: NestedVector;
 
-  optionalField: i32?;
+  optionalField: i32;
 };
 
 struct TemplateExample {
 
   struct TemplateData {
     name: str;
+    someVec: vector<i32>;
   };
 
   tmpl: tmpl_str<TemplateData> = "Hello < name >!";
 
   tmpl2: tmpl_str<TemplateData> = r#"Yo < name >!"#;
+
+  tmpl3: tmpl_str<TemplateData> = r#"
+  <for i in someVec>
+    Hi! <there>
+    <if this></if>
+  </for>
+
+  <if name>
+    yo
+  <else if name>
+    yar
+  <else if name2>
+    foo
+  <else>
+    bar
+  </if>
+  "#;
 
 };

@@ -12,6 +12,10 @@ TEXT: ~'<'+; // clump all text together
 mode ISLAND;
 CLOSE: '>' -> mode(DEFAULT_MODE);
 SLASH: '/';
+KW_FOR: 'for';
+KW_IN: 'in';
+KW_IF: 'if';
+KW_ELSE: 'else';
 
 // rule itself allow any identifier, but keyword has been matched before
 NON_KEYWORD_IDENTIFIER:

@@ -539,6 +539,15 @@ class MutableTemplateExample {
         // Nested classes.
     
     
+        
+        class MutablesomeVec : public std::vector<int32_t> {
+          public:
+            MutablesomeVec() {};
+            ~MutablesomeVec() {};
+        
+            friend std::ostream& operator<<(std::ostream& os, const MutablesomeVec& obj);
+        
+        };  // class MutablesomeVec
     
     
     
@@ -547,12 +556,17 @@ class MutableTemplateExample {
         std::string name() const { return name_; }
         void name(std::string _val) { name_ = _val; }
         
+        std::unique_ptr<MutablesomeVec>& someVec() { return someVec_; }
+        const std::unique_ptr<MutablesomeVec>& someVec() const { return someVec_; }
+        void someVec(std::unique_ptr<MutablesomeVec> _val) { someVec_ = std::move(_val); }
+        
     
         friend std::ostream& operator<<(std::ostream& os, const MutableTemplateData& obj);
     
       private:
         // Members.
         std::string name_;
+        std::unique_ptr<MutablesomeVec> someVec_;
     
     };  // class MutableTemplateData
 
@@ -565,6 +579,8 @@ class MutableTemplateExample {
     static std::string tmpl(const MutableTemplateData& arg) { return "tmpl_str"; }
     
     static std::string tmpl2(const MutableTemplateData& arg) { return "tmpl_str"; }
+    
+    static std::string tmpl3(const MutableTemplateData& arg) { return "tmpl_str"; }
     
 
     friend std::ostream& operator<<(std::ostream& os, const MutableTemplateExample& obj);

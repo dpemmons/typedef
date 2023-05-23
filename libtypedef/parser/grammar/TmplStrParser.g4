@@ -4,12 +4,33 @@ options {
 	tokenVocab = TmplStrLexer;
 }
 
-tmpl: (text taggedStatement?)*;
+@header {
+}
 
-taggedStatement: '<' statement '>';
+@parser::definitions {
+#include <string>
+}
 
-statement: identifier;
-text: TEXT;
+tmpl: item*;
+
+item: text | replacement | forBlock | ifBlock;
+
+replacement
+	returns[std::string id]:
+	'<' identifier '>' {$id = $identifier.id;};
+
+forBlock: forOpen item* forClose;
+forOpen: '<' KW_FOR identifier KW_IN identifier '>';
+forClose: '<' SLASH KW_FOR '>';
+
+ifBlock: ifOpen item* (elseIfStmt item*)* (elseStmt item*)? ifClose;
+ifOpen: '<' KW_IF identifier '>';
+elseIfStmt: '<' KW_ELSE KW_IF identifier '>';
+elseStmt: '<' KW_ELSE '>';
+ifClose: '<' SLASH KW_IF '>';
+
+text
+	returns[std::string txt]: TEXT { $txt = $TEXT->getText(); };
 
 identifier
 	returns[std::string id]

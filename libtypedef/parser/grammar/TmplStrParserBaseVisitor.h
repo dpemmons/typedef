@@ -1,4 +1,6 @@
 
+
+
 // Generated from ./libtypedef/parser/grammar/TmplStrParser.g4 by ANTLR 4.7.2
 
 #pragma once
@@ -19,11 +21,43 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTaggedStatement(TmplStrParser::TaggedStatementContext *ctx) override {
+  virtual antlrcpp::Any visitItem(TmplStrParser::ItemContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitStatement(TmplStrParser::StatementContext *ctx) override {
+  virtual antlrcpp::Any visitReplacement(TmplStrParser::ReplacementContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitForBlock(TmplStrParser::ForBlockContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitForOpen(TmplStrParser::ForOpenContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitForClose(TmplStrParser::ForCloseContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitIfBlock(TmplStrParser::IfBlockContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitIfOpen(TmplStrParser::IfOpenContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitElseIfStmt(TmplStrParser::ElseIfStmtContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitElseStmt(TmplStrParser::ElseStmtContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitIfClose(TmplStrParser::IfCloseContext *ctx) override {
     return visitChildren(ctx);
   }
 

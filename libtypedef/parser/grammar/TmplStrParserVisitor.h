@@ -1,4 +1,6 @@
 
+
+
 // Generated from ./libtypedef/parser/grammar/TmplStrParser.g4 by ANTLR 4.7.2
 
 #pragma once
@@ -21,9 +23,25 @@ public:
    */
     virtual antlrcpp::Any visitTmpl(TmplStrParser::TmplContext *context) = 0;
 
-    virtual antlrcpp::Any visitTaggedStatement(TmplStrParser::TaggedStatementContext *context) = 0;
+    virtual antlrcpp::Any visitItem(TmplStrParser::ItemContext *context) = 0;
 
-    virtual antlrcpp::Any visitStatement(TmplStrParser::StatementContext *context) = 0;
+    virtual antlrcpp::Any visitReplacement(TmplStrParser::ReplacementContext *context) = 0;
+
+    virtual antlrcpp::Any visitForBlock(TmplStrParser::ForBlockContext *context) = 0;
+
+    virtual antlrcpp::Any visitForOpen(TmplStrParser::ForOpenContext *context) = 0;
+
+    virtual antlrcpp::Any visitForClose(TmplStrParser::ForCloseContext *context) = 0;
+
+    virtual antlrcpp::Any visitIfBlock(TmplStrParser::IfBlockContext *context) = 0;
+
+    virtual antlrcpp::Any visitIfOpen(TmplStrParser::IfOpenContext *context) = 0;
+
+    virtual antlrcpp::Any visitElseIfStmt(TmplStrParser::ElseIfStmtContext *context) = 0;
+
+    virtual antlrcpp::Any visitElseStmt(TmplStrParser::ElseStmtContext *context) = 0;
+
+    virtual antlrcpp::Any visitIfClose(TmplStrParser::IfCloseContext *context) = 0;
 
     virtual antlrcpp::Any visitText(TmplStrParser::TextContext *context) = 0;
 

@@ -12,8 +12,8 @@
 class  TmplStrLexer : public antlr4::Lexer {
 public:
   enum {
-    OPEN = 1, TEXT = 2, CLOSE = 3, SLASH = 4, NON_KEYWORD_IDENTIFIER = 5, 
-    RAW_ESCAPE = 6, WS = 7
+    OPEN = 1, TEXT = 2, CLOSE = 3, SLASH = 4, KW_FOR = 5, KW_IN = 6, KW_IF = 7, 
+    KW_ELSE = 8, NON_KEYWORD_IDENTIFIER = 9, RAW_ESCAPE = 10, WS = 11
   };
 
   enum {
