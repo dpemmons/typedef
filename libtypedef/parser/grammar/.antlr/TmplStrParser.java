@@ -1,5 +1,6 @@
 // Generated from /home/dpemmons/src/typedef/libtypedef/parser/grammar/TmplStrParser.g4 by ANTLR 4.9.2
 
+#include "libtypedef/parser/tmpl_str_table.h"
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -21,14 +22,15 @@ public class TmplStrParser extends Parser {
 		OPEN=1, TEXT=2, CLOSE=3, SLASH=4, KW_FOR=5, KW_IN=6, KW_IF=7, KW_ELSE=8, 
 		NON_KEYWORD_IDENTIFIER=9, RAW_ESCAPE=10, WS=11;
 	public static final int
-		RULE_tmpl = 0, RULE_item = 1, RULE_replacement = 2, RULE_forBlock = 3, 
-		RULE_forOpen = 4, RULE_forClose = 5, RULE_ifBlock = 6, RULE_ifOpen = 7, 
-		RULE_elseIfStmt = 8, RULE_elseStmt = 9, RULE_ifClose = 10, RULE_text = 11, 
-		RULE_identifier = 12;
+		RULE_tmpl = 0, RULE_item = 1, RULE_insertion = 2, RULE_forBlock = 3, RULE_forClose = 4, 
+		RULE_fullIIfBlock = 5, RULE_ifOpen = 6, RULE_ifBlock = 7, RULE_elseIfStmt = 8, 
+		RULE_elseIfBlock = 9, RULE_elseStmt = 10, RULE_elseBlock = 11, RULE_ifClose = 12, 
+		RULE_textItem = 13, RULE_identifier = 14;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"tmpl", "item", "replacement", "forBlock", "forOpen", "forClose", "ifBlock", 
-			"ifOpen", "elseIfStmt", "elseStmt", "ifClose", "text", "identifier"
+			"tmpl", "item", "insertion", "forBlock", "forClose", "fullIIfBlock", 
+			"ifOpen", "ifBlock", "elseIfStmt", "elseIfBlock", "elseStmt", "elseBlock", 
+			"ifClose", "textItem", "identifier"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -98,6 +100,8 @@ public class TmplStrParser extends Parser {
 	}
 
 	public static class TmplContext extends ParserRuleContext {
+		public td::TmplStrTablePtr tbl;
+		public ItemContext item;
 		public List<ItemContext> item() {
 			return getRuleContexts(ItemContext.class);
 		}
@@ -113,21 +117,23 @@ public class TmplStrParser extends Parser {
 	public final TmplContext tmpl() throws RecognitionException {
 		TmplContext _localctx = new TmplContext(_ctx, getState());
 		enterRule(_localctx, 0, RULE_tmpl);
+		((TmplContext)_localctx).tbl =  std::make_shared<td::TmplStrTable>();
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(29);
+			setState(35);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==OPEN || _la==TEXT) {
 				{
 				{
-				setState(26);
-				item();
+				setState(30);
+				((TmplContext)_localctx).item = item();
+				_localctx.tbl->items.push_back(((TmplContext)_localctx).item->itm);
 				}
 				}
-				setState(31);
+				setState(37);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -145,17 +151,22 @@ public class TmplStrParser extends Parser {
 	}
 
 	public static class ItemContext extends ParserRuleContext {
-		public TextContext text() {
-			return getRuleContext(TextContext.class,0);
+		public td::TmplStrTable::ItemPtr itm;
+		public TextItemContext textItem;
+		public InsertionContext insertion;
+		public ForBlockContext forBlock;
+		public FullIIfBlockContext fullIIfBlock;
+		public TextItemContext textItem() {
+			return getRuleContext(TextItemContext.class,0);
 		}
-		public ReplacementContext replacement() {
-			return getRuleContext(ReplacementContext.class,0);
+		public InsertionContext insertion() {
+			return getRuleContext(InsertionContext.class,0);
 		}
 		public ForBlockContext forBlock() {
 			return getRuleContext(ForBlockContext.class,0);
 		}
-		public IfBlockContext ifBlock() {
-			return getRuleContext(IfBlockContext.class,0);
+		public FullIIfBlockContext fullIIfBlock() {
+			return getRuleContext(FullIIfBlockContext.class,0);
 		}
 		public ItemContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -166,36 +177,41 @@ public class TmplStrParser extends Parser {
 	public final ItemContext item() throws RecognitionException {
 		ItemContext _localctx = new ItemContext(_ctx, getState());
 		enterRule(_localctx, 2, RULE_item);
+		((ItemContext)_localctx).itm =  std::make_shared<td::TmplStrTable::Item>();
 		try {
-			setState(36);
+			setState(50);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(32);
-				text();
+				setState(38);
+				((ItemContext)_localctx).textItem = textItem();
+				_localctx.itm->text = ((ItemContext)_localctx).textItem->txt;
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(33);
-				replacement();
+				setState(41);
+				((ItemContext)_localctx).insertion = insertion();
+				_localctx.itm->insertion = ((ItemContext)_localctx).insertion->ins;
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(34);
-				forBlock();
+				setState(44);
+				((ItemContext)_localctx).forBlock = forBlock();
+				_localctx.itm->for_block = ((ItemContext)_localctx).forBlock->for_block;
 				}
 				break;
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(35);
-				ifBlock();
+				setState(47);
+				((ItemContext)_localctx).fullIIfBlock = fullIIfBlock();
+				_localctx.itm->if_block  = ((ItemContext)_localctx).fullIIfBlock->if_block;
 				}
 				break;
 			}
@@ -211,33 +227,36 @@ public class TmplStrParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ReplacementContext extends ParserRuleContext {
-		public std::string id;
+	public static class InsertionContext extends ParserRuleContext {
+		public td::TmplStrTable::InsertionPtr ins;
 		public IdentifierContext identifier;
 		public TerminalNode OPEN() { return getToken(TmplStrParser.OPEN, 0); }
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
 		}
 		public TerminalNode CLOSE() { return getToken(TmplStrParser.CLOSE, 0); }
-		public ReplacementContext(ParserRuleContext parent, int invokingState) {
+		public InsertionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_replacement; }
+		@Override public int getRuleIndex() { return RULE_insertion; }
 	}
 
-	public final ReplacementContext replacement() throws RecognitionException {
-		ReplacementContext _localctx = new ReplacementContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_replacement);
+	public final InsertionContext insertion() throws RecognitionException {
+		InsertionContext _localctx = new InsertionContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_insertion);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(38);
+			setState(52);
 			match(OPEN);
-			setState(39);
-			((ReplacementContext)_localctx).identifier = identifier();
-			setState(40);
+			setState(53);
+			((InsertionContext)_localctx).identifier = identifier();
+			setState(54);
 			match(CLOSE);
-			((ReplacementContext)_localctx).id =  ((ReplacementContext)_localctx).identifier.id;
+
+					((InsertionContext)_localctx).ins =  std::make_shared<td::TmplStrTable::Insertion>();
+					_localctx.ins->identifier = ((InsertionContext)_localctx).identifier.id;
+				
 			}
 		}
 		catch (RecognitionException re) {
@@ -252,12 +271,22 @@ public class TmplStrParser extends Parser {
 	}
 
 	public static class ForBlockContext extends ParserRuleContext {
-		public ForOpenContext forOpen() {
-			return getRuleContext(ForOpenContext.class,0);
-		}
+		public td::TmplStrTable::ForBlockPtr for_block;
+		public IdentifierContext identifier;
+		public ItemContext item;
 		public ForCloseContext forClose() {
 			return getRuleContext(ForCloseContext.class,0);
 		}
+		public TerminalNode OPEN() { return getToken(TmplStrParser.OPEN, 0); }
+		public TerminalNode KW_FOR() { return getToken(TmplStrParser.KW_FOR, 0); }
+		public List<IdentifierContext> identifier() {
+			return getRuleContexts(IdentifierContext.class);
+		}
+		public IdentifierContext identifier(int i) {
+			return getRuleContext(IdentifierContext.class,i);
+		}
+		public TerminalNode KW_IN() { return getToken(TmplStrParser.KW_IN, 0); }
+		public TerminalNode CLOSE() { return getToken(TmplStrParser.CLOSE, 0); }
 		public List<ItemContext> item() {
 			return getRuleContexts(ItemContext.class);
 		}
@@ -273,78 +302,47 @@ public class TmplStrParser extends Parser {
 	public final ForBlockContext forBlock() throws RecognitionException {
 		ForBlockContext _localctx = new ForBlockContext(_ctx, getState());
 		enterRule(_localctx, 6, RULE_forBlock);
+		((ForBlockContext)_localctx).for_block =  std::make_shared<td::TmplStrTable::ForBlock>();
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(43);
-			forOpen();
-			setState(47);
+			{
+			setState(57);
+			match(OPEN);
+			setState(58);
+			match(KW_FOR);
+			setState(59);
+			((ForBlockContext)_localctx).identifier = identifier();
+			_localctx.for_block->loop_variable = ((ForBlockContext)_localctx).identifier->id;
+			setState(61);
+			match(KW_IN);
+			setState(62);
+			((ForBlockContext)_localctx).identifier = identifier();
+			_localctx.for_block->iterable_identifier = ((ForBlockContext)_localctx).identifier->id;
+					
+			setState(64);
+			match(CLOSE);
+			}
+			setState(71);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					setState(44);
-					item();
+					setState(66);
+					((ForBlockContext)_localctx).item = item();
+					_localctx.for_block->body_items.push_back(((ForBlockContext)_localctx).item->itm);
 					}
 					} 
 				}
-				setState(49);
+				setState(73);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			}
-			setState(50);
+			setState(74);
 			forClose();
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class ForOpenContext extends ParserRuleContext {
-		public TerminalNode OPEN() { return getToken(TmplStrParser.OPEN, 0); }
-		public TerminalNode KW_FOR() { return getToken(TmplStrParser.KW_FOR, 0); }
-		public List<IdentifierContext> identifier() {
-			return getRuleContexts(IdentifierContext.class);
-		}
-		public IdentifierContext identifier(int i) {
-			return getRuleContext(IdentifierContext.class,i);
-		}
-		public TerminalNode KW_IN() { return getToken(TmplStrParser.KW_IN, 0); }
-		public TerminalNode CLOSE() { return getToken(TmplStrParser.CLOSE, 0); }
-		public ForOpenContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_forOpen; }
-	}
-
-	public final ForOpenContext forOpen() throws RecognitionException {
-		ForOpenContext _localctx = new ForOpenContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_forOpen);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(52);
-			match(OPEN);
-			setState(53);
-			match(KW_FOR);
-			setState(54);
-			identifier();
-			setState(55);
-			match(KW_IN);
-			setState(56);
-			identifier();
-			setState(57);
-			match(CLOSE);
 			}
 		}
 		catch (RecognitionException re) {
@@ -371,17 +369,17 @@ public class TmplStrParser extends Parser {
 
 	public final ForCloseContext forClose() throws RecognitionException {
 		ForCloseContext _localctx = new ForCloseContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_forClose);
+		enterRule(_localctx, 8, RULE_forClose);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(59);
+			setState(76);
 			match(OPEN);
-			setState(60);
+			setState(77);
 			match(SLASH);
-			setState(61);
+			setState(78);
 			match(KW_FOR);
-			setState(62);
+			setState(79);
 			match(CLOSE);
 			}
 		}
@@ -396,118 +394,71 @@ public class TmplStrParser extends Parser {
 		return _localctx;
 	}
 
-	public static class IfBlockContext extends ParserRuleContext {
-		public IfOpenContext ifOpen() {
-			return getRuleContext(IfOpenContext.class,0);
+	public static class FullIIfBlockContext extends ParserRuleContext {
+		public td::TmplStrTable::IfBlockPtr if_block;
+		public IfBlockContext ifBlock;
+		public ElseIfBlockContext elseIfBlock;
+		public ElseBlockContext elseBlock;
+		public IfBlockContext ifBlock() {
+			return getRuleContext(IfBlockContext.class,0);
 		}
 		public IfCloseContext ifClose() {
 			return getRuleContext(IfCloseContext.class,0);
 		}
-		public List<ItemContext> item() {
-			return getRuleContexts(ItemContext.class);
+		public List<ElseIfBlockContext> elseIfBlock() {
+			return getRuleContexts(ElseIfBlockContext.class);
 		}
-		public ItemContext item(int i) {
-			return getRuleContext(ItemContext.class,i);
+		public ElseIfBlockContext elseIfBlock(int i) {
+			return getRuleContext(ElseIfBlockContext.class,i);
 		}
-		public List<ElseIfStmtContext> elseIfStmt() {
-			return getRuleContexts(ElseIfStmtContext.class);
+		public ElseBlockContext elseBlock() {
+			return getRuleContext(ElseBlockContext.class,0);
 		}
-		public ElseIfStmtContext elseIfStmt(int i) {
-			return getRuleContext(ElseIfStmtContext.class,i);
-		}
-		public ElseStmtContext elseStmt() {
-			return getRuleContext(ElseStmtContext.class,0);
-		}
-		public IfBlockContext(ParserRuleContext parent, int invokingState) {
+		public FullIIfBlockContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_ifBlock; }
+		@Override public int getRuleIndex() { return RULE_fullIIfBlock; }
 	}
 
-	public final IfBlockContext ifBlock() throws RecognitionException {
-		IfBlockContext _localctx = new IfBlockContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_ifBlock);
+	public final FullIIfBlockContext fullIIfBlock() throws RecognitionException {
+		FullIIfBlockContext _localctx = new FullIIfBlockContext(_ctx, getState());
+		enterRule(_localctx, 10, RULE_fullIIfBlock);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(64);
-			ifOpen();
-			setState(68);
+			setState(81);
+			((FullIIfBlockContext)_localctx).ifBlock = ifBlock();
+			((FullIIfBlockContext)_localctx).if_block =  ((FullIIfBlockContext)_localctx).ifBlock->if_block;
+			setState(88);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					setState(65);
-					item();
+					setState(83);
+					((FullIIfBlockContext)_localctx).elseIfBlock = elseIfBlock();
+					_localctx.if_block->else_ifs.push_back(((FullIIfBlockContext)_localctx).elseIfBlock->else_if_block);
 					}
 					} 
 				}
-				setState(70);
+				setState(90);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
 			}
-			setState(80);
+			setState(94);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
-			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
-				if ( _alt==1 ) {
-					{
-					{
-					setState(71);
-					elseIfStmt();
-					setState(75);
-					_errHandler.sync(this);
-					_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
-					while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
-						if ( _alt==1 ) {
-							{
-							{
-							setState(72);
-							item();
-							}
-							} 
-						}
-						setState(77);
-						_errHandler.sync(this);
-						_alt = getInterpreter().adaptivePredict(_input,4,_ctx);
-					}
-					}
-					} 
-				}
-				setState(82);
-				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
-			}
-			setState(90);
-			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
 			case 1:
 				{
-				setState(83);
-				elseStmt();
-				setState(87);
-				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,6,_ctx);
-				while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
-					if ( _alt==1 ) {
-						{
-						{
-						setState(84);
-						item();
-						}
-						} 
-					}
-					setState(89);
-					_errHandler.sync(this);
-					_alt = getInterpreter().adaptivePredict(_input,6,_ctx);
-				}
+				setState(91);
+				((FullIIfBlockContext)_localctx).elseBlock = elseBlock();
+				_localctx.if_block->else_body_items = ((FullIIfBlockContext)_localctx).elseBlock->else_body_items;
 				}
 				break;
 			}
-			setState(92);
+			setState(96);
 			ifClose();
 			}
 		}
@@ -523,6 +474,8 @@ public class TmplStrParser extends Parser {
 	}
 
 	public static class IfOpenContext extends ParserRuleContext {
+		public td::TmplStrTable::StrPtr conditional;
+		public IdentifierContext identifier;
 		public TerminalNode OPEN() { return getToken(TmplStrParser.OPEN, 0); }
 		public TerminalNode KW_IF() { return getToken(TmplStrParser.KW_IF, 0); }
 		public IdentifierContext identifier() {
@@ -537,18 +490,77 @@ public class TmplStrParser extends Parser {
 
 	public final IfOpenContext ifOpen() throws RecognitionException {
 		IfOpenContext _localctx = new IfOpenContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_ifOpen);
+		enterRule(_localctx, 12, RULE_ifOpen);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(94);
+			setState(98);
 			match(OPEN);
-			setState(95);
+			setState(99);
 			match(KW_IF);
-			setState(96);
-			identifier();
-			setState(97);
+			setState(100);
+			((IfOpenContext)_localctx).identifier = identifier();
+			setState(101);
 			match(CLOSE);
+			((IfOpenContext)_localctx).conditional =  ((IfOpenContext)_localctx).identifier->id;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class IfBlockContext extends ParserRuleContext {
+		public td::TmplStrTable::IfBlockPtr if_block;
+		public ItemContext item;
+		public IfOpenContext ifOpen() {
+			return getRuleContext(IfOpenContext.class,0);
+		}
+		public List<ItemContext> item() {
+			return getRuleContexts(ItemContext.class);
+		}
+		public ItemContext item(int i) {
+			return getRuleContext(ItemContext.class,i);
+		}
+		public IfBlockContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_ifBlock; }
+	}
+
+	public final IfBlockContext ifBlock() throws RecognitionException {
+		IfBlockContext _localctx = new IfBlockContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_ifBlock);
+		((IfBlockContext)_localctx).if_block =  std::make_shared<td::TmplStrTable::IfBlock>();
+		try {
+			int _alt;
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(104);
+			ifOpen();
+			setState(110);
+			_errHandler.sync(this);
+			_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					{
+					{
+					setState(105);
+					((IfBlockContext)_localctx).item = item();
+					_localctx.if_block->body_items.push_back(((IfBlockContext)_localctx).item->itm);
+					}
+					} 
+				}
+				setState(112);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -563,6 +575,8 @@ public class TmplStrParser extends Parser {
 	}
 
 	public static class ElseIfStmtContext extends ParserRuleContext {
+		public td::TmplStrTable::StrPtr conditional;
+		public IdentifierContext identifier;
 		public TerminalNode OPEN() { return getToken(TmplStrParser.OPEN, 0); }
 		public TerminalNode KW_ELSE() { return getToken(TmplStrParser.KW_ELSE, 0); }
 		public TerminalNode KW_IF() { return getToken(TmplStrParser.KW_IF, 0); }
@@ -582,16 +596,75 @@ public class TmplStrParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(99);
+			setState(113);
 			match(OPEN);
-			setState(100);
+			setState(114);
 			match(KW_ELSE);
-			setState(101);
+			setState(115);
 			match(KW_IF);
-			setState(102);
-			identifier();
-			setState(103);
+			setState(116);
+			((ElseIfStmtContext)_localctx).identifier = identifier();
+			setState(117);
 			match(CLOSE);
+			((ElseIfStmtContext)_localctx).conditional =  ((ElseIfStmtContext)_localctx).identifier->id;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class ElseIfBlockContext extends ParserRuleContext {
+		public td::TmplStrTable::ElseIfBlockPtr else_if_block;
+		public ItemContext item;
+		public ElseIfStmtContext elseIfStmt() {
+			return getRuleContext(ElseIfStmtContext.class,0);
+		}
+		public List<ItemContext> item() {
+			return getRuleContexts(ItemContext.class);
+		}
+		public ItemContext item(int i) {
+			return getRuleContext(ItemContext.class,i);
+		}
+		public ElseIfBlockContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_elseIfBlock; }
+	}
+
+	public final ElseIfBlockContext elseIfBlock() throws RecognitionException {
+		ElseIfBlockContext _localctx = new ElseIfBlockContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_elseIfBlock);
+		((ElseIfBlockContext)_localctx).else_if_block =  std::make_shared<td::TmplStrTable::ElseIfBlock>();
+		try {
+			int _alt;
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(120);
+			elseIfStmt();
+			setState(126);
+			_errHandler.sync(this);
+			_alt = getInterpreter().adaptivePredict(_input,6,_ctx);
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					{
+					{
+					setState(121);
+					((ElseIfBlockContext)_localctx).item = item();
+					_localctx.else_if_block->body_items.push_back(((ElseIfBlockContext)_localctx).item->itm);
+					}
+					} 
+				}
+				setState(128);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,6,_ctx);
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -617,16 +690,73 @@ public class TmplStrParser extends Parser {
 
 	public final ElseStmtContext elseStmt() throws RecognitionException {
 		ElseStmtContext _localctx = new ElseStmtContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_elseStmt);
+		enterRule(_localctx, 20, RULE_elseStmt);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(105);
+			setState(129);
 			match(OPEN);
-			setState(106);
+			setState(130);
 			match(KW_ELSE);
-			setState(107);
+			setState(131);
 			match(CLOSE);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class ElseBlockContext extends ParserRuleContext {
+		public std::vector<td::TmplStrTable::ItemPtr> else_body_items;
+		public ItemContext item;
+		public ElseStmtContext elseStmt() {
+			return getRuleContext(ElseStmtContext.class,0);
+		}
+		public List<ItemContext> item() {
+			return getRuleContexts(ItemContext.class);
+		}
+		public ItemContext item(int i) {
+			return getRuleContext(ItemContext.class,i);
+		}
+		public ElseBlockContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_elseBlock; }
+	}
+
+	public final ElseBlockContext elseBlock() throws RecognitionException {
+		ElseBlockContext _localctx = new ElseBlockContext(_ctx, getState());
+		enterRule(_localctx, 22, RULE_elseBlock);
+		try {
+			int _alt;
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(133);
+			elseStmt();
+			setState(139);
+			_errHandler.sync(this);
+			_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					{
+					{
+					setState(134);
+					((ElseBlockContext)_localctx).item = item();
+					_localctx.else_body_items.push_back(((ElseBlockContext)_localctx).item->itm);
+					}
+					} 
+				}
+				setState(141);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -653,17 +783,17 @@ public class TmplStrParser extends Parser {
 
 	public final IfCloseContext ifClose() throws RecognitionException {
 		IfCloseContext _localctx = new IfCloseContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_ifClose);
+		enterRule(_localctx, 24, RULE_ifClose);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(109);
+			setState(142);
 			match(OPEN);
-			setState(110);
+			setState(143);
 			match(SLASH);
-			setState(111);
+			setState(144);
 			match(KW_IF);
-			setState(112);
+			setState(145);
 			match(CLOSE);
 			}
 		}
@@ -678,25 +808,25 @@ public class TmplStrParser extends Parser {
 		return _localctx;
 	}
 
-	public static class TextContext extends ParserRuleContext {
-		public std::string txt;
+	public static class TextItemContext extends ParserRuleContext {
+		public td::TmplStrTable::StrPtr txt;
 		public Token TEXT;
 		public TerminalNode TEXT() { return getToken(TmplStrParser.TEXT, 0); }
-		public TextContext(ParserRuleContext parent, int invokingState) {
+		public TextItemContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_text; }
+		@Override public int getRuleIndex() { return RULE_textItem; }
 	}
 
-	public final TextContext text() throws RecognitionException {
-		TextContext _localctx = new TextContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_text);
+	public final TextItemContext textItem() throws RecognitionException {
+		TextItemContext _localctx = new TextItemContext(_ctx, getState());
+		enterRule(_localctx, 26, RULE_textItem);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(114);
-			((TextContext)_localctx).TEXT = match(TEXT);
-			 ((TextContext)_localctx).txt =  ((TextContext)_localctx).TEXT->getText(); 
+			setState(147);
+			((TextItemContext)_localctx).TEXT = match(TEXT);
+			((TextItemContext)_localctx).txt =  std::make_shared<std::string>(((TextItemContext)_localctx).TEXT->getText());
 			}
 		}
 		catch (RecognitionException re) {
@@ -711,10 +841,10 @@ public class TmplStrParser extends Parser {
 	}
 
 	public static class IdentifierContext extends ParserRuleContext {
-		public std::string id;
+		public td::TmplStrTable::StrPtr id;
 		public Token nki;
-		public TerminalNode NON_KEYWORD_IDENTIFIER() { return getToken(TmplStrParser.NON_KEYWORD_IDENTIFIER, 0); }
 		public TerminalNode RAW_ESCAPE() { return getToken(TmplStrParser.RAW_ESCAPE, 0); }
+		public TerminalNode NON_KEYWORD_IDENTIFIER() { return getToken(TmplStrParser.NON_KEYWORD_IDENTIFIER, 0); }
 		public IdentifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -723,34 +853,32 @@ public class TmplStrParser extends Parser {
 
 	public final IdentifierContext identifier() throws RecognitionException {
 		IdentifierContext _localctx = new IdentifierContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_identifier);
+		enterRule(_localctx, 28, RULE_identifier);
 		try {
-			setState(120);
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(153);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case NON_KEYWORD_IDENTIFIER:
-				enterOuterAlt(_localctx, 1);
 				{
-				setState(117);
+				setState(150);
 				((IdentifierContext)_localctx).nki = match(NON_KEYWORD_IDENTIFIER);
 				}
 				break;
 			case RAW_ESCAPE:
-				enterOuterAlt(_localctx, 2);
 				{
-				setState(118);
+				setState(151);
 				match(RAW_ESCAPE);
-				setState(119);
+				setState(152);
 				((IdentifierContext)_localctx).nki = match(NON_KEYWORD_IDENTIFIER);
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
-			_ctx.stop = _input.LT(-1);
-
-					((IdentifierContext)_localctx).id =  ((IdentifierContext)_localctx).nki->getText();
-			  
+			((IdentifierContext)_localctx).id =  std::make_shared<std::string>(((IdentifierContext)_localctx).nki->getText());
+			}
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -764,35 +892,47 @@ public class TmplStrParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\r}\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
-		"\f\t\f\4\r\t\r\4\16\t\16\3\2\7\2\36\n\2\f\2\16\2!\13\2\3\3\3\3\3\3\3\3"+
-		"\5\3\'\n\3\3\4\3\4\3\4\3\4\3\4\3\5\3\5\7\5\60\n\5\f\5\16\5\63\13\5\3\5"+
-		"\3\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\b\3\b\7\bE\n\b"+
-		"\f\b\16\bH\13\b\3\b\3\b\7\bL\n\b\f\b\16\bO\13\b\7\bQ\n\b\f\b\16\bT\13"+
-		"\b\3\b\3\b\7\bX\n\b\f\b\16\b[\13\b\5\b]\n\b\3\b\3\b\3\t\3\t\3\t\3\t\3"+
-		"\t\3\n\3\n\3\n\3\n\3\n\3\n\3\13\3\13\3\13\3\13\3\f\3\f\3\f\3\f\3\f\3\r"+
-		"\3\r\3\r\3\16\3\16\3\16\5\16{\n\16\3\16\2\2\17\2\4\6\b\n\f\16\20\22\24"+
-		"\26\30\32\2\2\2z\2\37\3\2\2\2\4&\3\2\2\2\6(\3\2\2\2\b-\3\2\2\2\n\66\3"+
-		"\2\2\2\f=\3\2\2\2\16B\3\2\2\2\20`\3\2\2\2\22e\3\2\2\2\24k\3\2\2\2\26o"+
-		"\3\2\2\2\30t\3\2\2\2\32z\3\2\2\2\34\36\5\4\3\2\35\34\3\2\2\2\36!\3\2\2"+
-		"\2\37\35\3\2\2\2\37 \3\2\2\2 \3\3\2\2\2!\37\3\2\2\2\"\'\5\30\r\2#\'\5"+
-		"\6\4\2$\'\5\b\5\2%\'\5\16\b\2&\"\3\2\2\2&#\3\2\2\2&$\3\2\2\2&%\3\2\2\2"+
-		"\'\5\3\2\2\2()\7\3\2\2)*\5\32\16\2*+\7\5\2\2+,\b\4\1\2,\7\3\2\2\2-\61"+
-		"\5\n\6\2.\60\5\4\3\2/.\3\2\2\2\60\63\3\2\2\2\61/\3\2\2\2\61\62\3\2\2\2"+
-		"\62\64\3\2\2\2\63\61\3\2\2\2\64\65\5\f\7\2\65\t\3\2\2\2\66\67\7\3\2\2"+
-		"\678\7\7\2\289\5\32\16\29:\7\b\2\2:;\5\32\16\2;<\7\5\2\2<\13\3\2\2\2="+
-		">\7\3\2\2>?\7\6\2\2?@\7\7\2\2@A\7\5\2\2A\r\3\2\2\2BF\5\20\t\2CE\5\4\3"+
-		"\2DC\3\2\2\2EH\3\2\2\2FD\3\2\2\2FG\3\2\2\2GR\3\2\2\2HF\3\2\2\2IM\5\22"+
-		"\n\2JL\5\4\3\2KJ\3\2\2\2LO\3\2\2\2MK\3\2\2\2MN\3\2\2\2NQ\3\2\2\2OM\3\2"+
-		"\2\2PI\3\2\2\2QT\3\2\2\2RP\3\2\2\2RS\3\2\2\2S\\\3\2\2\2TR\3\2\2\2UY\5"+
-		"\24\13\2VX\5\4\3\2WV\3\2\2\2X[\3\2\2\2YW\3\2\2\2YZ\3\2\2\2Z]\3\2\2\2["+
-		"Y\3\2\2\2\\U\3\2\2\2\\]\3\2\2\2]^\3\2\2\2^_\5\26\f\2_\17\3\2\2\2`a\7\3"+
-		"\2\2ab\7\t\2\2bc\5\32\16\2cd\7\5\2\2d\21\3\2\2\2ef\7\3\2\2fg\7\n\2\2g"+
-		"h\7\t\2\2hi\5\32\16\2ij\7\5\2\2j\23\3\2\2\2kl\7\3\2\2lm\7\n\2\2mn\7\5"+
-		"\2\2n\25\3\2\2\2op\7\3\2\2pq\7\6\2\2qr\7\t\2\2rs\7\5\2\2s\27\3\2\2\2t"+
-		"u\7\4\2\2uv\b\r\1\2v\31\3\2\2\2w{\7\13\2\2xy\7\f\2\2y{\7\13\2\2zw\3\2"+
-		"\2\2zx\3\2\2\2{\33\3\2\2\2\13\37&\61FMRY\\z";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\r\u00a0\4\2\t\2\4"+
+		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
+		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\3\2\3\2\3\2\7\2$\n\2"+
+		"\f\2\16\2\'\13\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3\65"+
+		"\n\3\3\4\3\4\3\4\3\4\3\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3"+
+		"\5\7\5H\n\5\f\5\16\5K\13\5\3\5\3\5\3\6\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7"+
+		"\3\7\7\7Y\n\7\f\7\16\7\\\13\7\3\7\3\7\3\7\5\7a\n\7\3\7\3\7\3\b\3\b\3\b"+
+		"\3\b\3\b\3\b\3\t\3\t\3\t\3\t\7\to\n\t\f\t\16\tr\13\t\3\n\3\n\3\n\3\n\3"+
+		"\n\3\n\3\n\3\13\3\13\3\13\3\13\7\13\177\n\13\f\13\16\13\u0082\13\13\3"+
+		"\f\3\f\3\f\3\f\3\r\3\r\3\r\3\r\7\r\u008c\n\r\f\r\16\r\u008f\13\r\3\16"+
+		"\3\16\3\16\3\16\3\16\3\17\3\17\3\17\3\20\3\20\3\20\5\20\u009c\n\20\3\20"+
+		"\3\20\3\20\2\2\21\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36\2\2\2\u009b\2"+
+		"%\3\2\2\2\4\64\3\2\2\2\6\66\3\2\2\2\b;\3\2\2\2\nN\3\2\2\2\fS\3\2\2\2\16"+
+		"d\3\2\2\2\20j\3\2\2\2\22s\3\2\2\2\24z\3\2\2\2\26\u0083\3\2\2\2\30\u0087"+
+		"\3\2\2\2\32\u0090\3\2\2\2\34\u0095\3\2\2\2\36\u009b\3\2\2\2 !\5\4\3\2"+
+		"!\"\b\2\1\2\"$\3\2\2\2# \3\2\2\2$\'\3\2\2\2%#\3\2\2\2%&\3\2\2\2&\3\3\2"+
+		"\2\2\'%\3\2\2\2()\5\34\17\2)*\b\3\1\2*\65\3\2\2\2+,\5\6\4\2,-\b\3\1\2"+
+		"-\65\3\2\2\2./\5\b\5\2/\60\b\3\1\2\60\65\3\2\2\2\61\62\5\f\7\2\62\63\b"+
+		"\3\1\2\63\65\3\2\2\2\64(\3\2\2\2\64+\3\2\2\2\64.\3\2\2\2\64\61\3\2\2\2"+
+		"\65\5\3\2\2\2\66\67\7\3\2\2\678\5\36\20\289\7\5\2\29:\b\4\1\2:\7\3\2\2"+
+		"\2;<\7\3\2\2<=\7\7\2\2=>\5\36\20\2>?\b\5\1\2?@\7\b\2\2@A\5\36\20\2AB\b"+
+		"\5\1\2BC\7\5\2\2CI\3\2\2\2DE\5\4\3\2EF\b\5\1\2FH\3\2\2\2GD\3\2\2\2HK\3"+
+		"\2\2\2IG\3\2\2\2IJ\3\2\2\2JL\3\2\2\2KI\3\2\2\2LM\5\n\6\2M\t\3\2\2\2NO"+
+		"\7\3\2\2OP\7\6\2\2PQ\7\7\2\2QR\7\5\2\2R\13\3\2\2\2ST\5\20\t\2TZ\b\7\1"+
+		"\2UV\5\24\13\2VW\b\7\1\2WY\3\2\2\2XU\3\2\2\2Y\\\3\2\2\2ZX\3\2\2\2Z[\3"+
+		"\2\2\2[`\3\2\2\2\\Z\3\2\2\2]^\5\30\r\2^_\b\7\1\2_a\3\2\2\2`]\3\2\2\2`"+
+		"a\3\2\2\2ab\3\2\2\2bc\5\32\16\2c\r\3\2\2\2de\7\3\2\2ef\7\t\2\2fg\5\36"+
+		"\20\2gh\7\5\2\2hi\b\b\1\2i\17\3\2\2\2jp\5\16\b\2kl\5\4\3\2lm\b\t\1\2m"+
+		"o\3\2\2\2nk\3\2\2\2or\3\2\2\2pn\3\2\2\2pq\3\2\2\2q\21\3\2\2\2rp\3\2\2"+
+		"\2st\7\3\2\2tu\7\n\2\2uv\7\t\2\2vw\5\36\20\2wx\7\5\2\2xy\b\n\1\2y\23\3"+
+		"\2\2\2z\u0080\5\22\n\2{|\5\4\3\2|}\b\13\1\2}\177\3\2\2\2~{\3\2\2\2\177"+
+		"\u0082\3\2\2\2\u0080~\3\2\2\2\u0080\u0081\3\2\2\2\u0081\25\3\2\2\2\u0082"+
+		"\u0080\3\2\2\2\u0083\u0084\7\3\2\2\u0084\u0085\7\n\2\2\u0085\u0086\7\5"+
+		"\2\2\u0086\27\3\2\2\2\u0087\u008d\5\26\f\2\u0088\u0089\5\4\3\2\u0089\u008a"+
+		"\b\r\1\2\u008a\u008c\3\2\2\2\u008b\u0088\3\2\2\2\u008c\u008f\3\2\2\2\u008d"+
+		"\u008b\3\2\2\2\u008d\u008e\3\2\2\2\u008e\31\3\2\2\2\u008f\u008d\3\2\2"+
+		"\2\u0090\u0091\7\3\2\2\u0091\u0092\7\6\2\2\u0092\u0093\7\t\2\2\u0093\u0094"+
+		"\7\5\2\2\u0094\33\3\2\2\2\u0095\u0096\7\4\2\2\u0096\u0097\b\17\1\2\u0097"+
+		"\35\3\2\2\2\u0098\u009c\7\13\2\2\u0099\u009a\7\f\2\2\u009a\u009c\7\13"+
+		"\2\2\u009b\u0098\3\2\2\2\u009b\u0099\3\2\2\2\u009c\u009d\3\2\2\2\u009d"+
+		"\u009e\b\20\1\2\u009e\37\3\2\2\2\13%\64IZ`p\u0080\u008d\u009b";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

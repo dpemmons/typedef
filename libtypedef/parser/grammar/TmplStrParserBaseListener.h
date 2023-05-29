@@ -1,4 +1,5 @@
 
+#include "libtypedef/parser/tmpl_str_table.h"
 
 
 // Generated from ./libtypedef/parser/grammar/TmplStrParser.g4 by ANTLR 4.7.2
@@ -24,35 +25,41 @@ public:
   virtual void enterItem(TmplStrParser::ItemContext * /*ctx*/) override { }
   virtual void exitItem(TmplStrParser::ItemContext * /*ctx*/) override { }
 
-  virtual void enterReplacement(TmplStrParser::ReplacementContext * /*ctx*/) override { }
-  virtual void exitReplacement(TmplStrParser::ReplacementContext * /*ctx*/) override { }
+  virtual void enterInsertion(TmplStrParser::InsertionContext * /*ctx*/) override { }
+  virtual void exitInsertion(TmplStrParser::InsertionContext * /*ctx*/) override { }
 
   virtual void enterForBlock(TmplStrParser::ForBlockContext * /*ctx*/) override { }
   virtual void exitForBlock(TmplStrParser::ForBlockContext * /*ctx*/) override { }
 
-  virtual void enterForOpen(TmplStrParser::ForOpenContext * /*ctx*/) override { }
-  virtual void exitForOpen(TmplStrParser::ForOpenContext * /*ctx*/) override { }
-
   virtual void enterForClose(TmplStrParser::ForCloseContext * /*ctx*/) override { }
   virtual void exitForClose(TmplStrParser::ForCloseContext * /*ctx*/) override { }
 
-  virtual void enterIfBlock(TmplStrParser::IfBlockContext * /*ctx*/) override { }
-  virtual void exitIfBlock(TmplStrParser::IfBlockContext * /*ctx*/) override { }
+  virtual void enterFullIIfBlock(TmplStrParser::FullIIfBlockContext * /*ctx*/) override { }
+  virtual void exitFullIIfBlock(TmplStrParser::FullIIfBlockContext * /*ctx*/) override { }
 
   virtual void enterIfOpen(TmplStrParser::IfOpenContext * /*ctx*/) override { }
   virtual void exitIfOpen(TmplStrParser::IfOpenContext * /*ctx*/) override { }
 
+  virtual void enterIfBlock(TmplStrParser::IfBlockContext * /*ctx*/) override { }
+  virtual void exitIfBlock(TmplStrParser::IfBlockContext * /*ctx*/) override { }
+
   virtual void enterElseIfStmt(TmplStrParser::ElseIfStmtContext * /*ctx*/) override { }
   virtual void exitElseIfStmt(TmplStrParser::ElseIfStmtContext * /*ctx*/) override { }
+
+  virtual void enterElseIfBlock(TmplStrParser::ElseIfBlockContext * /*ctx*/) override { }
+  virtual void exitElseIfBlock(TmplStrParser::ElseIfBlockContext * /*ctx*/) override { }
 
   virtual void enterElseStmt(TmplStrParser::ElseStmtContext * /*ctx*/) override { }
   virtual void exitElseStmt(TmplStrParser::ElseStmtContext * /*ctx*/) override { }
 
+  virtual void enterElseBlock(TmplStrParser::ElseBlockContext * /*ctx*/) override { }
+  virtual void exitElseBlock(TmplStrParser::ElseBlockContext * /*ctx*/) override { }
+
   virtual void enterIfClose(TmplStrParser::IfCloseContext * /*ctx*/) override { }
   virtual void exitIfClose(TmplStrParser::IfCloseContext * /*ctx*/) override { }
 
-  virtual void enterText(TmplStrParser::TextContext * /*ctx*/) override { }
-  virtual void exitText(TmplStrParser::TextContext * /*ctx*/) override { }
+  virtual void enterTextItem(TmplStrParser::TextItemContext * /*ctx*/) override { }
+  virtual void exitTextItem(TmplStrParser::TextItemContext * /*ctx*/) override { }
 
   virtual void enterIdentifier(TmplStrParser::IdentifierContext * /*ctx*/) override { }
   virtual void exitIdentifier(TmplStrParser::IdentifierContext * /*ctx*/) override { }

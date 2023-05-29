@@ -1,4 +1,5 @@
 
+#include "libtypedef/parser/tmpl_str_table.h"
 
 
 // Generated from ./libtypedef/parser/grammar/TmplStrParser.g4 by ANTLR 4.7.2
@@ -19,9 +20,10 @@ public:
   };
 
   enum {
-    RuleTmpl = 0, RuleItem = 1, RuleReplacement = 2, RuleForBlock = 3, RuleForOpen = 4, 
-    RuleForClose = 5, RuleIfBlock = 6, RuleIfOpen = 7, RuleElseIfStmt = 8, 
-    RuleElseStmt = 9, RuleIfClose = 10, RuleText = 11, RuleIdentifier = 12
+    RuleTmpl = 0, RuleItem = 1, RuleInsertion = 2, RuleForBlock = 3, RuleForClose = 4, 
+    RuleFullIIfBlock = 5, RuleIfOpen = 6, RuleIfBlock = 7, RuleElseIfStmt = 8, 
+    RuleElseIfBlock = 9, RuleElseStmt = 10, RuleElseBlock = 11, RuleIfClose = 12, 
+    RuleTextItem = 13, RuleIdentifier = 14
   };
 
   TmplStrParser(antlr4::TokenStream *input);
@@ -36,20 +38,24 @@ public:
 
   class TmplContext;
   class ItemContext;
-  class ReplacementContext;
+  class InsertionContext;
   class ForBlockContext;
-  class ForOpenContext;
   class ForCloseContext;
-  class IfBlockContext;
+  class FullIIfBlockContext;
   class IfOpenContext;
+  class IfBlockContext;
   class ElseIfStmtContext;
+  class ElseIfBlockContext;
   class ElseStmtContext;
+  class ElseBlockContext;
   class IfCloseContext;
-  class TextContext;
+  class TextItemContext;
   class IdentifierContext; 
 
   class  TmplContext : public antlr4::ParserRuleContext {
   public:
+    td::TmplStrTablePtr tbl;
+    TmplStrParser::ItemContext *itemContext = nullptr;;
     TmplContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<ItemContext *> item();
@@ -66,12 +72,17 @@ public:
 
   class  ItemContext : public antlr4::ParserRuleContext {
   public:
+    td::TmplStrTable::ItemPtr itm;
+    TmplStrParser::TextItemContext *textItemContext = nullptr;;
+    TmplStrParser::InsertionContext *insertionContext = nullptr;;
+    TmplStrParser::ForBlockContext *forBlockContext = nullptr;;
+    TmplStrParser::FullIIfBlockContext *fullIIfBlockContext = nullptr;;
     ItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    TextContext *text();
-    ReplacementContext *replacement();
+    TextItemContext *textItem();
+    InsertionContext *insertion();
     ForBlockContext *forBlock();
-    IfBlockContext *ifBlock();
+    FullIIfBlockContext *fullIIfBlock();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -82,11 +93,11 @@ public:
 
   ItemContext* item();
 
-  class  ReplacementContext : public antlr4::ParserRuleContext {
+  class  InsertionContext : public antlr4::ParserRuleContext {
   public:
-    std::string id;
+    td::TmplStrTable::InsertionPtr ins;
     TmplStrParser::IdentifierContext *identifierContext = nullptr;;
-    ReplacementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    InsertionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *OPEN();
     IdentifierContext *identifier();
@@ -99,14 +110,22 @@ public:
    
   };
 
-  ReplacementContext* replacement();
+  InsertionContext* insertion();
 
   class  ForBlockContext : public antlr4::ParserRuleContext {
   public:
+    td::TmplStrTable::ForBlockPtr for_block;
+    TmplStrParser::IdentifierContext *identifierContext = nullptr;;
+    TmplStrParser::ItemContext *itemContext = nullptr;;
     ForBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    ForOpenContext *forOpen();
     ForCloseContext *forClose();
+    antlr4::tree::TerminalNode *OPEN();
+    antlr4::tree::TerminalNode *KW_FOR();
+    std::vector<IdentifierContext *> identifier();
+    IdentifierContext* identifier(size_t i);
+    antlr4::tree::TerminalNode *KW_IN();
+    antlr4::tree::TerminalNode *CLOSE();
     std::vector<ItemContext *> item();
     ItemContext* item(size_t i);
 
@@ -118,26 +137,6 @@ public:
   };
 
   ForBlockContext* forBlock();
-
-  class  ForOpenContext : public antlr4::ParserRuleContext {
-  public:
-    ForOpenContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *OPEN();
-    antlr4::tree::TerminalNode *KW_FOR();
-    std::vector<IdentifierContext *> identifier();
-    IdentifierContext* identifier(size_t i);
-    antlr4::tree::TerminalNode *KW_IN();
-    antlr4::tree::TerminalNode *CLOSE();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  ForOpenContext* forOpen();
 
   class  ForCloseContext : public antlr4::ParserRuleContext {
   public:
@@ -157,17 +156,19 @@ public:
 
   ForCloseContext* forClose();
 
-  class  IfBlockContext : public antlr4::ParserRuleContext {
+  class  FullIIfBlockContext : public antlr4::ParserRuleContext {
   public:
-    IfBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    td::TmplStrTable::IfBlockPtr if_block;
+    TmplStrParser::IfBlockContext *ifBlockContext = nullptr;;
+    TmplStrParser::ElseIfBlockContext *elseIfBlockContext = nullptr;;
+    TmplStrParser::ElseBlockContext *elseBlockContext = nullptr;;
+    FullIIfBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    IfOpenContext *ifOpen();
+    IfBlockContext *ifBlock();
     IfCloseContext *ifClose();
-    std::vector<ItemContext *> item();
-    ItemContext* item(size_t i);
-    std::vector<ElseIfStmtContext *> elseIfStmt();
-    ElseIfStmtContext* elseIfStmt(size_t i);
-    ElseStmtContext *elseStmt();
+    std::vector<ElseIfBlockContext *> elseIfBlock();
+    ElseIfBlockContext* elseIfBlock(size_t i);
+    ElseBlockContext *elseBlock();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -176,10 +177,12 @@ public:
    
   };
 
-  IfBlockContext* ifBlock();
+  FullIIfBlockContext* fullIIfBlock();
 
   class  IfOpenContext : public antlr4::ParserRuleContext {
   public:
+    td::TmplStrTable::StrPtr conditional;
+    TmplStrParser::IdentifierContext *identifierContext = nullptr;;
     IfOpenContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *OPEN();
@@ -196,8 +199,29 @@ public:
 
   IfOpenContext* ifOpen();
 
+  class  IfBlockContext : public antlr4::ParserRuleContext {
+  public:
+    td::TmplStrTable::IfBlockPtr if_block;
+    TmplStrParser::ItemContext *itemContext = nullptr;;
+    IfBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IfOpenContext *ifOpen();
+    std::vector<ItemContext *> item();
+    ItemContext* item(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  IfBlockContext* ifBlock();
+
   class  ElseIfStmtContext : public antlr4::ParserRuleContext {
   public:
+    td::TmplStrTable::StrPtr conditional;
+    TmplStrParser::IdentifierContext *identifierContext = nullptr;;
     ElseIfStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *OPEN();
@@ -215,6 +239,25 @@ public:
 
   ElseIfStmtContext* elseIfStmt();
 
+  class  ElseIfBlockContext : public antlr4::ParserRuleContext {
+  public:
+    td::TmplStrTable::ElseIfBlockPtr else_if_block;
+    TmplStrParser::ItemContext *itemContext = nullptr;;
+    ElseIfBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ElseIfStmtContext *elseIfStmt();
+    std::vector<ItemContext *> item();
+    ItemContext* item(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ElseIfBlockContext* elseIfBlock();
+
   class  ElseStmtContext : public antlr4::ParserRuleContext {
   public:
     ElseStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -231,6 +274,25 @@ public:
   };
 
   ElseStmtContext* elseStmt();
+
+  class  ElseBlockContext : public antlr4::ParserRuleContext {
+  public:
+    std::vector<td::TmplStrTable::ItemPtr> else_body_items;
+    TmplStrParser::ItemContext *itemContext = nullptr;;
+    ElseBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ElseStmtContext *elseStmt();
+    std::vector<ItemContext *> item();
+    ItemContext* item(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ElseBlockContext* elseBlock();
 
   class  IfCloseContext : public antlr4::ParserRuleContext {
   public:
@@ -250,11 +312,11 @@ public:
 
   IfCloseContext* ifClose();
 
-  class  TextContext : public antlr4::ParserRuleContext {
+  class  TextItemContext : public antlr4::ParserRuleContext {
   public:
-    std::string txt;
+    td::TmplStrTable::StrPtr txt;
     antlr4::Token *textToken = nullptr;;
-    TextContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    TextItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *TEXT();
 
@@ -265,16 +327,16 @@ public:
    
   };
 
-  TextContext* text();
+  TextItemContext* textItem();
 
   class  IdentifierContext : public antlr4::ParserRuleContext {
   public:
-    std::string id;
+    td::TmplStrTable::StrPtr id;
     antlr4::Token *nki = nullptr;;
     IdentifierContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *NON_KEYWORD_IDENTIFIER();
     antlr4::tree::TerminalNode *RAW_ESCAPE();
+    antlr4::tree::TerminalNode *NON_KEYWORD_IDENTIFIER();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

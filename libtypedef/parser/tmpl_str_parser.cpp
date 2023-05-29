@@ -67,6 +67,10 @@ std::unique_ptr<TmplStrTemplate> ParseTmplStr(std::istream& input) {
     }
   }
 
+  if (tmpl_ctx != nullptr) {
+    parsedTmpl->table = tmpl_ctx->tbl;
+  }
+
   return std::move(parsedTmpl);
 }
 

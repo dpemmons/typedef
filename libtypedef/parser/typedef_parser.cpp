@@ -112,6 +112,9 @@ class TmplStrListener : public TypedefParserBaseListener {
                 .SetLength(err.length)
                 .build());
       }
+
+      std:cout << parsedTmplStr->table << std::endl;
+      // do something with parsedTmplStr->table;
     }
   }
 

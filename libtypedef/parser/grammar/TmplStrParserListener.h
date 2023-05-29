@@ -1,4 +1,5 @@
 
+#include "libtypedef/parser/tmpl_str_table.h"
 
 
 // Generated from ./libtypedef/parser/grammar/TmplStrParser.g4 by ANTLR 4.7.2
@@ -22,35 +23,41 @@ public:
   virtual void enterItem(TmplStrParser::ItemContext *ctx) = 0;
   virtual void exitItem(TmplStrParser::ItemContext *ctx) = 0;
 
-  virtual void enterReplacement(TmplStrParser::ReplacementContext *ctx) = 0;
-  virtual void exitReplacement(TmplStrParser::ReplacementContext *ctx) = 0;
+  virtual void enterInsertion(TmplStrParser::InsertionContext *ctx) = 0;
+  virtual void exitInsertion(TmplStrParser::InsertionContext *ctx) = 0;
 
   virtual void enterForBlock(TmplStrParser::ForBlockContext *ctx) = 0;
   virtual void exitForBlock(TmplStrParser::ForBlockContext *ctx) = 0;
 
-  virtual void enterForOpen(TmplStrParser::ForOpenContext *ctx) = 0;
-  virtual void exitForOpen(TmplStrParser::ForOpenContext *ctx) = 0;
-
   virtual void enterForClose(TmplStrParser::ForCloseContext *ctx) = 0;
   virtual void exitForClose(TmplStrParser::ForCloseContext *ctx) = 0;
 
-  virtual void enterIfBlock(TmplStrParser::IfBlockContext *ctx) = 0;
-  virtual void exitIfBlock(TmplStrParser::IfBlockContext *ctx) = 0;
+  virtual void enterFullIIfBlock(TmplStrParser::FullIIfBlockContext *ctx) = 0;
+  virtual void exitFullIIfBlock(TmplStrParser::FullIIfBlockContext *ctx) = 0;
 
   virtual void enterIfOpen(TmplStrParser::IfOpenContext *ctx) = 0;
   virtual void exitIfOpen(TmplStrParser::IfOpenContext *ctx) = 0;
 
+  virtual void enterIfBlock(TmplStrParser::IfBlockContext *ctx) = 0;
+  virtual void exitIfBlock(TmplStrParser::IfBlockContext *ctx) = 0;
+
   virtual void enterElseIfStmt(TmplStrParser::ElseIfStmtContext *ctx) = 0;
   virtual void exitElseIfStmt(TmplStrParser::ElseIfStmtContext *ctx) = 0;
+
+  virtual void enterElseIfBlock(TmplStrParser::ElseIfBlockContext *ctx) = 0;
+  virtual void exitElseIfBlock(TmplStrParser::ElseIfBlockContext *ctx) = 0;
 
   virtual void enterElseStmt(TmplStrParser::ElseStmtContext *ctx) = 0;
   virtual void exitElseStmt(TmplStrParser::ElseStmtContext *ctx) = 0;
 
+  virtual void enterElseBlock(TmplStrParser::ElseBlockContext *ctx) = 0;
+  virtual void exitElseBlock(TmplStrParser::ElseBlockContext *ctx) = 0;
+
   virtual void enterIfClose(TmplStrParser::IfCloseContext *ctx) = 0;
   virtual void exitIfClose(TmplStrParser::IfCloseContext *ctx) = 0;
 
-  virtual void enterText(TmplStrParser::TextContext *ctx) = 0;
-  virtual void exitText(TmplStrParser::TextContext *ctx) = 0;
+  virtual void enterTextItem(TmplStrParser::TextItemContext *ctx) = 0;
+  virtual void exitTextItem(TmplStrParser::TextItemContext *ctx) = 0;
 
   virtual void enterIdentifier(TmplStrParser::IdentifierContext *ctx) = 0;
   virtual void exitIdentifier(TmplStrParser::IdentifierContext *ctx) = 0;

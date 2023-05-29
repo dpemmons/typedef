@@ -7,11 +7,13 @@
 #include <vector>
 
 #include "libtypedef/parser/parser_error_info.h"
+#include "libtypedef/parser/tmpl_str_table.h"
 
 namespace td {
 
 struct TmplStrTemplate {
   std::vector<ParserErrorInfo> errors;
+  TmplStrTablePtr table;
 };
 
 std::unique_ptr<TmplStrTemplate> ParseTmplStr(const std::string& s);
