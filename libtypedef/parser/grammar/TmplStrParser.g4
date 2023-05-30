@@ -59,8 +59,6 @@ fullIIfBlock
 		elseBlock {$if_block->else_body_items = $elseBlock.ctx->else_body_items;}
 	)? ifClose;
 
-// TODO wire up conditionals
-
 ifOpen
 	returns[td::TmplStrTable::StrPtr conditional]:
 	'<' KW_IF identifier '>' {$conditional = $identifier.ctx->id;};
@@ -68,7 +66,7 @@ ifOpen
 ifBlock
 	returns[td::TmplStrTable::IfBlockPtr if_block]
 	@init {$if_block = std::make_shared<td::TmplStrTable::IfBlock>();}:
-	ifOpen (
+	ifOpen {$if_block->conditional_identifier = $ifOpen.ctx->conditional;} (
 		item {$if_block->body_items.push_back($item.ctx->itm);}
 	)*;
 
@@ -78,7 +76,7 @@ elseIfStmt
 elseIfBlock
 	returns[td::TmplStrTable::ElseIfBlockPtr else_if_block]
 	@init {$else_if_block = std::make_shared<td::TmplStrTable::ElseIfBlock>();}:
-	elseIfStmt (
+	elseIfStmt {$else_if_block->conditional_identifier = $elseIfStmt.ctx->conditional;} (
 		item {$else_if_block->body_items.push_back($item.ctx->itm);}
 	)*;
 

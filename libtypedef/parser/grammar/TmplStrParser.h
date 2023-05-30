@@ -202,6 +202,7 @@ public:
   class  IfBlockContext : public antlr4::ParserRuleContext {
   public:
     td::TmplStrTable::IfBlockPtr if_block;
+    TmplStrParser::IfOpenContext *ifOpenContext = nullptr;;
     TmplStrParser::ItemContext *itemContext = nullptr;;
     IfBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
@@ -242,6 +243,7 @@ public:
   class  ElseIfBlockContext : public antlr4::ParserRuleContext {
   public:
     td::TmplStrTable::ElseIfBlockPtr else_if_block;
+    TmplStrParser::ElseIfStmtContext *elseIfStmtContext = nullptr;;
     TmplStrParser::ItemContext *itemContext = nullptr;;
     ElseIfBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
