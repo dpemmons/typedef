@@ -3,7 +3,7 @@ COMPILER=gcc
 
 CXXFLAGS.gcc.debug := -DDEBUG -g3 -ggdb -Og -fstack-protector-all
 CXXFLAGS.gcc.release := -O3 -march=native -DNDEBUG
-CXXFLAGS.gcc := -pthread -std=gnu++17 -march=native -g -MMD -MP -fmessage-length=0 ${CXXFLAGS.gcc.${BUILD}}
+CXXFLAGS.gcc := -pthread -std=gnu++17 -march=native -g -MMD -MP -fmessage-length=0 -fdiagnostics-show-template-tree ${CXXFLAGS.gcc.${BUILD}}
 
 CXXFLAGS.clang.debug := -O0 -fstack-protector-all
 CXXFLAGS.clang.release := -O3 -march=native -DNDEBUG
