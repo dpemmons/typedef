@@ -128,10 +128,13 @@ antlr4-runtime: $(ANTLR4_LIB)
 .PHONY: example-main-run
 example-main-run: typedef
 	$(MAKE) -C examples example-main-run
+.PHONY: example-main-clean
+example-main-clean:
+	$(MAKE) -C examples clean
 
 .PHONY: clean
 clean:
-	rm -rf $(BASE_BUILD_DIR)/libtypedef $(BASE_BUILD_DIR)/typedef $(BASE_BUILD_DIR)/test
+	rm -rf $(BASE_BUILD_DIR)/libtypedef $(BASE_BUILD_DIR)/typedef $(BASE_BUILD_DIR)/test $(BASE_BUILD_DIR)/examples
 
 .PHONY: typedef-clean
 typedef-clean:

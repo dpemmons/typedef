@@ -21,13 +21,15 @@ $(EXAMPLE_BIN): $(EXAMPLE_OBJS)
 	$(CXX) $(EXAMPLE_OBJS) -o $@ $(LDFLAGS)
 
 TYPEDEF_BIN := ${CURDIR}/../build/${BUILD}/typedef
-example-cpp-gen: examples/simple_values.td.cpp
+example-cpp-gen: FORCE
 	$(TYPEDEF_BIN) -f simple_values.td --cpp_out ${CURDIR}/examples
 
-example-main: $(EXAMPLE_BIN)
+FORCE: ;
+
+example-main: example-cpp-gen $(EXAMPLE_BIN)
 
 .PHONY: example-main-run
-example-main-run: $(EXAMPLE_BIN)
+example-main-run: example-main
 	$(EXAMPLE_BIN)
 
 .PHONY: clean
