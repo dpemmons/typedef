@@ -4,6 +4,8 @@
 
 int main() {
   using namespace sv::t;
+
+#if 0
   MutableStructA sA;
   MutableStructB sB;
 
@@ -36,10 +38,11 @@ int main() {
   sE.inlineMap()->emplace(std::string("hi"),
                           std::make_unique<MutableStructD>());
   sE.VariantB(std::make_unique<MutableStructE::MutableVariantB>());
+#endif
 
   MutableTemplateExample::MutableTemplateData tmpl_data;
   tmpl_data.name("John");
-  std::cout << MutableTemplateExample::tmpl(tmpl_data) << std::endl;
+  std::cout << "here's the template value:\n" << MutableTemplateExample::tmpl(tmpl_data) << std::endl;
 
   return 0;
 }
