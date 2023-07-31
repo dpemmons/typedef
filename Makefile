@@ -125,6 +125,10 @@ $(ANTLR4_LIB):
 	$(MAKE) -C external/antlr4-runtime-4.7.2 antlr4
 antlr4-runtime: $(ANTLR4_LIB)
 
+.PHONY: example-main-run
+example-main-run: typedef
+	$(MAKE) -C examples example-main-run
+
 .PHONY: clean
 clean:
 	rm -rf $(BASE_BUILD_DIR)/libtypedef $(BASE_BUILD_DIR)/typedef $(BASE_BUILD_DIR)/test

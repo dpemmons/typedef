@@ -22,7 +22,7 @@ $(EXAMPLE_BIN): $(EXAMPLE_OBJS)
 
 TYPEDEF_BIN := ${CURDIR}/../build/${BUILD}/typedef
 example-cpp-gen: examples/simple_values.td.cpp
-	$(TYPEDEF_BIN) -f simple_values.td --cpp_out
+	$(TYPEDEF_BIN) -f simple_values.td --cpp_out ${CURDIR}/examples
 
 example-main: $(EXAMPLE_BIN)
 
