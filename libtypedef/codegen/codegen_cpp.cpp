@@ -358,7 +358,8 @@ string CodegenCpp::StructAccessors(
     } else if (m.IsTmplStr()) {
       store.push_back(fmt::arg("arg_type", m.TmplStr().ArgCppType()));
       fmt::vprint(ss, R"(
-    static std::string {identifier}(const {arg_type}& arg) {{ return "tmpl_str"; }}
+    // Defined in cpp.
+    static std::string {identifier}(const {arg_type}& arg);
     )",
                   store);
     } else {
@@ -672,8 +673,8 @@ class {classname} : public std::map<{key}, {value}> {{
 string CodegenCpp::StructMethods(const vector<StructViewModel>& structs) {
   stringstream ss;
   for (auto s : structs) {
-    fmt::dynamic_format_arg_store<fmt::format_context> store;
-    store.push_back(fmt::arg("classname", s.struct_name));
+    fmt::dynamic_format_arg_store<fmt::format_context> structs_store;
+    structs_store.push_back(fmt::arg("classname", s.struct_name));
 
     fmt::vprint(ss, R"(
 std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
@@ -681,7 +682,23 @@ std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
   return os;
 }}
 )",
-                store);
+                structs_store);
+
+    for (auto m : s.members) {
+      fmt::dynamic_format_arg_store<fmt::format_context> member_store;
+      member_store.push_back(fmt::arg("classname", s.struct_name));
+      member_store.push_back(fmt::arg("identifier", m.EscapedIdentifier()));
+
+      if (m.IsTmplStr()) {
+        member_store.push_back(fmt::arg("arg_type", m.TmplStr().ArgCppType()));
+        fmt::vprint(ss, R"(
+std::string {classname}::{identifier}(const {arg_type}& arg) {{
+  return "printing here!";
+}}
+)",
+                    member_store);
+      }
+    }
   }
   return ss.str();
 }
