@@ -1,18 +1,48 @@
 BUILD := debug
-COMPILER=gcc
+COMPILER=clang
 
-CXXFLAGS.gcc.debug := -DDEBUG -g3 -ggdb -Og -fstack-protector-all
+# Inspired by https://stackoverflow.com/a/48793058
+# https://stackoverflow.com/questions/48791883/best-practice-for-building-a-make-file/48793058#48793058
+
+CXX.gcc := /usr/bin/g++
+CC.gcc := /usr/bin/gcc
+LD.gcc := /usr/bin/g++
+AR.gcc := /usr/bin/ar
+
+CXX.clang := /usr/bin/clang++
+LD.clang := /usr/bin/clang++
+AR.clang := /usr/bin/ar
+
+CXX := ${CXX.${COMPILER}}
+LD := ${LD.${COMPILER}}
+AR := ${AR.${COMPILER}}
+
+CXXFLAGS.gcc.debug := -DDEBUG -gdwarf-2 -O0 -fstack-protector-all
 CXXFLAGS.gcc.release := -O3 -march=native -DNDEBUG
-CXXFLAGS.gcc := -pthread -std=gnu++17 -march=native -g -MMD -MP \
-  -fmessage-length=0 \
-  -fdiagnostics-show-template-tree \
-  -fdiagnostics-color=auto \
-  -fdiagnostics-generate-patch \
-  ${CXXFLAGS.gcc.${BUILD}}
+CXXFLAGS.gcc := -pthread \
+                -std=gnu++17 \
+                -march=native \
+                -g \
+                -MMD \
+                -MP \
+                -fmessage-length=0 \
+                -fdiagnostics-show-template-tree \
+                -fdiagnostics-color=auto \
+                -fdiagnostics-generate-patch \
+                ${CXXFLAGS.gcc.${BUILD}}
 
 CXXFLAGS.clang.debug := -O0 -fstack-protector-all
 CXXFLAGS.clang.release := -O3 -march=native -DNDEBUG
-CXXFLAGS.clang := -pthread -std=gnu++17 -march=native -g -MMD -MP -fmessage-length=0 ${CXXFLAGS.clang.${BUILD}}
+CXXFLAGS.clang := -pthread \
+                  -std=gnu++17 \
+                  -march=native \
+                  -g \
+                  -gdwarf-4 \
+                  -MMD \
+                  -MP \
+                  -fmessage-length=0 \
+                  -Wno-defaulted-function-deleted \
+                  ${CXXFLAGS.clang.${BUILD}}
 
 CXXFLAGS := ${CXXFLAGS.${COMPILER}}
 CFLAGS := ${CFLAGS.${COMPILER}}

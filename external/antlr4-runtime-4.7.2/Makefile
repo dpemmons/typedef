@@ -13,7 +13,7 @@ LIB_OBJS := $(LIB_SRCS:%=$(LIB_BUILD_DIR)/%.o)
 LIB_DEPS := $(LIB_OBJS:.o=.d)
 LIB_INC_DIRS := $(shell find $(LIB_SRC_DIRS) -type d) .
 LIB_INC_FLAGS := $(addprefix -I,$(LIB_INC_DIRS))
-LIB_CPPFLAGS := $(GLOBAL_CPPFLAGS) $(LIB_INC_FLAGS)
+LIB_CPPFLAGS := $(LIB_INC_FLAGS)
 
 $(LIB_BUILD_DIR)/%.c.o: %.c
 	mkdir -p $(dir $@)
