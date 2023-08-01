@@ -34,7 +34,7 @@ class CodegenCpp : public CodegenBase {
 
   class CppPrimitiveValue {
    public:
-    CppPrimitiveValue(const SymbolTable::Value& v);
+    explicit CppPrimitiveValue(const SymbolTable::Value& v);
     const string& CppType() const { return cpp_type_; }
 
     bool IsChar() const { return is_char_; }
@@ -52,7 +52,7 @@ class CodegenCpp : public CodegenBase {
 
   class CppNonPrimitiveValue {
    public:
-    CppNonPrimitiveValue(SymbolTable::Symbol const& s);
+    explicit CppNonPrimitiveValue(SymbolTable::Symbol const& s);
 
     bool IsStruct() const { return is_struct_; }
     bool IsVariant() const { return is_variant_; }
@@ -71,27 +71,41 @@ class CodegenCpp : public CodegenBase {
 
   class CppSymRef {
    public:
-    CppSymRef(const string& referenced_escaped_identifier);
+    explicit CppSymRef(const string& referenced_escaped_identifier);
+    const string& ReferencedEscapedIdentifier() const {
+      return referenced_escaped_identifier_;
+    }
     const string& ReferencedCppType() const { return referenced_cpp_type_; }
 
    private:
+    string referenced_escaped_identifier_;
     string referenced_cpp_type_;
   };
 
   class CppTmplStr {
    public:
-    CppTmplStr(const string& arg_cpp_type, const string& tmpl);
+    struct TmplSegment {
+      // One of...
+      shared_ptr<string> literal_segment;
+      optional<CppSymRef> insertion;
+    };
+
+    CppTmplStr(const string& arg_cpp_type, const string& tmpl,
+               const vector<TmplSegment>& segments);
     const string& ArgCppType() const { return arg_cpp_typpe_; }
     const string& TmplStr() const { return tmpl_; }  // temporary...
+
+    const vector<TmplSegment>& Segments() const { return segments_; }
 
    private:
     string arg_cpp_typpe_;
     string tmpl_;
+    vector<TmplSegment> segments_;
   };
 
   class CppSymbol {
    public:
-    CppSymbol(const SymbolTable::Symbol& s);
+    explicit CppSymbol(const SymbolTable::Symbol& s);
     const string& EscapedIdentifier() { return escaped_identifier_; }
 
     bool IsPrimitive() const { return primitive_.has_value(); }

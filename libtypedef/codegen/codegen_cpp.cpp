@@ -69,13 +69,15 @@ string indent(const string& input, unsigned int count) {
 }  // namespace
 
 CodegenCpp::CppSymRef::CppSymRef(const string& referenced_escaped_identifier) {
+  referenced_escaped_identifier_ = referenced_escaped_identifier;
   referenced_cpp_type_ =
       fmt::format("std::unique_ptr<Mutable{}>", referenced_escaped_identifier);
 }
 
 CodegenCpp::CppTmplStr::CppTmplStr(const string& arg_cpp_type,
-                                   const string& tmpl)
-    : arg_cpp_typpe_(arg_cpp_type), tmpl_(tmpl) {}
+                                   const string& tmpl,
+                                   const vector<TmplSegment>& segments)
+    : arg_cpp_typpe_(arg_cpp_type), tmpl_(tmpl), segments_(segments) {}
 
 CodegenCpp::CppNonPrimitiveValue::CppNonPrimitiveValue(
     const SymbolTable::Symbol& s)
@@ -267,6 +269,8 @@ void CodegenCpp::PrintSource(ostream& os, const ViewModel& vm) {
 
   fmt::vprint(os, R"(
 #include "{hdr_filename}"
+
+#include <sstream>
 
 {namespaces_open}
 
@@ -691,9 +695,28 @@ std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
 
       if (m.IsTmplStr()) {
         member_store.push_back(fmt::arg("arg_type", m.TmplStr().ArgCppType()));
+        member_store.push_back(fmt::arg("tmpl_str", m.TmplStr().TmplStr()));
+
         fmt::vprint(ss, R"(
 std::string {classname}::{identifier}(const {arg_type}& arg) {{
-  return "printing here!";
+  std::stringstream ss;
+)",
+                    member_store);
+
+        // Print each template part.
+        for (auto& seg : m.TmplStr().Segments()) {
+          if (seg.literal_segment) {
+            fmt::print(ss, "  ss << R\"typedef({})typedef\";\n",
+                       *seg.literal_segment);
+          } else if (seg.insertion) {
+            fmt::print(ss, "  ss << arg.{}();\n", seg.insertion->ReferencedEscapedIdentifier());
+          }
+        }
+
+        // end Print each template part.
+
+        fmt::vprint(ss, R"(
+  return ss.str();
 }}
 )",
                     member_store);
@@ -894,9 +917,30 @@ CodegenCpp::CppTmplStr CodegenCpp::CreateTmplStr(
     const SymbolTable::Symbol& tmpl_str) {
   auto ptr = get<shared_ptr<TmplStr>>(tmpl_str.second);
   auto arg_sym_ref = get<SymbolRef>(ptr->arg_type);
+
+  vector<CppTmplStr::TmplSegment> segments;
+
+  if (!ptr->table) {
+    abort();
+  }
+
+  for (auto& item : ptr->table->items) {
+    CppTmplStr::TmplSegment cpp_tmpl_seg;
+    if (item->text) {
+      cpp_tmpl_seg.literal_segment = item->text;
+    } else if (item->insertion) {
+      // TODO: symbols should already be resolved!!
+      cpp_tmpl_seg.insertion = CppSymRef(escape_utf8_to_cpp_identifier(
+          SymbolRef(*item->insertion->identifier)));
+    } else if (item->if_block) {
+    } else if (item->for_block) {
+    }
+    segments.push_back(cpp_tmpl_seg);
+  }
+
   return CppTmplStr(
       string("Mutable") + escape_utf8_to_cpp_identifier(arg_sym_ref.id),
-      *get<optional<string>>(ptr->str));
+      *get<optional<string>>(ptr->str), segments);
 }
 
 }  // namespace td

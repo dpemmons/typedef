@@ -112,9 +112,17 @@ class TmplStrListener : public TypedefParserBaseListener {
                 .SetLength(err.length)
                 .build());
       }
+      return;
+    }
 
-      std:cout << parsedTmplStr->table << std::endl;
-      // do something with parsedTmplStr->table;
+    // stick the table onto the TmplStr value!
+    if (holds_alternative<shared_ptr<TmplStr>>(*ctx->maybe_val)) {
+      auto tmpl_str = get<shared_ptr<TmplStr>>(*ctx->maybe_val);
+      tmpl_str->table = parsedTmplStr->table;
+    } else {
+      ErrorFromContext(ctx, ParserErrorInfo::OTHER,
+                        "Internal error: Valued template string object does "
+                        "not contain a value object.");
     }
   }
 
@@ -195,7 +203,8 @@ std::shared_ptr<ParsedFile> ParseTypedef(std::istream &input) {
         ParsedFileBuilder().AddErrors(errors).build());
   }
 
-  // Parse template strings.
+  // Parse template strings and decorate ValuedTemplateStringTypeContext
+  // value objects with tmpl_str_tables.
   TmplStrListener tmplStrListener(errors);
   antlr4::tree::ParseTreeWalker::DEFAULT.walk(&tmplStrListener,
                                               compilation_unit);

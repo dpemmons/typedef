@@ -1,6 +1,6 @@
 
-#ifndef __EXAMPLES_SIMPLE_VALUES_TD_H_H__
-#define __EXAMPLES_SIMPLE_VALUES_TD_H_H__
+#ifndef SIMPLE_VALUES_TD_H_H__
+#define SIMPLE_VALUES_TD_H_H__
 
 #include <cassert>
 #include <cstdint>
@@ -576,11 +576,14 @@ class MutableTemplateExample {
 
     // Accessors.
 
-    static std::string tmpl(const MutableTemplateData& arg) { return "tmpl_str"; }
+    // Defined in cpp.
+    static std::string tmpl(const MutableTemplateData& arg);
     
-    static std::string tmpl2(const MutableTemplateData& arg) { return "tmpl_str"; }
+    // Defined in cpp.
+    static std::string tmpl2(const MutableTemplateData& arg);
     
-    static std::string tmpl3(const MutableTemplateData& arg) { return "tmpl_str"; }
+    // Defined in cpp.
+    static std::string tmpl3(const MutableTemplateData& arg);
     
 
     friend std::ostream& operator<<(std::ostream& os, const MutableTemplateExample& obj);
@@ -1463,4 +1466,4 @@ class MutableMapD : public std::map<std::string, std::unique_ptr<MutableVariantA
 }  // t
 
 
-#endif  // __EXAMPLES_SIMPLE_VALUES_TD_H_H__
+#endif  // SIMPLE_VALUES_TD_H_H__

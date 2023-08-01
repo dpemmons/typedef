@@ -19,7 +19,7 @@ char32_t GetCharValue(TypedefParser* parser,
     throw InvalidLiteralException("Invalid char literal", parser);
   }
 
-  std::string_view inner = literal.substr(1, literal.size() - 2);
+  std::string_view inner(literal.data() + 1, literal.size() - 2);
 
   if (inner.size() == 2 && inner[0] == '\\') {
     switch (inner[1]) {

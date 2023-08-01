@@ -1,6 +1,8 @@
 
 #include "simple_values.td.h"
 
+#include <sstream>
+
 namespace sv {
 namespace t {
 
@@ -34,6 +36,37 @@ std::ostream& operator<<(std::ostream& os, const MutableStructE& obj) {
 std::ostream& operator<<(std::ostream& os, const MutableTemplateExample& obj) {
   os << "struct MutableTemplateExample.\n";
   return os;
+}
+
+std::string MutableTemplateExample::tmpl(const MutableTemplateData& arg) {
+  std::stringstream ss;
+  ss << R"typedef(Hello )typedef";
+  ss << arg.name();
+  ss << R"typedef(!)typedef";
+
+  return ss.str();
+}
+
+std::string MutableTemplateExample::tmpl2(const MutableTemplateData& arg) {
+  std::stringstream ss;
+  ss << R"typedef(Yo )typedef";
+  ss << arg.name();
+  ss << R"typedef(!)typedef";
+
+  return ss.str();
+}
+
+std::string MutableTemplateExample::tmpl3(const MutableTemplateData& arg) {
+  std::stringstream ss;
+  ss << R"typedef(
+  )typedef";
+  ss << R"typedef(
+
+  )typedef";
+  ss << R"typedef(
+  )typedef";
+
+  return ss.str();
 }
 
 

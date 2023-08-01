@@ -11,6 +11,8 @@
 #include <utility>
 #include <variant>
 
+#include "tmpl_str_table.h"
+
 namespace td {
 
 using namespace std;
@@ -83,12 +85,12 @@ class SymbolTable {
                   optional<uint32_t>,  // u32
                   optional<uint64_t>,  // u64
                   // TODO these can probably be unique_ptr?
-                  shared_ptr<Struct>,       // struct
-                  shared_ptr<Variant>,      // variant
-                  shared_ptr<Vector>,       // vector
-                  shared_ptr<Map>,          // map
+                  shared_ptr<Struct>,   // struct
+                  shared_ptr<Variant>,  // variant
+                  shared_ptr<Vector>,   // vector
+                  shared_ptr<Map>,      // map
                   shared_ptr<TmplStr>,  // str_template
-                  SymbolRef                 // reference to some other symbol.
+                  SymbolRef             // reference to some other symbol.
                   >
       Value;
   using Symbol = pair<Identifier, Value>;
@@ -184,6 +186,7 @@ class TmplStr {
 
   SymbolTable::Value arg_type;
   SymbolTable::Value str;
+  shared_ptr<TmplStrTable> table;
 };
 
 }  // namespace td

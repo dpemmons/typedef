@@ -25,9 +25,9 @@ class TmplStrTable {
 
   struct Item {
     StrPtr text;
-    std::shared_ptr<Insertion> insertion;
-    std::shared_ptr<IfBlock> if_block;
-    std::shared_ptr<ForBlock> for_block;
+    InsertionPtr insertion;
+    IfBlockPtr if_block;
+    ForBlockPtr for_block;
   };
 
   struct Insertion {
