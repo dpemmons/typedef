@@ -230,6 +230,15 @@ void CodegenCpp::PrintHeader(ostream& os, const ViewModel& vm) {
 #include <variant>
 #include <vector>
 
+namespace typedef_utils {{
+
+// TODO(dpemmons) more truthiness checks.
+inline bool IsTrue(std::string str) {{
+  return str.size() > 0;
+}}
+
+}}  // namespace typedef
+
 {namespaces_open}
 
 // Value declarations
@@ -674,6 +683,69 @@ class {classname} : public std::map<{key}, {value}> {{
   return ss.str();
 }
 
+inline string CodegenCpp::PrintDereference(
+    const CodegenCpp::CppSymRef& symbol,
+    const set<string>& block_local_symbols) {
+  if (block_local_symbols.count(symbol.ReferencedEscapedIdentifier())) {
+    return fmt::format("{}", symbol.ReferencedEscapedIdentifier());
+  } else {
+    return fmt::format("arg.{}()", symbol.ReferencedEscapedIdentifier());
+  }
+}
+
+string CodegenCpp::PrintTmplSegment(
+    const CodegenCpp::CppTmplStr::TmplSegment& seg,
+    set<string> block_local_symbols) {
+  stringstream ss;
+
+  if (seg.literal_segment) {
+    fmt::print(ss, "  ss << R\"typedef({})typedef\";\n", *seg.literal_segment);
+  } else if (seg.insertion) {
+    fmt::print(ss, "  ss << {};\n",
+               PrintDereference(*seg.insertion, block_local_symbols));
+  } else if (seg.if_block) {
+    fmt::print(ss, "  if (typedef_utils::IsTrue({})) {{\n",
+               PrintDereference(*seg.if_block->conditional_identifier,
+                                block_local_symbols));
+    for (auto& item : seg.if_block->body_items) {
+      ss << PrintTmplSegment(item, block_local_symbols);
+    }
+    for (auto& else_if : seg.if_block->else_ifs) {
+      fmt::print(ss, "  }} else if (typedef_utils::IsTrue({})) {{\n",
+                 PrintDereference(*else_if.conditional_identifier,
+                                  block_local_symbols));
+      for (auto& else_if_body_item : else_if.body_items) {
+        ss << PrintTmplSegment(else_if_body_item, block_local_symbols);
+      }
+    }
+    if (seg.if_block->else_body_items.size()) {
+      fmt::print(ss, "  }} else {{\n");
+      for (auto& else_body_item : seg.if_block->else_body_items) {
+        ss << PrintTmplSegment(else_body_item, block_local_symbols);
+      }
+    }
+
+    fmt::print(ss, "  }}\n");
+  } else if (seg.for_block) {
+    fmt::print(ss, "  if ({}) {{\n",
+               PrintDereference(*seg.for_block->iterable_identifier,
+                                block_local_symbols));
+    fmt::print(ss, "  for (auto& {} : *{}) {{\n",
+               seg.for_block->loop_variable->ReferencedEscapedIdentifier(),
+               PrintDereference(*seg.for_block->iterable_identifier,
+                                block_local_symbols));
+    block_local_symbols.insert(
+        seg.for_block->loop_variable->ReferencedEscapedIdentifier());
+    for (auto& body_item : seg.for_block->body_items) {
+      // TODO introduce block-local variables?
+      ss << PrintTmplSegment(body_item, block_local_symbols);
+    }
+    fmt::print(ss, "  }}\n  }}\n");
+  }
+  // TODO(dpemmons) handle if statements here!
+  return ss.str();
+}
+
 string CodegenCpp::StructMethods(const vector<StructViewModel>& structs) {
   stringstream ss;
   for (auto s : structs) {
@@ -705,15 +777,8 @@ std::string {classname}::{identifier}(const {arg_type}& arg) {{
 
         // Print each template part.
         for (auto& seg : m.TmplStr().Segments()) {
-          if (seg.literal_segment) {
-            fmt::print(ss, "  ss << R\"typedef({})typedef\";\n",
-                       *seg.literal_segment);
-          } else if (seg.insertion) {
-            fmt::print(ss, "  ss << arg.{}();\n", seg.insertion->ReferencedEscapedIdentifier());
-          }
+          ss << PrintTmplSegment(seg, {});
         }
-
-        // end Print each template part.
 
         fmt::vprint(ss, R"(
   return ss.str();
@@ -913,6 +978,51 @@ vector<CodegenCpp::MapViewModel> CodegenCpp::CreateMapViewModels(
   return view_models;
 }
 
+CodegenCpp::CppTmplStr::TmplSegment CodegenCpp::MakeTmplSegment(
+    TmplStrTable::ItemPtr item) {
+  CppTmplStr::TmplSegment cpp_tmpl_seg;
+
+  if (item->text) {
+    cpp_tmpl_seg.literal_segment = item->text;
+  } else if (item->insertion) {
+    // TODO: symbols should already be resolved!!
+    cpp_tmpl_seg.insertion = CppSymRef(
+        escape_utf8_to_cpp_identifier(SymbolRef(*item->insertion->identifier)));
+  } else if (item->if_block) {
+    CppTmplStr::TmplSegment::IfBlock if_block;
+    if_block.conditional_identifier = CppSymRef(escape_utf8_to_cpp_identifier(
+        SymbolRef(*item->if_block->conditional_identifier)));
+    for (auto body_item : item->if_block->body_items) {
+      if_block.body_items.push_back(MakeTmplSegment(body_item));
+    }
+    for (auto else_if : item->if_block->else_ifs) {
+      CppTmplStr::TmplSegment::IfBlock::ElseIfBlock else_if_block;
+      else_if_block.conditional_identifier =
+          CppSymRef(escape_utf8_to_cpp_identifier(
+              SymbolRef(*else_if->conditional_identifier)));
+      for (auto body_item : else_if->body_items) {
+        else_if_block.body_items.push_back(MakeTmplSegment(body_item));
+      }
+      if_block.else_ifs.push_back(else_if_block);
+    }
+    cpp_tmpl_seg.if_block = if_block;
+  } else if (item->for_block) {
+    CppTmplStr::TmplSegment::ForBlock for_block;
+    for_block.loop_variable = CppSymRef(escape_utf8_to_cpp_identifier(
+        SymbolRef(*item->for_block->loop_variable)));
+
+    for_block.iterable_identifier = CppSymRef(escape_utf8_to_cpp_identifier(
+        SymbolRef(*item->for_block->iterable_identifier)));
+    for (auto body_item : item->for_block->body_items) {
+      for_block.body_items.push_back(MakeTmplSegment(body_item));
+    }
+
+    cpp_tmpl_seg.for_block = for_block;
+  }
+
+  return cpp_tmpl_seg;
+}
+
 CodegenCpp::CppTmplStr CodegenCpp::CreateTmplStr(
     const SymbolTable::Symbol& tmpl_str) {
   auto ptr = get<shared_ptr<TmplStr>>(tmpl_str.second);
@@ -925,17 +1035,7 @@ CodegenCpp::CppTmplStr CodegenCpp::CreateTmplStr(
   }
 
   for (auto& item : ptr->table->items) {
-    CppTmplStr::TmplSegment cpp_tmpl_seg;
-    if (item->text) {
-      cpp_tmpl_seg.literal_segment = item->text;
-    } else if (item->insertion) {
-      // TODO: symbols should already be resolved!!
-      cpp_tmpl_seg.insertion = CppSymRef(escape_utf8_to_cpp_identifier(
-          SymbolRef(*item->insertion->identifier)));
-    } else if (item->if_block) {
-    } else if (item->for_block) {
-    }
-    segments.push_back(cpp_tmpl_seg);
+    segments.push_back(MakeTmplSegment(item));
   }
 
   return CppTmplStr(

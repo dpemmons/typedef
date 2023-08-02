@@ -160,6 +160,7 @@ struct TemplateExample {
 
   struct TemplateData {
     name: str;
+    name2: str;
     someVec: vector<i32>;
   };
 
@@ -168,19 +169,20 @@ struct TemplateExample {
   tmpl2: tmpl_str<TemplateData> = r#"Yo < name >!"#;
 
   tmpl3: tmpl_str<TemplateData> = r#"
+  here's a for statement:
   <for i in someVec>
-    Hi! <there>
-    <if this></if>
+    for value number: <i>
   </for>
 
+  here's an if:
   <if name>
-    yo
+    yo name: <name>
   <else if name>
-    yar
+    should not get here.
   <else if name2>
-    foo
+    hi name2: <name2>
   <else>
-    bar
+    we're in the else block.
   </if>
   "#;
 

@@ -59,10 +59,38 @@ std::string MutableTemplateExample::tmpl2(const MutableTemplateData& arg) {
 std::string MutableTemplateExample::tmpl3(const MutableTemplateData& arg) {
   std::stringstream ss;
   ss << R"typedef(
+  here's a for statement:
   )typedef";
+  if (arg.someVec()) {
+  for (auto& i : *arg.someVec()) {
+  ss << R"typedef(
+    for value number: )typedef";
+  ss << i;
+  ss << R"typedef(
+  )typedef";
+  }
+  }
   ss << R"typedef(
 
+  here's an if:
   )typedef";
+  if (typedef_utils::IsTrue(arg.name())) {
+  ss << R"typedef(
+    yo name: )typedef";
+  ss << arg.name();
+  ss << R"typedef(
+  )typedef";
+  } else if (typedef_utils::IsTrue(arg.name())) {
+  ss << R"typedef(
+    should not get here.
+  )typedef";
+  } else if (typedef_utils::IsTrue(arg.name2())) {
+  ss << R"typedef(
+    hi name2: )typedef";
+  ss << arg.name2();
+  ss << R"typedef(
+  )typedef";
+  }
   ss << R"typedef(
   )typedef";
 

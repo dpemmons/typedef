@@ -11,6 +11,15 @@
 #include <variant>
 #include <vector>
 
+namespace typedef_utils {
+
+// TODO(dpemmons) more truthiness checks.
+inline bool IsTrue(std::string str) {
+  return str.size() > 0;
+}
+
+}  // namespace typedef
+
 namespace sv {
 namespace t {
 
@@ -556,6 +565,9 @@ class MutableTemplateExample {
         std::string name() const { return name_; }
         void name(std::string _val) { name_ = _val; }
         
+        std::string name2() const { return name2_; }
+        void name2(std::string _val) { name2_ = _val; }
+        
         std::unique_ptr<MutablesomeVec>& someVec() { return someVec_; }
         const std::unique_ptr<MutablesomeVec>& someVec() const { return someVec_; }
         void someVec(std::unique_ptr<MutablesomeVec> _val) { someVec_ = std::move(_val); }
@@ -566,6 +578,7 @@ class MutableTemplateExample {
       private:
         // Members.
         std::string name_;
+        std::string name2_;
         std::unique_ptr<MutablesomeVec> someVec_;
     
     };  // class MutableTemplateData

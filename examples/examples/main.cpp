@@ -42,7 +42,17 @@ int main() {
 
   MutableTemplateExample::MutableTemplateData tmpl_data;
   tmpl_data.name("John");
-  std::cout << "here's the template value:\n" << MutableTemplateExample::tmpl(tmpl_data) << std::endl;
+  auto vec = std::make_unique<
+      MutableTemplateExample::MutableTemplateData::MutablesomeVec>();
+  vec->push_back(1);
+  vec->push_back(2);
+  vec->push_back(3);
+  tmpl_data.someVec(std::move(vec));
+  std::cout << "tmpl: " << MutableTemplateExample::tmpl(tmpl_data) << std::endl;
+  std::cout << "tmpl2: " << MutableTemplateExample::tmpl2(tmpl_data)
+            << std::endl;
+  std::cout << "tmpl3: " << MutableTemplateExample::tmpl3(tmpl_data)
+            << std::endl;
 
   return 0;
 }

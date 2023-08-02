@@ -3,6 +3,7 @@
 
 #include <filesystem>
 #include <optional>
+#include <set>
 #include <string>
 
 #include "libtypedef/codegen/codegen_base.h"
@@ -85,9 +86,38 @@ class CodegenCpp : public CodegenBase {
   class CppTmplStr {
    public:
     struct TmplSegment {
+      struct IfBlock {
+        // Pseudo-code:
+        //  if (conditional_identifier) {
+        //    body_items;
+        //  }
+        optional<CppSymRef> conditional_identifier;
+        std::vector<TmplSegment> body_items;
+
+        //  else if (else_ifs[0]) {
+        //    else_ifs[0].body_items;
+        //  }
+        struct ElseIfBlock {
+          optional<CppSymRef> conditional_identifier;
+          std::vector<TmplSegment> body_items;
+        };
+        std::vector<ElseIfBlock> else_ifs;
+
+        //  else {
+        //    else_body_items;
+        //  }
+        std::vector<TmplSegment> else_body_items;
+      };
+      struct ForBlock {
+        optional<CppSymRef> loop_variable;
+        optional<CppSymRef> iterable_identifier;
+        std::vector<TmplSegment> body_items;
+      };
       // One of...
       shared_ptr<string> literal_segment;
       optional<CppSymRef> insertion;
+      optional<IfBlock> if_block;
+      optional<ForBlock> for_block;
     };
 
     CppTmplStr(const string& arg_cpp_type, const string& tmpl,
@@ -236,10 +266,17 @@ class CodegenCpp : public CodegenBase {
   static string VectorClasses(const vector<VectorViewModel>& vectors);
   static string MapClasses(const vector<MapViewModel>& maps);
 
+  static string PrintTmplSegment(const CppTmplStr::TmplSegment& segment,
+                                 set<string> block_local_symbols);
+  static string PrintDereference(const CppSymRef& symbol,
+                                 const set<string>& block_local_symbols);
+
   static string StructMethods(const vector<StructViewModel>& structs);
   static string VariantMethods(const vector<VariantViewModel>& variants);
   static string VectorMethods(const vector<VectorViewModel>& vectors);
   static string MapMethods(const vector<MapViewModel>& maps);
+
+  static CppTmplStr::TmplSegment MakeTmplSegment(TmplStrTable::ItemPtr item);
 };
 
 }  // namespace td
