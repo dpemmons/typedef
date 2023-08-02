@@ -10,9 +10,10 @@ Items in ***bold*** are in-progress.
 - [x] consider making cpp codegen more sane?
 - [x] pitchfork repo layout
 - [ ] string templates
-    - [ ] simple replacement
+    - [x] simple replacement
       - [ ] formatting
-    - [ ] if/then/for
+    - [x] if/then/for
+      - [ ] for map
     - [ ] subtemplates
 - [ ] self-host symbol table
 - [ ] tests...
