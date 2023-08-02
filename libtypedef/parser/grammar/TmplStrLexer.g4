@@ -12,6 +12,7 @@ TEXT: ~'<'+; // clump all text together
 mode ISLAND;
 CLOSE: '>' -> mode(DEFAULT_MODE);
 SLASH: '/';
+COMMA: ',';
 KW_FOR: 'for';
 KW_IN: 'in';
 KW_IF: 'if';

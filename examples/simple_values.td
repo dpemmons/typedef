@@ -162,6 +162,7 @@ struct TemplateExample {
     name: str;
     name2: str;
     someVec: vector<i32>;
+    someMap: map<str, str>;
   };
 
   tmpl: tmpl_str<TemplateData> = "Hello < name >!";
@@ -169,11 +170,6 @@ struct TemplateExample {
   tmpl2: tmpl_str<TemplateData> = r#"Yo < name >!"#;
 
   tmpl3: tmpl_str<TemplateData> = r#"
-  here's a for statement:
-  <for i in someVec>
-    for value number: <i>
-  </for>
-
   here's an if:
   <if name>
     yo name: <name>
@@ -184,6 +180,17 @@ struct TemplateExample {
   <else>
     we're in the else block.
   </if>
+
+  here's a for statement over a vector:
+  <for i in someVec>
+    for value number: <i>
+  </for>
+
+  here's a for statement over a map:
+  <for key, val in someMap>
+    <key> -> <val>
+  </for>
+
   "#;
 
 };

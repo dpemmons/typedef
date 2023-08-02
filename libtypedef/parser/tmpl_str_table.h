@@ -68,6 +68,7 @@ class TmplStrTable {
     // identifier for the current element of the iterable in each iteration of
     // the loop
     StrPtr loop_variable;
+    StrPtr loop_variable2;
 
     // the thing being iterated over
     StrPtr iterable_identifier;

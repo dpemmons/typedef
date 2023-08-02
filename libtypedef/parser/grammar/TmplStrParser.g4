@@ -42,7 +42,9 @@ forBlock
 	returns[td::TmplStrTable::ForBlockPtr for_block]
 	@init {$for_block = std::make_shared<td::TmplStrTable::ForBlock>();}:
 	(
-		'<' KW_FOR identifier {$for_block->loop_variable = $identifier.ctx->id;} KW_IN identifier {$for_block->iterable_identifier = $identifier.ctx->id;
+		'<' KW_FOR identifier {$for_block->loop_variable = $identifier.ctx->id;} (
+			COMMA identifier {$for_block->loop_variable2 = $identifier.ctx->id;}
+		)? KW_IN identifier {$for_block->iterable_identifier = $identifier.ctx->id;
 		} '>'
 	) (item {$for_block->body_items.push_back($item.ctx->itm);})* forClose;
 
