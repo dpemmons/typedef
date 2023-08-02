@@ -31,6 +31,7 @@ Items in ***bold*** are in-progress.
   - [ ] byte literals
   - [ ] byte strings
   - [ ] raw byte strings
+- [ ] set type? (does it make sense?)
 - [ ] raw identifiers (do they just work?)
 - [ ] generated cpp features (probably after template engine)
   - [ ] move semantics
