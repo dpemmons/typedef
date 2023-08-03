@@ -171,6 +171,9 @@ struct TemplateExample {
     jkl: i32 is <jkl>
   "#;
 
+  // TODO change to this type of syntax?
+  tmpl_int: tmpl_str<name: i32> = "Hello <name>";
+
   tmpl: tmpl_str<TemplateData> = "Hello < name >!";
 
   tmpl2: tmpl_str<TemplateData> = r#"Yo < name >!"#;
