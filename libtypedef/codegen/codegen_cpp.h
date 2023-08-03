@@ -86,6 +86,11 @@ class CodegenCpp : public CodegenBase {
   class CppTmplStr {
    public:
     struct TmplSegment {
+      struct FunctionCall {
+        optional<CppSymRef> identifier;
+        std::vector<CppSymRef> args;
+      };
+
       struct IfBlock {
         // Pseudo-code:
         //  if (conditional_identifier) {
@@ -117,6 +122,7 @@ class CodegenCpp : public CodegenBase {
       // One of...
       shared_ptr<string> literal_segment;
       optional<CppSymRef> insertion;
+      optional<FunctionCall> function_call;
       optional<IfBlock> if_block;
       optional<ForBlock> for_block;
     };

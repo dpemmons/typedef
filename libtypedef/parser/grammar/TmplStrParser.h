@@ -15,16 +15,16 @@
 class  TmplStrParser : public antlr4::Parser {
 public:
   enum {
-    OPEN = 1, TEXT = 2, CLOSE = 3, SLASH = 4, COMMA = 5, KW_FOR = 6, KW_IN = 7, 
-    KW_IF = 8, KW_ELSE = 9, NON_KEYWORD_IDENTIFIER = 10, RAW_ESCAPE = 11, 
-    WS = 12
+    OPEN = 1, TEXT = 2, CLOSE = 3, SLASH = 4, COMMA = 5, LPAREN = 6, RPAREN = 7, 
+    PATHSEP = 8, KW_FOR = 9, KW_IN = 10, KW_IF = 11, KW_ELSE = 12, NON_KEYWORD_IDENTIFIER = 13, 
+    RAW_ESCAPE = 14, WS = 15
   };
 
   enum {
-    RuleTmpl = 0, RuleItem = 1, RuleInsertion = 2, RuleForBlock = 3, RuleForClose = 4, 
-    RuleFullIIfBlock = 5, RuleIfOpen = 6, RuleIfBlock = 7, RuleElseIfStmt = 8, 
-    RuleElseIfBlock = 9, RuleElseStmt = 10, RuleElseBlock = 11, RuleIfClose = 12, 
-    RuleTextItem = 13, RuleIdentifier = 14
+    RuleTmpl = 0, RuleItem = 1, RuleInsertion = 2, RuleFunctionCall = 3, 
+    RuleForBlock = 4, RuleForClose = 5, RuleFullIIfBlock = 6, RuleIfOpen = 7, 
+    RuleIfBlock = 8, RuleElseIfStmt = 9, RuleElseIfBlock = 10, RuleElseStmt = 11, 
+    RuleElseBlock = 12, RuleIfClose = 13, RuleTextItem = 14, RuleIdentifier = 15
   };
 
   TmplStrParser(antlr4::TokenStream *input);
@@ -40,6 +40,7 @@ public:
   class TmplContext;
   class ItemContext;
   class InsertionContext;
+  class FunctionCallContext;
   class ForBlockContext;
   class ForCloseContext;
   class FullIIfBlockContext;
@@ -76,12 +77,14 @@ public:
     td::TmplStrTable::ItemPtr itm;
     TmplStrParser::TextItemContext *textItemContext = nullptr;;
     TmplStrParser::InsertionContext *insertionContext = nullptr;;
+    TmplStrParser::FunctionCallContext *functionCallContext = nullptr;;
     TmplStrParser::ForBlockContext *forBlockContext = nullptr;;
     TmplStrParser::FullIIfBlockContext *fullIIfBlockContext = nullptr;;
     ItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     TextItemContext *textItem();
     InsertionContext *insertion();
+    FunctionCallContext *functionCall();
     ForBlockContext *forBlock();
     FullIIfBlockContext *fullIIfBlock();
 
@@ -112,6 +115,30 @@ public:
   };
 
   InsertionContext* insertion();
+
+  class  FunctionCallContext : public antlr4::ParserRuleContext {
+  public:
+    td::TmplStrTable::FunctionCallPtr function_call;
+    TmplStrParser::IdentifierContext *identifierContext = nullptr;;
+    FunctionCallContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *OPEN();
+    std::vector<IdentifierContext *> identifier();
+    IdentifierContext* identifier(size_t i);
+    antlr4::tree::TerminalNode *LPAREN();
+    antlr4::tree::TerminalNode *RPAREN();
+    antlr4::tree::TerminalNode *CLOSE();
+    std::vector<antlr4::tree::TerminalNode *> COMMA();
+    antlr4::tree::TerminalNode* COMMA(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  FunctionCallContext* functionCall();
 
   class  ForBlockContext : public antlr4::ParserRuleContext {
   public:

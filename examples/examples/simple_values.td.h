@@ -585,6 +585,10 @@ class MutableTemplateExample {
         const std::unique_ptr<MutablesomeVec>& someVec() const { return someVec_; }
         void someVec(std::unique_ptr<MutablesomeVec> _val) { someVec_ = std::move(_val); }
         
+        std::unique_ptr<MutableStructC>& structC() { return structC_; }
+        const std::unique_ptr<MutableStructC>& structC() const { return structC_; }
+        void structC(std::unique_ptr<MutableStructC> _val) { structC_ = std::move(_val); }
+        
     
         friend std::ostream& operator<<(std::ostream& os, const MutableTemplateData& obj);
     
@@ -594,6 +598,7 @@ class MutableTemplateExample {
         std::string name2_;
         std::unique_ptr<MutablesomeMap> someMap_;
         std::unique_ptr<MutablesomeVec> someVec_;
+        std::unique_ptr<MutableStructC> structC_;
     
     };  // class MutableTemplateData
 
@@ -611,6 +616,9 @@ class MutableTemplateExample {
     
     // Defined in cpp.
     static std::string tmpl3(const MutableTemplateData& arg);
+    
+    // Defined in cpp.
+    static std::string tmpl_structC(const MutableStructC& arg);
     
 
     friend std::ostream& operator<<(std::ostream& os, const MutableTemplateExample& obj);

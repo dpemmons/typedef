@@ -14,6 +14,8 @@ Items in ***bold*** are in-progress.
       - [ ] formatting
     - [x] if/then, for (vector and map)
     - [ ] subtemplates
+    - [ ] comments
+    - [ ] escape delimiters
 - [ ] self-host symbol table
 - [ ] tests...
 - [ ] more types

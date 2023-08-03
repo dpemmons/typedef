@@ -28,6 +28,9 @@ public:
   virtual void enterInsertion(TmplStrParser::InsertionContext * /*ctx*/) override { }
   virtual void exitInsertion(TmplStrParser::InsertionContext * /*ctx*/) override { }
 
+  virtual void enterFunctionCall(TmplStrParser::FunctionCallContext * /*ctx*/) override { }
+  virtual void exitFunctionCall(TmplStrParser::FunctionCallContext * /*ctx*/) override { }
+
   virtual void enterForBlock(TmplStrParser::ForBlockContext * /*ctx*/) override { }
   virtual void exitForBlock(TmplStrParser::ForBlockContext * /*ctx*/) override { }
 

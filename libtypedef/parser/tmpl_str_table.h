@@ -14,6 +14,8 @@ class TmplStrTable {
 
   struct Insertion;
   using InsertionPtr = std::shared_ptr<Insertion>;
+  struct FunctionCall;
+  using FunctionCallPtr = std::shared_ptr<FunctionCall>;
   struct IfBlock;
   using IfBlockPtr = std::shared_ptr<IfBlock>;
   struct ForBlock;
@@ -26,12 +28,18 @@ class TmplStrTable {
   struct Item {
     StrPtr text;
     InsertionPtr insertion;
+    FunctionCallPtr function_call;
     IfBlockPtr if_block;
     ForBlockPtr for_block;
   };
 
   struct Insertion {
     StrPtr identifier;
+  };
+
+  struct FunctionCall {
+    StrPtr identifier;
+    std::vector<StrPtr> args;
   };
 
   struct ElseIfBlock {

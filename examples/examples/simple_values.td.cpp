@@ -108,6 +108,25 @@ std::string MutableTemplateExample::tmpl3(const MutableTemplateData& arg) {
   }
   ss << R"typedef(
 
+  calling another template (in the same scope) with structC as an argument:
+  )typedef";
+  ss << tmpl_structC(*arg.structC());
+  ss << R"typedef(
+
+  )typedef";
+
+  return ss.str();
+}
+
+std::string MutableTemplateExample::tmpl_structC(const MutableStructC& arg) {
+  std::stringstream ss;
+  ss << R"typedef(
+    zxcv: i32 is )typedef";
+  ss << arg.zxcv();
+  ss << R"typedef(
+    jkl: i32 is )typedef";
+  ss << arg.jkl();
+  ss << R"typedef(
   )typedef";
 
   return ss.str();

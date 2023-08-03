@@ -28,6 +28,8 @@ public:
 
     virtual antlrcpp::Any visitInsertion(TmplStrParser::InsertionContext *context) = 0;
 
+    virtual antlrcpp::Any visitFunctionCall(TmplStrParser::FunctionCallContext *context) = 0;
+
     virtual antlrcpp::Any visitForBlock(TmplStrParser::ForBlockContext *context) = 0;
 
     virtual antlrcpp::Any visitForClose(TmplStrParser::ForCloseContext *context) = 0;

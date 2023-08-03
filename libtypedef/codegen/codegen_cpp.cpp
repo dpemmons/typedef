@@ -703,6 +703,22 @@ string CodegenCpp::PrintTmplSegment(
   } else if (seg.insertion) {
     fmt::print(ss, "  ss << {};\n",
                PrintDereference(*seg.insertion, block_local_symbols));
+
+  } else if (seg.function_call) {
+    fmt::print(ss, "  ss << {}(",
+               seg.function_call->identifier->ReferencedEscapedIdentifier());
+    if (seg.function_call->args.size()) {
+      fmt::print(
+          ss, "*{}",
+          PrintDereference(seg.function_call->args[0], block_local_symbols));
+      for (size_t ii = 1; ii < seg.function_call->args.size(); ii++) {
+        fmt::print(
+            ss, ", *{}",
+            PrintDereference(seg.function_call->args[ii], block_local_symbols));
+      }
+    }
+    fmt::print(ss, ");\n");
+
   } else if (seg.if_block) {
     fmt::print(ss, "  if (typedef_utils::IsTrue({})) {{\n",
                PrintDereference(*seg.if_block->conditional_identifier,
@@ -1000,6 +1016,15 @@ CodegenCpp::CppTmplStr::TmplSegment CodegenCpp::MakeTmplSegment(
     // TODO: symbols should already be resolved!!
     cpp_tmpl_seg.insertion = CppSymRef(
         escape_utf8_to_cpp_identifier(SymbolRef(*item->insertion->identifier)));
+  } else if (item->function_call) {
+    CppTmplStr::TmplSegment::FunctionCall function_call;
+    function_call.identifier = CppSymRef(escape_utf8_to_cpp_identifier(
+        SymbolRef(*item->function_call->identifier)));
+    for (const auto& arg : item->function_call->args) {
+      function_call.args.push_back(
+          CppSymRef(escape_utf8_to_cpp_identifier(SymbolRef(*arg))));
+    }
+    cpp_tmpl_seg.function_call = function_call;
   } else if (item->if_block) {
     CppTmplStr::TmplSegment::IfBlock if_block;
     if_block.conditional_identifier = CppSymRef(escape_utf8_to_cpp_identifier(

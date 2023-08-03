@@ -22,6 +22,7 @@ item
 	@init {$itm = std::make_shared<td::TmplStrTable::Item>();}:
 	textItem {$itm->text = $textItem.ctx->txt;}
 	| insertion {$itm->insertion = $insertion.ctx->ins;}
+	| functionCall {$itm->function_call = $functionCall.ctx->function_call;}
 	| forBlock {$itm->for_block = $forBlock.ctx->for_block;}
 	| fullIIfBlock {$itm->if_block  = $fullIIfBlock.ctx->if_block;};
 
@@ -34,6 +35,18 @@ insertion
 		$ins = std::make_shared<td::TmplStrTable::Insertion>();
 		$ins->identifier = $identifier.id;
 	};
+
+//-----------------------------------------------------------------------------
+// Function calls 
+//------------------------------------------------------------------------------
+functionCall
+	returns[td::TmplStrTable::FunctionCallPtr function_call]
+	@init {$function_call = std::make_shared<td::TmplStrTable::FunctionCall>();}:
+	'<' identifier {$function_call->identifier = $identifier.ctx->id;} LPAREN (
+		identifier {$function_call->args.push_back($identifier.ctx->id);}
+	)? (
+		COMMA identifier {$function_call->args.push_back($identifier.ctx->id);}
+	)* RPAREN '>';
 
 //-----------------------------------------------------------------------------
 // For blocks. Eg. <for something> foo </for>

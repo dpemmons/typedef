@@ -30,6 +30,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitFunctionCall(TmplStrParser::FunctionCallContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitForBlock(TmplStrParser::ForBlockContext *ctx) override {
     return visitChildren(ctx);
   }

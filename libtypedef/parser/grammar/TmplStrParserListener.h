@@ -26,6 +26,9 @@ public:
   virtual void enterInsertion(TmplStrParser::InsertionContext *ctx) = 0;
   virtual void exitInsertion(TmplStrParser::InsertionContext *ctx) = 0;
 
+  virtual void enterFunctionCall(TmplStrParser::FunctionCallContext *ctx) = 0;
+  virtual void exitFunctionCall(TmplStrParser::FunctionCallContext *ctx) = 0;
+
   virtual void enterForBlock(TmplStrParser::ForBlockContext *ctx) = 0;
   virtual void exitForBlock(TmplStrParser::ForBlockContext *ctx) = 0;
 

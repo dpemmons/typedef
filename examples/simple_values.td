@@ -163,7 +163,13 @@ struct TemplateExample {
     name2: str;
     someVec: vector<i32>;
     someMap: map<str, str>;
+    structC: StructC;
   };
+
+  tmpl_structC: tmpl_str<StructC> = r#"
+    zxcv: i32 is <zxcv>
+    jkl: i32 is <jkl>
+  "#;
 
   tmpl: tmpl_str<TemplateData> = "Hello < name >!";
 
@@ -190,6 +196,9 @@ struct TemplateExample {
   <for key, val in someMap>
     <key> -> <val>
   </for>
+
+  calling another template (in the same scope) with structC as an argument:
+  <tmpl_structC(structC)>
 
   "#;
 
