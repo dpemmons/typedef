@@ -558,6 +558,15 @@ class MutableTemplateExample {
         
         };  // class MutablesomeVec
     
+        
+        class MutablesomeMap : public std::map<std::string, std::string> {
+          public:
+            MutablesomeMap() {};
+            ~MutablesomeMap() {};
+        
+            friend std::ostream& operator<<(std::ostream& os, const MutablesomeMap& obj);
+        
+        };  // class MutablesomeMap
     
     
         // Accessors.
@@ -567,6 +576,10 @@ class MutableTemplateExample {
         
         std::string name2() const { return name2_; }
         void name2(std::string _val) { name2_ = _val; }
+        
+        std::unique_ptr<MutablesomeMap>& someMap() { return someMap_; }
+        const std::unique_ptr<MutablesomeMap>& someMap() const { return someMap_; }
+        void someMap(std::unique_ptr<MutablesomeMap> _val) { someMap_ = std::move(_val); }
         
         std::unique_ptr<MutablesomeVec>& someVec() { return someVec_; }
         const std::unique_ptr<MutablesomeVec>& someVec() const { return someVec_; }
@@ -579,6 +592,7 @@ class MutableTemplateExample {
         // Members.
         std::string name_;
         std::string name2_;
+        std::unique_ptr<MutablesomeMap> someMap_;
         std::unique_ptr<MutablesomeVec> someVec_;
     
     };  // class MutableTemplateData

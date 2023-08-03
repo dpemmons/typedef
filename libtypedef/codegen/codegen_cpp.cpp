@@ -730,12 +730,24 @@ string CodegenCpp::PrintTmplSegment(
     fmt::print(ss, "  if ({}) {{\n",
                PrintDereference(*seg.for_block->iterable_identifier,
                                 block_local_symbols));
-    fmt::print(ss, "  for (auto& {} : *{}) {{\n",
-               seg.for_block->loop_variable->ReferencedEscapedIdentifier(),
-               PrintDereference(*seg.for_block->iterable_identifier,
-                                block_local_symbols));
+
+    if (seg.for_block->loop_variable2) {
+      fmt::print(ss, "  for (auto const& [{}, {}] : *{}) {{\n",
+                 seg.for_block->loop_variable->ReferencedEscapedIdentifier(),
+                 seg.for_block->loop_variable2->ReferencedEscapedIdentifier(),
+                 PrintDereference(*seg.for_block->iterable_identifier,
+                                  block_local_symbols));
+      block_local_symbols.insert(
+          seg.for_block->loop_variable2->ReferencedEscapedIdentifier());
+    } else {
+      fmt::print(ss, "  for (auto& {} : *{}) {{\n",
+                 seg.for_block->loop_variable->ReferencedEscapedIdentifier(),
+                 PrintDereference(*seg.for_block->iterable_identifier,
+                                  block_local_symbols));
+    }
     block_local_symbols.insert(
         seg.for_block->loop_variable->ReferencedEscapedIdentifier());
+
     for (auto& body_item : seg.for_block->body_items) {
       // TODO introduce block-local variables?
       ss << PrintTmplSegment(body_item, block_local_symbols);
@@ -1010,6 +1022,10 @@ CodegenCpp::CppTmplStr::TmplSegment CodegenCpp::MakeTmplSegment(
     CppTmplStr::TmplSegment::ForBlock for_block;
     for_block.loop_variable = CppSymRef(escape_utf8_to_cpp_identifier(
         SymbolRef(*item->for_block->loop_variable)));
+    if (item->for_block->loop_variable2) {
+      for_block.loop_variable2 = CppSymRef(escape_utf8_to_cpp_identifier(
+          SymbolRef(*item->for_block->loop_variable2)));
+    }
 
     for_block.iterable_identifier = CppSymRef(escape_utf8_to_cpp_identifier(
         SymbolRef(*item->for_block->iterable_identifier)));

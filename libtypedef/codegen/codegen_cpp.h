@@ -110,6 +110,7 @@ class CodegenCpp : public CodegenBase {
       };
       struct ForBlock {
         optional<CppSymRef> loop_variable;
+        optional<CppSymRef> loop_variable2;
         optional<CppSymRef> iterable_identifier;
         std::vector<TmplSegment> body_items;
       };

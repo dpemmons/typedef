@@ -48,6 +48,13 @@ int main() {
   vec->push_back(2);
   vec->push_back(3);
   tmpl_data.someVec(std::move(vec));
+
+  auto map = std::make_unique<
+      MutableTemplateExample::MutableTemplateData::MutablesomeMap>();
+  map->insert({"foo", "bar"});
+  map->insert({"biz", "baz"});
+  tmpl_data.someMap(std::move(map));
+
   std::cout << "tmpl: " << MutableTemplateExample::tmpl(tmpl_data) << std::endl;
   std::cout << "tmpl2: " << MutableTemplateExample::tmpl2(tmpl_data)
             << std::endl;

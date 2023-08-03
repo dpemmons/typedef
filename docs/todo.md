@@ -12,8 +12,7 @@ Items in ***bold*** are in-progress.
 - [ ] string templates
     - [x] simple replacement
       - [ ] formatting
-    - [x] if/then/for
-      - [ ] for map
+    - [x] if/then, for (vector and map)
     - [ ] subtemplates
 - [ ] self-host symbol table
 - [ ] tests...

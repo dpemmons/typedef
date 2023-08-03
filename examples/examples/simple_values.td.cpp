@@ -59,19 +59,6 @@ std::string MutableTemplateExample::tmpl2(const MutableTemplateData& arg) {
 std::string MutableTemplateExample::tmpl3(const MutableTemplateData& arg) {
   std::stringstream ss;
   ss << R"typedef(
-  here's a for statement:
-  )typedef";
-  if (arg.someVec()) {
-  for (auto& i : *arg.someVec()) {
-  ss << R"typedef(
-    for value number: )typedef";
-  ss << i;
-  ss << R"typedef(
-  )typedef";
-  }
-  }
-  ss << R"typedef(
-
   here's an if:
   )typedef";
   if (typedef_utils::IsTrue(arg.name())) {
@@ -92,6 +79,35 @@ std::string MutableTemplateExample::tmpl3(const MutableTemplateData& arg) {
   )typedef";
   }
   ss << R"typedef(
+
+  here's a for statement over a vector:
+  )typedef";
+  if (arg.someVec()) {
+  for (auto& i : *arg.someVec()) {
+  ss << R"typedef(
+    for value number: )typedef";
+  ss << i;
+  ss << R"typedef(
+  )typedef";
+  }
+  }
+  ss << R"typedef(
+
+  here's a for statement over a map:
+  )typedef";
+  if (arg.someMap()) {
+  for (auto const& [key, val] : *arg.someMap()) {
+  ss << R"typedef(
+    )typedef";
+  ss << key;
+  ss << R"typedef( -> )typedef";
+  ss << val;
+  ss << R"typedef(
+  )typedef";
+  }
+  }
+  ss << R"typedef(
+
   )typedef";
 
   return ss.str();
