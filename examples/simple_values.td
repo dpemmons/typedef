@@ -166,7 +166,7 @@ struct TemplateExample {
     structC: StructC;
   };
 
-  tmpl_structC: tmpl_str<StructC> = r#"
+  tmpl_structC: tmpl_str<s: StructC> = r#"
     zxcv: i32 is <zxcv>
     jkl: i32 is <jkl>
   "#;
@@ -174,11 +174,11 @@ struct TemplateExample {
   // TODO change to this type of syntax?
   tmpl_int: tmpl_str<name: i32> = "Hello <name>";
 
-  tmpl: tmpl_str<TemplateData> = "Hello < name >!";
+  tmpl: tmpl_str<t: TemplateData> = "Hello < name >!";
 
-  tmpl2: tmpl_str<TemplateData> = r#"Yo < name >!"#;
+  tmpl2: tmpl_str<t: TemplateData> = r#"Yo < name >!"#;
 
-  tmpl3: tmpl_str<TemplateData> = r#"
+  tmpl3: tmpl_str<t: TemplateData> = r#"
   here's an if:
   <if name>
     yo name: <name>

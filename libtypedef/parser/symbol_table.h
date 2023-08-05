@@ -180,11 +180,10 @@ class Map {
 
 class TmplStr {
  public:
-  TmplStr(SymbolTable::Value arg_type, SymbolTable::Value str)
-      : arg_type(arg_type), str(str) {}
+  TmplStr() {}
   friend ostream &operator<<(ostream &os, const TmplStr &s);
 
-  SymbolTable::Value arg_type;
+  vector<SymbolTable::Symbol> args;
   SymbolTable::Value str;
   shared_ptr<TmplStrTable> table;
 };

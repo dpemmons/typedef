@@ -621,19 +621,23 @@ public:
   class  ValuedTemplateStringTypeContext : public antlr4::ParserRuleContext {
   public:
     std::optional<td::SymbolTable::Value> maybe_val;
-    TypedefParser::UnvaluedTypeContext *unvaluedTypeContext = nullptr;;
+    std::shared_ptr<td::TmplStr> s;
+    TypedefParser::UnvaluedSymbolContext *unvaluedSymbolContext = nullptr;;
     TypedefParser::StringLiteralContext *stringLiteralContext = nullptr;;
     ValuedTemplateStringTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
     antlr4::tree::TerminalNode *KW_TEMPLATESTRING();
     antlr4::tree::TerminalNode *LT();
-    UnvaluedTypeContext *unvaluedType();
     antlr4::tree::TerminalNode *GT();
     antlr4::tree::TerminalNode *EQ();
     StringLiteralContext *stringLiteral();
+    std::vector<UnvaluedSymbolContext *> unvaluedSymbol();
+    UnvaluedSymbolContext* unvaluedSymbol(size_t i);
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> COMMA();
+    antlr4::tree::TerminalNode* COMMA(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

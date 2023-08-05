@@ -179,6 +179,10 @@ void TryInsertSymbol(std::shared_ptr<td::Variant> &s,
                      antlr4::Parser *recognizer,
                      TypedefParser::UnvaluedSymbolContext *ctx);
 
+void TryInsertArgSymbol(std::shared_ptr<td::TmplStr> &s,
+                        antlr4::Parser *recognizer,
+                        TypedefParser::UnvaluedSymbolContext *ctx);
+
 template <class Destination, class SourceParserContext>
 void TryInsertNested(std::shared_ptr<Destination> &dst,
                      antlr4::Parser *recognizer, SourceParserContext *ctx) {

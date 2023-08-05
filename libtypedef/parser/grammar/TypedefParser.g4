@@ -254,11 +254,24 @@ primitiveType
 	| KW_I32 { $maybe_val = std::optional<int32_t>(); }
 	| KW_I64 { $maybe_val = std::optional<int64_t>(); };
 
+// TODO multiple unvaluedSymbol
 valuedTemplateStringType
-	returns[std::optional<td::SymbolTable::Value> maybe_val]:
-	COLON WS* KW_TEMPLATESTRING WS* LT WS* unvaluedType WS* GT WS* EQ WS* stringLiteral {
-		$maybe_val = std::make_shared<td::TmplStr>(
-		  *$unvaluedType.ctx->maybe_val, $stringLiteral.ctx->maybe_val);
+	returns[std::optional<td::SymbolTable::Value> maybe_val]
+	locals[std::shared_ptr<td::TmplStr> s]
+	@init {
+		$s = std::make_shared<td::TmplStr>();
+	}:
+	COLON WS* KW_TEMPLATESTRING WS* LT WS* (
+		unvaluedSymbol {
+				TryInsertArgSymbol($s, this, $unvaluedSymbol.ctx);
+			} (
+			WS* COMMA WS* unvaluedSymbol {
+				TryInsertArgSymbol($s, this, $unvaluedSymbol.ctx);
+			}
+		)*
+	) WS* GT WS* EQ WS* stringLiteral {
+	  $s->str = $stringLiteral.ctx->maybe_val;
+		$maybe_val = $s;
 	};
 
 // Matches " : bool = literal"

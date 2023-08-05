@@ -217,6 +217,7 @@ void TryInsert(td::SymbolTable& dst_table,
 
 void TryInsertSymbol(std::shared_ptr<td::Struct>& s, antlr4::Parser* recognizer,
                      TypedefParser::MaybeValuedSymbolContext* ctx) {
+  // TODO throw an internal error if this is false?
   if (ctx->maybe_symbol) {
     if (!s->TryInsert(*ctx->maybe_symbol)) {
       throw DuplicateSymbolException(
@@ -229,11 +230,28 @@ void TryInsertSymbol(std::shared_ptr<td::Struct>& s, antlr4::Parser* recognizer,
 void TryInsertSymbol(std::shared_ptr<td::Variant>& s,
                      antlr4::Parser* recognizer,
                      TypedefParser::UnvaluedSymbolContext* ctx) {
+  // TODO throw an internal error if this is false?
   if (ctx->maybe_symbol) {
     if (!s->TryInsert(*ctx->maybe_symbol)) {
       throw DuplicateSymbolException(
           recognizer, ctx,
           ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
     }
+  }
+}
+
+void TryInsertArgSymbol(std::shared_ptr<td::TmplStr>& s,
+                        antlr4::Parser* recognizer,
+                        TypedefParser::UnvaluedSymbolContext* ctx) {
+  // TODO throw an internal error if this is false?
+  if (ctx->maybe_symbol) {
+    for (const auto& existing_arg : s->args) {
+      if (existing_arg.first.id() == ctx->maybe_symbol->first.id()) {
+        throw DuplicateSymbolException(
+            recognizer, ctx,
+            ctx->identifier()->NON_KEYWORD_IDENTIFIER()->getSymbol());
+      }
+    }
+    s->args.push_back(*ctx->maybe_symbol);
   }
 }
