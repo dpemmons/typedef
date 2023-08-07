@@ -68,16 +68,12 @@ string indent(const string& input, unsigned int count) {
 
 }  // namespace
 
-CodegenCpp::CppSymRef::CppSymRef(const string& referenced_escaped_identifier) {
+CodegenCpp::CppSymRef::CppSymRef(const string& referenced_escaped_identifier,
+                                 CppTypeClass ref_type_class) {
   referenced_escaped_identifier_ = referenced_escaped_identifier;
   referenced_cpp_type_ =
       fmt::format("std::unique_ptr<Mutable{}>", referenced_escaped_identifier);
 }
-
-CodegenCpp::CppTmplStr::CppTmplStr(const string& arg_cpp_type,
-                                   const string& tmpl,
-                                   const vector<TmplSegment>& segments)
-    : arg_cpp_typpe_(arg_cpp_type), tmpl_(tmpl), segments_(segments) {}
 
 CodegenCpp::CppNonPrimitiveValue::CppNonPrimitiveValue(
     const SymbolTable::Symbol& s)
@@ -338,6 +334,26 @@ string CodegenCpp::ForwardDeclarations(const ViewModel& vm) {
   return ss.str();
 }
 
+string CodegenCpp::TmplArgs(const CodegenCpp::CppTmplStr& cpp_tmpl_str) {
+  stringstream ss;
+  for (int ii = 0; ii < cpp_tmpl_str.Args().size(); ii++) {
+    const auto& arg = cpp_tmpl_str.Args()[ii];
+    switch (arg.type_class) {
+      case CPP_TYPE_CLASS_PRIMITIVE:
+      case CPP_TYPE_CLASS_PRIMITIVE_CHAR:
+      case CPP_TYPE_CLASS_PRIMITIVE_STRING:
+      case CPP_TYPE_CLASS_STRUCT:
+
+      case CPP_TYPE_CLASS_VARIANT:
+      case CPP_TYPE_CLASS_VECTOR:
+      case CPP_TYPE_CLASS_MAP:
+        fmt::print(ss, "const {}& {}", arg.type, arg.symbol);
+        break;
+    }
+  }
+  return ss.str();
+}
+
 string CodegenCpp::StructAccessors(
     const vector<CodegenCpp::CppSymbol>& members) {
   stringstream ss;
@@ -369,10 +385,10 @@ string CodegenCpp::StructAccessors(
     )",
                   store);
     } else if (m.IsTmplStr()) {
-      store.push_back(fmt::arg("arg_type", m.TmplStr().ArgCppType()));
+      store.push_back(fmt::arg("args", TmplArgs(m.TmplStr())));
       fmt::vprint(ss, R"(
     // Defined in cpp.
-    static std::string {identifier}(const {arg_type}& arg);
+    static std::string {identifier}({args});
     )",
                   store);
     } else {
@@ -795,7 +811,6 @@ std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
 
       if (m.IsTmplStr()) {
         member_store.push_back(fmt::arg("arg_type", m.TmplStr().ArgCppType()));
-        member_store.push_back(fmt::arg("tmpl_str", m.TmplStr().TmplStr()));
 
         fmt::vprint(ss, R"(
 std::string {classname}::{identifier}(const {arg_type}& arg) {{
@@ -1067,21 +1082,23 @@ CodegenCpp::CppTmplStr::TmplSegment CodegenCpp::MakeTmplSegment(
 CodegenCpp::CppTmplStr CodegenCpp::CreateTmplStr(
     const SymbolTable::Symbol& tmpl_str) {
   auto ptr = get<shared_ptr<TmplStr>>(tmpl_str.second);
-  auto arg_sym_ref = get<SymbolRef>(ptr->arg_type);
-
-  vector<CppTmplStr::TmplSegment> segments;
-
-  if (!ptr->table) {
-    abort();
+  if (!ptr || !ptr->table) {
+    abort();  // we really should be throwing exceptions...
   }
 
+  std::vector<CppSymRef> cpp_args;
+  for (const SymbolTable::Symbol& arg : ptr->args) {
+    // TODO: does the symbol have all the info we need?
+    // Probably not... I think it's type for more type info in the CppSymbol...
+    cpp_args.push_back();
+  }
+
+  vector<CppTmplStr::TmplSegment> segments;
   for (auto& item : ptr->table->items) {
     segments.push_back(MakeTmplSegment(item));
   }
 
-  return CppTmplStr(
-      string("Mutable") + escape_utf8_to_cpp_identifier(arg_sym_ref.id),
-      *get<optional<string>>(ptr->str), segments);
+  return CppTmplStr(cpp_args, *get<optional<string>>(ptr->str), segments);
 }
 
 }  // namespace td

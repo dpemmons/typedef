@@ -25,6 +25,23 @@ class CodegenCpp : public CodegenBase {
  private:
   string source_filename_;
 
+  enum CppTypeClass {
+    CPP_TYPE_CLASS_UNKNOWN = 0,
+    CPP_TYPE_CLASS_PRIMITIVE,
+    CPP_TYPE_CLASS_PRIMITIVE_CHAR,
+    CPP_TYPE_CLASS_PRIMITIVE_STRING,
+    CPP_TYPE_CLASS_STRUCT,
+    CPP_TYPE_CLASS_VARIANT,
+    CPP_TYPE_CLASS_VECTOR,
+    CPP_TYPE_CLASS_MAP
+  };
+
+  struct FunctionArg {
+    string symbol;
+    string type;
+    CppTypeClass type_class;
+  };
+
   struct GroupedSymbols {
     vector<SymbolTable::Symbol> values;
     vector<SymbolTable::Symbol> structs;
@@ -72,13 +89,16 @@ class CodegenCpp : public CodegenBase {
 
   class CppSymRef {
    public:
-    explicit CppSymRef(const string& referenced_escaped_identifier);
+    CppSymRef(const string& referenced_escaped_identifier,
+              CppTypeClass ref_type_class);
     const string& ReferencedEscapedIdentifier() const {
       return referenced_escaped_identifier_;
     }
+    CppTypeClass TypeClass() const { return ref_type_class_; }
     const string& ReferencedCppType() const { return referenced_cpp_type_; }
 
    private:
+    CppTypeClass ref_type_class_;
     string referenced_escaped_identifier_;
     string referenced_cpp_type_;
   };
@@ -127,16 +147,15 @@ class CodegenCpp : public CodegenBase {
       optional<ForBlock> for_block;
     };
 
-    CppTmplStr(const string& arg_cpp_type, const string& tmpl,
-               const vector<TmplSegment>& segments);
-    const string& ArgCppType() const { return arg_cpp_typpe_; }
-    const string& TmplStr() const { return tmpl_; }  // temporary...
+    CppTmplStr(const std::vector<FunctionArg>& args, const string& tmpl,
+               const vector<TmplSegment>& segments)
+        : args_(args), segments_(segments) {}
 
+    const vector<FunctionArg>& Args() const { return args_; }
     const vector<TmplSegment>& Segments() const { return segments_; }
 
    private:
-    string arg_cpp_typpe_;
-    string tmpl_;
+    std::vector<FunctionArg> args_;
     vector<TmplSegment> segments_;
   };
 
@@ -260,6 +279,8 @@ class CodegenCpp : public CodegenBase {
 
   static string ValueDeclarations(const vector<ValueViewModel>& values);
   static string ForwardDeclarations(const ViewModel& vm);
+
+  static string TmplArgs(const CppTmplStr& cpp_tmpl_str);
 
   static string StructAccessors(const vector<CppSymbol>& members);
   static string StructMembers(const vector<CppSymbol>& members);

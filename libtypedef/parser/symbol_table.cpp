@@ -166,7 +166,9 @@ ostream& operator<<(ostream& os, const Map& s) {
 
 ostream& operator<<(ostream& os, const TmplStr& s) {
   fmt::print(os, "tmpl_str<");
-  PrintType(os, s.arg_type);
+  for (const auto& arg : s.args) {
+    PrintField(os, arg);
+  }
   fmt::print(os, ">");
   return os;
 }
