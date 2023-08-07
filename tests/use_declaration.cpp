@@ -12,13 +12,12 @@ namespace {
 const std::vector<td::ParserErrorInfo> empty_errors;
 }  // namespace
 
-TEST_CASE("Use declarations throw UNIMPLEMENTED error.", "[use_declarations]") {
-  auto parsed_file = td::Parse(R"(
+TEST_CASE("Use declarations", "[use_declarations]") {
+  // TODO use declarations don't actually have any effect at the moment.
+  auto parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
+module test;
 use someModule;
     )");
-  REQUIRE(parsed_file->HasErrors());
-  REQUIRE(parsed_file->GetErrors().size() == 1);
-  REQUIRE(parsed_file->GetErrors()[0].error_type ==
-          td::ParserErrorInfo::UNIMPLEMENTED);
+  REQUIRE(!parsed_file->HasErrors());
 }

@@ -1,0 +1,2 @@
+typedef=alpha;
+module someModule;

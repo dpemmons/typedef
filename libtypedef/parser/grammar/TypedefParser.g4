@@ -22,6 +22,7 @@ compilationUnit
 		std::string version,
 		std::vector<std::string> module
 	]:
+	WS*
 	typedefVersionDeclaration { $version = $typedefVersionDeclaration.ctx->version; } WS* (
 		moduleDeclaration { $module = $moduleDeclaration.ctx->module; }
 	)? (WS* useDeclaration)* (
@@ -347,7 +348,7 @@ moduleDeclaration
 	returns[std::vector<std::string> module]:
 	KW_MODULE WS+ simplePath WS* SEMI { $module = $simplePath.ctx->path; };
 
-useDeclaration: 'use' useTree ';';
+useDeclaration: 'use' WS+ useTree WS* ';';
 useTree: (simplePath? '::')? (
 		'*'
 		| '{' ( useTree (',' useTree)* ','?)? '}'

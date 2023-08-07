@@ -16,12 +16,9 @@ const std::vector<td::ParserErrorInfo> empty_errors;
 
 TEST_CASE("Module declaration throws an UNIMPLEMENTED error.",
           "[module_declaration]") {
-  auto parsed_file = td::Parse(R"(
+  auto parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module someModule;
     )");
-  REQUIRE(parsed_file->HasErrors());
-  REQUIRE(parsed_file->GetErrors().size() == 1);
-  REQUIRE(parsed_file->GetErrors()[0].error_type ==
-          td::ParserErrorInfo::UNIMPLEMENTED);
+  REQUIRE(!parsed_file->HasErrors());
 }
