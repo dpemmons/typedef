@@ -2,6 +2,10 @@
 
 Items in ***bold*** are in-progress.
 
+- [ ] actually resolve symbols, and make SymRef's point to their symbols.
+- [ ] Don't use unique_ptr for vectors, maps, etc.
+- [ ] multiple function arguments (templates, etc.)
+  - [ ] Resolve the function types! Pipe them through to the code generator.
 - [x] separate type declaration from field, value, etc. declaration
 - [x] make symbol references independent of declaration order
 - [ ] ***optionals***
