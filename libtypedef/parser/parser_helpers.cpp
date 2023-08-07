@@ -245,6 +245,7 @@ void TryInsertArgSymbol(std::shared_ptr<td::TmplStr>& s,
                         TypedefParser::UnvaluedSymbolContext* ctx) {
   // TODO throw an internal error if this is false?
   if (ctx->maybe_symbol) {
+    // Search to see if an arg of the same name already exists.
     for (const auto& existing_arg : s->args) {
       if (existing_arg.first.id() == ctx->maybe_symbol->first.id()) {
         throw DuplicateSymbolException(

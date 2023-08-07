@@ -609,16 +609,19 @@ class MutableTemplateExample {
     // Accessors.
 
     // Defined in cpp.
-    static std::string tmpl(const MutableTemplateData& arg);
+    static std::string tmpl();
     
     // Defined in cpp.
-    static std::string tmpl2(const MutableTemplateData& arg);
+    static std::string tmpl2();
     
     // Defined in cpp.
-    static std::string tmpl3(const MutableTemplateData& arg);
+    static std::string tmpl3();
     
     // Defined in cpp.
-    static std::string tmpl_structC(const MutableStructC& arg);
+    static std::string tmpl_int();
+    
+    // Defined in cpp.
+    static std::string tmpl_structC();
     
 
     friend std::ostream& operator<<(std::ostream& os, const MutableTemplateExample& obj);

@@ -73,6 +73,7 @@ CodegenCpp::CppSymRef::CppSymRef(const string& referenced_escaped_identifier,
   referenced_escaped_identifier_ = referenced_escaped_identifier;
   referenced_cpp_type_ =
       fmt::format("std::unique_ptr<Mutable{}>", referenced_escaped_identifier);
+  ref_type_class_ = ref_type_class;
 }
 
 CodegenCpp::CppNonPrimitiveValue::CppNonPrimitiveValue(
@@ -100,7 +101,9 @@ CodegenCpp::CppSymbol::CppSymbol(const SymbolTable::Symbol& s)
     non_primitive_ = CppNonPrimitiveValue(s);
   } else if (holds_alternative<SymbolRef>(s.second)) {
     auto sr = get<SymbolRef>(s.second);
-    reference_ = CppSymRef(escape_utf8_to_cpp_identifier(sr.id));
+    // TODO set this to something useful.
+    reference_ = CppSymRef(escape_utf8_to_cpp_identifier(sr.id),
+                           CppTypeClass::CPP_TYPE_CLASS_UNKNOWN);
   } else if (holds_alternative<shared_ptr<td::TmplStr>>(s.second)) {
     tmpl_str_ = CodegenCpp::CreateTmplStr(s);
   } else {
@@ -339,11 +342,12 @@ string CodegenCpp::TmplArgs(const CodegenCpp::CppTmplStr& cpp_tmpl_str) {
   for (int ii = 0; ii < cpp_tmpl_str.Args().size(); ii++) {
     const auto& arg = cpp_tmpl_str.Args()[ii];
     switch (arg.type_class) {
+      case CPP_TYPE_CLASS_UNKNOWN:
+        // TODO something here.
       case CPP_TYPE_CLASS_PRIMITIVE:
       case CPP_TYPE_CLASS_PRIMITIVE_CHAR:
       case CPP_TYPE_CLASS_PRIMITIVE_STRING:
       case CPP_TYPE_CLASS_STRUCT:
-
       case CPP_TYPE_CLASS_VARIANT:
       case CPP_TYPE_CLASS_VECTOR:
       case CPP_TYPE_CLASS_MAP:
@@ -810,10 +814,10 @@ std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
       member_store.push_back(fmt::arg("identifier", m.EscapedIdentifier()));
 
       if (m.IsTmplStr()) {
-        member_store.push_back(fmt::arg("arg_type", m.TmplStr().ArgCppType()));
+        member_store.push_back(fmt::arg("args", TmplArgs(m.TmplStr())));
 
         fmt::vprint(ss, R"(
-std::string {classname}::{identifier}(const {arg_type}& arg) {{
+std::string {classname}::{identifier}({args}) {{
   std::stringstream ss;
 )",
                     member_store);
@@ -1030,20 +1034,24 @@ CodegenCpp::CppTmplStr::TmplSegment CodegenCpp::MakeTmplSegment(
   } else if (item->insertion) {
     // TODO: symbols should already be resolved!!
     cpp_tmpl_seg.insertion = CppSymRef(
-        escape_utf8_to_cpp_identifier(SymbolRef(*item->insertion->identifier)));
+        escape_utf8_to_cpp_identifier(SymbolRef(*item->insertion->identifier)),
+        CPP_TYPE_CLASS_UNKNOWN);
   } else if (item->function_call) {
     CppTmplStr::TmplSegment::FunctionCall function_call;
-    function_call.identifier = CppSymRef(escape_utf8_to_cpp_identifier(
-        SymbolRef(*item->function_call->identifier)));
+    function_call.identifier =
+        CppSymRef(escape_utf8_to_cpp_identifier(
+                      SymbolRef(*item->function_call->identifier)),
+                  CPP_TYPE_CLASS_UNKNOWN);
     for (const auto& arg : item->function_call->args) {
       function_call.args.push_back(
-          CppSymRef(escape_utf8_to_cpp_identifier(SymbolRef(*arg))));
+          CppSymRef(escape_utf8_to_cpp_identifier(SymbolRef(*arg)),
+                    CPP_TYPE_CLASS_UNKNOWN));
     }
     cpp_tmpl_seg.function_call = function_call;
   } else if (item->if_block) {
     CppTmplStr::TmplSegment::IfBlock if_block;
     if_block.conditional_identifier = CppSymRef(escape_utf8_to_cpp_identifier(
-        SymbolRef(*item->if_block->conditional_identifier)));
+        SymbolRef(*item->if_block->conditional_identifier)), CPP_TYPE_CLASS_UNKNOWN);
     for (auto body_item : item->if_block->body_items) {
       if_block.body_items.push_back(MakeTmplSegment(body_item));
     }
@@ -1051,7 +1059,8 @@ CodegenCpp::CppTmplStr::TmplSegment CodegenCpp::MakeTmplSegment(
       CppTmplStr::TmplSegment::IfBlock::ElseIfBlock else_if_block;
       else_if_block.conditional_identifier =
           CppSymRef(escape_utf8_to_cpp_identifier(
-              SymbolRef(*else_if->conditional_identifier)));
+                        SymbolRef(*else_if->conditional_identifier)),
+                    CPP_TYPE_CLASS_UNKNOWN);
       for (auto body_item : else_if->body_items) {
         else_if_block.body_items.push_back(MakeTmplSegment(body_item));
       }
@@ -1060,15 +1069,20 @@ CodegenCpp::CppTmplStr::TmplSegment CodegenCpp::MakeTmplSegment(
     cpp_tmpl_seg.if_block = if_block;
   } else if (item->for_block) {
     CppTmplStr::TmplSegment::ForBlock for_block;
-    for_block.loop_variable = CppSymRef(escape_utf8_to_cpp_identifier(
-        SymbolRef(*item->for_block->loop_variable)));
+    for_block.loop_variable = CppSymRef(escape_utf8_to_cpp_identifier(SymbolRef(
+                                            *item->for_block->loop_variable)),
+                                        CPP_TYPE_CLASS_UNKNOWN);
     if (item->for_block->loop_variable2) {
-      for_block.loop_variable2 = CppSymRef(escape_utf8_to_cpp_identifier(
-          SymbolRef(*item->for_block->loop_variable2)));
+      for_block.loop_variable2 =
+          CppSymRef(escape_utf8_to_cpp_identifier(
+                        SymbolRef(*item->for_block->loop_variable2)),
+                    CPP_TYPE_CLASS_UNKNOWN);
     }
 
-    for_block.iterable_identifier = CppSymRef(escape_utf8_to_cpp_identifier(
-        SymbolRef(*item->for_block->iterable_identifier)));
+    for_block.iterable_identifier =
+        CppSymRef(escape_utf8_to_cpp_identifier(
+                      SymbolRef(*item->for_block->iterable_identifier)),
+                  CPP_TYPE_CLASS_UNKNOWN);
     for (auto body_item : item->for_block->body_items) {
       for_block.body_items.push_back(MakeTmplSegment(body_item));
     }
@@ -1086,11 +1100,12 @@ CodegenCpp::CppTmplStr CodegenCpp::CreateTmplStr(
     abort();  // we really should be throwing exceptions...
   }
 
-  std::vector<CppSymRef> cpp_args;
+  vector<FunctionArg> cpp_args;
   for (const SymbolTable::Symbol& arg : ptr->args) {
     // TODO: does the symbol have all the info we need?
     // Probably not... I think it's type for more type info in the CppSymbol...
-    cpp_args.push_back();
+    
+    // cpp_args.push_back();
   }
 
   vector<CppTmplStr::TmplSegment> segments;
@@ -1098,7 +1113,7 @@ CodegenCpp::CppTmplStr CodegenCpp::CreateTmplStr(
     segments.push_back(MakeTmplSegment(item));
   }
 
-  return CppTmplStr(cpp_args, *get<optional<string>>(ptr->str), segments);
+  return CppTmplStr(cpp_args, segments);
 }
 
 }  // namespace td

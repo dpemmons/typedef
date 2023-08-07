@@ -147,7 +147,7 @@ class CodegenCpp : public CodegenBase {
       optional<ForBlock> for_block;
     };
 
-    CppTmplStr(const std::vector<FunctionArg>& args, const string& tmpl,
+    CppTmplStr(const vector<FunctionArg>& args,
                const vector<TmplSegment>& segments)
         : args_(args), segments_(segments) {}
 
@@ -155,7 +155,7 @@ class CodegenCpp : public CodegenBase {
     const vector<TmplSegment>& Segments() const { return segments_; }
 
    private:
-    std::vector<FunctionArg> args_;
+    vector<FunctionArg> args_;
     vector<TmplSegment> segments_;
   };
 

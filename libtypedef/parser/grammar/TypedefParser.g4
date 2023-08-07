@@ -254,7 +254,6 @@ primitiveType
 	| KW_I32 { $maybe_val = std::optional<int32_t>(); }
 	| KW_I64 { $maybe_val = std::optional<int64_t>(); };
 
-// TODO multiple unvaluedSymbol
 valuedTemplateStringType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]
 	locals[std::shared_ptr<td::TmplStr> s]

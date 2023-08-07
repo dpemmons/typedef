@@ -38,7 +38,7 @@ std::ostream& operator<<(std::ostream& os, const MutableTemplateExample& obj) {
   return os;
 }
 
-std::string MutableTemplateExample::tmpl(const MutableTemplateData& arg) {
+std::string MutableTemplateExample::tmpl() {
   std::stringstream ss;
   ss << R"typedef(Hello )typedef";
   ss << arg.name();
@@ -47,7 +47,7 @@ std::string MutableTemplateExample::tmpl(const MutableTemplateData& arg) {
   return ss.str();
 }
 
-std::string MutableTemplateExample::tmpl2(const MutableTemplateData& arg) {
+std::string MutableTemplateExample::tmpl2() {
   std::stringstream ss;
   ss << R"typedef(Yo )typedef";
   ss << arg.name();
@@ -56,7 +56,7 @@ std::string MutableTemplateExample::tmpl2(const MutableTemplateData& arg) {
   return ss.str();
 }
 
-std::string MutableTemplateExample::tmpl3(const MutableTemplateData& arg) {
+std::string MutableTemplateExample::tmpl3() {
   std::stringstream ss;
   ss << R"typedef(
   here's an if:
@@ -118,7 +118,15 @@ std::string MutableTemplateExample::tmpl3(const MutableTemplateData& arg) {
   return ss.str();
 }
 
-std::string MutableTemplateExample::tmpl_structC(const MutableStructC& arg) {
+std::string MutableTemplateExample::tmpl_int() {
+  std::stringstream ss;
+  ss << R"typedef(Hello )typedef";
+  ss << arg.name();
+
+  return ss.str();
+}
+
+std::string MutableTemplateExample::tmpl_structC() {
   std::stringstream ss;
   ss << R"typedef(
     zxcv: i32 is )typedef";

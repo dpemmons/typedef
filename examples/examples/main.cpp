@@ -60,11 +60,11 @@ int main() {
   sc->zxcv(200);
   tmpl_data.structC(std::move(sc));
 
-  std::cout << "tmpl: " << MutableTemplateExample::tmpl(tmpl_data) << std::endl;
-  std::cout << "tmpl2: " << MutableTemplateExample::tmpl2(tmpl_data)
-            << std::endl;
-  std::cout << "tmpl3: " << MutableTemplateExample::tmpl3(tmpl_data)
-            << std::endl;
+  // std::cout << "tmpl: " << MutableTemplateExample::tmpl(tmpl_data) << std::endl;
+  // std::cout << "tmpl2: " << MutableTemplateExample::tmpl2(tmpl_data)
+  //           << std::endl;
+  // std::cout << "tmpl3: " << MutableTemplateExample::tmpl3(tmpl_data)
+  //           << std::endl;
 
   return 0;
 }
