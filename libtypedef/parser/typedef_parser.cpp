@@ -40,23 +40,23 @@ class SymRefListener : public TypedefParserBaseListener {
     TypedefParser::CompilationUnitContext *maybeCompilationUnit =
         dynamic_cast<TypedefParser::CompilationUnitContext *>(search_ctx);
 
-    if (maybeStruct && maybeStruct->s->table.IsIdentifierUsed(identifier) > 0) {
+    if (maybeStruct &&
+        maybeStruct->s->table.HasTypeIdentifier(identifier) > 0) {
       return true;
     } else if (maybeVariant &&
-               maybeVariant->v->table.IsIdentifierUsed(identifier) > 0) {
+               maybeVariant->v->table.HasTypeIdentifier(identifier) > 0) {
       return true;
     } else if (maybeCompilationUnit &&
-               maybeCompilationUnit->symbol_table.IsIdentifierUsed(identifier) >
-                   0) {
+               maybeCompilationUnit->symbol_table.HasTypeIdentifier(
+                   identifier) > 0) {
       return true;
     } else if (search_ctx->parent != nullptr) {
       return FindSymbol(unresolved_symbol_ctx, search_ctx->parent);
     } else {
       // top of the tree.
-      errors_list_.emplace_back(
-          ErrorFromContext(unresolved_symbol_ctx, ParserErrorInfo::PARSE_ERROR,
-                           "Unresolved symbol reference."));
-
+      errors_list_.emplace_back(ErrorFromContext(
+          unresolved_symbol_ctx, ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE,
+          "Unresolved symbol reference."));
       return false;
     }
   }
@@ -121,8 +121,8 @@ class TmplStrListener : public TypedefParserBaseListener {
       tmpl_str->table = parsedTmplStr->table;
     } else {
       ErrorFromContext(ctx, ParserErrorInfo::OTHER,
-                        "Internal error: Valued template string object does "
-                        "not contain a value object.");
+                       "Internal error: Valued template string object does "
+                       "not contain a value object.");
     }
   }
 

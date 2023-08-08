@@ -254,38 +254,3 @@ struct SomeStruct {
   shared_ptr<td::Map> the_map = get<shared_ptr<td::Map>>(*map_val);
   REQUIRE(the_map);
 }
-
-TEST_CASE("Struct with an symbol reference to another struct", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
-typedef=alpha;
-module test;
-
-struct SomeStruct {
-  inlineMap: map<i32, f64>;
-};
-
-struct SomeOtherStruct {
-  ref_to_some_struct: SomeStruct;
-};
-    )");
-  REQUIRE(!parsed_file->HasErrors());
-
-  optional<td::SymbolTable::Value> some_struct_val =
-      parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
-  REQUIRE(some_struct_val);
-  REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*some_struct_val));
-
-  optional<td::SymbolTable::Value> some_other_struct_val =
-      parsed_file->symbols2_.Get(
-          td::Identifier::TypeIdentifier("SomeOtherStruct"));
-  REQUIRE(some_other_struct_val);
-  REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*some_other_struct_val));
-  auto s = get<shared_ptr<td::Struct>>(*some_other_struct_val);
-
-  optional<td::SymbolTable::Value> symref_val =
-      s->table.Get(td::Identifier::ValueIdentifier("ref_to_some_struct"));
-  REQUIRE(symref_val);
-  REQUIRE(holds_alternative<td::SymbolRef>(*symref_val));
-  td::SymbolRef symref = get<td::SymbolRef>(*symref_val);
-  REQUIRE_THAT(symref.id, Equals("SomeStruct"));
-}

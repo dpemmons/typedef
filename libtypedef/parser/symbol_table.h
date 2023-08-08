@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <filesystem>
 #include <map>
 #include <memory>
 #include <optional>
@@ -118,9 +119,8 @@ class SymbolTable {
            table_.count(identifier.AsValueIdentifier());
   }
 
-  bool IsIdentifierUsed(string const &identifier) {
-    return table_.count(Identifier::TypeIdentifier(identifier)) ||
-           table_.count(Identifier::ValueIdentifier(identifier));
+  bool HasTypeIdentifier(string const &identifier) {
+    return table_.count(Identifier::TypeIdentifier(identifier));
   }
 
   optional<Value> Get(Identifier const &identifier) {
@@ -134,6 +134,9 @@ class SymbolTable {
 
   friend ostream &operator<<(ostream &os, const SymbolTable &value);
 
+  // TODO populate this everywhere so SymRefs can know the fully
+  // qualified name of the thing they point at.
+  std::filesystem::path path_;
   using Table = map<Identifier, Value>;
   Table table_;
 };

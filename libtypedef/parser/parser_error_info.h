@@ -36,6 +36,7 @@ struct ParserErrorInfo {
     INVALID_INTEGER_LITERAL = 15,
     INVALID_STRING_LITERAL = 16,
     TEMPLATE_STRING_PARSE_ERROR = 17,
+    UNRESOLVED_SYMBOL_REFERENCE = 18,
   };
   Type error_type;
 
