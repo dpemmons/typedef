@@ -85,7 +85,6 @@ struct SomeStruct {
 
   std::optional<td::SymbolTable::Value> value =
       parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
-
   REQUIRE(value);
   REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*value));
   auto s = get<shared_ptr<td::Struct>>(*value);
@@ -148,4 +147,145 @@ struct SomeStruct {
   REQUIRE(i64);
   REQUIRE(holds_alternative<optional<int64_t>>(*i64));
   REQUIRE(get<optional<int64_t>>(*i64).value() == -64);
+}
+
+TEST_CASE("Struct with an inline struct", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  an_inline_struct: struct {
+    a: i32;
+  };
+};
+    )");
+  REQUIRE(!parsed_file->HasErrors());
+
+  optional<td::SymbolTable::Value> value =
+      parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
+  REQUIRE(value);
+  REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*value));
+  auto s = get<shared_ptr<td::Struct>>(*value);
+
+  optional<td::SymbolTable::Value> struct_val =
+      s->table.Get(td::Identifier::ValueIdentifier("an_inline_struct"));
+  REQUIRE(struct_val);
+  REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*struct_val));
+  shared_ptr<td::Struct> the_sturct = get<shared_ptr<td::Struct>>(*struct_val);
+  REQUIRE(the_sturct);
+}
+
+TEST_CASE("Struct with an inline variant", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  an_inline_variant: variant {
+    va: i32;
+    vb: str;
+  };
+};
+    )");
+  REQUIRE(!parsed_file->HasErrors());
+
+  optional<td::SymbolTable::Value> value =
+      parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
+  REQUIRE(value);
+  REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*value));
+  auto s = get<shared_ptr<td::Struct>>(*value);
+
+  optional<td::SymbolTable::Value> variant_val =
+      s->table.Get(td::Identifier::ValueIdentifier("an_inline_variant"));
+  REQUIRE(variant_val);
+  REQUIRE(holds_alternative<shared_ptr<td::Variant>>(*variant_val));
+  shared_ptr<td::Variant> the_variant =
+      get<shared_ptr<td::Variant>>(*variant_val);
+  REQUIRE(the_variant);
+}
+
+TEST_CASE("Struct with an inline vector", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  inlineVector: vector<i32>;
+};
+    )");
+  REQUIRE(!parsed_file->HasErrors());
+
+  optional<td::SymbolTable::Value> value =
+      parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
+  REQUIRE(value);
+  REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*value));
+  auto s = get<shared_ptr<td::Struct>>(*value);
+
+  optional<td::SymbolTable::Value> vector_val =
+      s->table.Get(td::Identifier::ValueIdentifier("inlineVector"));
+  REQUIRE(vector_val);
+  REQUIRE(holds_alternative<shared_ptr<td::Vector>>(*vector_val));
+  shared_ptr<td::Vector> the_vector = get<shared_ptr<td::Vector>>(*vector_val);
+  REQUIRE(the_vector);
+}
+
+TEST_CASE("Struct with an inline map", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  inlineMap: map<i32, f64>;
+};
+    )");
+  REQUIRE(!parsed_file->HasErrors());
+
+  optional<td::SymbolTable::Value> value =
+      parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
+  REQUIRE(value);
+  REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*value));
+  auto s = get<shared_ptr<td::Struct>>(*value);
+
+  optional<td::SymbolTable::Value> map_val =
+      s->table.Get(td::Identifier::ValueIdentifier("inlineMap"));
+  REQUIRE(map_val);
+  REQUIRE(holds_alternative<shared_ptr<td::Map>>(*map_val));
+  shared_ptr<td::Map> the_map = get<shared_ptr<td::Map>>(*map_val);
+  REQUIRE(the_map);
+}
+
+TEST_CASE("Struct with an symbol reference to another struct", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  inlineMap: map<i32, f64>;
+};
+
+struct SomeOtherStruct {
+  ref_to_some_struct: SomeStruct;
+};
+    )");
+  REQUIRE(!parsed_file->HasErrors());
+
+  optional<td::SymbolTable::Value> some_struct_val =
+      parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
+  REQUIRE(some_struct_val);
+  REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*some_struct_val));
+
+  optional<td::SymbolTable::Value> some_other_struct_val =
+      parsed_file->symbols2_.Get(
+          td::Identifier::TypeIdentifier("SomeOtherStruct"));
+  REQUIRE(some_other_struct_val);
+  REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*some_other_struct_val));
+  auto s = get<shared_ptr<td::Struct>>(*some_other_struct_val);
+
+  optional<td::SymbolTable::Value> symref_val =
+      s->table.Get(td::Identifier::ValueIdentifier("ref_to_some_struct"));
+  REQUIRE(symref_val);
+  REQUIRE(holds_alternative<td::SymbolRef>(*symref_val));
+  td::SymbolRef symref = get<td::SymbolRef>(*symref_val);
+  REQUIRE_THAT(symref.id, Equals("SomeStruct"));
 }
