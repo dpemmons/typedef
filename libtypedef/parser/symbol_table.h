@@ -27,6 +27,7 @@ class TmplStr;
 struct SymbolRef {
   SymbolRef(const string &str) : id(str) {}
   string id;
+  filesystem::path target_path;
 };
 
 class Identifier {
@@ -55,6 +56,8 @@ class Identifier {
   }
 
   friend ostream &operator<<(ostream &os, const Identifier &value);
+
+  std::filesystem::path path;
 
  private:
   enum class Type {
@@ -123,6 +126,10 @@ class SymbolTable {
     return table_.count(Identifier::TypeIdentifier(identifier));
   }
 
+  optional<Value> GetTypeIdentifier(const string& identifier) {
+    return table_.at(Identifier::TypeIdentifier(identifier));
+  }
+
   optional<Value> Get(Identifier const &identifier) {
     if (table_.count(identifier)) {
       return table_.find(identifier)->second;
@@ -134,11 +141,6 @@ class SymbolTable {
 
   friend ostream &operator<<(ostream &os, const SymbolTable &value);
 
-  void PopulatePaths(const std::filesystem::path &current_path);
-
-  // TODO populate this everywhere so SymRefs can know the fully
-  // qualified name of the thing they point at.
-  std::filesystem::path path_;
   using Table = map<Identifier, Value>;
   Table table_;
 };

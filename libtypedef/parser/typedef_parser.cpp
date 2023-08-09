@@ -28,10 +28,17 @@ class SymRefListener : public TypedefParserBaseListener {
   SymRefListener(std::vector<ParserErrorInfo> &errors_list)
       : errors_list_(errors_list) {}
 
-  // Walk up the tree looking for nodes that may contain the referenced symbol.
+  /***
+   * Recursively walk *up* the parse tree to find a symbol.
+   *
+   * @param unresolved_symbol_ctx ths symbol we're searching for.
+   * @param search_ctx the part of the parse tree we're searching in.
+   *
+   * @returns true if found.
+   */
   bool FindSymbol(TypedefParser::SymbolReferenceContext *unresolved_symbol_ctx,
                   antlr4::tree::ParseTree *search_ctx) {
-    const string &identifier = unresolved_symbol_ctx->maybe_symref->id;
+    const string &query_identifier = unresolved_symbol_ctx->maybe_symref->id;
 
     TypedefParser::StructDeclarationContext *maybeStruct =
         dynamic_cast<TypedefParser::StructDeclarationContext *>(search_ctx);
@@ -40,15 +47,21 @@ class SymRefListener : public TypedefParserBaseListener {
     TypedefParser::CompilationUnitContext *maybeCompilationUnit =
         dynamic_cast<TypedefParser::CompilationUnitContext *>(search_ctx);
 
+    // If the current tree leaf is a struct...
     if (maybeStruct &&
-        maybeStruct->s->table.HasTypeIdentifier(identifier) > 0) {
+        maybeStruct->s->table.HasTypeIdentifier(query_identifier) > 0) {
+      maybeStruct->s->table.GetTypeIdentifier(query_identifier);
       return true;
-    } else if (maybeVariant &&
-               maybeVariant->v->table.HasTypeIdentifier(identifier) > 0) {
+    }
+    // If the current tree leaf is a variant...
+    else if (maybeVariant &&
+             maybeVariant->v->table.HasTypeIdentifier(query_identifier) > 0) {
       return true;
-    } else if (maybeCompilationUnit &&
-               maybeCompilationUnit->symbol_table.HasTypeIdentifier(
-                   identifier) > 0) {
+    }
+    // If the current tree leaf is a comilation unit...
+    else if (maybeCompilationUnit &&
+             maybeCompilationUnit->symbol_table.HasTypeIdentifier(
+                 query_identifier) > 0) {
       return true;
     } else if (search_ctx->parent != nullptr) {
       return FindSymbol(unresolved_symbol_ctx, search_ctx->parent);
@@ -193,9 +206,6 @@ std::shared_ptr<ParsedFile> ParseTypedef(std::istream &input) {
     return std::make_shared<ParsedFile>(
         ParsedFileBuilder().AddErrors(errors).build());
   }
-
-  // Populate symbol paths.
-  compilation_unit->symbol_table.PopulatePaths(compilation_unit->module);
 
   // Resolve symbol references.
   SymRefListener symRefListener(errors);

@@ -183,14 +183,3 @@ ostream& operator<<(ostream& os, const SymbolTable& value) {
 }
 
 }  // namespace td
-void td::SymbolTable::PopulatePaths(const std::filesystem::path& current_path) {
-  path_ = current_path;
-  for (auto& table_value : table_) {
-    if (table_value.first.IsType()) {
-      if (holds_alternative<shared_ptr<Struct>>(table_value.second)) {
-        get<shared_ptr<Struct>>(table_value.second)
-            ->table.PopulatePaths(path_ / table_value.first.id());
-      }
-    }
-  }
-}
