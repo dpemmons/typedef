@@ -890,7 +890,7 @@ std::ostream& operator<<(std::ostream& os, const {classname}& obj) {{
 }
 
 CodegenCpp::ViewModel CodegenCpp::CreateViewModel(
-    const filesystem::path& hdr_path, const vector<string>& module,
+    const filesystem::path& hdr_path, const filesystem::path& module,
     const GroupedSymbols& grouped_symbols) {
   ViewModel view_model;
   view_model.hdr_filename = hdr_path.filename().string();

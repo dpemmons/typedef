@@ -36,6 +36,7 @@ dfa::Vocabulary& TypedefParser::getVocabulary() const {
 
 
 #include <cstdint>
+#include <filesystem>  // for std::filesystem::path
 #include <memory>
 #include <optional>
 #include <string>
@@ -1257,7 +1258,7 @@ TypedefParser::MapDeclarationContext* TypedefParser::mapDeclaration() {
     		// Map Declaration
     		if (dynamic_cast<MapDeclarationContext *>(_localctx)->key->maybe_val && dynamic_cast<MapDeclarationContext *>(_localctx)->val->maybe_val) {
     			dynamic_cast<MapDeclarationContext *>(_localctx)->maybe_symbol =  std::make_pair(
-    				td::Identifier::ValueIdentifier(dynamic_cast<MapDeclarationContext *>(_localctx)->identifierContext->id),
+    				td::Identifier::TypeIdentifier(dynamic_cast<MapDeclarationContext *>(_localctx)->identifierContext->id),
     			  std::make_shared<td::Map>(
     					*dynamic_cast<MapDeclarationContext *>(_localctx)->key->maybe_val, *dynamic_cast<MapDeclarationContext *>(_localctx)->val->maybe_val));
     		}
@@ -5903,7 +5904,7 @@ TypedefParser::SimplePathContext* TypedefParser::simplePath() {
     }
     setState(1392);
     dynamic_cast<SimplePathContext *>(_localctx)->identifierContext = identifier();
-    _localctx->path.push_back(dynamic_cast<SimplePathContext *>(_localctx)->identifierContext->id);
+    _localctx->path /= dynamic_cast<SimplePathContext *>(_localctx)->identifierContext->id;
     setState(1400);
     _errHandler->sync(this);
     alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 184, _ctx);
@@ -5913,7 +5914,7 @@ TypedefParser::SimplePathContext* TypedefParser::simplePath() {
         match(TypedefParser::PATHSEP);
         setState(1395);
         dynamic_cast<SimplePathContext *>(_localctx)->identifierContext = identifier();
-        _localctx->path.push_back(dynamic_cast<SimplePathContext *>(_localctx)->identifierContext->id); 
+        _localctx->path /= dynamic_cast<SimplePathContext *>(_localctx)->identifierContext->id; 
       }
       setState(1402);
       _errHandler->sync(this);

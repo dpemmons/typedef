@@ -243,7 +243,7 @@ class CodegenCpp : public CodegenBase {
 
   static GroupedSymbols GroupSymbols(const SymbolTable::Table& table);
   static ViewModel CreateViewModel(const filesystem::path& hdr_path,
-                                   const vector<string>& module,
+                                   const filesystem::path& module,
                                    const GroupedSymbols& grouped_symbols);
   static vector<ValueViewModel> CreateValueViewModels(
       const vector<SymbolTable::Symbol>& values);

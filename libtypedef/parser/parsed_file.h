@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <optional>
 #include <string>
 #include <vector>
@@ -21,7 +22,7 @@ class ParsedFile {
 
   SymbolTable symbols2_;
 
-  std::vector<std::string> module_;
+  std::filesystem::path module_;
 
  private:
   friend class ParsedFileBuilder;
@@ -38,7 +39,7 @@ class ParsedFileBuilder {
     return *this;
   }
 
-  ParsedFileBuilder& SetModule(std::vector<std::string> module) {
+  ParsedFileBuilder& SetModule(const std::filesystem::path& module) {
     file_.module_ = module;
     return *this;
   }

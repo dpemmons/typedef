@@ -194,6 +194,9 @@ std::shared_ptr<ParsedFile> ParseTypedef(std::istream &input) {
         ParsedFileBuilder().AddErrors(errors).build());
   }
 
+  // Populate symbol paths.
+  compilation_unit->symbol_table.PopulatePaths(compilation_unit->module);
+
   // Resolve symbol references.
   SymRefListener symRefListener(errors);
   antlr4::tree::ParseTreeWalker::DEFAULT.walk(&symRefListener,

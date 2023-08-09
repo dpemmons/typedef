@@ -10,6 +10,7 @@ options {
 
 @parser::definitions {
 #include <cstdint>
+#include <filesystem>  // for std::filesystem::path
 #include <memory>
 #include <optional>
 #include <string>
@@ -20,7 +21,7 @@ compilationUnit
 	returns[
 		td::SymbolTable symbol_table,
 		std::string version,
-		std::vector<std::string> module
+		std::filesystem::path module
 	]:
 	WS*
 	typedefVersionDeclaration { $version = $typedefVersionDeclaration.ctx->version; } WS* (
@@ -120,7 +121,7 @@ mapDeclaration
 		// Map Declaration
 		if ($key.ctx->maybe_val && $val.ctx->maybe_val) {
 			$maybe_symbol = std::make_pair(
-				td::Identifier::ValueIdentifier($identifier.ctx->id),
+				td::Identifier::TypeIdentifier($identifier.ctx->id),
 			  std::make_shared<td::Map>(
 					*$key.ctx->maybe_val, *$val.ctx->maybe_val));
 		}
@@ -345,7 +346,7 @@ typedefVersionDeclaration
 	KW_TYPEDEF WS* EQ WS* identifier WS* SEMI { $version = $identifier.ctx->id; };
 
 moduleDeclaration
-	returns[std::vector<std::string> module]:
+	returns[std::filesystem::path module]:
 	KW_MODULE WS+ simplePath WS* SEMI { $module = $simplePath.ctx->path; };
 
 useDeclaration: 'use' WS+ useTree WS* ';';
@@ -356,9 +357,9 @@ useTree: (simplePath? '::')? (
 	| simplePath ('as' identifier)?;
 
 simplePath
-	returns[std::vector<std::string> path]:
-	'::'? identifier {$path.push_back($identifier.ctx->id);} (
-		'::' identifier {$path.push_back($identifier.ctx->id);}
+	returns[std::filesystem::path path]:
+	'::'? identifier {$path /= $identifier.ctx->id;} (
+		'::' identifier {$path /= $identifier.ctx->id;}
 	)*;
 
 boolLiteral

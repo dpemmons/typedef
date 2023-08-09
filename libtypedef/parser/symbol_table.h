@@ -134,6 +134,8 @@ class SymbolTable {
 
   friend ostream &operator<<(ostream &os, const SymbolTable &value);
 
+  void PopulatePaths(const std::filesystem::path &current_path);
+
   // TODO populate this everywhere so SymRefs can know the fully
   // qualified name of the thing they point at.
   std::filesystem::path path_;

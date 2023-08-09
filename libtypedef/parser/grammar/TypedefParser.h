@@ -137,7 +137,7 @@ public:
   public:
     td::SymbolTable symbol_table;
     std::string version;
-    std::vector<std::string> module;
+    std::filesystem::path module;
     TypedefParser::TypedefVersionDeclarationContext *typedefVersionDeclarationContext = nullptr;;
     TypedefParser::ModuleDeclarationContext *moduleDeclarationContext = nullptr;;
     TypedefParser::TypeDeclarationContext *typeDeclarationContext = nullptr;;
@@ -996,7 +996,7 @@ public:
 
   class  ModuleDeclarationContext : public antlr4::ParserRuleContext {
   public:
-    std::vector<std::string> module;
+    std::filesystem::path module;
     TypedefParser::SimplePathContext *simplePathContext = nullptr;;
     ModuleDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
@@ -1061,7 +1061,7 @@ public:
 
   class  SimplePathContext : public antlr4::ParserRuleContext {
   public:
-    std::vector<std::string> path;
+    std::filesystem::path path;
     TypedefParser::IdentifierContext *identifierContext = nullptr;;
     SimplePathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;

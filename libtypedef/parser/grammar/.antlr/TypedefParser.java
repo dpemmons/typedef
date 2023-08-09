@@ -193,7 +193,7 @@ public class TypedefParser extends Parser {
 	public static class CompilationUnitContext extends ParserRuleContext {
 		public td::SymbolTable symbol_table;
 		public std::string version;
-		public std::vector<std::string> module;
+		public std::filesystem::path module;
 		public TypedefVersionDeclarationContext typedefVersionDeclaration;
 		public ModuleDeclarationContext moduleDeclaration;
 		public TypeDeclarationContext typeDeclaration;
@@ -1258,7 +1258,7 @@ public class TypedefParser extends Parser {
 					// Map Declaration
 					if (((MapDeclarationContext)_localctx).key->maybe_val && ((MapDeclarationContext)_localctx).val->maybe_val) {
 						((MapDeclarationContext)_localctx).maybe_symbol =  std::make_pair(
-							td::Identifier::ValueIdentifier(((MapDeclarationContext)_localctx).identifier->id),
+							td::Identifier::TypeIdentifier(((MapDeclarationContext)_localctx).identifier->id),
 						  std::make_shared<td::Map>(
 								*((MapDeclarationContext)_localctx).key->maybe_val, *((MapDeclarationContext)_localctx).val->maybe_val));
 					}
@@ -4860,7 +4860,7 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class ModuleDeclarationContext extends ParserRuleContext {
-		public std::vector<std::string> module;
+		public std::filesystem::path module;
 		public SimplePathContext simplePath;
 		public TerminalNode KW_MODULE() { return getToken(TypedefParser.KW_MODULE, 0); }
 		public SimplePathContext simplePath() {
@@ -5155,7 +5155,7 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class SimplePathContext extends ParserRuleContext {
-		public std::vector<std::string> path;
+		public std::filesystem::path path;
 		public IdentifierContext identifier;
 		public List<IdentifierContext> identifier() {
 			return getRuleContexts(IdentifierContext.class);
@@ -5193,7 +5193,7 @@ public class TypedefParser extends Parser {
 
 			setState(1392);
 			((SimplePathContext)_localctx).identifier = identifier();
-			_localctx.path.push_back(((SimplePathContext)_localctx).identifier->id);
+			_localctx.path /= ((SimplePathContext)_localctx).identifier->id;
 			setState(1400);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,184,_ctx);
@@ -5205,7 +5205,7 @@ public class TypedefParser extends Parser {
 					match(PATHSEP);
 					setState(1395);
 					((SimplePathContext)_localctx).identifier = identifier();
-					_localctx.path.push_back(((SimplePathContext)_localctx).identifier->id);
+					_localctx.path /= ((SimplePathContext)_localctx).identifier->id;
 					}
 					} 
 				}
