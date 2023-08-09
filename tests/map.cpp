@@ -26,7 +26,7 @@ void AssertType(std::shared_ptr<td::ParsedFile> parsed_file, string name) {
   REQUIRE(holds_alternative<optional<string>>(s->value_type));
 }
 
-TEST_CASE("Map with various scalar key types and string value", "[symref]") {
+TEST_CASE("Map with various scalar key types", "[symref]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
@@ -43,6 +43,7 @@ map SomeI8Map<i8, str>;
 map SomeI16Map<i16, str>;
 map SomeI32Map<i32, str>;
 map SomeI64Map<i64, str>;
+map SomeStrMap<str, str>;
     )");
   REQUIRE(!parsed_file->HasErrors());
 
@@ -50,12 +51,69 @@ map SomeI64Map<i64, str>;
   AssertType<char32_t>(parsed_file, "SomeCharMap");
   AssertType<float>(parsed_file, "SomeF32Map");
   AssertType<double>(parsed_file, "SomeF64Map");
-  AssertType<int8_t>(parsed_file, "SomeI8Map");
-  AssertType<int16_t>(parsed_file, "SomeI16Map");
-  AssertType<int32_t>(parsed_file, "SomeI32Map");
-  AssertType<int64_t>(parsed_file, "SomeI64Map");
   AssertType<uint8_t>(parsed_file, "SomeU8Map");
   AssertType<uint16_t>(parsed_file, "SomeU16Map");
   AssertType<uint32_t>(parsed_file, "SomeU32Map");
   AssertType<uint64_t>(parsed_file, "SomeU64Map");
+  AssertType<int8_t>(parsed_file, "SomeI8Map");
+  AssertType<int16_t>(parsed_file, "SomeI16Map");
+  AssertType<int32_t>(parsed_file, "SomeI32Map");
+  AssertType<int64_t>(parsed_file, "SomeI64Map");
+  AssertType<string>(parsed_file, "SomeStrMap");
+}
+
+TEST_CASE("Map with a struct key type should error", "[symref]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct StructA {
+  an_int: i32;
+};
+
+map SomeBoolMap<StructA, str>;
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  // TODO this should throw an appropriate semantic error (not a syntax error)
+}
+
+TEST_CASE("Map with a variant key type should error", "[symref]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+variant VariantA {
+  an_int: i32;
+};
+
+map SomeBoolMap<VariantA, str>;
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  // TODO this should throw an appropriate semantic error (not a syntax error)
+}
+
+TEST_CASE("Map with a vector key type should error", "[symref]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+vector VecA<i32>;
+
+map SomeBoolMap<VecA, str>;
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  // TODO this should throw an appropriate semantic error (not a syntax error)
+}
+
+TEST_CASE("Map with a map key type should error", "[symref]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+map MapA<i32, str>;
+
+map SomeBoolMap<MapA, str>;
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  // TODO this should throw an appropriate semantic error (not a syntax error)
 }

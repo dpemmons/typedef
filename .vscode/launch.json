@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceRoot}/build/debug/tests",
-      "args": ["Struct with a symbol reference to a map type"],
+      "args": [],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",
       "environment": [],

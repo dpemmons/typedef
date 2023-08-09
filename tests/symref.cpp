@@ -84,8 +84,7 @@ struct SomeStruct {
   REQUIRE(!parsed_file->HasErrors());
 
   optional<td::SymbolTable::Value> some_struct_val =
-      parsed_file->symbols2_.Get(
-          td::Identifier::TypeIdentifier("SomeStruct"));
+      parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
   REQUIRE(some_struct_val);
   REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*some_struct_val));
   auto s = get<shared_ptr<td::Struct>>(*some_struct_val);
@@ -235,7 +234,8 @@ variant SomeVariant {
   REQUIRE_THAT(some_struct.id, Equals("SomeStruct"));
 }
 
-TEST_CASE("Variant with a symbol reference to another variant type", "[symref]") {
+TEST_CASE("Variant with a symbol reference to another variant type",
+          "[symref]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
@@ -411,14 +411,6 @@ vector SomeVector<MapA>;
   REQUIRE(holds_alternative<td::SymbolRef>(s->type));
   REQUIRE_THAT(get<td::SymbolRef>(s->type).id, Equals("MapA"));
 }
-
-
-
-
-
-
-
-
 
 TEST_CASE("Map with a symbol reference to a struct type", "[symref]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
