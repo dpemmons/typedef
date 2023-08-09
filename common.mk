@@ -31,13 +31,12 @@ CXXFLAGS.gcc := -pthread \
                 -fdiagnostics-generate-patch \
                 ${CXXFLAGS.gcc.${BUILD}}
 
-CXXFLAGS.clang.debug := -O0 -fstack-protector-all
+CXXFLAGS.clang.debug := -DDEBUG -gdwarf-4 -O0 -fstack-protector-all
 CXXFLAGS.clang.release := -O3 -march=native -DNDEBUG
 CXXFLAGS.clang := -pthread \
                   -std=gnu++17 \
                   -march=native \
                   -g \
-                  -gdwarf-4 \
                   -MMD \
                   -MP \
                   -fmessage-length=0 \
