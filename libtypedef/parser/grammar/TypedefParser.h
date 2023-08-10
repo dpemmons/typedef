@@ -1,5 +1,6 @@
 
 #include "libtypedef/parser/symbol_table.h"
+#include "libtypedef/parser/table.h"
 
 
 // Generated from ./libtypedef/parser/grammar/TypedefParser.g4 by ANTLR 4.7.2
@@ -974,8 +975,7 @@ public:
 
   class  TypedefVersionDeclarationContext : public antlr4::ParserRuleContext {
   public:
-    std::string version;
-    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    std::shared_ptr<std::string> version;
     TypedefVersionDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_TYPEDEF();
@@ -996,8 +996,7 @@ public:
 
   class  ModuleDeclarationContext : public antlr4::ParserRuleContext {
   public:
-    std::filesystem::path module;
-    TypedefParser::SimplePathContext *simplePathContext = nullptr;;
+    std::shared_ptr<td::SymbolPath> path;
     ModuleDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_MODULE();
@@ -1061,8 +1060,8 @@ public:
 
   class  SimplePathContext : public antlr4::ParserRuleContext {
   public:
-    std::filesystem::path path;
-    TypedefParser::IdentifierContext *identifierContext = nullptr;;
+    std::shared_ptr<td::SymbolPath> path;
+    antlr4::Token *leading_pathsep = nullptr;;
     SimplePathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<IdentifierContext *> identifier();
@@ -1362,10 +1361,7 @@ public:
 
   class  StringLiteralContext : public antlr4::ParserRuleContext {
   public:
-    std::optional<std::string> maybe_val;
-    int start_offset;
-    antlr4::Token *string_literalToken = nullptr;;
-    antlr4::Token *raw_string_literalToken = nullptr;;
+    std::shared_ptr<std::string> str;
     StringLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *STRING_LITERAL();
@@ -1382,7 +1378,7 @@ public:
 
   class  IdentifierContext : public antlr4::ParserRuleContext {
   public:
-    std::string id;
+    std::shared_ptr<std::string> id;
     antlr4::Token *nki = nullptr;;
     IdentifierContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;

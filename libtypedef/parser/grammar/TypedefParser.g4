@@ -6,6 +6,7 @@ options {
 
 @header {
 #include "libtypedef/parser/symbol_table.h"
+#include "libtypedef/parser/table.h"
 }
 
 @parser::definitions {
@@ -15,6 +16,7 @@ options {
 #include <optional>
 #include <string>
 #include "libtypedef/parser/parser_helpers.h"
+#include "libtypedef/parser/symbol_path.h"
 }
 
 compilationUnit
@@ -23,8 +25,7 @@ compilationUnit
 		std::string version,
 		std::filesystem::path module
 	]:
-	WS*
-	typedefVersionDeclaration { $version = $typedefVersionDeclaration.ctx->version; } WS* (
+	WS* typedefVersionDeclaration { $version = $typedefVersionDeclaration.ctx->version; } WS* (
 		moduleDeclaration { $module = $moduleDeclaration.ctx->module; }
 	)? (WS* useDeclaration)* (
 		WS* typeDeclaration {
@@ -342,13 +343,14 @@ valuedI64Fragment: (
 	| (EQ WS* literal = i64Literal 'i64');
 
 typedefVersionDeclaration
-	returns[std::string version]:
-	KW_TYPEDEF WS* EQ WS* identifier WS* SEMI { $version = $identifier.ctx->id; };
+	returns[std::shared_ptr<std::string> version]:
+	KW_TYPEDEF WS* EQ WS* identifier WS* SEMI;
 
 moduleDeclaration
-	returns[std::filesystem::path module]:
-	KW_MODULE WS+ simplePath WS* SEMI { $module = $simplePath.ctx->path; };
+	returns[std::shared_ptr<td::SymbolPath> path]:
+	KW_MODULE WS+ simplePath WS* SEMI;
 
+// TODO use declarations.
 useDeclaration: 'use' WS+ useTree WS* ';';
 useTree: (simplePath? '::')? (
 		'*'
@@ -357,93 +359,59 @@ useTree: (simplePath? '::')? (
 	| simplePath ('as' identifier)?;
 
 simplePath
-	returns[std::filesystem::path path]:
-	'::'? identifier {$path /= $identifier.ctx->id;} (
-		'::' identifier {$path /= $identifier.ctx->id;}
-	)*;
+	returns[std::shared_ptr<td::SymbolPath> path]:
+	(leading_pathsep = PATHSEP)? identifier (PATHSEP identifier)*;
 
 boolLiteral
-	returns[std::optional<bool> maybe_val]
-	@after {
-		// From boolLiteral grammar.
-		if ($ctx->start->getType() == TypedefParser::KW_FALSE) {
-			$maybe_val = false;
-		} else if ($ctx->start->getType() == TypedefParser::KW_TRUE) {
-			$maybe_val = true;
-		} else {
-			throw InputMismatchException(this);
-		}
-		// End from boolLiteral grammar.
-  }: KW_TRUE | KW_FALSE;
+	returns[std::optional<bool> maybe_val]: KW_TRUE | KW_FALSE;
 charLiteral
-	returns[std::optional<char32_t> maybe_val]:
-	CHAR_LITERAL {
-		$maybe_val = GetCharValue(this, $ctx);
-  };
+	returns[std::optional<char32_t> maybe_val]: CHAR_LITERAL;
 f32Literal
-	returns[std::optional<float> maybe_val]:
-	FLOAT_LITERAL {
-		$maybe_val = GetFloatValue<float>(this, $ctx);
-  };
+	returns[std::optional<float> maybe_val]: FLOAT_LITERAL;
 f64Literal
-	returns[std::optional<double> maybe_val]:
-	FLOAT_LITERAL {
-		$maybe_val = GetFloatValue<double>(this, $ctx);
-  };
+	returns[std::optional<double> maybe_val]: FLOAT_LITERAL;
 u8Literal
 	returns[std::optional<uint8_t> maybe_val]: (
 		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
 		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
 		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
 		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	) {
-		$maybe_val = GetIntValue<uint8_t>(this, $ctx);
-  };
+	);
 u16Literal
 	returns[std::optional<uint16_t> maybe_val]: (
 		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
 		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
 		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
 		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	) {
-		$maybe_val = GetIntValue<uint16_t>(this, $ctx);
-  };
+	);
 u32Literal
 	returns[std::optional<uint32_t> maybe_val]: (
 		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
 		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
 		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
 		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	) {
-		$maybe_val = GetIntValue<uint32_t>(this, $ctx);
-  };
+	);
 u64Literal
 	returns[std::optional<uint64_t> maybe_val]: (
 		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
 		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
 		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
 		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	) {
-		$maybe_val = GetIntValue<uint64_t>(this, $ctx);
-  };
+	);
 i8Literal
 	returns[std::optional<int8_t> maybe_val]: (
 		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
 		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
 		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
 		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	) {
-		$maybe_val = GetIntValue<int8_t>(this, $ctx);
-  };
+	);
 i16Literal
 	returns[std::optional<int16_t> maybe_val]: (
 		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
 		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
 		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
 		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	) {
-		$maybe_val = GetIntValue<int16_t>(this, $ctx);
-  };
+	);
 i32Literal
 	returns[std::optional<int32_t> maybe_val]:
 	(
@@ -451,9 +419,7 @@ i32Literal
 		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
 		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
 		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	) {
-		$maybe_val = GetIntValue<int32_t>(this, $ctx);
-  };
+	);
 i64Literal
 	returns[std::optional<int64_t> maybe_val]:
 	(
@@ -461,28 +427,15 @@ i64Literal
 		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
 		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
 		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	) {
-		$maybe_val = GetIntValue<int64_t>(this, $ctx);
-  };
+	);
 
 stringLiteral
-	returns[std::optional<std::string> maybe_val, int start_offset]:
-	STRING_LITERAL {
-		auto contents = GetStringValue(this, $STRING_LITERAL);
-		$maybe_val = contents.str;
-		$start_offset = contents.start_offset;
-	}
-	| RAW_STRING_LITERAL {
-		auto contents = GetRawString(this, $RAW_STRING_LITERAL);
-		$maybe_val = contents.str;
-		$start_offset = contents.start_offset;
-	};
+	returns[std::shared_ptr<std::string> str]:
+	STRING_LITERAL
+	| RAW_STRING_LITERAL;
 
 identifier
-	returns[std::string id]
-	@after {
-		$id = $nki->getText();
-  }:
+	returns[std::shared_ptr<std::string> id]:
 	nki = NON_KEYWORD_IDENTIFIER
 	| RAW_ESCAPE nki = NON_KEYWORD_IDENTIFIER;
 

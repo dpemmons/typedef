@@ -23,6 +23,7 @@ namespace {
 
 using namespace td;
 
+
 class SymRefListener : public TypedefParserBaseListener {
  public:
   SymRefListener(std::vector<ParserErrorInfo> &errors_list)

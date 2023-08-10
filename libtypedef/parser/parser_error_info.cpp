@@ -351,6 +351,8 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
       return "INVALID_INTEGER_LITERAL";
     case INVALID_STRING_LITERAL:
       return "INVALID_STRING_LITERAL";
+    case INVALID_RAW_STRING_LITERAL:
+      return "INVALID_RAW_STRING_LITERAL";
     case TEMPLATE_STRING_PARSE_ERROR:
       return "TEMPLATE_STRING_PARSE_ERROR";
     case UNRESOLVED_SYMBOL_REFERENCE:
