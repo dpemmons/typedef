@@ -242,20 +242,20 @@ symbolReference
 	identifier {$maybe_symref = td::SymbolRef($identifier.ctx->id); };
 
 primitiveType
-	returns[std::optional<td::SymbolTable::Value> maybe_val]:
-	KW_BOOL { $maybe_val = std::optional<bool>(); }
-	| KW_CHAR { $maybe_val = std::optional<char32_t>(); }
-	| KW_STRING { $maybe_val = std::optional<std::string>(); }
-	| KW_F32 { $maybe_val = std::optional<float>(); }
-	| KW_F64 { $maybe_val = std::optional<double>(); }
-	| KW_U8 { $maybe_val = std::optional<uint8_t>(); }
-	| KW_U16 { $maybe_val = std::optional<uint16_t>(); }
-	| KW_U32 { $maybe_val = std::optional<uint32_t>(); }
-	| KW_U64 { $maybe_val = std::optional<uint64_t>(); }
-	| KW_I8 { $maybe_val = std::optional<int8_t>(); }
-	| KW_I16 { $maybe_val = std::optional<int16_t>(); }
-	| KW_I32 { $maybe_val = std::optional<int32_t>(); }
-	| KW_I64 { $maybe_val = std::optional<int64_t>(); };
+	returns[td::PrimitiveType primitive_type]:
+	KW_BOOL
+	| KW_CHAR
+	| KW_STRING
+	| KW_F32
+	| KW_F64
+	| KW_U8
+	| KW_U16
+	| KW_U32
+	| KW_U64
+	| KW_I8
+	| KW_I16
+	| KW_I32
+	| KW_I64;
 
 valuedTemplateStringType
 	returns[std::optional<td::SymbolTable::Value> maybe_val]

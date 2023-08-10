@@ -593,7 +593,7 @@ public:
 
   class  PrimitiveTypeContext : public antlr4::ParserRuleContext {
   public:
-    std::optional<td::SymbolTable::Value> maybe_val;
+    td::PrimitiveType primitive_type;
     PrimitiveTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_BOOL();

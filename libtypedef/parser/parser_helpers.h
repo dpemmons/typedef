@@ -22,7 +22,24 @@ class ParserRuleContext;
 class Token;
 }  // namespace antlr4
 
-
+namespace td {
+enum PrimitiveType {
+  PRIMITIVE_TYPE_UNKNOWN = 0,
+  PRIMITIVE_TYPE_BOOL,
+  PRIMITIVE_TYPE_CHAR,
+  PRIMITIVE_TYPE_STRING,
+  PRIMITIVE_TYPE_F32,
+  PRIMITIVE_TYPE_F64,
+  PRIMITIVE_TYPE_U8,
+  PRIMITIVE_TYPE_U16,
+  PRIMITIVE_TYPE_U32,
+  PRIMITIVE_TYPE_U64,
+  PRIMITIVE_TYPE_I8,
+  PRIMITIVE_TYPE_I16,
+  PRIMITIVE_TYPE_I32,
+  PRIMITIVE_TYPE_I64
+};
+}  // namespace td
 
 class DuplicateSymbolException : public antlr4::RecognitionException {
  public:

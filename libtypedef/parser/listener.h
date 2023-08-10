@@ -17,6 +17,12 @@ class Listener : public TypedefParserBaseListener {
   Listener(std::vector<td::ParserErrorInfo> &errors_list)
       : errors_list_(errors_list) {}
 
+  virtual void exitPrimitiveType(
+      TypedefParser::PrimitiveTypeContext *ctx) override;
+
+  virtual void exitValuedPrimitiveType(
+      TypedefParser::ValuedPrimitiveTypeContext *ctx) override;
+
   virtual void exitTypedefVersionDeclaration(
       TypedefParser::TypedefVersionDeclarationContext *ctx) override {
     ctx->version = ctx->identifier()->id;
