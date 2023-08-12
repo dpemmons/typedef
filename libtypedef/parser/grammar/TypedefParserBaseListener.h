@@ -32,6 +32,9 @@ public:
   virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
   virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
 
+  virtual void enterMember(TypedefParser::MemberContext * /*ctx*/) override { }
+  virtual void exitMember(TypedefParser::MemberContext * /*ctx*/) override { }
+
   virtual void enterVariantDeclaration(TypedefParser::VariantDeclarationContext * /*ctx*/) override { }
   virtual void exitVariantDeclaration(TypedefParser::VariantDeclarationContext * /*ctx*/) override { }
 
@@ -62,20 +65,8 @@ public:
   virtual void enterMaybeValuedType(TypedefParser::MaybeValuedTypeContext * /*ctx*/) override { }
   virtual void exitMaybeValuedType(TypedefParser::MaybeValuedTypeContext * /*ctx*/) override { }
 
-  virtual void enterValuedType(TypedefParser::ValuedTypeContext * /*ctx*/) override { }
-  virtual void exitValuedType(TypedefParser::ValuedTypeContext * /*ctx*/) override { }
-
-  virtual void enterUnvaluedType(TypedefParser::UnvaluedTypeContext * /*ctx*/) override { }
-  virtual void exitUnvaluedType(TypedefParser::UnvaluedTypeContext * /*ctx*/) override { }
-
-  virtual void enterSymbolReference(TypedefParser::SymbolReferenceContext * /*ctx*/) override { }
-  virtual void exitSymbolReference(TypedefParser::SymbolReferenceContext * /*ctx*/) override { }
-
   virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
   virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
-
-  virtual void enterValuedTemplateStringType(TypedefParser::ValuedTemplateStringTypeContext * /*ctx*/) override { }
-  virtual void exitValuedTemplateStringType(TypedefParser::ValuedTemplateStringTypeContext * /*ctx*/) override { }
 
   virtual void enterValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext * /*ctx*/) override { }
   virtual void exitValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext * /*ctx*/) override { }

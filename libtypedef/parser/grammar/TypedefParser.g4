@@ -11,7 +11,6 @@ options {
 
 @parser::definitions {
 #include <cstdint>
-#include <filesystem>  // for std::filesystem::path
 #include <memory>
 #include <optional>
 #include <string>
@@ -25,141 +24,61 @@ compilationUnit
 		std::string version,
 		std::filesystem::path module
 	]:
-	WS* typedefVersionDeclaration { $version = $typedefVersionDeclaration.ctx->version; } WS* (
-		moduleDeclaration { $module = $moduleDeclaration.ctx->module; }
-	)? (WS* useDeclaration)* (
-		WS* typeDeclaration {
-		TryInsert($symbol_table, $typeDeclaration.ctx, this);
-	}
-	)* WS* EOF;
+	WS* typedefVersionDeclaration WS* (moduleDeclaration)? (
+		WS* useDeclaration
+	)* (WS* typeDeclaration)* WS* EOF;
 
 maybeValuedSymbolDeclaration: maybeValuedSymbol WS* SEMI;
 
 typeDeclaration
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
 	(
-		structDeclaration { $maybe_symbol = $structDeclaration.ctx->maybe_symbol; }
-		| variantDeclaration { $maybe_symbol = $variantDeclaration.ctx->maybe_symbol; }
-		| vectorDeclaration { $maybe_symbol = $vectorDeclaration.ctx->maybe_symbol; }
-		| mapDeclaration { $maybe_symbol = $mapDeclaration.ctx->maybe_symbol; }
+		structDeclaration
+		| variantDeclaration
+		| vectorDeclaration
+		| mapDeclaration
 	) WS* SEMI;
 
 // variant SomeVariant { optionA: i32; optionB: str; }
 structDeclaration
-	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]
-	locals[std::shared_ptr<td::Struct> s]
-	@init {
-		$s = std::make_shared<td::Struct>();
-	}:
-	KW_STRUCT WS* identifier WS* LBRACE WS* (
-		(
-			maybeValuedSymbol {
-				TryInsertSymbol($s, this, $maybeValuedSymbol.ctx);
-			}
-			| structDeclaration {
-				TryInsertNested($s, this, $structDeclaration.ctx);
-			}
-			| variantDeclaration {
-				TryInsertNested($s, this, $variantDeclaration.ctx);
-			}
-			| vectorDeclaration {
-				TryInsertNested($s, this, $vectorDeclaration.ctx);
-			}
-			| mapDeclaration {
-				TryInsertNested($s, this, $mapDeclaration.ctx);
-			}
-		) WS* SEMI WS*
-	)* WS* RBRACE {
-		$maybe_symbol = std::make_pair(
-			td::Identifier::TypeIdentifier($identifier.ctx->id), $s);
-	};
+	returns[std::shared_ptr<td::table2::Struct> st]:
+	KW_STRUCT WS* identifier WS* LBRACE WS* (member WS* SEMI WS*)* WS* RBRACE;
+
+member:
+	maybeValuedSymbol
+	| structDeclaration
+	| variantDeclaration
+	| vectorDeclaration
+	| mapDeclaration;
 
 // variant SomeVariant { optionA: i32; optionB: str; }
 variantDeclaration
-	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]
-	locals[std::shared_ptr<td::Variant> v]
-	@init {
-		$v = std::make_shared<td::Variant>();
-	}:
+	returns[std::shared_ptr<td::table2::Variant> var]:
 	KW_VARIANT WS* identifier WS* LBRACE (
-		WS* (
-			unvaluedSymbol {
-				TryInsertSymbol($v, this, $unvaluedSymbol.ctx);
-			}
-			| structDeclaration {
-				TryInsertNested($v, this, $structDeclaration.ctx);
-			}
-			| variantDeclaration {
-				TryInsertNested($v, this, $variantDeclaration.ctx);
-			}
-			| vectorDeclaration {
-				TryInsertNested($v, this, $vectorDeclaration.ctx);
-			}
-			| mapDeclaration {
-				TryInsertNested($v, this, $mapDeclaration.ctx);
-			}
-		) WS* SEMI WS*
-	)* RBRACE {
-		$maybe_symbol = std::make_pair(
-			td::Identifier::TypeIdentifier($identifier.ctx->id), $v);
-	};
+		WS* member WS* SEMI WS*
+	)* RBRACE;
 
 // vector SomeVector<i32>
 vectorDeclaration
-	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
-	KW_VECTOR WS* identifier WS* LT WS* val = unvaluedType WS* GT {
-		if ($unvaluedType.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair(
-				td::Identifier::TypeIdentifier($identifier.ctx->id),
-			  std::make_shared<td::Vector>(*$val.ctx->maybe_val));
-		}
-	};
+	returns[std::shared_ptr<td::table2::Vector> vec]:
+	KW_VECTOR WS* identifier WS* LT WS* val = primitiveType WS* GT;
 
 // map SomeMap<str, StructA>
 mapDeclaration
-	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
-	KW_MAP WS* identifier WS* LT WS* key = primitiveType WS* COMMA WS* val = unvaluedType WS* GT {
-		// Map Declaration
-		if ($key.ctx->maybe_val && $val.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair(
-				td::Identifier::TypeIdentifier($identifier.ctx->id),
-			  std::make_shared<td::Map>(
-					*$key.ctx->maybe_val, *$val.ctx->maybe_val));
-		}
-	};
+	returns[std::shared_ptr<td::table2::Map> map]:
+	KW_MAP WS* identifier WS* LT WS* key = primitiveType WS* COMMA WS* val = primitiveType WS* GT;
 
 // ValA: i32 = 42;
-maybeValuedSymbol
-	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
-	(
-		identifier WS* maybeValuedType WS* {
-		if ($maybeValuedType.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair(
-				td::Identifier::ValueIdentifier($identifier.ctx->id),
-				*$maybeValuedType.ctx->maybe_val);
-		}
-	}
-	)
-	| unvaluedSymbol {$maybe_symbol = $unvaluedSymbol.ctx->maybe_symbol; };
+maybeValuedSymbol: (identifier WS* maybeValuedType)
+	| unvaluedSymbol;
 
 // ValA: i32;
-unvaluedSymbol
-	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
-	inlineStruct {$maybe_symbol = $inlineStruct.ctx->maybe_symbol; }
-	| inlineVariant {$maybe_symbol = $inlineVariant.ctx->maybe_symbol; }
-	| inlineVector {$maybe_symbol = $inlineVector.ctx->maybe_symbol; }
-	| inlineMap {$maybe_symbol = $inlineMap.ctx->maybe_symbol; }
-	| (
-		identifier WS* COLON WS* unvaluedType (
-			WS* optional = QUESTION
-		)? {
-		if ($unvaluedType.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair(
-				td::Identifier::ValueIdentifier($identifier.ctx->id),
-				*$unvaluedType.ctx->maybe_val);
-		}
-	}
-	);
+unvaluedSymbol:
+	inlineStruct
+	| inlineVariant
+	| inlineVector
+	| inlineMap
+	| (identifier WS* COLON WS* primitiveType);
 
 inlineStruct
 	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]
@@ -195,54 +114,24 @@ inlineVariant
 			td::Identifier::ValueIdentifier($identifier.ctx->id), $v);
 	};
 
-inlineVector
-	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
-	identifier WS* COLON WS* KW_VECTOR WS* LT WS* val = unvaluedType WS* GT (
+inlineVector:
+	identifier WS* COLON WS* KW_VECTOR WS* LT WS* val = primitiveType WS* GT (
 		WS* optional = QUESTION
-	)? {
-		if ($unvaluedType.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair(
-				td::Identifier::ValueIdentifier($identifier.ctx->id),
-			  std::make_shared<td::Vector>(*$val.ctx->maybe_val));
-		}
-	};
+	)?;
 
-inlineMap
-	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
-	identifier WS* COLON WS* KW_MAP WS* LT WS* key = primitiveType WS* COMMA WS* val = unvaluedType
-		WS* GT (WS* optional = QUESTION)? {
-		// Map Declaration
-		if ($key.ctx->maybe_val && $val.ctx->maybe_val) {
-			$maybe_symbol = std::make_pair(
-				td::Identifier::ValueIdentifier($identifier.ctx->id),
-			  std::make_shared<td::Map>(
-					*$key.ctx->maybe_val, *$val.ctx->maybe_val));
-		}
-	};
+inlineMap:
+	identifier WS* COLON WS* KW_MAP WS* LT WS* key = primitiveType WS* COMMA WS* val = primitiveType
+		WS* GT (WS* optional = QUESTION)?;
 
-maybeValuedType
-	returns[std::optional<td::SymbolTable::Value> maybe_val]:
-	valuedType {$maybe_val = $valuedType.ctx->maybe_val;}
-	| (COLON WS* unvaluedType) {$maybe_val = $unvaluedType.ctx->maybe_val;};
-
-valuedType
-	returns[std::optional<td::SymbolTable::Value> maybe_val]:
-	valuedPrimitiveType {$maybe_val = $valuedPrimitiveType.ctx->maybe_val;}
-	| valuedTemplateStringType {$maybe_val = $valuedTemplateStringType.ctx->maybe_val;};
-
-unvaluedType
-	returns[std::optional<td::SymbolTable::Value> maybe_val]:
-	(
-		primitiveType {$maybe_val = $primitiveType.ctx->maybe_val;}
-		| symbolReference {$maybe_val = $symbolReference.ctx->maybe_symref; }
-	);
-
-symbolReference
-	returns[std::optional<td::SymbolRef> maybe_symref]:
-	identifier {$maybe_symref = td::SymbolRef($identifier.ctx->id); };
+maybeValuedType: valuedPrimitiveType | (COLON WS* primitiveType);
+// unvaluedType
+// 	returns[td::table2::PrimitiveType primitive_type]:
+// 	primitiveType;
+// | symbolReference; // TODO put this back
+// symbolReference: identifier;
 
 primitiveType
-	returns[td::PrimitiveType primitive_type]:
+	returns[td::table2::PrimitiveType primitive_type]:
 	KW_BOOL
 	| KW_CHAR
 	| KW_STRING
@@ -257,90 +146,85 @@ primitiveType
 	| KW_I32
 	| KW_I64;
 
-valuedTemplateStringType
-	returns[std::optional<td::SymbolTable::Value> maybe_val]
-	locals[std::shared_ptr<td::TmplStr> s]
-	@init {
-		$s = std::make_shared<td::TmplStr>();
-	}:
-	COLON WS* KW_TEMPLATESTRING WS* LT WS* (
-		unvaluedSymbol {
-				TryInsertArgSymbol($s, this, $unvaluedSymbol.ctx);
-			} (
-			WS* COMMA WS* unvaluedSymbol {
-				TryInsertArgSymbol($s, this, $unvaluedSymbol.ctx);
-			}
-		)*
-	) WS* GT WS* EQ WS* stringLiteral {
-	  $s->str = $stringLiteral.ctx->maybe_val;
-		$maybe_val = $s;
-	};
+// valuedTemplateStringType
+// 	returns[std::optional<td::SymbolTable::Value> maybe_val]
+// 	locals[std::shared_ptr<td::TmplStr> s]
+// 	@init {
+// 		$s = std::make_shared<td::TmplStr>();
+// 	}:
+// 	COLON WS* KW_TEMPLATESTRING WS* LT WS* (
+// 		unvaluedSymbol {
+// 				TryInsertArgSymbol($s, this, $unvaluedSymbol.ctx);
+// 			} (
+// 			WS* COMMA WS* unvaluedSymbol {
+// 				TryInsertArgSymbol($s, this, $unvaluedSymbol.ctx);
+// 			}
+// 		)*
+// 	) WS* GT WS* EQ WS* stringLiteral {
+// 	  $s->str = $stringLiteral.ctx->maybe_val;
+// 		$maybe_val = $s;
+// 	};
+
+// TODO probably get rid of valuedPrimitiveType, etc. and just do
+// primitive type resolution in a separate pass?
 
 // Matches " : bool = literal"
 valuedPrimitiveType
-	returns[std::optional<td::SymbolTable::Value> maybe_val]: (
-		valuedBoolFragment {$maybe_val = $valuedBoolFragment.ctx->literal->maybe_val;}
-		| valuedCharFragment {$maybe_val = $valuedCharFragment.ctx->literal->maybe_val;}
-		| valuedStringFragment {$maybe_val = $valuedStringFragment.ctx->literal->maybe_val;}
-		| valuedF32Fragment {$maybe_val = $valuedF32Fragment.ctx->literal->maybe_val;}
-		| valuedF64Fragment {$maybe_val = $valuedF64Fragment.ctx->literal->maybe_val;}
-		| valuedU8Fragment {$maybe_val = $valuedU8Fragment.ctx->literal->maybe_val;}
-		| valuedU16Fragment {$maybe_val = $valuedU16Fragment.ctx->literal->maybe_val;}
-		| valuedU32Fragment {$maybe_val = $valuedU32Fragment.ctx->literal->maybe_val;}
-		| valuedU64Fragment {$maybe_val = $valuedU64Fragment.ctx->literal->maybe_val;}
-		| valuedI8Fragment {$maybe_val = $valuedI8Fragment.ctx->literal->maybe_val;}
-		| valuedI16Fragment {$maybe_val = $valuedI16Fragment.ctx->literal->maybe_val;}
-		| valuedI32Fragment {$maybe_val = $valuedI32Fragment.ctx->literal->maybe_val;}
-		| valuedI64Fragment {$maybe_val = $valuedI64Fragment.ctx->literal->maybe_val;}
+	returns[td::table2::PrimitiveType primitive_type, td::table2::PrimitiveValue value]: (
+		valuedBoolFragment
+		| valuedCharFragment
+		| valuedStringFragment
+		| valuedF32Fragment
+		| valuedF64Fragment
+		| valuedU8Fragment
+		| valuedU16Fragment
+		| valuedU32Fragment
+		| valuedU64Fragment
+		| valuedI8Fragment
+		| valuedI16Fragment
+		| valuedI32Fragment
+		| valuedI64Fragment
 	);
-valuedBoolFragment:
-	(COLON WS* KW_BOOL)? WS* EQ WS* literal = boolLiteral;
-valuedCharFragment:
-	(COLON WS* KW_CHAR)? WS* EQ WS* literal = charLiteral;
-
+valuedBoolFragment: (COLON WS* KW_BOOL)? WS* EQ WS* boolLiteral;
+valuedCharFragment: (COLON WS* KW_CHAR)? WS* EQ WS* charLiteral;
 valuedStringFragment:
-	(COLON WS* KW_STRING)? WS* EQ WS* literal = stringLiteral;
-
+	(COLON WS* KW_STRING)? WS* EQ WS* stringLiteral;
 valuedF32Fragment: (
-		COLON WS* KW_F32 WS* EQ WS* literal = f32Literal 'f32'?
+		COLON WS* KW_F32 WS* EQ WS* f32Literal 'f32'?
 	)
-	| (EQ WS* literal = f32Literal 'f32'?);
+	| (EQ WS* f32Literal 'f32'?);
 valuedF64Fragment: (
-		COLON WS* KW_F64 WS* EQ WS* literal = f64Literal 'f64'?
+		COLON WS* KW_F64 WS* EQ WS* f64Literal 'f64'?
 	)
-	| (EQ WS* literal = f64Literal 'f64');
-valuedU8Fragment: (
-		COLON WS* KW_U8 WS* EQ WS* literal = u8Literal 'u8'?
-	)
-	| (EQ WS* literal = u8Literal 'u8');
+	| (EQ WS* f64Literal 'f64');
+valuedU8Fragment: (COLON WS* KW_U8 WS* EQ WS* u8Literal 'u8'?)
+	| (EQ WS* u8Literal 'u8');
 valuedU16Fragment: (
-		COLON WS* KW_U16 WS* EQ WS* literal = u16Literal 'u16'?
+		COLON WS* KW_U16 WS* EQ WS* u16Literal 'u16'?
 	)
-	| (EQ WS* literal = u16Literal 'u16');
+	| (EQ WS* u16Literal 'u16');
 valuedU32Fragment: (
-		COLON WS* KW_U32 WS* EQ WS* literal = u32Literal 'u32'?
+		COLON WS* KW_U32 WS* EQ WS* u32Literal 'u32'?
 	)
-	| (EQ WS* literal = u32Literal 'u32');
+	| (EQ WS* u32Literal 'u32');
 valuedU64Fragment: (
-		COLON WS* KW_U64 WS* EQ WS* literal = u64Literal 'u64'?
+		COLON WS* KW_U64 WS* EQ WS* u64Literal 'u64'?
 	)
-	| (EQ WS* literal = u64Literal 'u64');
-valuedI8Fragment: (
-		COLON WS* KW_I8 WS* EQ WS* literal = i8Literal 'i8'?
-	)
-	| (EQ WS* literal = i8Literal 'i8');
+	| (EQ WS* u64Literal 'u64');
+valuedI8Fragment: (COLON WS* KW_I8 WS* EQ WS* i8Literal 'i8'?)
+	| (EQ WS* i8Literal 'i8');
 valuedI16Fragment: (
-		COLON WS* KW_I16 WS* EQ WS* literal = i16Literal 'i16'?
+		COLON WS* KW_I16 WS* EQ WS* i16Literal 'i16'?
 	)
-	| (EQ WS* literal = i16Literal 'i16');
+	| (EQ WS* i16Literal 'i16');
 valuedI32Fragment: (
-		COLON WS* KW_I32 WS* EQ WS* literal = i32Literal 'i32'?
+		COLON WS* KW_I32 WS* EQ WS* i32Literal 'i32'?
 	)
-	| (EQ WS* literal = i32Literal 'i32'?);
+	| (EQ WS* i32Literal 'i32'?);
 valuedI64Fragment: (
-		COLON WS* KW_I64 WS* EQ WS* literal = i64Literal 'i64'?
+		COLON WS* KW_I64 WS* EQ WS* i64Literal 'i64'?
 	)
-	| (EQ WS* literal = i64Literal 'i64');
+	| (EQ WS* i64Literal 'i64');
 
 typedefVersionDeclaration
 	returns[std::shared_ptr<std::string> version]:

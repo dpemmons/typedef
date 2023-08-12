@@ -30,6 +30,9 @@ public:
   virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
   virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
 
+  virtual void enterMember(TypedefParser::MemberContext *ctx) = 0;
+  virtual void exitMember(TypedefParser::MemberContext *ctx) = 0;
+
   virtual void enterVariantDeclaration(TypedefParser::VariantDeclarationContext *ctx) = 0;
   virtual void exitVariantDeclaration(TypedefParser::VariantDeclarationContext *ctx) = 0;
 
@@ -60,20 +63,8 @@ public:
   virtual void enterMaybeValuedType(TypedefParser::MaybeValuedTypeContext *ctx) = 0;
   virtual void exitMaybeValuedType(TypedefParser::MaybeValuedTypeContext *ctx) = 0;
 
-  virtual void enterValuedType(TypedefParser::ValuedTypeContext *ctx) = 0;
-  virtual void exitValuedType(TypedefParser::ValuedTypeContext *ctx) = 0;
-
-  virtual void enterUnvaluedType(TypedefParser::UnvaluedTypeContext *ctx) = 0;
-  virtual void exitUnvaluedType(TypedefParser::UnvaluedTypeContext *ctx) = 0;
-
-  virtual void enterSymbolReference(TypedefParser::SymbolReferenceContext *ctx) = 0;
-  virtual void exitSymbolReference(TypedefParser::SymbolReferenceContext *ctx) = 0;
-
   virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
   virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) = 0;
-
-  virtual void enterValuedTemplateStringType(TypedefParser::ValuedTemplateStringTypeContext *ctx) = 0;
-  virtual void exitValuedTemplateStringType(TypedefParser::ValuedTemplateStringTypeContext *ctx) = 0;
 
   virtual void enterValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext *ctx) = 0;
   virtual void exitValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext *ctx) = 0;

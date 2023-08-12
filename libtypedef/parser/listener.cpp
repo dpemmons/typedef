@@ -5,6 +5,7 @@
 
 #include "libtypedef/parser/parser_helpers.h"
 #include "libtypedef/parser/symbol_path.h"
+#include "libtypedef/parser/table.h"
 
 using namespace std;
 
@@ -194,40 +195,133 @@ char32_t GetCharValue(TypedefParser::CharLiteralContext* ctx) {
                   "Invalid char literal", ctx->CHAR_LITERAL()->getSymbol());
 }
 
+void Listener::exitStructDeclaration(
+    TypedefParser::StructDeclarationContext* ctx) {}
+
+void Listener::exitVariantDeclaration(
+    TypedefParser::VariantDeclarationContext* ctx) {
+  ctx->var = make_shared<td::table2::Variant>();
+  ctx->var->identifier = ctx->identifier()->id;
+  for (TypedefParser::MemberContext* mctx : ctx->member()) {
+    td::table2::StructMember member;
+    if (mctx->maybeValuedSymbol()) {
+    } else if (mctx->structDeclaration()) {
+      member.member_type = td::table2::Type::TYPE_STRUCT;
+      member.st = mctx->structDeclaration()->st;
+    } else if (mctx->variantDeclaration()) {
+      member.member_type = td::table2::Type::TYPE_VARIANT;
+      member.var = mctx->variantDeclaration()->var;
+    } else if (mctx->vectorDeclaration()) {
+      member.member_type = td::table2::Type::TYPE_VECTOR;
+      member.vec = mctx->vectorDeclaration()->vec;
+    } else if (mctx->mapDeclaration()) {
+      member.member_type = td::table2::Type::TYPE_MAP;
+      member.map = mctx->mapDeclaration()->map;
+    }
+    ctx->var->members.push_back(member);
+  }
+}
+
+void Listener::exitVectorDeclaration(
+    TypedefParser::VectorDeclarationContext* ctx) {
+  ctx->vec = make_shared<td::table2::Vector>();
+  ctx->vec->identifier = ctx->identifier()->id;
+  if (ctx->primitiveType()) {
+    ctx->vec->value_type =
+        (td::table2::Type)ctx->primitiveType()->primitive_type;
+  } else {
+    throw "Invalid state.";
+  }
+}
+
+void Listener::exitMapDeclaration(TypedefParser::MapDeclarationContext* ctx) {
+  ctx->map = make_shared<td::table2::Map>();
+  ctx->map->identifier = ctx->identifier()->id;
+  ctx->map->key_type = ctx->key->primitive_type;
+  // TODO
+}
+
+void Listener::exitMaybeValuedType(TypedefParser::MaybeValuedTypeContext* ctx) {
+  // TODO
+}
+
 void Listener::exitPrimitiveType(TypedefParser::PrimitiveTypeContext* ctx) {
   if (ctx->KW_BOOL() != nullptr) {
-    ctx->primitive_type = td::PrimitiveType::PRIMITIVE_TYPE_BOOL;
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_BOOL;
   } else if (ctx->KW_CHAR() != nullptr) {
-    ctx->primitive_type = td::PrimitiveType::PRIMITIVE_TYPE_CHAR;
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_CHAR;
   } else if (ctx->KW_STRING() != nullptr) {
-    ctx->primitive_type = td::PrimitiveType::PRIMITIVE_TYPE_STRING;
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_STRING;
   } else if (ctx->KW_F32() != nullptr) {
-    ctx->primitive_type = td::PrimitiveType::PRIMITIVE_TYPE_F32;
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_F32;
   } else if (ctx->KW_F64() != nullptr) {
-    ctx->primitive_type = td::PrimitiveType::PRIMITIVE_TYPE_F64;
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_F64;
   } else if (ctx->KW_U8() != nullptr) {
-    ctx->primitive_type = td::PrimitiveType::PRIMITIVE_TYPE_U8;
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_U8;
   } else if (ctx->KW_U16() != nullptr) {
-    ctx->primitive_type = td::PrimitiveType::PRIMITIVE_TYPE_U16;
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_U16;
   } else if (ctx->KW_U32() != nullptr) {
-    ctx->primitive_type = td::PrimitiveType::PRIMITIVE_TYPE_U32;
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_U32;
   } else if (ctx->KW_U64() != nullptr) {
-    ctx->primitive_type = td::PrimitiveType::PRIMITIVE_TYPE_U64;
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_U64;
   } else if (ctx->KW_I8() != nullptr) {
-    ctx->primitive_type = td::PrimitiveType::PRIMITIVE_TYPE_I8;
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_I8;
   } else if (ctx->KW_I16() != nullptr) {
-    ctx->primitive_type = td::PrimitiveType::PRIMITIVE_TYPE_I16;
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_I16;
   } else if (ctx->KW_I32() != nullptr) {
-    ctx->primitive_type = td::PrimitiveType::PRIMITIVE_TYPE_I32;
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_I32;
   } else if (ctx->KW_I64() != nullptr) {
-    ctx->primitive_type = td::PrimitiveType::PRIMITIVE_TYPE_I64;
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_I64;
   } else {
     throw "Invalid state.";
   }
 }
 
 void Listener::exitValuedPrimitiveType(
-    TypedefParser::ValuedPrimitiveTypeContext* ctx) {}
+    TypedefParser::ValuedPrimitiveTypeContext* ctx) {
+  if (ctx->valuedBoolFragment() != nullptr) {
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_BOOL;
+    ctx->value = *ctx->valuedBoolFragment()->boolLiteral()->maybe_val;
+  } else if (ctx->valuedCharFragment() != nullptr) {
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_CHAR;
+    ctx->value = *ctx->valuedCharFragment()->charLiteral()->maybe_val;
+  } else if (ctx->valuedStringFragment() != nullptr) {
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_STRING;
+    ctx->value = *ctx->valuedStringFragment()->stringLiteral()->str;
+  } else if (ctx->valuedF32Fragment() != nullptr) {
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_F32;
+    ctx->value = *ctx->valuedF32Fragment()->f32Literal()->maybe_val;
+  } else if (ctx->valuedF64Fragment() != nullptr) {
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_F64;
+    ctx->value = *ctx->valuedF64Fragment()->f64Literal()->maybe_val;
+  } else if (ctx->valuedU8Fragment() != nullptr) {
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_U8;
+    ctx->value = *ctx->valuedU8Fragment()->u8Literal()->maybe_val;
+  } else if (ctx->valuedU16Fragment() != nullptr) {
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_U16;
+    ctx->value = *ctx->valuedU16Fragment()->u16Literal()->maybe_val;
+  } else if (ctx->valuedU32Fragment() != nullptr) {
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_U32;
+    ctx->value = *ctx->valuedU32Fragment()->u32Literal()->maybe_val;
+  } else if (ctx->valuedU64Fragment() != nullptr) {
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_U64;
+    ctx->value = *ctx->valuedU64Fragment()->u64Literal()->maybe_val;
+  } else if (ctx->valuedI8Fragment() != nullptr) {
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_I8;
+    ctx->value = *ctx->valuedI8Fragment()->i8Literal()->maybe_val;
+  } else if (ctx->valuedI16Fragment() != nullptr) {
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_I16;
+    ctx->value = *ctx->valuedI16Fragment()->i16Literal()->maybe_val;
+  } else if (ctx->valuedI32Fragment() != nullptr) {
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_I32;
+    ctx->value = *ctx->valuedI32Fragment()->i32Literal()->maybe_val;
+  } else if (ctx->valuedI64Fragment() != nullptr) {
+    ctx->primitive_type = td::table2::PrimitiveType::PRIMITIVE_TYPE_I64;
+    ctx->value = *ctx->valuedI64Fragment()->i64Literal()->maybe_val;
+  } else {
+    throw "Invalid state.";
+  }
+}
 
 void Listener::exitSimplePath(TypedefParser::SimplePathContext* ctx) {
   ctx->path = make_shared<td::SymbolPath>(ctx->leading_pathsep != nullptr);

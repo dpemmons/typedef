@@ -31,6 +31,8 @@ public:
 
     virtual antlrcpp::Any visitStructDeclaration(TypedefParser::StructDeclarationContext *context) = 0;
 
+    virtual antlrcpp::Any visitMember(TypedefParser::MemberContext *context) = 0;
+
     virtual antlrcpp::Any visitVariantDeclaration(TypedefParser::VariantDeclarationContext *context) = 0;
 
     virtual antlrcpp::Any visitVectorDeclaration(TypedefParser::VectorDeclarationContext *context) = 0;
@@ -51,15 +53,7 @@ public:
 
     virtual antlrcpp::Any visitMaybeValuedType(TypedefParser::MaybeValuedTypeContext *context) = 0;
 
-    virtual antlrcpp::Any visitValuedType(TypedefParser::ValuedTypeContext *context) = 0;
-
-    virtual antlrcpp::Any visitUnvaluedType(TypedefParser::UnvaluedTypeContext *context) = 0;
-
-    virtual antlrcpp::Any visitSymbolReference(TypedefParser::SymbolReferenceContext *context) = 0;
-
     virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *context) = 0;
-
-    virtual antlrcpp::Any visitValuedTemplateStringType(TypedefParser::ValuedTemplateStringTypeContext *context) = 0;
 
     virtual antlrcpp::Any visitValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext *context) = 0;
 

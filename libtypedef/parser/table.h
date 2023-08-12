@@ -11,6 +11,72 @@ namespace table2 {
 
 using namespace std;
 
+enum PrimitiveType {
+  PRIMITIVE_TYPE_UNKNOWN = 0,
+  PRIMITIVE_TYPE_BOOL,
+  PRIMITIVE_TYPE_CHAR,
+  PRIMITIVE_TYPE_STRING,
+  PRIMITIVE_TYPE_F32,
+  PRIMITIVE_TYPE_F64,
+  PRIMITIVE_TYPE_U8,
+  PRIMITIVE_TYPE_U16,
+  PRIMITIVE_TYPE_U32,
+  PRIMITIVE_TYPE_U64,
+  PRIMITIVE_TYPE_I8,
+  PRIMITIVE_TYPE_I16,
+  PRIMITIVE_TYPE_I32,
+  PRIMITIVE_TYPE_I64
+};
+
+typedef variant<bool, char32_t, string, float, double, int8_t, int16_t, int32_t,
+                int64_t, uint8_t, uint16_t, uint32_t, uint64_t>
+    PrimitiveValue;
+
+enum NonPrimitiveType {
+  NONPRIMITIVE_TYPE_UNKNOWN = 0,
+  NONPRIMITIVE_TYPE_STRUCT,
+  NONPRIMITIVE_TYPE_VARIANT,
+  NONPRIMITIVE_TYPE_VECTOR,
+  NONPRIMITIVE_TYPE_MAP
+};
+
+enum Type {
+  TYPE_UNKNOWN = PRIMITIVE_TYPE_UNKNOWN,
+  TYPE_BOOL = PRIMITIVE_TYPE_BOOL,
+  TYPE_CHAR = PRIMITIVE_TYPE_CHAR,
+  TYPE_STRING = PRIMITIVE_TYPE_STRING,
+  TYPE_F32 = PRIMITIVE_TYPE_F32,
+  TYPE_F64 = PRIMITIVE_TYPE_F64,
+  TYPE_I8 = PRIMITIVE_TYPE_U8,
+  TYPE_I16 = PRIMITIVE_TYPE_U16,
+  TYPE_I32 = PRIMITIVE_TYPE_U32,
+  TYPE_I64 = PRIMITIVE_TYPE_U64,
+  TYPE_U8 = PRIMITIVE_TYPE_I8,
+  TYPE_U16 = PRIMITIVE_TYPE_I16,
+  TYPE_U32 = PRIMITIVE_TYPE_I32,
+  TYPE_U64 = PRIMITIVE_TYPE_I64,
+  TYPE_STRUCT = NONPRIMITIVE_TYPE_STRUCT,
+  TYPE_VARIANT = NONPRIMITIVE_TYPE_VARIANT,
+  TYPE_VECTOR = NONPRIMITIVE_TYPE_VECTOR,
+  TYPE_MAP = NONPRIMITIVE_TYPE_MAP,
+};
+
+typedef std::variant<bool,      // bool
+                     char32_t,  // char
+                     string,    // str
+                     float,     // f32
+                     double,    // f64
+                     int8_t,    // i8
+                     int16_t,   // i16
+                     int32_t,   // i32
+                     int64_t,   // i64
+                     uint8_t,   // u8
+                     uint16_t,  // u16
+                     uint32_t,  // u32
+                     uint64_t   // u64
+                     >
+    PrimitiveValue;
+
 struct Struct;
 struct Variant;
 struct Vector;
@@ -22,8 +88,7 @@ struct Module {
   struct Member {
     shared_ptr<string> symbol;
 
-    enum Type { UNKNOWN, STRUCT, VARIANT, VECTOR, MAP } member_type = UNKNOWN;
-
+    NonPrimitiveType member_type = NONPRIMITIVE_TYPE_UNKNOWN;
     shared_ptr<Struct> st;
     shared_ptr<Variant> var;
     shared_ptr<Vector> vec;
@@ -33,77 +98,38 @@ struct Module {
   vector<Member> members;
 };
 
+struct StructMember {
+  shared_ptr<string> identifier;
+
+  Type member_type = TYPE_UNKNOWN;
+
+  // May be any of the following:
+  PrimitiveValue prim;
+  shared_ptr<Struct> st;
+  shared_ptr<Variant> var;
+  shared_ptr<Vector> vec;
+  shared_ptr<Map> map;
+};
+
 struct Struct {
   // If empty, it's an anonymous struct.
   shared_ptr<string> identifier;
+  vector<StructMember> members;
+};
 
-  struct Member {
-    shared_ptr<string> identifier;
-
-    enum Type {
-      UNKNOWN,
-      BOOL,
-      CHAR,
-      STRING,
-      F32,
-      F64,
-      I8,
-      I16,
-      I32,
-      I64,
-      U8,
-      U16,
-      U32,
-      U64,
-      STRUCT,
-      VARIANT,
-      VECTOR,
-      MAP
-    } member_type = UNKNOWN;
-    variant<bool, char32_t, string, float, double, int8_t, int16_t, int32_t,
-            int64_t, uint8_t, uint16_t, uint32_t, uint64_t>
-        simple;
-
-    // May be any of the following:
-    shared_ptr<Struct> st;
-    shared_ptr<Variant> var;
-    shared_ptr<Vector> vec;
-    shared_ptr<Map> map;
-  };
-
-  vector<Member> members;
+struct Variant {
+  // If empty, it's an anonymous struct.
+  shared_ptr<string> identifier;
+  vector<StructMember> members;
 };
 
 struct Vector {
   // If empty, it's an anonymous struct.
   shared_ptr<string> identifier;
 
-  enum Type {
-    UNKNOWN,
-    BOOL,
-    CHAR,
-    STRING,
-    F32,
-    F64,
-    I8,
-    I16,
-    I32,
-    I64,
-    U8,
-    U16,
-    U32,
-    U64,
-    STRUCT,
-    VARIANT,
-    VECTOR,
-    MAP
-  } value_type = UNKNOWN;
+  Type value_type = TYPE_UNKNOWN;
 
-  variant<bool, char32_t, string, float, double, int8_t, int16_t, int32_t,
-          int64_t, uint8_t, uint16_t, uint32_t, uint64_t>
-      simple_val;
-
-  // May be any of the following:
+  // If non-primitive, then may be any of the following:
   shared_ptr<Struct> st_val;
   shared_ptr<Variant> var_val;
   shared_ptr<Vector> vec_val;
@@ -114,49 +140,10 @@ struct Map {
   // If empty, it's an anonymous struct.
   shared_ptr<string> identifier;
 
-  enum KeyType {
-    KT_UNKNOWN,
-    KT_BOOL,
-    KT_CHAR,
-    KT_STRING,
-    KT_F32,
-    KT_F64,
-    KT_I8,
-    KT_I16,
-    KT_I32,
-    KT_I64,
-    KT_U8,
-    KT_U16,
-    KT_U32,
-    KT_U64
-  } key_type = KT_UNKNOWN;
-  variant<bool, char32_t, string, float, double, int8_t, int16_t, int32_t,
-          int64_t, uint8_t, uint16_t, uint32_t, uint64_t>
-      simple_key;
+  PrimitiveType key_type = PrimitiveType::PRIMITIVE_TYPE_UNKNOWN;
 
-  enum ValType {
-    VT_UNKNOWN,
-    VT_BOOL,
-    VT_CHAR,
-    VT_STRING,
-    VT_F32,
-    VT_F64,
-    VT_I8,
-    VT_I16,
-    VT_I32,
-    VT_I64,
-    VT_U8,
-    VT_U16,
-    VT_U32,
-    VT_U64,
-    VT_STRUCT,
-    VT_VARIANT,
-    VT_VECTOR,
-    VT_MAP
-  } value_type = VT_UNKNOWN;
-  variant<bool, char32_t, string, float, double, int8_t, int16_t, int32_t,
-          int64_t, uint8_t, uint16_t, uint32_t, uint64_t>
-      simple_val;
+  Type value_type = TYPE_UNKNOWN;
+  // If non-primitive, then may be any of the following:
   shared_ptr<Struct> st_val;
   shared_ptr<Variant> var_val;
   shared_ptr<Vector> vec_val;

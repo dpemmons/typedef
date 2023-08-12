@@ -17,6 +17,18 @@ class Listener : public TypedefParserBaseListener {
   Listener(std::vector<td::ParserErrorInfo> &errors_list)
       : errors_list_(errors_list) {}
 
+  virtual void exitStructDeclaration(
+      TypedefParser::StructDeclarationContext *ctx) override;
+  virtual void exitVariantDeclaration(
+      TypedefParser::VariantDeclarationContext *ctx) override;
+  virtual void exitVectorDeclaration(
+      TypedefParser::VectorDeclarationContext *ctx) override;
+  virtual void exitMapDeclaration(
+      TypedefParser::MapDeclarationContext *ctx) override;
+
+  virtual void exitMaybeValuedType(
+      TypedefParser::MaybeValuedTypeContext *ctx) override;
+
   virtual void exitPrimitiveType(
       TypedefParser::PrimitiveTypeContext *ctx) override;
 
