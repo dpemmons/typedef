@@ -82,11 +82,8 @@ struct Struct;
 struct Variant;
 struct Vector;
 struct Map;
-
-struct Module {
-  shared_ptr<string> name;
-  vector<shared_ptr<TypeDeclaration>> types;
-};
+struct TypeDeclaration;
+struct FieldDeclaration;
 
 struct StructMember {
   // One of the following:
@@ -116,22 +113,20 @@ struct FieldDeclaration {
   shared_ptr<Map> map;
 };
 
-struct Struct {
+struct NonPrimitive {
   // If empty, it's an anonymous struct.
   shared_ptr<string> identifier;
+};
+
+struct Struct : public NonPrimitive {
   vector<shared_ptr<StructMember>> members;
 };
 
-struct Variant {
-  // If empty, it's an anonymous struct.
-  shared_ptr<string> identifier;
+struct Variant : public NonPrimitive {
   vector<shared_ptr<StructMember>> members;
 };
 
-struct Vector {
-  // If empty, it's an anonymous struct.
-  shared_ptr<string> identifier;
-
+struct Vector : public NonPrimitive {
   Type value_type = TYPE_UNKNOWN;
 
   // If non-primitive, then may be any of the following:
@@ -141,10 +136,7 @@ struct Vector {
   shared_ptr<Map> map_val;
 };
 
-struct Map {
-  // If empty, it's an anonymous struct.
-  shared_ptr<string> identifier;
-
+struct Map : public NonPrimitive {
   PrimitiveType key_type = PrimitiveType::PRIMITIVE_TYPE_UNKNOWN;
 
   Type value_type = TYPE_UNKNOWN;
@@ -153,6 +145,26 @@ struct Map {
   shared_ptr<Variant> var_val;
   shared_ptr<Vector> vec_val;
   shared_ptr<Map> map_val;
+};
+
+struct Module {
+  shared_ptr<string> name;
+  vector<shared_ptr<TypeDeclaration>> types;
+
+  shared_ptr<TypeDeclaration> Get(const string& identifier) {
+    for (auto t : types) {
+      if (t->st && *t->st->identifier == identifier) {
+        return t;
+      } else if (t->var && *t->var->identifier == identifier) {
+        return t;
+      } else if (t->vec && *t->vec->identifier == identifier) {
+        return t;
+      } else if (t->map && *t->map->identifier == identifier) {
+        return t;
+      }
+    }
+    return nullptr;
+  }
 };
 
 }  // namespace table

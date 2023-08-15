@@ -359,7 +359,7 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
       return "UNRESOLVED_SYMBOL_REFERENCE";
     default:
       throw fmt::format("Unhandled error ID in ErrorTypeToString(): {}",
-                        error_type);
+                        (int)error_type);
   }
 }
 

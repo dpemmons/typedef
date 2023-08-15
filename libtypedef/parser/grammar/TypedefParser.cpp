@@ -1,4 +1,5 @@
 
+#include "libtypedef/parser/symbol_path.h"
 #include "libtypedef/parser/table.h"
 
 
@@ -39,7 +40,6 @@ dfa::Vocabulary& TypedefParser::getVocabulary() const {
 #include <memory>
 #include <optional>
 #include <string>
-#include "libtypedef/parser/symbol_path.h"
 
 
 //----------------- CompilationUnitContext ------------------------------------------------------------------

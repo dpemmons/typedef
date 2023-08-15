@@ -12,9 +12,9 @@
 #include "libtypedef/parser/grammar/TypedefParserBaseListener.h"
 #include "libtypedef/parser/parser_error_info.h"
 
-class Listener : public TypedefParserBaseListener {
+class FirstPassListener : public TypedefParserBaseListener {
  public:
-  Listener(std::vector<td::ParserErrorInfo> &errors_list)
+  FirstPassListener(std::vector<td::ParserErrorInfo> &errors_list)
       : errors_list_(errors_list) {}
 
   virtual void exitCompilationUnit(

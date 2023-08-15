@@ -1,5 +1,6 @@
 // Generated from /home/dpemmons/src/typedef/libtypedef/parser/grammar/TypedefParser.g4 by ANTLR 4.9.2
 
+#include "libtypedef/parser/symbol_path.h"
 #include "libtypedef/parser/table.h"
 
 import org.antlr.v4.runtime.atn.*;

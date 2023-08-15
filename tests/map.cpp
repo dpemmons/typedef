@@ -15,16 +15,16 @@ namespace {
 const std::vector<td::ParserErrorInfo> empty_errors;
 }  // namespace
 
-template <typename T>
-void AssertType(std::shared_ptr<td::ParsedFile> parsed_file, string name) {
-  optional<td::SymbolTable::Value> some_map_val =
-      parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier(name));
-  REQUIRE(some_map_val);
-  REQUIRE(holds_alternative<shared_ptr<td::Map>>(*some_map_val));
-  auto s = get<shared_ptr<td::Map>>(*some_map_val);
-  REQUIRE(holds_alternative<optional<T>>(s->key_type));
-  REQUIRE(holds_alternative<optional<string>>(s->value_type));
-}
+// template <typename T>
+// void AssertType(std::shared_ptr<td::ParsedFile> parsed_file, string name) {
+//   optional<td::SymbolTable::Value> some_map_val =
+//       parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier(name));
+//   REQUIRE(some_map_val);
+//   REQUIRE(holds_alternative<shared_ptr<td::Map>>(*some_map_val));
+//   auto s = get<shared_ptr<td::Map>>(*some_map_val);
+//   REQUIRE(holds_alternative<optional<T>>(s->key_type));
+//   REQUIRE(holds_alternative<optional<string>>(s->value_type));
+// }
 
 TEST_CASE("Map with various scalar key types", "[symref]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
@@ -47,19 +47,19 @@ map SomeStrMap<str, str>;
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  AssertType<bool>(parsed_file, "SomeBoolMap");
-  AssertType<char32_t>(parsed_file, "SomeCharMap");
-  AssertType<float>(parsed_file, "SomeF32Map");
-  AssertType<double>(parsed_file, "SomeF64Map");
-  AssertType<uint8_t>(parsed_file, "SomeU8Map");
-  AssertType<uint16_t>(parsed_file, "SomeU16Map");
-  AssertType<uint32_t>(parsed_file, "SomeU32Map");
-  AssertType<uint64_t>(parsed_file, "SomeU64Map");
-  AssertType<int8_t>(parsed_file, "SomeI8Map");
-  AssertType<int16_t>(parsed_file, "SomeI16Map");
-  AssertType<int32_t>(parsed_file, "SomeI32Map");
-  AssertType<int64_t>(parsed_file, "SomeI64Map");
-  AssertType<string>(parsed_file, "SomeStrMap");
+  // AssertType<bool>(parsed_file, "SomeBoolMap");
+  // AssertType<char32_t>(parsed_file, "SomeCharMap");
+  // AssertType<float>(parsed_file, "SomeF32Map");
+  // AssertType<double>(parsed_file, "SomeF64Map");
+  // AssertType<uint8_t>(parsed_file, "SomeU8Map");
+  // AssertType<uint16_t>(parsed_file, "SomeU16Map");
+  // AssertType<uint32_t>(parsed_file, "SomeU32Map");
+  // AssertType<uint64_t>(parsed_file, "SomeU64Map");
+  // AssertType<int8_t>(parsed_file, "SomeI8Map");
+  // AssertType<int16_t>(parsed_file, "SomeI16Map");
+  // AssertType<int32_t>(parsed_file, "SomeI32Map");
+  // AssertType<int64_t>(parsed_file, "SomeI64Map");
+  // AssertType<string>(parsed_file, "SomeStrMap");
 }
 
 TEST_CASE("Map with a struct key type should error", "[symref]") {

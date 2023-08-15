@@ -13,6 +13,7 @@ namespace td {
 struct ParsedFile {
   std::string langauge_version;
   std::vector<ParserErrorInfo> errors;
+  bool HasErrors() const { return errors.size() > 0; }
   std::shared_ptr<td::table::Module> mod;
 };
 

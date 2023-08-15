@@ -1,4 +1,5 @@
 
+#include "libtypedef/parser/symbol_path.h"
 #include "libtypedef/parser/table.h"
 
 

@@ -1,9 +1,8 @@
-#include "listener.h"
+#include "first_pass.h"
 
 #include <charconv>
 #include <memory>
 
-#include "libtypedef/parser/parser_helpers.h"
 #include "libtypedef/parser/symbol_path.h"
 #include "libtypedef/parser/table.h"
 
@@ -21,7 +20,8 @@ td::ParserErrorInfo MakeError(td::ParserErrorInfo::Type type, const string& msg,
       .build();
 }
 
-void Listener::exitCompilationUnit(TypedefParser::CompilationUnitContext* ctx) {
+void FirstPassListener::exitCompilationUnit(
+    TypedefParser::CompilationUnitContext* ctx) {
   ctx->version = ctx->typedefVersionDeclaration()->version;
   ctx->mod = make_shared<td::table::Module>();
   for (TypedefParser::TypeDeclarationContext* td : ctx->typeDeclaration()) {
@@ -29,7 +29,7 @@ void Listener::exitCompilationUnit(TypedefParser::CompilationUnitContext* ctx) {
   }
 }
 
-void Listener::exitStructDeclaration(
+void FirstPassListener::exitStructDeclaration(
     TypedefParser::StructDeclarationContext* ctx) {
   ctx->st = make_shared<td::table::Struct>();
   ctx->st->identifier = ctx->identifier()->id;
@@ -38,7 +38,7 @@ void Listener::exitStructDeclaration(
   }
 }
 
-void Listener::exitVariantDeclaration(
+void FirstPassListener::exitVariantDeclaration(
     TypedefParser::VariantDeclarationContext* ctx) {
   ctx->var = make_shared<td::table::Variant>();
   ctx->var->identifier = ctx->identifier()->id;
@@ -47,7 +47,7 @@ void Listener::exitVariantDeclaration(
   }
 }
 
-void Listener::exitVectorDeclaration(
+void FirstPassListener::exitVectorDeclaration(
     TypedefParser::VectorDeclarationContext* ctx) {
   ctx->vec = make_shared<td::table::Vector>();
   ctx->vec->identifier = ctx->identifier()->id;
@@ -56,7 +56,8 @@ void Listener::exitVectorDeclaration(
   // TODO: handle non-primitive value types.
 }
 
-void Listener::exitMapDeclaration(TypedefParser::MapDeclarationContext* ctx) {
+void FirstPassListener::exitMapDeclaration(
+    TypedefParser::MapDeclarationContext* ctx) {
   ctx->map = make_shared<td::table::Map>();
   ctx->map->identifier = ctx->identifier()->id;
   ctx->map->key_type = ctx->key->primitive_type;
@@ -64,7 +65,8 @@ void Listener::exitMapDeclaration(TypedefParser::MapDeclarationContext* ctx) {
   // TODO: handle non-primitive value types.
 }
 
-void Listener::exitStructMember(TypedefParser::StructMemberContext* ctx) {
+void FirstPassListener::exitStructMember(
+    TypedefParser::StructMemberContext* ctx) {
   ctx->mem = make_shared<td::table::StructMember>();
   if (ctx->typeDeclaration()) {
     ctx->mem->type_decl = ctx->typeDeclaration()->type_decl;
@@ -75,7 +77,8 @@ void Listener::exitStructMember(TypedefParser::StructMemberContext* ctx) {
   }
 }
 
-void Listener::exitTypeDeclaration(TypedefParser::TypeDeclarationContext* ctx) {
+void FirstPassListener::exitTypeDeclaration(
+    TypedefParser::TypeDeclarationContext* ctx) {
   ctx->type_decl = make_shared<td::table::TypeDeclaration>();
   if (ctx->structDeclaration()) {
     ctx->type_decl->declaration_type =
@@ -98,7 +101,7 @@ void Listener::exitTypeDeclaration(TypedefParser::TypeDeclarationContext* ctx) {
   }
 }
 
-void Listener::exitFieldDeclaration(
+void FirstPassListener::exitFieldDeclaration(
     TypedefParser::FieldDeclarationContext* ctx) {
   if (ctx->primitiveMemberDeclaration()) {
     ctx->field_decl = ctx->primitiveMemberDeclaration()->field_decl;
@@ -115,7 +118,7 @@ void Listener::exitFieldDeclaration(
   }
 }
 
-void Listener::exitPrimitiveMemberDeclaration(
+void FirstPassListener::exitPrimitiveMemberDeclaration(
     TypedefParser::PrimitiveMemberDeclarationContext* ctx) {
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
   ctx->field_decl->identifier = ctx->identifier()->id;
@@ -126,7 +129,7 @@ void Listener::exitPrimitiveMemberDeclaration(
   }
 }
 
-void Listener::exitInlineStructDeclaration(
+void FirstPassListener::exitInlineStructDeclaration(
     TypedefParser::InlineStructDeclarationContext* ctx) {
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
   ctx->field_decl->identifier = ctx->identifier()->id;
@@ -135,7 +138,7 @@ void Listener::exitInlineStructDeclaration(
   // TODO: handle all field types.
 }
 
-void Listener::exitInlineVariantDeclaration(
+void FirstPassListener::exitInlineVariantDeclaration(
     TypedefParser::InlineVariantDeclarationContext* ctx) {
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
   ctx->field_decl->identifier = ctx->identifier()->id;
@@ -144,7 +147,7 @@ void Listener::exitInlineVariantDeclaration(
   // TODO: handle all field types.
 }
 
-void Listener::exitInlineVectorDeclaration(
+void FirstPassListener::exitInlineVectorDeclaration(
     TypedefParser::InlineVectorDeclarationContext* ctx) {
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
   ctx->field_decl->identifier = ctx->identifier()->id;
@@ -154,7 +157,7 @@ void Listener::exitInlineVectorDeclaration(
   // TODO: handle non-primitive value types.
 }
 
-void Listener::exitInlineMapDeclaration(
+void FirstPassListener::exitInlineMapDeclaration(
     TypedefParser::InlineMapDeclarationContext* ctx) {
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
   ctx->field_decl->identifier = ctx->identifier()->id;
@@ -165,14 +168,14 @@ void Listener::exitInlineMapDeclaration(
   // TODO: handle non-primitive value types.
 }
 
-void Listener::exitSimplePath(TypedefParser::SimplePathContext* ctx) {
+void FirstPassListener::exitSimplePath(TypedefParser::SimplePathContext* ctx) {
   ctx->path = make_shared<td::SymbolPath>(ctx->leading_pathsep != nullptr);
   for (const TypedefParser::IdentifierContext* i : ctx->identifier()) {
     ctx->path->emplace_back(i->id);
   }
 }
 
-void Listener::exitPrimitiveLiteral(
+void FirstPassListener::exitPrimitiveLiteral(
     TypedefParser::PrimitiveLiteralContext* ctx) {
   if (ctx->boolLiteral()) {
     ctx->val = ctx->boolLiteral()->val;
@@ -203,7 +206,8 @@ void Listener::exitPrimitiveLiteral(
   }
 }
 
-void Listener::exitBoolLiteral(TypedefParser::BoolLiteralContext* ctx) {
+void FirstPassListener::exitBoolLiteral(
+    TypedefParser::BoolLiteralContext* ctx) {
   if (ctx->start->getType() == TypedefParser::KW_FALSE) {
     ctx->val = false;
   } else if (ctx->start->getType() == TypedefParser::KW_TRUE) {
@@ -494,7 +498,8 @@ T GetFloatValue(CTX* ctx) {
 
 }  // namespace
 
-void Listener::exitCharLiteral(TypedefParser::CharLiteralContext* ctx) {
+void FirstPassListener::exitCharLiteral(
+    TypedefParser::CharLiteralContext* ctx) {
   try {
     ctx->val = GetCharValue(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -502,7 +507,7 @@ void Listener::exitCharLiteral(TypedefParser::CharLiteralContext* ctx) {
   }
 }
 
-void Listener::exitF32Literal(TypedefParser::F32LiteralContext* ctx) {
+void FirstPassListener::exitF32Literal(TypedefParser::F32LiteralContext* ctx) {
   try {
     ctx->val = GetFloatValue<float>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -510,7 +515,7 @@ void Listener::exitF32Literal(TypedefParser::F32LiteralContext* ctx) {
   }
 }
 
-void Listener::exitF64Literal(TypedefParser::F64LiteralContext* ctx) {
+void FirstPassListener::exitF64Literal(TypedefParser::F64LiteralContext* ctx) {
   try {
     ctx->val = GetFloatValue<double>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -518,7 +523,7 @@ void Listener::exitF64Literal(TypedefParser::F64LiteralContext* ctx) {
   }
 }
 
-void Listener::exitU8Literal(TypedefParser::U8LiteralContext* ctx) {
+void FirstPassListener::exitU8Literal(TypedefParser::U8LiteralContext* ctx) {
   try {
     ctx->val = GetIntValue<uint8_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -526,7 +531,7 @@ void Listener::exitU8Literal(TypedefParser::U8LiteralContext* ctx) {
   }
 }
 
-void Listener::exitU16Literal(TypedefParser::U16LiteralContext* ctx) {
+void FirstPassListener::exitU16Literal(TypedefParser::U16LiteralContext* ctx) {
   try {
     ctx->val = GetIntValue<uint16_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -534,7 +539,7 @@ void Listener::exitU16Literal(TypedefParser::U16LiteralContext* ctx) {
   }
 }
 
-void Listener::exitU32Literal(TypedefParser::U32LiteralContext* ctx) {
+void FirstPassListener::exitU32Literal(TypedefParser::U32LiteralContext* ctx) {
   try {
     ctx->val = GetIntValue<uint32_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -542,7 +547,7 @@ void Listener::exitU32Literal(TypedefParser::U32LiteralContext* ctx) {
   }
 }
 
-void Listener::exitU64Literal(TypedefParser::U64LiteralContext* ctx) {
+void FirstPassListener::exitU64Literal(TypedefParser::U64LiteralContext* ctx) {
   try {
     ctx->val = GetIntValue<uint64_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -550,7 +555,7 @@ void Listener::exitU64Literal(TypedefParser::U64LiteralContext* ctx) {
   }
 }
 
-void Listener::exitI8Literal(TypedefParser::I8LiteralContext* ctx) {
+void FirstPassListener::exitI8Literal(TypedefParser::I8LiteralContext* ctx) {
   try {
     ctx->val = GetIntValue<int8_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -558,7 +563,7 @@ void Listener::exitI8Literal(TypedefParser::I8LiteralContext* ctx) {
   }
 }
 
-void Listener::exitI16Literal(TypedefParser::I16LiteralContext* ctx) {
+void FirstPassListener::exitI16Literal(TypedefParser::I16LiteralContext* ctx) {
   try {
     ctx->val = GetIntValue<int16_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -566,7 +571,7 @@ void Listener::exitI16Literal(TypedefParser::I16LiteralContext* ctx) {
   }
 }
 
-void Listener::exitI32Literal(TypedefParser::I32LiteralContext* ctx) {
+void FirstPassListener::exitI32Literal(TypedefParser::I32LiteralContext* ctx) {
   try {
     ctx->val = GetIntValue<int32_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -574,7 +579,7 @@ void Listener::exitI32Literal(TypedefParser::I32LiteralContext* ctx) {
   }
 }
 
-void Listener::exitI64Literal(TypedefParser::I64LiteralContext* ctx) {
+void FirstPassListener::exitI64Literal(TypedefParser::I64LiteralContext* ctx) {
   try {
     ctx->val = GetIntValue<int64_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -582,7 +587,8 @@ void Listener::exitI64Literal(TypedefParser::I64LiteralContext* ctx) {
   }
 }
 
-void Listener::exitStringLiteral(TypedefParser::StringLiteralContext* ctx) {
+void FirstPassListener::exitStringLiteral(
+    TypedefParser::StringLiteralContext* ctx) {
   try {
     if (ctx->STRING_LITERAL()) {
       ctx->str = GetStringValue(ctx->STRING_LITERAL()->getSymbol());
@@ -594,13 +600,13 @@ void Listener::exitStringLiteral(TypedefParser::StringLiteralContext* ctx) {
   }
 }
 
-void Listener::exitIdentifier(TypedefParser::IdentifierContext* ctx) {
+void FirstPassListener::exitIdentifier(TypedefParser::IdentifierContext* ctx) {
   if (ctx->nki) {
     ctx->id = make_shared<string>(std::move(ctx->nki->getText()));
   }
 }
 
-void Listener::exitPrimitiveTypeIdentifier(
+void FirstPassListener::exitPrimitiveTypeIdentifier(
     TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
   if (ctx->KW_BOOL()) {
     ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_BOOL;

@@ -5,6 +5,7 @@ options {
 }
 
 @header {
+#include "libtypedef/parser/symbol_path.h"
 #include "libtypedef/parser/table.h"
 }
 
@@ -13,7 +14,6 @@ options {
 #include <memory>
 #include <optional>
 #include <string>
-#include "libtypedef/parser/symbol_path.h"
 }
 
 compilationUnit
