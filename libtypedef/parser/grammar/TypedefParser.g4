@@ -5,7 +5,6 @@ options {
 }
 
 @header {
-#include "libtypedef/parser/symbol_table.h"
 #include "libtypedef/parser/table.h"
 }
 
@@ -14,24 +13,50 @@ options {
 #include <memory>
 #include <optional>
 #include <string>
-#include "libtypedef/parser/parser_helpers.h"
 #include "libtypedef/parser/symbol_path.h"
 }
 
 compilationUnit
 	returns[
-		td::SymbolTable symbol_table,
-		std::string version,
-		std::filesystem::path module
+		std::shared_ptr<std::string> version,
+		std::shared_ptr<td::table::Module> mod
 	]:
 	WS* typedefVersionDeclaration WS* (moduleDeclaration)? (
 		WS* useDeclaration
 	)* (WS* typeDeclaration)* WS* EOF;
 
-maybeValuedSymbolDeclaration: maybeValuedSymbol WS* SEMI;
+// variant SomeVariant { optionA: i32; optionB: str; }
+structDeclaration
+	returns[std::shared_ptr<td::table::Struct> st]:
+	KW_STRUCT WS* identifier WS* LBRACE WS* (
+		structMember WS* SEMI WS*
+	)* WS* RBRACE;
+
+// variant SomeVariant { optionA: i32; optionB: str; }
+variantDeclaration
+	returns[std::shared_ptr<td::table::Variant> var]:
+	KW_VARIANT WS* identifier WS* LBRACE (
+		WS* structMember WS* SEMI WS*
+	)* RBRACE;
+
+// vector SomeVector<i32>
+vectorDeclaration
+	returns[std::shared_ptr<td::table::Vector> vec]:
+	KW_VECTOR WS* identifier WS* LT WS* val = primitiveTypeIdentifier WS* GT;
+
+// map SomeMap<str, StructA>
+mapDeclaration
+	returns[std::shared_ptr<td::table::Map> map]:
+	KW_MAP WS* identifier WS* LT WS* key = primitiveTypeIdentifier WS* COMMA WS* val =
+		primitiveTypeIdentifier WS* GT;
+
+structMember
+	returns[std::shared_ptr<td::table::StructMember> mem]:
+	typeDeclaration
+	| fieldDeclaration;
 
 typeDeclaration
-	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]:
+	returns[std::shared_ptr<td::table::TypeDeclaration> type_decl]:
 	(
 		structDeclaration
 		| variantDeclaration
@@ -39,192 +64,50 @@ typeDeclaration
 		| mapDeclaration
 	) WS* SEMI;
 
-// variant SomeVariant { optionA: i32; optionB: str; }
-structDeclaration
-	returns[std::shared_ptr<td::table2::Struct> st]:
-	KW_STRUCT WS* identifier WS* LBRACE WS* (member WS* SEMI WS*)* WS* RBRACE;
+fieldDeclaration
+	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
+	primitiveMemberDeclaration
+	| inlineStructDeclaration
+	| inlineVariantDeclaration
+	| inlineVectorDeclaration
+	| inlineMapDeclaration;
 
-member:
-	maybeValuedSymbol
-	| structDeclaration
-	| variantDeclaration
-	| vectorDeclaration
-	| mapDeclaration;
-
-// variant SomeVariant { optionA: i32; optionB: str; }
-variantDeclaration
-	returns[std::shared_ptr<td::table2::Variant> var]:
-	KW_VARIANT WS* identifier WS* LBRACE (
-		WS* member WS* SEMI WS*
-	)* RBRACE;
-
-// vector SomeVector<i32>
-vectorDeclaration
-	returns[std::shared_ptr<td::table2::Vector> vec]:
-	KW_VECTOR WS* identifier WS* LT WS* val = primitiveType WS* GT;
-
-// map SomeMap<str, StructA>
-mapDeclaration
-	returns[std::shared_ptr<td::table2::Map> map]:
-	KW_MAP WS* identifier WS* LT WS* key = primitiveType WS* COMMA WS* val = primitiveType WS* GT;
-
-// ValA: i32 = 42;
-maybeValuedSymbol: (identifier WS* maybeValuedType)
-	| unvaluedSymbol;
-
-// ValA: i32;
-unvaluedSymbol:
-	inlineStruct
-	| inlineVariant
-	| inlineVector
-	| inlineMap
-	| (identifier WS* COLON WS* primitiveType);
-
-inlineStruct
-	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]
-	locals[std::shared_ptr<td::Struct> s]
-	@init {
-		$s = std::make_shared<td::Struct>();
-	}:
-	identifier WS* COLON WS* KW_STRUCT WS* (
-		optional = QUESTION WS*
-	)? LBRACE WS* (
-		maybeValuedSymbol {
-				TryInsertSymbol($s, this, $maybeValuedSymbol.ctx);
-			} WS* SEMI WS*
-	)* WS* RBRACE {
-		$maybe_symbol = std::make_pair(
-			td::Identifier::ValueIdentifier($identifier.ctx->id), $s);
-	};
-
-inlineVariant
-	returns[std::optional<td::SymbolTable::Symbol> maybe_symbol]
-	locals[std::shared_ptr<td::Variant> v]
-	@init {
-		$v = std::make_shared<td::Variant>();
-	}:
-	identifier WS* COLON WS* KW_VARIANT WS* (
-		WS* optional = QUESTION
-	)? LBRACE (
-		WS* unvaluedSymbol {
-				TryInsertSymbol($v, this, $unvaluedSymbol.ctx);
-			} WS* SEMI WS*
-	)* RBRACE {
-		$maybe_symbol = std::make_pair(
-			td::Identifier::ValueIdentifier($identifier.ctx->id), $v);
-	};
-
-inlineVector:
-	identifier WS* COLON WS* KW_VECTOR WS* LT WS* val = primitiveType WS* GT (
-		WS* optional = QUESTION
+primitiveMemberDeclaration
+	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
+	identifier WS* COLON WS* primitiveTypeIdentifier (
+		WS* EQ WS* primitiveLiteral
 	)?;
 
-inlineMap:
-	identifier WS* COLON WS* KW_MAP WS* LT WS* key = primitiveType WS* COMMA WS* val = primitiveType
-		WS* GT (WS* optional = QUESTION)?;
+inlineStructDeclaration
+	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
+	identifier WS* COLON WS* KW_STRUCT WS* LBRACE WS* (
+		structMember WS* SEMI WS*
+	)* WS* RBRACE;
 
-maybeValuedType: valuedPrimitiveType | (COLON WS* primitiveType);
-// unvaluedType
-// 	returns[td::table2::PrimitiveType primitive_type]:
-// 	primitiveType;
-// | symbolReference; // TODO put this back
-// symbolReference: identifier;
+inlineVariantDeclaration
+	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
+	identifier WS* COLON WS* KW_STRUCT WS* LBRACE WS* (
+		structMember WS* SEMI WS*
+	)* WS* RBRACE;
 
-primitiveType
-	returns[td::table2::PrimitiveType primitive_type]:
-	KW_BOOL
-	| KW_CHAR
-	| KW_STRING
-	| KW_F32
-	| KW_F64
-	| KW_U8
-	| KW_U16
-	| KW_U32
-	| KW_U64
-	| KW_I8
-	| KW_I16
-	| KW_I32
-	| KW_I64;
+inlineVectorDeclaration
+	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
+	identifier WS* COLON WS* KW_VECTOR WS* LT WS* val = primitiveTypeIdentifier WS* GT;
 
-// valuedTemplateStringType
-// 	returns[std::optional<td::SymbolTable::Value> maybe_val]
-// 	locals[std::shared_ptr<td::TmplStr> s]
-// 	@init {
-// 		$s = std::make_shared<td::TmplStr>();
-// 	}:
-// 	COLON WS* KW_TEMPLATESTRING WS* LT WS* (
-// 		unvaluedSymbol {
-// 				TryInsertArgSymbol($s, this, $unvaluedSymbol.ctx);
-// 			} (
-// 			WS* COMMA WS* unvaluedSymbol {
-// 				TryInsertArgSymbol($s, this, $unvaluedSymbol.ctx);
-// 			}
-// 		)*
-// 	) WS* GT WS* EQ WS* stringLiteral {
-// 	  $s->str = $stringLiteral.ctx->maybe_val;
-// 		$maybe_val = $s;
-// 	};
+inlineMapDeclaration
+	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
+	identifier WS* COLON WS* KW_MAP WS* LT WS* key = primitiveTypeIdentifier WS* COMMA WS* val =
+		primitiveTypeIdentifier WS* GT;
 
-// TODO probably get rid of valuedPrimitiveType, etc. and just do
-// primitive type resolution in a separate pass?
+// valuedTemplateStringType returns[std::optional<td::SymbolTable::Value> maybe_val]
+// locals[std::shared_ptr<td::TmplStr> s] @init { $s = std::make_shared<td::TmplStr>(); }: COLON WS*
+// KW_TEMPLATESTRING WS* LT WS* ( unvaluedSymbol { TryInsertArgSymbol($s, this,
+// $unvaluedSymbol.ctx); } ( WS* COMMA WS* unvaluedSymbol { TryInsertArgSymbol($s, this,
+// $unvaluedSymbol.ctx); } )* ) WS* GT WS* EQ WS* stringLiteral { $s->str =
+// $stringLiteral.ctx->maybe_val; $maybe_val = $s; };
 
-// Matches " : bool = literal"
-valuedPrimitiveType
-	returns[td::table2::PrimitiveType primitive_type, td::table2::PrimitiveValue value]: (
-		valuedBoolFragment
-		| valuedCharFragment
-		| valuedStringFragment
-		| valuedF32Fragment
-		| valuedF64Fragment
-		| valuedU8Fragment
-		| valuedU16Fragment
-		| valuedU32Fragment
-		| valuedU64Fragment
-		| valuedI8Fragment
-		| valuedI16Fragment
-		| valuedI32Fragment
-		| valuedI64Fragment
-	);
-valuedBoolFragment: (COLON WS* KW_BOOL)? WS* EQ WS* boolLiteral;
-valuedCharFragment: (COLON WS* KW_CHAR)? WS* EQ WS* charLiteral;
-valuedStringFragment:
-	(COLON WS* KW_STRING)? WS* EQ WS* stringLiteral;
-valuedF32Fragment: (
-		COLON WS* KW_F32 WS* EQ WS* f32Literal 'f32'?
-	)
-	| (EQ WS* f32Literal 'f32'?);
-valuedF64Fragment: (
-		COLON WS* KW_F64 WS* EQ WS* f64Literal 'f64'?
-	)
-	| (EQ WS* f64Literal 'f64');
-valuedU8Fragment: (COLON WS* KW_U8 WS* EQ WS* u8Literal 'u8'?)
-	| (EQ WS* u8Literal 'u8');
-valuedU16Fragment: (
-		COLON WS* KW_U16 WS* EQ WS* u16Literal 'u16'?
-	)
-	| (EQ WS* u16Literal 'u16');
-valuedU32Fragment: (
-		COLON WS* KW_U32 WS* EQ WS* u32Literal 'u32'?
-	)
-	| (EQ WS* u32Literal 'u32');
-valuedU64Fragment: (
-		COLON WS* KW_U64 WS* EQ WS* u64Literal 'u64'?
-	)
-	| (EQ WS* u64Literal 'u64');
-valuedI8Fragment: (COLON WS* KW_I8 WS* EQ WS* i8Literal 'i8'?)
-	| (EQ WS* i8Literal 'i8');
-valuedI16Fragment: (
-		COLON WS* KW_I16 WS* EQ WS* i16Literal 'i16'?
-	)
-	| (EQ WS* i16Literal 'i16');
-valuedI32Fragment: (
-		COLON WS* KW_I32 WS* EQ WS* i32Literal 'i32'?
-	)
-	| (EQ WS* i32Literal 'i32'?);
-valuedI64Fragment: (
-		COLON WS* KW_I64 WS* EQ WS* i64Literal 'i64'?
-	)
-	| (EQ WS* i64Literal 'i64');
+// TODO probably get rid of valuedPrimitiveType, etc. and just do primitive type resolution in a
+// separate pass?
 
 typedefVersionDeclaration
 	returns[std::shared_ptr<std::string> version]:
@@ -246,72 +129,51 @@ simplePath
 	returns[std::shared_ptr<td::SymbolPath> path]:
 	(leading_pathsep = PATHSEP)? identifier (PATHSEP identifier)*;
 
+primitiveLiteral
+	returns[td::table::PrimitiveValue val]:
+	boolLiteral
+	| charLiteral
+	| f32Literal
+	| f64Literal
+	| u8Literal
+	| u16Literal
+	| u32Literal
+	| u64Literal
+	| i8Literal
+	| i16Literal
+	| i32Literal
+	| i64Literal;
+
 boolLiteral
-	returns[std::optional<bool> maybe_val]: KW_TRUE | KW_FALSE;
+	returns[bool val]: KW_TRUE | KW_FALSE;
 charLiteral
-	returns[std::optional<char32_t> maybe_val]: CHAR_LITERAL;
+	returns[char32_t val]: CHAR_LITERAL;
 f32Literal
-	returns[std::optional<float> maybe_val]: FLOAT_LITERAL;
+	returns[float val]: floatLiteral 'f32'?;
 f64Literal
-	returns[std::optional<double> maybe_val]: FLOAT_LITERAL;
+	returns[double val]: floatLiteral 'f64';
+floatLiteral: FLOAT_LITERAL;
 u8Literal
-	returns[std::optional<uint8_t> maybe_val]: (
-		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
-		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	);
+	returns[uint8_t val]: intLiteral 'u8';
 u16Literal
-	returns[std::optional<uint16_t> maybe_val]: (
-		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
-		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	);
+	returns[uint16_t val]: intLiteral 'u16';
 u32Literal
-	returns[std::optional<uint32_t> maybe_val]: (
-		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
-		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	);
+	returns[uint32_t val]: intLiteral 'u32';
 u64Literal
-	returns[std::optional<uint64_t> maybe_val]: (
-		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
-		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	);
+	returns[uint64_t val]: intLiteral 'u64';
 i8Literal
-	returns[std::optional<int8_t> maybe_val]: (
-		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
-		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	);
+	returns[int8_t val]: intLiteral 'i8';
 i16Literal
-	returns[std::optional<int16_t> maybe_val]: (
-		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
-		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	);
+	returns[int16_t val]: intLiteral 'i16';
 i32Literal
-	returns[std::optional<int32_t> maybe_val]:
-	(
-		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
-		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	);
+	returns[int32_t val]: intLiteral 'i32'?;
 i64Literal
-	returns[std::optional<int64_t> maybe_val]:
-	(
-		(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
-		| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
-		| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
-		| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE))
-	);
+	returns[int64_t val]: intLiteral 'i64';
+intLiteral:
+	(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
+	| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
+	| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
+	| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE));
 
 stringLiteral
 	returns[std::shared_ptr<std::string> str]:
@@ -322,6 +184,22 @@ identifier
 	returns[std::shared_ptr<std::string> id]:
 	nki = NON_KEYWORD_IDENTIFIER
 	| RAW_ESCAPE nki = NON_KEYWORD_IDENTIFIER;
+
+primitiveTypeIdentifier
+	returns[td::table::PrimitiveType primitive_type]:
+	KW_BOOL
+	| KW_CHAR
+	| KW_STRING
+	| KW_F32
+	| KW_F64
+	| KW_U8
+	| KW_U16
+	| KW_U32
+	| KW_U64
+	| KW_I8
+	| KW_I16
+	| KW_I32
+	| KW_I64;
 
 keyword:
 	KW_AS

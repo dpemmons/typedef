@@ -308,7 +308,7 @@ const char *TokenToString(size_t token) {
     case TypedefParser::RPAREN:
       return "RPAREN";
     default:
-      assert(false);  // unreachable
+      throw fmt::format("Unhandled token ID in TokenToString({})", token);
   }
 }
 }  // namespace
@@ -358,7 +358,8 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
     case UNRESOLVED_SYMBOL_REFERENCE:
       return "UNRESOLVED_SYMBOL_REFERENCE";
     default:
-      assert(false);  // unreachable
+      throw fmt::format("Unhandled error ID in ErrorTypeToString(): {}",
+                        error_type);
   }
 }
 

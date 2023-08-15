@@ -17,6 +17,9 @@ class Listener : public TypedefParserBaseListener {
   Listener(std::vector<td::ParserErrorInfo> &errors_list)
       : errors_list_(errors_list) {}
 
+  virtual void exitCompilationUnit(
+      TypedefParser::CompilationUnitContext *ctx) override;
+
   virtual void exitStructDeclaration(
       TypedefParser::StructDeclarationContext *ctx) override;
   virtual void exitVariantDeclaration(
@@ -25,15 +28,6 @@ class Listener : public TypedefParserBaseListener {
       TypedefParser::VectorDeclarationContext *ctx) override;
   virtual void exitMapDeclaration(
       TypedefParser::MapDeclarationContext *ctx) override;
-
-  virtual void exitMaybeValuedType(
-      TypedefParser::MaybeValuedTypeContext *ctx) override;
-
-  virtual void exitPrimitiveType(
-      TypedefParser::PrimitiveTypeContext *ctx) override;
-
-  virtual void exitValuedPrimitiveType(
-      TypedefParser::ValuedPrimitiveTypeContext *ctx) override;
 
   virtual void exitTypedefVersionDeclaration(
       TypedefParser::TypedefVersionDeclarationContext *ctx) override {
@@ -45,7 +39,30 @@ class Listener : public TypedefParserBaseListener {
     ctx->path = ctx->simplePath()->path;
   }
 
+  virtual void exitStructMember(
+      TypedefParser::StructMemberContext *ctx) override;
+
+  virtual void exitTypeDeclaration(
+      TypedefParser::TypeDeclarationContext *ctx) override;
+
+  virtual void exitFieldDeclaration(
+      TypedefParser::FieldDeclarationContext *ctx) override;
+
+  virtual void exitPrimitiveMemberDeclaration(
+      TypedefParser::PrimitiveMemberDeclarationContext *ctx) override;
+  virtual void exitInlineStructDeclaration(
+      TypedefParser::InlineStructDeclarationContext *ctx) override;
+  virtual void exitInlineVariantDeclaration(
+      TypedefParser::InlineVariantDeclarationContext *ctx) override;
+  virtual void exitInlineVectorDeclaration(
+      TypedefParser::InlineVectorDeclarationContext *ctx) override;
+  virtual void exitInlineMapDeclaration(
+      TypedefParser::InlineMapDeclarationContext *ctx) override;
+
   virtual void exitSimplePath(TypedefParser::SimplePathContext *ctx) override;
+
+  virtual void exitPrimitiveLiteral(
+      TypedefParser::PrimitiveLiteralContext *ctx) override;
 
   virtual void exitBoolLiteral(TypedefParser::BoolLiteralContext *ctx) override;
   virtual void exitCharLiteral(TypedefParser::CharLiteralContext *ctx) override;
@@ -63,6 +80,9 @@ class Listener : public TypedefParserBaseListener {
       TypedefParser::StringLiteralContext *ctx) override;
 
   virtual void exitIdentifier(TypedefParser::IdentifierContext *ctx) override;
+
+  virtual void exitPrimitiveTypeIdentifier(
+      TypedefParser::PrimitiveTypeIdentifierContext *ctx) override;
 
  private:
   std::vector<td::ParserErrorInfo> &errors_list_;

@@ -1,5 +1,4 @@
 
-#include "libtypedef/parser/symbol_table.h"
 #include "libtypedef/parser/table.h"
 
 
@@ -23,19 +22,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitTypeDeclaration(TypedefParser::TypeDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual antlrcpp::Any visitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitMember(TypedefParser::MemberContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -51,91 +38,35 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext *ctx) override {
+  virtual antlrcpp::Any visitStructMember(TypedefParser::StructMemberContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext *ctx) override {
+  virtual antlrcpp::Any visitTypeDeclaration(TypedefParser::TypeDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitInlineStruct(TypedefParser::InlineStructContext *ctx) override {
+  virtual antlrcpp::Any visitFieldDeclaration(TypedefParser::FieldDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitInlineVariant(TypedefParser::InlineVariantContext *ctx) override {
+  virtual antlrcpp::Any visitPrimitiveMemberDeclaration(TypedefParser::PrimitiveMemberDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitInlineVector(TypedefParser::InlineVectorContext *ctx) override {
+  virtual antlrcpp::Any visitInlineStructDeclaration(TypedefParser::InlineStructDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitInlineMap(TypedefParser::InlineMapContext *ctx) override {
+  virtual antlrcpp::Any visitInlineVariantDeclaration(TypedefParser::InlineVariantDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitMaybeValuedType(TypedefParser::MaybeValuedTypeContext *ctx) override {
+  virtual antlrcpp::Any visitInlineVectorDeclaration(TypedefParser::InlineVectorDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitPrimitiveType(TypedefParser::PrimitiveTypeContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedBoolFragment(TypedefParser::ValuedBoolFragmentContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedCharFragment(TypedefParser::ValuedCharFragmentContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedStringFragment(TypedefParser::ValuedStringFragmentContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedF32Fragment(TypedefParser::ValuedF32FragmentContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedF64Fragment(TypedefParser::ValuedF64FragmentContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedU8Fragment(TypedefParser::ValuedU8FragmentContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedU16Fragment(TypedefParser::ValuedU16FragmentContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedU32Fragment(TypedefParser::ValuedU32FragmentContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedU64Fragment(TypedefParser::ValuedU64FragmentContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedI8Fragment(TypedefParser::ValuedI8FragmentContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedI16Fragment(TypedefParser::ValuedI16FragmentContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedI32Fragment(TypedefParser::ValuedI32FragmentContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitValuedI64Fragment(TypedefParser::ValuedI64FragmentContext *ctx) override {
+  virtual antlrcpp::Any visitInlineMapDeclaration(TypedefParser::InlineMapDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -159,6 +90,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitBoolLiteral(TypedefParser::BoolLiteralContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -172,6 +107,10 @@ public:
   }
 
   virtual antlrcpp::Any visitF64Literal(TypedefParser::F64LiteralContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitFloatLiteral(TypedefParser::FloatLiteralContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -207,11 +146,19 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitIntLiteral(TypedefParser::IntLiteralContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitStringLiteral(TypedefParser::StringLiteralContext *ctx) override {
     return visitChildren(ctx);
   }
 
   virtual antlrcpp::Any visitIdentifier(TypedefParser::IdentifierContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitPrimitiveTypeIdentifier(TypedefParser::PrimitiveTypeIdentifierContext *ctx) override {
     return visitChildren(ctx);
   }
 

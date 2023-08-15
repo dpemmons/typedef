@@ -1,5 +1,4 @@
 
-#include "libtypedef/parser/symbol_table.h"
 #include "libtypedef/parser/table.h"
 
 

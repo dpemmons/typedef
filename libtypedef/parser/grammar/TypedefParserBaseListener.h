@@ -1,5 +1,4 @@
 
-#include "libtypedef/parser/symbol_table.h"
 #include "libtypedef/parser/table.h"
 
 
@@ -23,17 +22,8 @@ public:
   virtual void enterCompilationUnit(TypedefParser::CompilationUnitContext * /*ctx*/) override { }
   virtual void exitCompilationUnit(TypedefParser::CompilationUnitContext * /*ctx*/) override { }
 
-  virtual void enterMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext * /*ctx*/) override { }
-  virtual void exitMaybeValuedSymbolDeclaration(TypedefParser::MaybeValuedSymbolDeclarationContext * /*ctx*/) override { }
-
-  virtual void enterTypeDeclaration(TypedefParser::TypeDeclarationContext * /*ctx*/) override { }
-  virtual void exitTypeDeclaration(TypedefParser::TypeDeclarationContext * /*ctx*/) override { }
-
   virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
   virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext * /*ctx*/) override { }
-
-  virtual void enterMember(TypedefParser::MemberContext * /*ctx*/) override { }
-  virtual void exitMember(TypedefParser::MemberContext * /*ctx*/) override { }
 
   virtual void enterVariantDeclaration(TypedefParser::VariantDeclarationContext * /*ctx*/) override { }
   virtual void exitVariantDeclaration(TypedefParser::VariantDeclarationContext * /*ctx*/) override { }
@@ -44,71 +34,29 @@ public:
   virtual void enterMapDeclaration(TypedefParser::MapDeclarationContext * /*ctx*/) override { }
   virtual void exitMapDeclaration(TypedefParser::MapDeclarationContext * /*ctx*/) override { }
 
-  virtual void enterMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext * /*ctx*/) override { }
-  virtual void exitMaybeValuedSymbol(TypedefParser::MaybeValuedSymbolContext * /*ctx*/) override { }
+  virtual void enterStructMember(TypedefParser::StructMemberContext * /*ctx*/) override { }
+  virtual void exitStructMember(TypedefParser::StructMemberContext * /*ctx*/) override { }
 
-  virtual void enterUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext * /*ctx*/) override { }
-  virtual void exitUnvaluedSymbol(TypedefParser::UnvaluedSymbolContext * /*ctx*/) override { }
+  virtual void enterTypeDeclaration(TypedefParser::TypeDeclarationContext * /*ctx*/) override { }
+  virtual void exitTypeDeclaration(TypedefParser::TypeDeclarationContext * /*ctx*/) override { }
 
-  virtual void enterInlineStruct(TypedefParser::InlineStructContext * /*ctx*/) override { }
-  virtual void exitInlineStruct(TypedefParser::InlineStructContext * /*ctx*/) override { }
+  virtual void enterFieldDeclaration(TypedefParser::FieldDeclarationContext * /*ctx*/) override { }
+  virtual void exitFieldDeclaration(TypedefParser::FieldDeclarationContext * /*ctx*/) override { }
 
-  virtual void enterInlineVariant(TypedefParser::InlineVariantContext * /*ctx*/) override { }
-  virtual void exitInlineVariant(TypedefParser::InlineVariantContext * /*ctx*/) override { }
+  virtual void enterPrimitiveMemberDeclaration(TypedefParser::PrimitiveMemberDeclarationContext * /*ctx*/) override { }
+  virtual void exitPrimitiveMemberDeclaration(TypedefParser::PrimitiveMemberDeclarationContext * /*ctx*/) override { }
 
-  virtual void enterInlineVector(TypedefParser::InlineVectorContext * /*ctx*/) override { }
-  virtual void exitInlineVector(TypedefParser::InlineVectorContext * /*ctx*/) override { }
+  virtual void enterInlineStructDeclaration(TypedefParser::InlineStructDeclarationContext * /*ctx*/) override { }
+  virtual void exitInlineStructDeclaration(TypedefParser::InlineStructDeclarationContext * /*ctx*/) override { }
 
-  virtual void enterInlineMap(TypedefParser::InlineMapContext * /*ctx*/) override { }
-  virtual void exitInlineMap(TypedefParser::InlineMapContext * /*ctx*/) override { }
+  virtual void enterInlineVariantDeclaration(TypedefParser::InlineVariantDeclarationContext * /*ctx*/) override { }
+  virtual void exitInlineVariantDeclaration(TypedefParser::InlineVariantDeclarationContext * /*ctx*/) override { }
 
-  virtual void enterMaybeValuedType(TypedefParser::MaybeValuedTypeContext * /*ctx*/) override { }
-  virtual void exitMaybeValuedType(TypedefParser::MaybeValuedTypeContext * /*ctx*/) override { }
+  virtual void enterInlineVectorDeclaration(TypedefParser::InlineVectorDeclarationContext * /*ctx*/) override { }
+  virtual void exitInlineVectorDeclaration(TypedefParser::InlineVectorDeclarationContext * /*ctx*/) override { }
 
-  virtual void enterPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
-  virtual void exitPrimitiveType(TypedefParser::PrimitiveTypeContext * /*ctx*/) override { }
-
-  virtual void enterValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext * /*ctx*/) override { }
-  virtual void exitValuedPrimitiveType(TypedefParser::ValuedPrimitiveTypeContext * /*ctx*/) override { }
-
-  virtual void enterValuedBoolFragment(TypedefParser::ValuedBoolFragmentContext * /*ctx*/) override { }
-  virtual void exitValuedBoolFragment(TypedefParser::ValuedBoolFragmentContext * /*ctx*/) override { }
-
-  virtual void enterValuedCharFragment(TypedefParser::ValuedCharFragmentContext * /*ctx*/) override { }
-  virtual void exitValuedCharFragment(TypedefParser::ValuedCharFragmentContext * /*ctx*/) override { }
-
-  virtual void enterValuedStringFragment(TypedefParser::ValuedStringFragmentContext * /*ctx*/) override { }
-  virtual void exitValuedStringFragment(TypedefParser::ValuedStringFragmentContext * /*ctx*/) override { }
-
-  virtual void enterValuedF32Fragment(TypedefParser::ValuedF32FragmentContext * /*ctx*/) override { }
-  virtual void exitValuedF32Fragment(TypedefParser::ValuedF32FragmentContext * /*ctx*/) override { }
-
-  virtual void enterValuedF64Fragment(TypedefParser::ValuedF64FragmentContext * /*ctx*/) override { }
-  virtual void exitValuedF64Fragment(TypedefParser::ValuedF64FragmentContext * /*ctx*/) override { }
-
-  virtual void enterValuedU8Fragment(TypedefParser::ValuedU8FragmentContext * /*ctx*/) override { }
-  virtual void exitValuedU8Fragment(TypedefParser::ValuedU8FragmentContext * /*ctx*/) override { }
-
-  virtual void enterValuedU16Fragment(TypedefParser::ValuedU16FragmentContext * /*ctx*/) override { }
-  virtual void exitValuedU16Fragment(TypedefParser::ValuedU16FragmentContext * /*ctx*/) override { }
-
-  virtual void enterValuedU32Fragment(TypedefParser::ValuedU32FragmentContext * /*ctx*/) override { }
-  virtual void exitValuedU32Fragment(TypedefParser::ValuedU32FragmentContext * /*ctx*/) override { }
-
-  virtual void enterValuedU64Fragment(TypedefParser::ValuedU64FragmentContext * /*ctx*/) override { }
-  virtual void exitValuedU64Fragment(TypedefParser::ValuedU64FragmentContext * /*ctx*/) override { }
-
-  virtual void enterValuedI8Fragment(TypedefParser::ValuedI8FragmentContext * /*ctx*/) override { }
-  virtual void exitValuedI8Fragment(TypedefParser::ValuedI8FragmentContext * /*ctx*/) override { }
-
-  virtual void enterValuedI16Fragment(TypedefParser::ValuedI16FragmentContext * /*ctx*/) override { }
-  virtual void exitValuedI16Fragment(TypedefParser::ValuedI16FragmentContext * /*ctx*/) override { }
-
-  virtual void enterValuedI32Fragment(TypedefParser::ValuedI32FragmentContext * /*ctx*/) override { }
-  virtual void exitValuedI32Fragment(TypedefParser::ValuedI32FragmentContext * /*ctx*/) override { }
-
-  virtual void enterValuedI64Fragment(TypedefParser::ValuedI64FragmentContext * /*ctx*/) override { }
-  virtual void exitValuedI64Fragment(TypedefParser::ValuedI64FragmentContext * /*ctx*/) override { }
+  virtual void enterInlineMapDeclaration(TypedefParser::InlineMapDeclarationContext * /*ctx*/) override { }
+  virtual void exitInlineMapDeclaration(TypedefParser::InlineMapDeclarationContext * /*ctx*/) override { }
 
   virtual void enterTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext * /*ctx*/) override { }
   virtual void exitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext * /*ctx*/) override { }
@@ -125,6 +73,9 @@ public:
   virtual void enterSimplePath(TypedefParser::SimplePathContext * /*ctx*/) override { }
   virtual void exitSimplePath(TypedefParser::SimplePathContext * /*ctx*/) override { }
 
+  virtual void enterPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext * /*ctx*/) override { }
+  virtual void exitPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext * /*ctx*/) override { }
+
   virtual void enterBoolLiteral(TypedefParser::BoolLiteralContext * /*ctx*/) override { }
   virtual void exitBoolLiteral(TypedefParser::BoolLiteralContext * /*ctx*/) override { }
 
@@ -136,6 +87,9 @@ public:
 
   virtual void enterF64Literal(TypedefParser::F64LiteralContext * /*ctx*/) override { }
   virtual void exitF64Literal(TypedefParser::F64LiteralContext * /*ctx*/) override { }
+
+  virtual void enterFloatLiteral(TypedefParser::FloatLiteralContext * /*ctx*/) override { }
+  virtual void exitFloatLiteral(TypedefParser::FloatLiteralContext * /*ctx*/) override { }
 
   virtual void enterU8Literal(TypedefParser::U8LiteralContext * /*ctx*/) override { }
   virtual void exitU8Literal(TypedefParser::U8LiteralContext * /*ctx*/) override { }
@@ -161,11 +115,17 @@ public:
   virtual void enterI64Literal(TypedefParser::I64LiteralContext * /*ctx*/) override { }
   virtual void exitI64Literal(TypedefParser::I64LiteralContext * /*ctx*/) override { }
 
+  virtual void enterIntLiteral(TypedefParser::IntLiteralContext * /*ctx*/) override { }
+  virtual void exitIntLiteral(TypedefParser::IntLiteralContext * /*ctx*/) override { }
+
   virtual void enterStringLiteral(TypedefParser::StringLiteralContext * /*ctx*/) override { }
   virtual void exitStringLiteral(TypedefParser::StringLiteralContext * /*ctx*/) override { }
 
   virtual void enterIdentifier(TypedefParser::IdentifierContext * /*ctx*/) override { }
   virtual void exitIdentifier(TypedefParser::IdentifierContext * /*ctx*/) override { }
+
+  virtual void enterPrimitiveTypeIdentifier(TypedefParser::PrimitiveTypeIdentifierContext * /*ctx*/) override { }
+  virtual void exitPrimitiveTypeIdentifier(TypedefParser::PrimitiveTypeIdentifierContext * /*ctx*/) override { }
 
   virtual void enterKeyword(TypedefParser::KeywordContext * /*ctx*/) override { }
   virtual void exitKeyword(TypedefParser::KeywordContext * /*ctx*/) override { }

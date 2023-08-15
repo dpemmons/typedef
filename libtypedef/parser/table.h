@@ -2,12 +2,13 @@
 #define PARSER_TABLE_H__
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <variant>
 #include <vector>
 
 namespace td {
-namespace table2 {
+namespace table {
 
 using namespace std;
 
@@ -84,27 +85,31 @@ struct Map;
 
 struct Module {
   shared_ptr<string> name;
-
-  struct Member {
-    shared_ptr<string> symbol;
-
-    NonPrimitiveType member_type = NONPRIMITIVE_TYPE_UNKNOWN;
-    shared_ptr<Struct> st;
-    shared_ptr<Variant> var;
-    shared_ptr<Vector> vec;
-    shared_ptr<Map> map;
-  };
-
-  vector<Member> members;
+  vector<shared_ptr<TypeDeclaration>> types;
 };
 
 struct StructMember {
-  shared_ptr<string> identifier;
+  // One of the following:
+  shared_ptr<TypeDeclaration> type_decl;
+  shared_ptr<FieldDeclaration> field_decl;
+};
 
+struct TypeDeclaration {
+  NonPrimitiveType declaration_type = NONPRIMITIVE_TYPE_UNKNOWN;
+  // May be one of the following.
+  shared_ptr<Struct> st;
+  shared_ptr<Variant> var;
+  shared_ptr<Vector> vec;
+  shared_ptr<Map> map;
+};
+
+struct FieldDeclaration {
+  shared_ptr<string> identifier;
   Type member_type = TYPE_UNKNOWN;
 
   // May be any of the following:
-  PrimitiveValue prim;
+  optional<PrimitiveValue> primitive_value;
+  // Inline (anonymous) definitions + declarations.
   shared_ptr<Struct> st;
   shared_ptr<Variant> var;
   shared_ptr<Vector> vec;
@@ -114,13 +119,13 @@ struct StructMember {
 struct Struct {
   // If empty, it's an anonymous struct.
   shared_ptr<string> identifier;
-  vector<StructMember> members;
+  vector<shared_ptr<StructMember>> members;
 };
 
 struct Variant {
   // If empty, it's an anonymous struct.
   shared_ptr<string> identifier;
-  vector<StructMember> members;
+  vector<shared_ptr<StructMember>> members;
 };
 
 struct Vector {
@@ -150,7 +155,7 @@ struct Map {
   shared_ptr<Map> map_val;
 };
 
-}  // namespace table2
+}  // namespace table
 }  // namespace td
 
 #endif  // PARSER_TABLE_H__
