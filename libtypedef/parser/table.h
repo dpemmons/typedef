@@ -116,6 +116,8 @@ struct NonPrimitive {
 
 struct Struct : public NonPrimitive {
   vector<shared_ptr<StructMember>> members;
+  shared_ptr<FieldDeclaration> GetField(const string& id);
+  shared_ptr<TypeDeclaration> GetType(const string& id);
 };
 
 struct Variant : public NonPrimitive {

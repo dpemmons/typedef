@@ -38,9 +38,15 @@ struct SomeStruct {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  auto type = parsed_file->mod->Get("SomeStruct");
-  REQUIRE(type);
-  REQUIRE(type->declaration_type == td::table::Type::TYPE_STRUCT);
+  std::shared_ptr<td::table::TypeDeclaration> ss =
+      parsed_file->mod->Get("SomeStruct");
+  REQUIRE(ss);
+  REQUIRE(ss->declaration_type ==
+          td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_STRUCT);
+  REQUIRE(ss->st);
+  REQUIRE(ss->st->GetField("example_bool"));
+  REQUIRE(ss->st->GetField("example_bool")->member_type ==
+          td::table::Type::TYPE_BOOL);
 
   // REQUIRE(s->table.Get(td::Identifier::ValueIdentifier("example_bool")));
   // REQUIRE(s->table.Get(td::Identifier::ValueIdentifier("example_char")));
@@ -80,10 +86,10 @@ struct SomeStruct {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  auto type = parsed_file->mod->Get("SomeStruct");
-  REQUIRE(type);
-  REQUIRE(type->declaration_type == td::table::Type::TYPE_STRUCT);
-
+  auto ss = parsed_file->mod->Get("SomeStruct");
+  REQUIRE(ss);
+  REQUIRE(ss->declaration_type ==
+          td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_STRUCT);
   // auto b = s->table.Get(td::Identifier::ValueIdentifier("example_bool"));
   // REQUIRE(b);
   // REQUIRE(holds_alternative<optional<bool>>(*b));
@@ -157,10 +163,10 @@ struct SomeStruct {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  auto type = parsed_file->mod->Get("SomeStruct");
-  REQUIRE(type);
-  REQUIRE(type->declaration_type == td::table::Type::TYPE_STRUCT);
-
+  auto ss = parsed_file->mod->Get("SomeStruct");
+  REQUIRE(ss);
+  REQUIRE(ss->declaration_type ==
+          td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_STRUCT);
   // optional<td::SymbolTable::Value> value =
   //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
   // REQUIRE(value);
@@ -171,8 +177,8 @@ struct SomeStruct {
   //     s->table.Get(td::Identifier::ValueIdentifier("an_inline_struct"));
   // REQUIRE(struct_val);
   // REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*struct_val));
-  // shared_ptr<td::Struct> the_sturct = get<shared_ptr<td::Struct>>(*struct_val);
-  // REQUIRE(the_sturct);
+  // shared_ptr<td::Struct> the_sturct =
+  // get<shared_ptr<td::Struct>>(*struct_val); REQUIRE(the_sturct);
 }
 
 TEST_CASE("Struct with an inline variant", "[struct]") {
@@ -189,9 +195,10 @@ struct SomeStruct {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  auto type = parsed_file->mod->Get("SomeStruct");
-  REQUIRE(type);
-  REQUIRE(type->declaration_type == td::table::Type::TYPE_STRUCT);
+  auto ss = parsed_file->mod->Get("SomeStruct");
+  REQUIRE(ss);
+  REQUIRE(ss->declaration_type ==
+          td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_STRUCT);
 
   // optional<td::SymbolTable::Value> value =
   //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
@@ -219,9 +226,10 @@ struct SomeStruct {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  auto type = parsed_file->mod->Get("SomeStruct");
-  REQUIRE(type);
-  REQUIRE(type->declaration_type == td::table::Type::TYPE_STRUCT);
+  auto ss = parsed_file->mod->Get("SomeStruct");
+  REQUIRE(ss);
+  REQUIRE(ss->declaration_type ==
+          td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_STRUCT);
 
   // optional<td::SymbolTable::Value> value =
   //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
@@ -233,8 +241,8 @@ struct SomeStruct {
   //     s->table.Get(td::Identifier::ValueIdentifier("inlineVector"));
   // REQUIRE(vector_val);
   // REQUIRE(holds_alternative<shared_ptr<td::Vector>>(*vector_val));
-  // shared_ptr<td::Vector> the_vector = get<shared_ptr<td::Vector>>(*vector_val);
-  // REQUIRE(the_vector);
+  // shared_ptr<td::Vector> the_vector =
+  // get<shared_ptr<td::Vector>>(*vector_val); REQUIRE(the_vector);
 }
 
 TEST_CASE("Struct with an inline map", "[struct]") {
@@ -248,9 +256,10 @@ struct SomeStruct {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  auto type = parsed_file->mod->Get("SomeStruct");
-  REQUIRE(type);
-  REQUIRE(type->declaration_type == td::table::Type::TYPE_STRUCT);
+  auto ss = parsed_file->mod->Get("SomeStruct");
+  REQUIRE(ss);
+  REQUIRE(ss->declaration_type ==
+          td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_STRUCT);
 
   // optional<td::SymbolTable::Value> value =
   //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
