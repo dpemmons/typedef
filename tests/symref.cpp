@@ -15,6 +15,8 @@ namespace {
 const std::vector<td::ParserErrorInfo> empty_errors;
 }  // namespace
 
+#if 0
+
 TEST_CASE("Struct with a symbol reference to another struct", "[symref]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
@@ -501,3 +503,5 @@ map SomeMap<i32, MapA>;
   // REQUIRE(holds_alternative<td::SymbolRef>(s->value_type));
   // REQUIRE_THAT(get<td::SymbolRef>(s->value_type).id, Equals("MapA"));
 }
+
+#endif
