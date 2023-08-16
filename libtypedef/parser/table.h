@@ -29,10 +29,6 @@ enum PrimitiveType {
   PRIMITIVE_TYPE_I64
 };
 
-typedef variant<bool, char32_t, string, float, double, int8_t, int16_t, int32_t,
-                int64_t, uint8_t, uint16_t, uint32_t, uint64_t>
-    PrimitiveValue;
-
 enum NonPrimitiveType {
   NONPRIMITIVE_TYPE_UNKNOWN = 0,
   NONPRIMITIVE_TYPE_STRUCT,
@@ -62,19 +58,19 @@ enum Type {
   TYPE_MAP = NONPRIMITIVE_TYPE_MAP,
 };
 
-typedef std::variant<bool,      // bool
-                     char32_t,  // char
-                     string,    // str
-                     float,     // f32
-                     double,    // f64
-                     int8_t,    // i8
-                     int16_t,   // i16
-                     int32_t,   // i32
-                     int64_t,   // i64
-                     uint8_t,   // u8
-                     uint16_t,  // u16
-                     uint32_t,  // u32
-                     uint64_t   // u64
+typedef std::variant<bool,                // bool
+                     char32_t,            // char
+                     shared_ptr<string>,  // str
+                     float,               // f32
+                     double,              // f64
+                     int8_t,              // i8
+                     int16_t,             // i16
+                     int32_t,             // i32
+                     int64_t,             // i64
+                     uint8_t,             // u8
+                     uint16_t,            // u16
+                     uint32_t,            // u32
+                     uint64_t             // u64
                      >
     PrimitiveValue;
 

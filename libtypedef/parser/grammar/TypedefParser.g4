@@ -86,7 +86,7 @@ inlineStructDeclaration
 
 inlineVariantDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier WS* COLON WS* KW_STRUCT WS* LBRACE WS* (
+	identifier WS* COLON WS* KW_VARIANT WS* LBRACE WS* (
 		structMember WS* SEMI WS*
 	)* WS* RBRACE;
 
@@ -133,6 +133,7 @@ primitiveLiteral
 	returns[td::table::PrimitiveValue val]:
 	boolLiteral
 	| charLiteral
+	| stringLiteral
 	| f32Literal
 	| f64Literal
 	| u8Literal
@@ -148,6 +149,10 @@ boolLiteral
 	returns[bool val]: KW_TRUE | KW_FALSE;
 charLiteral
 	returns[char32_t val]: CHAR_LITERAL;
+stringLiteral
+	returns[std::shared_ptr<std::string> val]:
+	STRING_LITERAL
+	| RAW_STRING_LITERAL;
 f32Literal
 	returns[float val]: floatLiteral 'f32'?;
 f64Literal
@@ -174,11 +179,6 @@ intLiteral:
 	| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
 	| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
 	| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE));
-
-stringLiteral
-	returns[std::shared_ptr<std::string> str]:
-	STRING_LITERAL
-	| RAW_STRING_LITERAL;
 
 identifier
 	returns[std::shared_ptr<std::string> id]:

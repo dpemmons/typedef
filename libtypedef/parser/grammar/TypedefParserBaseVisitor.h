@@ -103,6 +103,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitStringLiteral(TypedefParser::StringLiteralContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitF32Literal(TypedefParser::F32LiteralContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -148,10 +152,6 @@ public:
   }
 
   virtual antlrcpp::Any visitIntLiteral(TypedefParser::IntLiteralContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitStringLiteral(TypedefParser::StringLiteralContext *ctx) override {
     return visitChildren(ctx);
   }
 

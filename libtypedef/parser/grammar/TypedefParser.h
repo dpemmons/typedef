@@ -59,10 +59,10 @@ public:
     RuleInlineVectorDeclaration = 11, RuleInlineMapDeclaration = 12, RuleTypedefVersionDeclaration = 13, 
     RuleModuleDeclaration = 14, RuleUseDeclaration = 15, RuleUseTree = 16, 
     RuleSimplePath = 17, RulePrimitiveLiteral = 18, RuleBoolLiteral = 19, 
-    RuleCharLiteral = 20, RuleF32Literal = 21, RuleF64Literal = 22, RuleFloatLiteral = 23, 
-    RuleU8Literal = 24, RuleU16Literal = 25, RuleU32Literal = 26, RuleU64Literal = 27, 
-    RuleI8Literal = 28, RuleI16Literal = 29, RuleI32Literal = 30, RuleI64Literal = 31, 
-    RuleIntLiteral = 32, RuleStringLiteral = 33, RuleIdentifier = 34, RulePrimitiveTypeIdentifier = 35, 
+    RuleCharLiteral = 20, RuleStringLiteral = 21, RuleF32Literal = 22, RuleF64Literal = 23, 
+    RuleFloatLiteral = 24, RuleU8Literal = 25, RuleU16Literal = 26, RuleU32Literal = 27, 
+    RuleU64Literal = 28, RuleI8Literal = 29, RuleI16Literal = 30, RuleI32Literal = 31, 
+    RuleI64Literal = 32, RuleIntLiteral = 33, RuleIdentifier = 34, RulePrimitiveTypeIdentifier = 35, 
     RuleKeyword = 36
   };
 
@@ -97,6 +97,7 @@ public:
   class PrimitiveLiteralContext;
   class BoolLiteralContext;
   class CharLiteralContext;
+  class StringLiteralContext;
   class F32LiteralContext;
   class F64LiteralContext;
   class FloatLiteralContext;
@@ -109,7 +110,6 @@ public:
   class I32LiteralContext;
   class I64LiteralContext;
   class IntLiteralContext;
-  class StringLiteralContext;
   class IdentifierContext;
   class PrimitiveTypeIdentifierContext;
   class KeywordContext; 
@@ -352,7 +352,7 @@ public:
     virtual size_t getRuleIndex() const override;
     IdentifierContext *identifier();
     antlr4::tree::TerminalNode *COLON();
-    antlr4::tree::TerminalNode *KW_STRUCT();
+    antlr4::tree::TerminalNode *KW_VARIANT();
     antlr4::tree::TerminalNode *LBRACE();
     antlr4::tree::TerminalNode *RBRACE();
     std::vector<antlr4::tree::TerminalNode *> WS();
@@ -534,6 +534,7 @@ public:
     virtual size_t getRuleIndex() const override;
     BoolLiteralContext *boolLiteral();
     CharLiteralContext *charLiteral();
+    StringLiteralContext *stringLiteral();
     F32LiteralContext *f32Literal();
     F64LiteralContext *f64Literal();
     U8LiteralContext *u8Literal();
@@ -586,6 +587,23 @@ public:
   };
 
   CharLiteralContext* charLiteral();
+
+  class  StringLiteralContext : public antlr4::ParserRuleContext {
+  public:
+    std::shared_ptr<std::string> val;
+    StringLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *STRING_LITERAL();
+    antlr4::tree::TerminalNode *RAW_STRING_LITERAL();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  StringLiteralContext* stringLiteral();
 
   class  F32LiteralContext : public antlr4::ParserRuleContext {
   public:
@@ -797,23 +815,6 @@ public:
   };
 
   IntLiteralContext* intLiteral();
-
-  class  StringLiteralContext : public antlr4::ParserRuleContext {
-  public:
-    std::shared_ptr<std::string> str;
-    StringLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *STRING_LITERAL();
-    antlr4::tree::TerminalNode *RAW_STRING_LITERAL();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  StringLiteralContext* stringLiteral();
 
   class  IdentifierContext : public antlr4::ParserRuleContext {
   public:

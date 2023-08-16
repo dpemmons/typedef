@@ -65,6 +65,8 @@ public:
 
     virtual antlrcpp::Any visitCharLiteral(TypedefParser::CharLiteralContext *context) = 0;
 
+    virtual antlrcpp::Any visitStringLiteral(TypedefParser::StringLiteralContext *context) = 0;
+
     virtual antlrcpp::Any visitF32Literal(TypedefParser::F32LiteralContext *context) = 0;
 
     virtual antlrcpp::Any visitF64Literal(TypedefParser::F64LiteralContext *context) = 0;
@@ -88,8 +90,6 @@ public:
     virtual antlrcpp::Any visitI64Literal(TypedefParser::I64LiteralContext *context) = 0;
 
     virtual antlrcpp::Any visitIntLiteral(TypedefParser::IntLiteralContext *context) = 0;
-
-    virtual antlrcpp::Any visitStringLiteral(TypedefParser::StringLiteralContext *context) = 0;
 
     virtual antlrcpp::Any visitIdentifier(TypedefParser::IdentifierContext *context) = 0;
 

@@ -3,10 +3,20 @@
 #include <charconv>
 #include <memory>
 
+#define FMT_HEADER_ONLY
+#include <fmt/core.h>
+
 #include "libtypedef/parser/symbol_path.h"
 #include "libtypedef/parser/table.h"
 
 using namespace std;
+
+#define throw_line(str) \
+  throw fmt::format("Exception \"{}\" in {}:{}", str, __FILE__, __LINE__);
+#define bail_if_errors()     \
+  if (errors_list_.size()) { \
+    return;                  \
+  }
 
 td::ParserErrorInfo MakeError(td::ParserErrorInfo::Type type, const string& msg,
                               antlr4::Token* token) {
@@ -22,6 +32,7 @@ td::ParserErrorInfo MakeError(td::ParserErrorInfo::Type type, const string& msg,
 
 void FirstPassListener::exitCompilationUnit(
     TypedefParser::CompilationUnitContext* ctx) {
+  bail_if_errors();
   ctx->version = ctx->typedefVersionDeclaration()->version;
   ctx->mod = make_shared<td::table::Module>();
   for (TypedefParser::TypeDeclarationContext* td : ctx->typeDeclaration()) {
@@ -31,6 +42,7 @@ void FirstPassListener::exitCompilationUnit(
 
 void FirstPassListener::exitStructDeclaration(
     TypedefParser::StructDeclarationContext* ctx) {
+  bail_if_errors();
   ctx->st = make_shared<td::table::Struct>();
   ctx->st->identifier = ctx->identifier()->id;
   for (TypedefParser::StructMemberContext* stmctx : ctx->structMember()) {
@@ -40,6 +52,7 @@ void FirstPassListener::exitStructDeclaration(
 
 void FirstPassListener::exitVariantDeclaration(
     TypedefParser::VariantDeclarationContext* ctx) {
+  bail_if_errors();
   ctx->var = make_shared<td::table::Variant>();
   ctx->var->identifier = ctx->identifier()->id;
   for (TypedefParser::StructMemberContext* stmctx : ctx->structMember()) {
@@ -49,6 +62,7 @@ void FirstPassListener::exitVariantDeclaration(
 
 void FirstPassListener::exitVectorDeclaration(
     TypedefParser::VectorDeclarationContext* ctx) {
+  bail_if_errors();
   ctx->vec = make_shared<td::table::Vector>();
   ctx->vec->identifier = ctx->identifier()->id;
   ctx->vec = make_shared<td::table::Vector>();
@@ -58,6 +72,7 @@ void FirstPassListener::exitVectorDeclaration(
 
 void FirstPassListener::exitMapDeclaration(
     TypedefParser::MapDeclarationContext* ctx) {
+  bail_if_errors();
   ctx->map = make_shared<td::table::Map>();
   ctx->map->identifier = ctx->identifier()->id;
   ctx->map->key_type = ctx->key->primitive_type;
@@ -67,18 +82,20 @@ void FirstPassListener::exitMapDeclaration(
 
 void FirstPassListener::exitStructMember(
     TypedefParser::StructMemberContext* ctx) {
+  bail_if_errors();
   ctx->mem = make_shared<td::table::StructMember>();
   if (ctx->typeDeclaration()) {
     ctx->mem->type_decl = ctx->typeDeclaration()->type_decl;
   } else if (ctx->fieldDeclaration()) {
     ctx->mem->field_decl = ctx->fieldDeclaration()->field_decl;
   } else {
-    throw "Invalid state.";
+    throw_line("Invalid state.");
   }
 }
 
 void FirstPassListener::exitTypeDeclaration(
     TypedefParser::TypeDeclarationContext* ctx) {
+  bail_if_errors();
   ctx->type_decl = make_shared<td::table::TypeDeclaration>();
   if (ctx->structDeclaration()) {
     ctx->type_decl->declaration_type =
@@ -97,12 +114,13 @@ void FirstPassListener::exitTypeDeclaration(
         td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_MAP;
     ctx->type_decl->map = ctx->mapDeclaration()->map;
   } else {
-    throw "Invalid state.";
+    throw_line("Invalid state.");
   }
 }
 
 void FirstPassListener::exitFieldDeclaration(
     TypedefParser::FieldDeclarationContext* ctx) {
+  bail_if_errors();
   if (ctx->primitiveMemberDeclaration()) {
     ctx->field_decl = ctx->primitiveMemberDeclaration()->field_decl;
   } else if (ctx->inlineStructDeclaration()) {
@@ -114,12 +132,13 @@ void FirstPassListener::exitFieldDeclaration(
   } else if (ctx->inlineMapDeclaration()) {
     ctx->field_decl = ctx->inlineMapDeclaration()->field_decl;
   } else {
-    throw "Invalid state.";
+    throw_line("Invalid state.");
   }
 }
 
 void FirstPassListener::exitPrimitiveMemberDeclaration(
     TypedefParser::PrimitiveMemberDeclarationContext* ctx) {
+  bail_if_errors();
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type =
@@ -131,6 +150,7 @@ void FirstPassListener::exitPrimitiveMemberDeclaration(
 
 void FirstPassListener::exitInlineStructDeclaration(
     TypedefParser::InlineStructDeclarationContext* ctx) {
+  bail_if_errors();
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_STRUCT;
@@ -140,6 +160,7 @@ void FirstPassListener::exitInlineStructDeclaration(
 
 void FirstPassListener::exitInlineVariantDeclaration(
     TypedefParser::InlineVariantDeclarationContext* ctx) {
+  bail_if_errors();
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_VARIANT;
@@ -149,6 +170,7 @@ void FirstPassListener::exitInlineVariantDeclaration(
 
 void FirstPassListener::exitInlineVectorDeclaration(
     TypedefParser::InlineVectorDeclarationContext* ctx) {
+  bail_if_errors();
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_VECTOR;
@@ -159,6 +181,7 @@ void FirstPassListener::exitInlineVectorDeclaration(
 
 void FirstPassListener::exitInlineMapDeclaration(
     TypedefParser::InlineMapDeclarationContext* ctx) {
+  bail_if_errors();
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_MAP;
@@ -169,6 +192,7 @@ void FirstPassListener::exitInlineMapDeclaration(
 }
 
 void FirstPassListener::exitSimplePath(TypedefParser::SimplePathContext* ctx) {
+  bail_if_errors();
   ctx->path = make_shared<td::SymbolPath>(ctx->leading_pathsep != nullptr);
   for (const TypedefParser::IdentifierContext* i : ctx->identifier()) {
     ctx->path->emplace_back(i->id);
@@ -177,10 +201,13 @@ void FirstPassListener::exitSimplePath(TypedefParser::SimplePathContext* ctx) {
 
 void FirstPassListener::exitPrimitiveLiteral(
     TypedefParser::PrimitiveLiteralContext* ctx) {
+  bail_if_errors();
   if (ctx->boolLiteral()) {
     ctx->val = ctx->boolLiteral()->val;
   } else if (ctx->charLiteral()) {
     ctx->val = ctx->charLiteral()->val;
+  } else if (ctx->stringLiteral()) {
+    ctx->val = ctx->stringLiteral()->val;
   } else if (ctx->f32Literal()) {
     ctx->val = ctx->f32Literal()->val;
   } else if (ctx->f64Literal()) {
@@ -202,18 +229,19 @@ void FirstPassListener::exitPrimitiveLiteral(
   } else if (ctx->i64Literal()) {
     ctx->val = ctx->i64Literal()->val;
   } else {
-    throw "Invalid state.";
+    throw_line("Invalid state.");
   }
 }
 
 void FirstPassListener::exitBoolLiteral(
     TypedefParser::BoolLiteralContext* ctx) {
+  bail_if_errors();
   if (ctx->start->getType() == TypedefParser::KW_FALSE) {
     ctx->val = false;
   } else if (ctx->start->getType() == TypedefParser::KW_TRUE) {
     ctx->val = true;
   } else {
-    throw "Invalid state.";
+    throw_line("Invalid state.");
   }
 }
 
@@ -500,6 +528,7 @@ T GetFloatValue(CTX* ctx) {
 
 void FirstPassListener::exitCharLiteral(
     TypedefParser::CharLiteralContext* ctx) {
+  bail_if_errors();
   try {
     ctx->val = GetCharValue(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -508,6 +537,7 @@ void FirstPassListener::exitCharLiteral(
 }
 
 void FirstPassListener::exitF32Literal(TypedefParser::F32LiteralContext* ctx) {
+  bail_if_errors();
   try {
     ctx->val = GetFloatValue<float>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -516,6 +546,7 @@ void FirstPassListener::exitF32Literal(TypedefParser::F32LiteralContext* ctx) {
 }
 
 void FirstPassListener::exitF64Literal(TypedefParser::F64LiteralContext* ctx) {
+  bail_if_errors();
   try {
     ctx->val = GetFloatValue<double>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -524,6 +555,7 @@ void FirstPassListener::exitF64Literal(TypedefParser::F64LiteralContext* ctx) {
 }
 
 void FirstPassListener::exitU8Literal(TypedefParser::U8LiteralContext* ctx) {
+  bail_if_errors();
   try {
     ctx->val = GetIntValue<uint8_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -532,6 +564,7 @@ void FirstPassListener::exitU8Literal(TypedefParser::U8LiteralContext* ctx) {
 }
 
 void FirstPassListener::exitU16Literal(TypedefParser::U16LiteralContext* ctx) {
+  bail_if_errors();
   try {
     ctx->val = GetIntValue<uint16_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -540,6 +573,7 @@ void FirstPassListener::exitU16Literal(TypedefParser::U16LiteralContext* ctx) {
 }
 
 void FirstPassListener::exitU32Literal(TypedefParser::U32LiteralContext* ctx) {
+  bail_if_errors();
   try {
     ctx->val = GetIntValue<uint32_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -548,6 +582,7 @@ void FirstPassListener::exitU32Literal(TypedefParser::U32LiteralContext* ctx) {
 }
 
 void FirstPassListener::exitU64Literal(TypedefParser::U64LiteralContext* ctx) {
+  bail_if_errors();
   try {
     ctx->val = GetIntValue<uint64_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -556,6 +591,7 @@ void FirstPassListener::exitU64Literal(TypedefParser::U64LiteralContext* ctx) {
 }
 
 void FirstPassListener::exitI8Literal(TypedefParser::I8LiteralContext* ctx) {
+  bail_if_errors();
   try {
     ctx->val = GetIntValue<int8_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -564,6 +600,7 @@ void FirstPassListener::exitI8Literal(TypedefParser::I8LiteralContext* ctx) {
 }
 
 void FirstPassListener::exitI16Literal(TypedefParser::I16LiteralContext* ctx) {
+  bail_if_errors();
   try {
     ctx->val = GetIntValue<int16_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -572,6 +609,7 @@ void FirstPassListener::exitI16Literal(TypedefParser::I16LiteralContext* ctx) {
 }
 
 void FirstPassListener::exitI32Literal(TypedefParser::I32LiteralContext* ctx) {
+  bail_if_errors();
   try {
     ctx->val = GetIntValue<int32_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -580,6 +618,8 @@ void FirstPassListener::exitI32Literal(TypedefParser::I32LiteralContext* ctx) {
 }
 
 void FirstPassListener::exitI64Literal(TypedefParser::I64LiteralContext* ctx) {
+  bail_if_errors();
+
   try {
     ctx->val = GetIntValue<int64_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -589,11 +629,13 @@ void FirstPassListener::exitI64Literal(TypedefParser::I64LiteralContext* ctx) {
 
 void FirstPassListener::exitStringLiteral(
     TypedefParser::StringLiteralContext* ctx) {
+  bail_if_errors();
+
   try {
     if (ctx->STRING_LITERAL()) {
-      ctx->str = GetStringValue(ctx->STRING_LITERAL()->getSymbol());
+      ctx->val = GetStringValue(ctx->STRING_LITERAL()->getSymbol());
     } else if (ctx->RAW_STRING_LITERAL()) {
-      ctx->str = GetRawString(ctx->RAW_STRING_LITERAL()->getSymbol());
+      ctx->val = GetRawString(ctx->RAW_STRING_LITERAL()->getSymbol());
     }
   } catch (td::ParserErrorInfo& pei) {
     errors_list_.push_back(pei);
@@ -601,6 +643,7 @@ void FirstPassListener::exitStringLiteral(
 }
 
 void FirstPassListener::exitIdentifier(TypedefParser::IdentifierContext* ctx) {
+  bail_if_errors();
   if (ctx->nki) {
     ctx->id = make_shared<string>(std::move(ctx->nki->getText()));
   }
@@ -608,6 +651,7 @@ void FirstPassListener::exitIdentifier(TypedefParser::IdentifierContext* ctx) {
 
 void FirstPassListener::exitPrimitiveTypeIdentifier(
     TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
+  bail_if_errors();
   if (ctx->KW_BOOL()) {
     ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_BOOL;
   } else if (ctx->KW_CHAR()) {

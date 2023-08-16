@@ -102,6 +102,7 @@ shared_ptr<ParsedFile> ParseTypedef(istream &input) {
   if (!errors.empty()) {
     parsed_file->errors = errors;
   }
+  parsed_file->mod = compilation_unit->mod;
   return std::move(parsed_file);
 }
 

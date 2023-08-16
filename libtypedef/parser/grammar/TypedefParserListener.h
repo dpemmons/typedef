@@ -81,6 +81,9 @@ public:
   virtual void enterCharLiteral(TypedefParser::CharLiteralContext *ctx) = 0;
   virtual void exitCharLiteral(TypedefParser::CharLiteralContext *ctx) = 0;
 
+  virtual void enterStringLiteral(TypedefParser::StringLiteralContext *ctx) = 0;
+  virtual void exitStringLiteral(TypedefParser::StringLiteralContext *ctx) = 0;
+
   virtual void enterF32Literal(TypedefParser::F32LiteralContext *ctx) = 0;
   virtual void exitF32Literal(TypedefParser::F32LiteralContext *ctx) = 0;
 
@@ -116,9 +119,6 @@ public:
 
   virtual void enterIntLiteral(TypedefParser::IntLiteralContext *ctx) = 0;
   virtual void exitIntLiteral(TypedefParser::IntLiteralContext *ctx) = 0;
-
-  virtual void enterStringLiteral(TypedefParser::StringLiteralContext *ctx) = 0;
-  virtual void exitStringLiteral(TypedefParser::StringLiteralContext *ctx) = 0;
 
   virtual void enterIdentifier(TypedefParser::IdentifierContext *ctx) = 0;
   virtual void exitIdentifier(TypedefParser::IdentifierContext *ctx) = 0;
