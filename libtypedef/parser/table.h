@@ -155,14 +155,14 @@ struct FieldDeclaration {
   }
   float GetF32() const { return get<float>(*primitive_value); }
   double GetF64() const { return get<double>(*primitive_value); }
-  uint8_t GetI8() const { return get<uint8_t>(*primitive_value); }
-  uint16_t GetI16() const { return get<uint16_t>(*primitive_value); }
-  uint32_t GetI32() const { return get<uint32_t>(*primitive_value); }
-  uint64_t GetI64() const { return get<uint64_t>(*primitive_value); }
-  int8_t GetU8() const { return get<int8_t>(*primitive_value); }
-  int16_t GetU16() const { return get<int16_t>(*primitive_value); }
-  int32_t GetU32() const { return get<int32_t>(*primitive_value); }
-  int64_t GetU64() const { return get<int64_t>(*primitive_value); }
+  uint8_t GetU8() const { return get<uint8_t>(*primitive_value); }
+  uint16_t GetU16() const { return get<uint16_t>(*primitive_value); }
+  uint32_t GetU32() const { return get<uint32_t>(*primitive_value); }
+  uint64_t GetU64() const { return get<uint64_t>(*primitive_value); }
+  int8_t GetI8() const { return get<int8_t>(*primitive_value); }
+  int16_t GetI16() const { return get<int16_t>(*primitive_value); }
+  int32_t GetI32() const { return get<int32_t>(*primitive_value); }
+  int64_t GetI64() const { return get<int64_t>(*primitive_value); }
 };
 
 struct NonPrimitive {

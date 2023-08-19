@@ -55,15 +55,15 @@ public:
     RuleCompilationUnit = 0, RuleStructDeclaration = 1, RuleVariantDeclaration = 2, 
     RuleVectorDeclaration = 3, RuleMapDeclaration = 4, RuleStructMember = 5, 
     RuleTypeDeclaration = 6, RuleFieldDeclaration = 7, RulePrimitiveMemberDeclaration = 8, 
-    RuleInlineStructDeclaration = 9, RuleInlineVariantDeclaration = 10, 
-    RuleInlineVectorDeclaration = 11, RuleInlineMapDeclaration = 12, RuleTypedefVersionDeclaration = 13, 
-    RuleModuleDeclaration = 14, RuleUseDeclaration = 15, RuleUseTree = 16, 
-    RuleSimplePath = 17, RuleExplicitPrimitiveLiteral = 18, RuleBoolLiteral = 19, 
-    RuleCharLiteral = 20, RuleStringLiteral = 21, RuleF32Literal = 22, RuleF64Literal = 23, 
-    RuleU8Literal = 24, RuleU16Literal = 25, RuleU32Literal = 26, RuleU64Literal = 27, 
-    RuleI8Literal = 28, RuleI16Literal = 29, RuleI32Literal = 30, RuleI64Literal = 31, 
-    RuleFloatLiteral = 32, RuleIntLiteral = 33, RuleIdentifier = 34, RulePrimitiveTypeIdentifier = 35, 
-    RuleKeyword = 36
+    RuleImpliedTypePrimitiveMemberDeclaration = 9, RuleInlineStructDeclaration = 10, 
+    RuleInlineVariantDeclaration = 11, RuleInlineVectorDeclaration = 12, 
+    RuleInlineMapDeclaration = 13, RuleTypedefVersionDeclaration = 14, RuleModuleDeclaration = 15, 
+    RuleUseDeclaration = 16, RuleUseTree = 17, RuleSimplePath = 18, RuleExplicitPrimitiveLiteral = 19, 
+    RuleBoolLiteral = 20, RuleCharLiteral = 21, RuleStringLiteral = 22, 
+    RuleF32Literal = 23, RuleF64Literal = 24, RuleU8Literal = 25, RuleU16Literal = 26, 
+    RuleU32Literal = 27, RuleU64Literal = 28, RuleI8Literal = 29, RuleI16Literal = 30, 
+    RuleI32Literal = 31, RuleI64Literal = 32, RuleFloatLiteral = 33, RuleIntLiteral = 34, 
+    RuleIdentifier = 35, RulePrimitiveTypeIdentifier = 36, RuleKeyword = 37
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -85,6 +85,7 @@ public:
   class TypeDeclarationContext;
   class FieldDeclarationContext;
   class PrimitiveMemberDeclarationContext;
+  class ImpliedTypePrimitiveMemberDeclarationContext;
   class InlineStructDeclarationContext;
   class InlineVariantDeclarationContext;
   class InlineVectorDeclarationContext;
@@ -302,6 +303,7 @@ public:
     std::shared_ptr<td::table::FieldDeclaration> field_decl;
     PrimitiveMemberDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    ImpliedTypePrimitiveMemberDeclarationContext *impliedTypePrimitiveMemberDeclaration();
     IdentifierContext *identifier();
     antlr4::tree::TerminalNode *COLON();
     PrimitiveTypeIdentifierContext *primitiveTypeIdentifier();
@@ -320,6 +322,28 @@ public:
   };
 
   PrimitiveMemberDeclarationContext* primitiveMemberDeclaration();
+
+  class  ImpliedTypePrimitiveMemberDeclarationContext : public antlr4::ParserRuleContext {
+  public:
+    std::shared_ptr<td::table::FieldDeclaration> field_decl;
+    ImpliedTypePrimitiveMemberDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IdentifierContext *identifier();
+    antlr4::tree::TerminalNode *EQ();
+    FloatLiteralContext *floatLiteral();
+    IntLiteralContext *intLiteral();
+    ExplicitPrimitiveLiteralContext *explicitPrimitiveLiteral();
+    std::vector<antlr4::tree::TerminalNode *> WS();
+    antlr4::tree::TerminalNode* WS(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ImpliedTypePrimitiveMemberDeclarationContext* impliedTypePrimitiveMemberDeclaration();
 
   class  InlineStructDeclarationContext : public antlr4::ParserRuleContext {
   public:
@@ -531,6 +555,7 @@ public:
 
   class  ExplicitPrimitiveLiteralContext : public antlr4::ParserRuleContext {
   public:
+    td::table::PrimitiveType type;
     td::table::PrimitiveValue val;
     ExplicitPrimitiveLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;

@@ -45,6 +45,9 @@ public:
   virtual void enterPrimitiveMemberDeclaration(TypedefParser::PrimitiveMemberDeclarationContext *ctx) = 0;
   virtual void exitPrimitiveMemberDeclaration(TypedefParser::PrimitiveMemberDeclarationContext *ctx) = 0;
 
+  virtual void enterImpliedTypePrimitiveMemberDeclaration(TypedefParser::ImpliedTypePrimitiveMemberDeclarationContext *ctx) = 0;
+  virtual void exitImpliedTypePrimitiveMemberDeclaration(TypedefParser::ImpliedTypePrimitiveMemberDeclarationContext *ctx) = 0;
+
   virtual void enterInlineStructDeclaration(TypedefParser::InlineStructDeclarationContext *ctx) = 0;
   virtual void exitInlineStructDeclaration(TypedefParser::InlineStructDeclarationContext *ctx) = 0;
 

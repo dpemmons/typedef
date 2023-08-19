@@ -421,6 +421,11 @@ void FirstPassListener::exitFieldDeclaration(
 void FirstPassListener::exitPrimitiveMemberDeclaration(
     TypedefParser::PrimitiveMemberDeclarationContext* ctx) {
   bail_if_errors();
+  if (ctx->impliedTypePrimitiveMemberDeclaration()) {
+    ctx->field_decl = ctx->impliedTypePrimitiveMemberDeclaration()->field_decl;
+    return;
+  }
+
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type =
@@ -501,6 +506,25 @@ void FirstPassListener::exitPrimitiveMemberDeclaration(
   // else no value; that's fine.
 }
 
+void FirstPassListener::exitImpliedTypePrimitiveMemberDeclaration(
+    TypedefParser::ImpliedTypePrimitiveMemberDeclarationContext* ctx) {
+  ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  ctx->field_decl->identifier = ctx->identifier()->id;
+  if (ctx->floatLiteral()) {
+    ctx->field_decl->member_type = td::table::Type::TYPE_F32;
+    ctx->field_decl->primitive_value = GetFloatValue<float>(ctx);
+  } else if (ctx->intLiteral()) {
+    ctx->field_decl->member_type = td::table::Type::TYPE_I32;
+    ctx->field_decl->primitive_value = GetIntValue<int32_t>(ctx);
+  } else if (ctx->explicitPrimitiveLiteral()) {
+    ctx->field_decl->member_type =
+        (td::table::Type)ctx->explicitPrimitiveLiteral()->type;
+    ctx->field_decl->primitive_value = ctx->explicitPrimitiveLiteral()->val;
+  } else {
+    throw_line("Invalid state.");
+  }
+}
+
 void FirstPassListener::exitInlineStructDeclaration(
     TypedefParser::InlineStructDeclarationContext* ctx) {
   bail_if_errors();
@@ -556,30 +580,43 @@ void FirstPassListener::exitExplicitPrimitiveLiteral(
     TypedefParser::ExplicitPrimitiveLiteralContext* ctx) {
   bail_if_errors();
   if (ctx->boolLiteral()) {
+    ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_BOOL;
     ctx->val = ctx->boolLiteral()->val;
   } else if (ctx->charLiteral()) {
+    ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_CHAR;
     ctx->val = ctx->charLiteral()->val;
   } else if (ctx->stringLiteral()) {
+    ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_STRING;
     ctx->val = ctx->stringLiteral()->val;
   } else if (ctx->f32Literal()) {
+    ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_F32;
     ctx->val = ctx->f32Literal()->val;
   } else if (ctx->f64Literal()) {
+    ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_F64;
     ctx->val = ctx->f64Literal()->val;
   } else if (ctx->u8Literal()) {
+    ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_U8;
     ctx->val = ctx->u8Literal()->val;
   } else if (ctx->u16Literal()) {
+    ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_U16;
     ctx->val = ctx->u16Literal()->val;
   } else if (ctx->u32Literal()) {
+    ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_U32;
     ctx->val = ctx->u32Literal()->val;
   } else if (ctx->u64Literal()) {
+    ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_U64;
     ctx->val = ctx->u64Literal()->val;
   } else if (ctx->i8Literal()) {
+    ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_I8;
     ctx->val = ctx->i8Literal()->val;
   } else if (ctx->i16Literal()) {
+    ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_I16;
     ctx->val = ctx->i16Literal()->val;
   } else if (ctx->i32Literal()) {
+    ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_I32;
     ctx->val = ctx->i32Literal()->val;
   } else if (ctx->i64Literal()) {
+    ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_I64;
     ctx->val = ctx->i64Literal()->val;
   } else {
     throw_line("Invalid state.");

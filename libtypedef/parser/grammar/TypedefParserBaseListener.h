@@ -47,6 +47,9 @@ public:
   virtual void enterPrimitiveMemberDeclaration(TypedefParser::PrimitiveMemberDeclarationContext * /*ctx*/) override { }
   virtual void exitPrimitiveMemberDeclaration(TypedefParser::PrimitiveMemberDeclarationContext * /*ctx*/) override { }
 
+  virtual void enterImpliedTypePrimitiveMemberDeclaration(TypedefParser::ImpliedTypePrimitiveMemberDeclarationContext * /*ctx*/) override { }
+  virtual void exitImpliedTypePrimitiveMemberDeclaration(TypedefParser::ImpliedTypePrimitiveMemberDeclarationContext * /*ctx*/) override { }
+
   virtual void enterInlineStructDeclaration(TypedefParser::InlineStructDeclarationContext * /*ctx*/) override { }
   virtual void exitInlineStructDeclaration(TypedefParser::InlineStructDeclarationContext * /*ctx*/) override { }
 

@@ -74,16 +74,27 @@ fieldDeclaration
 
 primitiveMemberDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier WS* COLON WS* (
-		primitiveTypeIdentifier WS* EQ WS* (
-			floatLiteral
-			| intLiteral
+	impliedTypePrimitiveMemberDeclaration
+	| (
+		identifier WS* COLON WS* (
+			primitiveTypeIdentifier WS* EQ WS* (
+				floatLiteral
+				| intLiteral
+			)
+			| (
+				primitiveTypeIdentifier (
+					WS* EQ WS* explicitPrimitiveLiteral
+				)?
+			)
 		)
-		| (
-			primitiveTypeIdentifier (
-				WS* EQ WS* explicitPrimitiveLiteral
-			)?
-		)
+	);
+
+impliedTypePrimitiveMemberDeclaration
+	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
+	identifier WS* EQ WS* (
+		floatLiteral
+		| intLiteral
+		| explicitPrimitiveLiteral
 	);
 
 inlineStructDeclaration
@@ -138,7 +149,7 @@ simplePath
 	(leading_pathsep = PATHSEP)? identifier (PATHSEP identifier)*;
 
 explicitPrimitiveLiteral
-	returns[td::table::PrimitiveValue val]:
+	returns[td::table::PrimitiveType type, td::table::PrimitiveValue val]:
 	boolLiteral
 	| charLiteral
 	| stringLiteral
