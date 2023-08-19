@@ -13,6 +13,7 @@ using namespace std;
 
 #define throw_line(str) \
   throw fmt::format("Exception \"{}\" in {}:{}", str, __FILE__, __LINE__);
+
 #define bail_if_errors()     \
   if (errors_list_.size()) { \
     return;                  \
@@ -28,221 +29,6 @@ td::ParserErrorInfo MakeError(td::ParserErrorInfo::Type type, const string& msg,
       .SetLineOffset(token->getCharPositionInLine())
       .SetLength(token->getText().length())
       .build();
-}
-
-void FirstPassListener::exitCompilationUnit(
-    TypedefParser::CompilationUnitContext* ctx) {
-  bail_if_errors();
-  ctx->version = ctx->typedefVersionDeclaration()->version;
-  ctx->mod = make_shared<td::table::Module>();
-  for (TypedefParser::TypeDeclarationContext* td : ctx->typeDeclaration()) {
-    ctx->mod->types.push_back(td->type_decl);
-  }
-}
-
-void FirstPassListener::exitStructDeclaration(
-    TypedefParser::StructDeclarationContext* ctx) {
-  bail_if_errors();
-  ctx->st = make_shared<td::table::Struct>();
-  ctx->st->identifier = ctx->identifier()->id;
-  for (TypedefParser::StructMemberContext* stmctx : ctx->structMember()) {
-    ctx->st->members.push_back(stmctx->mem);
-  }
-}
-
-void FirstPassListener::exitVariantDeclaration(
-    TypedefParser::VariantDeclarationContext* ctx) {
-  bail_if_errors();
-  ctx->var = make_shared<td::table::Variant>();
-  ctx->var->identifier = ctx->identifier()->id;
-  for (TypedefParser::StructMemberContext* stmctx : ctx->structMember()) {
-    ctx->var->members.push_back(stmctx->mem);
-  }
-}
-
-void FirstPassListener::exitVectorDeclaration(
-    TypedefParser::VectorDeclarationContext* ctx) {
-  bail_if_errors();
-  ctx->vec = make_shared<td::table::Vector>();
-  ctx->vec->identifier = ctx->identifier()->id;
-  ctx->vec = make_shared<td::table::Vector>();
-  ctx->vec->value_type = (td::table::Type)ctx->val->primitive_type;
-  // TODO: handle non-primitive value types.
-}
-
-void FirstPassListener::exitMapDeclaration(
-    TypedefParser::MapDeclarationContext* ctx) {
-  bail_if_errors();
-  ctx->map = make_shared<td::table::Map>();
-  ctx->map->identifier = ctx->identifier()->id;
-  ctx->map->key_type = ctx->key->primitive_type;
-  ctx->map->value_type = (td::table::Type)ctx->val->primitive_type;
-  // TODO: handle non-primitive value types.
-}
-
-void FirstPassListener::exitStructMember(
-    TypedefParser::StructMemberContext* ctx) {
-  bail_if_errors();
-  ctx->mem = make_shared<td::table::StructMember>();
-  if (ctx->typeDeclaration()) {
-    ctx->mem->type_decl = ctx->typeDeclaration()->type_decl;
-  } else if (ctx->fieldDeclaration()) {
-    ctx->mem->field_decl = ctx->fieldDeclaration()->field_decl;
-  } else {
-    throw_line("Invalid state.");
-  }
-}
-
-void FirstPassListener::exitTypeDeclaration(
-    TypedefParser::TypeDeclarationContext* ctx) {
-  bail_if_errors();
-  ctx->type_decl = make_shared<td::table::TypeDeclaration>();
-  if (ctx->structDeclaration()) {
-    ctx->type_decl->declaration_type =
-        td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_STRUCT;
-    ctx->type_decl->st = ctx->structDeclaration()->st;
-  } else if (ctx->variantDeclaration()) {
-    ctx->type_decl->declaration_type =
-        td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_VARIANT;
-    ctx->type_decl->var = ctx->variantDeclaration()->var;
-  } else if (ctx->vectorDeclaration()) {
-    ctx->type_decl->declaration_type =
-        td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_VECTOR;
-    ctx->type_decl->vec = ctx->vectorDeclaration()->vec;
-  } else if (ctx->mapDeclaration()) {
-    ctx->type_decl->declaration_type =
-        td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_MAP;
-    ctx->type_decl->map = ctx->mapDeclaration()->map;
-  } else {
-    throw_line("Invalid state.");
-  }
-}
-
-void FirstPassListener::exitFieldDeclaration(
-    TypedefParser::FieldDeclarationContext* ctx) {
-  bail_if_errors();
-  if (ctx->primitiveMemberDeclaration()) {
-    ctx->field_decl = ctx->primitiveMemberDeclaration()->field_decl;
-  } else if (ctx->inlineStructDeclaration()) {
-    ctx->field_decl = ctx->inlineStructDeclaration()->field_decl;
-  } else if (ctx->inlineVariantDeclaration()) {
-    ctx->field_decl = ctx->inlineVariantDeclaration()->field_decl;
-  } else if (ctx->inlineVectorDeclaration()) {
-    ctx->field_decl = ctx->inlineVectorDeclaration()->field_decl;
-  } else if (ctx->inlineMapDeclaration()) {
-    ctx->field_decl = ctx->inlineMapDeclaration()->field_decl;
-  } else {
-    throw_line("Invalid state.");
-  }
-}
-
-void FirstPassListener::exitPrimitiveMemberDeclaration(
-    TypedefParser::PrimitiveMemberDeclarationContext* ctx) {
-  bail_if_errors();
-  ctx->field_decl = make_shared<td::table::FieldDeclaration>();
-  ctx->field_decl->identifier = ctx->identifier()->id;
-  ctx->field_decl->member_type =
-      (td::table::Type)ctx->primitiveTypeIdentifier()->primitive_type;
-  if (ctx->primitiveLiteral()) {
-    ctx->field_decl->primitive_value = ctx->primitiveLiteral()->val;
-  }
-}
-
-void FirstPassListener::exitInlineStructDeclaration(
-    TypedefParser::InlineStructDeclarationContext* ctx) {
-  bail_if_errors();
-  ctx->field_decl = make_shared<td::table::FieldDeclaration>();
-  ctx->field_decl->identifier = ctx->identifier()->id;
-  ctx->field_decl->member_type = td::table::Type::TYPE_STRUCT;
-  ctx->field_decl->st = make_shared<td::table::Struct>();
-  // TODO: handle all field types.
-}
-
-void FirstPassListener::exitInlineVariantDeclaration(
-    TypedefParser::InlineVariantDeclarationContext* ctx) {
-  bail_if_errors();
-  ctx->field_decl = make_shared<td::table::FieldDeclaration>();
-  ctx->field_decl->identifier = ctx->identifier()->id;
-  ctx->field_decl->member_type = td::table::Type::TYPE_VARIANT;
-  ctx->field_decl->var = make_shared<td::table::Variant>();
-  // TODO: handle all field types.
-}
-
-void FirstPassListener::exitInlineVectorDeclaration(
-    TypedefParser::InlineVectorDeclarationContext* ctx) {
-  bail_if_errors();
-  ctx->field_decl = make_shared<td::table::FieldDeclaration>();
-  ctx->field_decl->identifier = ctx->identifier()->id;
-  ctx->field_decl->member_type = td::table::Type::TYPE_VECTOR;
-  ctx->field_decl->vec = make_shared<td::table::Vector>();
-  ctx->field_decl->vec->value_type = (td::table::Type)ctx->val->primitive_type;
-  // TODO: handle non-primitive value types.
-}
-
-void FirstPassListener::exitInlineMapDeclaration(
-    TypedefParser::InlineMapDeclarationContext* ctx) {
-  bail_if_errors();
-  ctx->field_decl = make_shared<td::table::FieldDeclaration>();
-  ctx->field_decl->identifier = ctx->identifier()->id;
-  ctx->field_decl->member_type = td::table::Type::TYPE_MAP;
-  ctx->field_decl->map = make_shared<td::table::Map>();
-  ctx->field_decl->map->key_type = ctx->key->primitive_type;
-  ctx->field_decl->map->value_type = (td::table::Type)ctx->val->primitive_type;
-  // TODO: handle non-primitive value types.
-}
-
-void FirstPassListener::exitSimplePath(TypedefParser::SimplePathContext* ctx) {
-  bail_if_errors();
-  ctx->path = make_shared<td::SymbolPath>(ctx->leading_pathsep != nullptr);
-  for (const TypedefParser::IdentifierContext* i : ctx->identifier()) {
-    ctx->path->emplace_back(i->id);
-  }
-}
-
-void FirstPassListener::exitPrimitiveLiteral(
-    TypedefParser::PrimitiveLiteralContext* ctx) {
-  bail_if_errors();
-  if (ctx->boolLiteral()) {
-    ctx->val = ctx->boolLiteral()->val;
-  } else if (ctx->charLiteral()) {
-    ctx->val = ctx->charLiteral()->val;
-  } else if (ctx->stringLiteral()) {
-    ctx->val = ctx->stringLiteral()->val;
-  } else if (ctx->f32Literal()) {
-    ctx->val = ctx->f32Literal()->val;
-  } else if (ctx->f64Literal()) {
-    ctx->val = ctx->f64Literal()->val;
-  } else if (ctx->u8Literal()) {
-    ctx->val = ctx->u8Literal()->val;
-  } else if (ctx->u16Literal()) {
-    ctx->val = ctx->u16Literal()->val;
-  } else if (ctx->u32Literal()) {
-    ctx->val = ctx->u32Literal()->val;
-  } else if (ctx->u64Literal()) {
-    ctx->val = ctx->u64Literal()->val;
-  } else if (ctx->i8Literal()) {
-    ctx->val = ctx->i8Literal()->val;
-  } else if (ctx->i16Literal()) {
-    ctx->val = ctx->i16Literal()->val;
-  } else if (ctx->i32Literal()) {
-    ctx->val = ctx->i32Literal()->val;
-  } else if (ctx->i64Literal()) {
-    ctx->val = ctx->i64Literal()->val;
-  } else {
-    throw_line("Invalid state.");
-  }
-}
-
-void FirstPassListener::exitBoolLiteral(
-    TypedefParser::BoolLiteralContext* ctx) {
-  bail_if_errors();
-  if (ctx->start->getType() == TypedefParser::KW_FALSE) {
-    ctx->val = false;
-  } else if (ctx->start->getType() == TypedefParser::KW_TRUE) {
-    ctx->val = true;
-  } else {
-    throw_line("Invalid state.");
-  }
 }
 
 namespace {
@@ -525,6 +311,292 @@ T GetFloatValue(CTX* ctx) {
 }
 
 }  // namespace
+
+void FirstPassListener::exitCompilationUnit(
+    TypedefParser::CompilationUnitContext* ctx) {
+  bail_if_errors();
+  ctx->version = ctx->typedefVersionDeclaration()->version;
+  ctx->mod = make_shared<td::table::Module>();
+  for (TypedefParser::TypeDeclarationContext* td : ctx->typeDeclaration()) {
+    ctx->mod->types.push_back(td->type_decl);
+  }
+}
+
+void FirstPassListener::exitStructDeclaration(
+    TypedefParser::StructDeclarationContext* ctx) {
+  bail_if_errors();
+  ctx->st = make_shared<td::table::Struct>();
+  ctx->st->identifier = ctx->identifier()->id;
+  for (TypedefParser::StructMemberContext* stmctx : ctx->structMember()) {
+    ctx->st->members.push_back(stmctx->mem);
+  }
+}
+
+void FirstPassListener::exitVariantDeclaration(
+    TypedefParser::VariantDeclarationContext* ctx) {
+  bail_if_errors();
+  ctx->var = make_shared<td::table::Variant>();
+  ctx->var->identifier = ctx->identifier()->id;
+  for (TypedefParser::StructMemberContext* stmctx : ctx->structMember()) {
+    ctx->var->members.push_back(stmctx->mem);
+  }
+}
+
+void FirstPassListener::exitVectorDeclaration(
+    TypedefParser::VectorDeclarationContext* ctx) {
+  bail_if_errors();
+  ctx->vec = make_shared<td::table::Vector>();
+  ctx->vec->identifier = ctx->identifier()->id;
+  ctx->vec = make_shared<td::table::Vector>();
+  ctx->vec->value_type = (td::table::Type)ctx->val->primitive_type;
+  // TODO: handle non-primitive value types.
+}
+
+void FirstPassListener::exitMapDeclaration(
+    TypedefParser::MapDeclarationContext* ctx) {
+  bail_if_errors();
+  ctx->map = make_shared<td::table::Map>();
+  ctx->map->identifier = ctx->identifier()->id;
+  ctx->map->key_type = ctx->key->primitive_type;
+  ctx->map->value_type = (td::table::Type)ctx->val->primitive_type;
+  // TODO: handle non-primitive value types.
+}
+
+void FirstPassListener::exitStructMember(
+    TypedefParser::StructMemberContext* ctx) {
+  bail_if_errors();
+  ctx->mem = make_shared<td::table::StructMember>();
+  if (ctx->typeDeclaration()) {
+    ctx->mem->type_decl = ctx->typeDeclaration()->type_decl;
+  } else if (ctx->fieldDeclaration()) {
+    ctx->mem->field_decl = ctx->fieldDeclaration()->field_decl;
+  } else {
+    throw_line("Invalid state.");
+  }
+}
+
+void FirstPassListener::exitTypeDeclaration(
+    TypedefParser::TypeDeclarationContext* ctx) {
+  bail_if_errors();
+  ctx->type_decl = make_shared<td::table::TypeDeclaration>();
+  if (ctx->structDeclaration()) {
+    ctx->type_decl->declaration_type =
+        td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_STRUCT;
+    ctx->type_decl->st = ctx->structDeclaration()->st;
+  } else if (ctx->variantDeclaration()) {
+    ctx->type_decl->declaration_type =
+        td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_VARIANT;
+    ctx->type_decl->var = ctx->variantDeclaration()->var;
+  } else if (ctx->vectorDeclaration()) {
+    ctx->type_decl->declaration_type =
+        td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_VECTOR;
+    ctx->type_decl->vec = ctx->vectorDeclaration()->vec;
+  } else if (ctx->mapDeclaration()) {
+    ctx->type_decl->declaration_type =
+        td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_MAP;
+    ctx->type_decl->map = ctx->mapDeclaration()->map;
+  } else {
+    throw_line("Invalid state.");
+  }
+}
+
+void FirstPassListener::exitFieldDeclaration(
+    TypedefParser::FieldDeclarationContext* ctx) {
+  bail_if_errors();
+  if (ctx->primitiveMemberDeclaration()) {
+    ctx->field_decl = ctx->primitiveMemberDeclaration()->field_decl;
+  } else if (ctx->inlineStructDeclaration()) {
+    ctx->field_decl = ctx->inlineStructDeclaration()->field_decl;
+  } else if (ctx->inlineVariantDeclaration()) {
+    ctx->field_decl = ctx->inlineVariantDeclaration()->field_decl;
+  } else if (ctx->inlineVectorDeclaration()) {
+    ctx->field_decl = ctx->inlineVectorDeclaration()->field_decl;
+  } else if (ctx->inlineMapDeclaration()) {
+    ctx->field_decl = ctx->inlineMapDeclaration()->field_decl;
+  } else {
+    throw_line("Invalid state.");
+  }
+}
+
+void FirstPassListener::exitPrimitiveMemberDeclaration(
+    TypedefParser::PrimitiveMemberDeclarationContext* ctx) {
+  bail_if_errors();
+  ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  ctx->field_decl->identifier = ctx->identifier()->id;
+  ctx->field_decl->member_type =
+      (td::table::Type)ctx->primitiveTypeIdentifier()->primitive_type;
+  if (ctx->explicitPrimitiveLiteral()) {
+    ctx->field_decl->primitive_value = ctx->explicitPrimitiveLiteral()->val;
+  } else if (ctx->floatLiteral()) {
+    switch (ctx->primitiveTypeIdentifier()->primitive_type) {
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_F32:
+        ctx->field_decl->primitive_value = GetFloatValue<float>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_F64:
+        ctx->field_decl->primitive_value = GetFloatValue<double>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_U8:
+        ctx->field_decl->primitive_value = GetFloatValue<uint8_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_U16:
+        ctx->field_decl->primitive_value = GetFloatValue<uint16_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_U32:
+        ctx->field_decl->primitive_value = GetFloatValue<uint32_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_U64:
+        ctx->field_decl->primitive_value = GetFloatValue<uint64_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_I8:
+        ctx->field_decl->primitive_value = GetFloatValue<int8_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_I16:
+        ctx->field_decl->primitive_value = GetFloatValue<int16_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_I32:
+        ctx->field_decl->primitive_value = GetFloatValue<int32_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_I64:
+        ctx->field_decl->primitive_value = GetFloatValue<int64_t>(ctx);
+        break;
+      default:
+        throw_line("Invalid state.");
+    }
+  } else if (ctx->intLiteral()) {
+    switch (ctx->primitiveTypeIdentifier()->primitive_type) {
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_F32:
+        ctx->field_decl->primitive_value = GetIntValue<int32_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_F64:
+        ctx->field_decl->primitive_value = GetIntValue<int32_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_U8:
+        ctx->field_decl->primitive_value = GetIntValue<uint8_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_U16:
+        ctx->field_decl->primitive_value = GetIntValue<uint16_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_U32:
+        ctx->field_decl->primitive_value = GetIntValue<uint32_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_U64:
+        ctx->field_decl->primitive_value = GetIntValue<uint64_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_I8:
+        ctx->field_decl->primitive_value = GetIntValue<int8_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_I16:
+        ctx->field_decl->primitive_value = GetIntValue<int16_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_I32:
+        ctx->field_decl->primitive_value = GetIntValue<int32_t>(ctx);
+        break;
+      case td::table::PrimitiveType::PRIMITIVE_TYPE_I64:
+        ctx->field_decl->primitive_value = GetIntValue<int64_t>(ctx);
+        break;
+      default:
+        throw_line("Invalid state.");
+    }
+  }
+  // else no value; that's fine.
+}
+
+void FirstPassListener::exitInlineStructDeclaration(
+    TypedefParser::InlineStructDeclarationContext* ctx) {
+  bail_if_errors();
+  ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  ctx->field_decl->identifier = ctx->identifier()->id;
+  ctx->field_decl->member_type = td::table::Type::TYPE_STRUCT;
+  ctx->field_decl->st = make_shared<td::table::Struct>();
+  // TODO: handle all field types.
+}
+
+void FirstPassListener::exitInlineVariantDeclaration(
+    TypedefParser::InlineVariantDeclarationContext* ctx) {
+  bail_if_errors();
+  ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  ctx->field_decl->identifier = ctx->identifier()->id;
+  ctx->field_decl->member_type = td::table::Type::TYPE_VARIANT;
+  ctx->field_decl->var = make_shared<td::table::Variant>();
+  // TODO: handle all field types.
+}
+
+void FirstPassListener::exitInlineVectorDeclaration(
+    TypedefParser::InlineVectorDeclarationContext* ctx) {
+  bail_if_errors();
+  ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  ctx->field_decl->identifier = ctx->identifier()->id;
+  ctx->field_decl->member_type = td::table::Type::TYPE_VECTOR;
+  ctx->field_decl->vec = make_shared<td::table::Vector>();
+  ctx->field_decl->vec->value_type = (td::table::Type)ctx->val->primitive_type;
+  // TODO: handle non-primitive value types.
+}
+
+void FirstPassListener::exitInlineMapDeclaration(
+    TypedefParser::InlineMapDeclarationContext* ctx) {
+  bail_if_errors();
+  ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  ctx->field_decl->identifier = ctx->identifier()->id;
+  ctx->field_decl->member_type = td::table::Type::TYPE_MAP;
+  ctx->field_decl->map = make_shared<td::table::Map>();
+  ctx->field_decl->map->key_type = ctx->key->primitive_type;
+  ctx->field_decl->map->value_type = (td::table::Type)ctx->val->primitive_type;
+  // TODO: handle non-primitive value types.
+}
+
+void FirstPassListener::exitSimplePath(TypedefParser::SimplePathContext* ctx) {
+  bail_if_errors();
+  ctx->path = make_shared<td::SymbolPath>(ctx->leading_pathsep != nullptr);
+  for (const TypedefParser::IdentifierContext* i : ctx->identifier()) {
+    ctx->path->emplace_back(i->id);
+  }
+}
+
+void FirstPassListener::exitExplicitPrimitiveLiteral(
+    TypedefParser::ExplicitPrimitiveLiteralContext* ctx) {
+  bail_if_errors();
+  if (ctx->boolLiteral()) {
+    ctx->val = ctx->boolLiteral()->val;
+  } else if (ctx->charLiteral()) {
+    ctx->val = ctx->charLiteral()->val;
+  } else if (ctx->stringLiteral()) {
+    ctx->val = ctx->stringLiteral()->val;
+  } else if (ctx->f32Literal()) {
+    ctx->val = ctx->f32Literal()->val;
+  } else if (ctx->f64Literal()) {
+    ctx->val = ctx->f64Literal()->val;
+  } else if (ctx->u8Literal()) {
+    ctx->val = ctx->u8Literal()->val;
+  } else if (ctx->u16Literal()) {
+    ctx->val = ctx->u16Literal()->val;
+  } else if (ctx->u32Literal()) {
+    ctx->val = ctx->u32Literal()->val;
+  } else if (ctx->u64Literal()) {
+    ctx->val = ctx->u64Literal()->val;
+  } else if (ctx->i8Literal()) {
+    ctx->val = ctx->i8Literal()->val;
+  } else if (ctx->i16Literal()) {
+    ctx->val = ctx->i16Literal()->val;
+  } else if (ctx->i32Literal()) {
+    ctx->val = ctx->i32Literal()->val;
+  } else if (ctx->i64Literal()) {
+    ctx->val = ctx->i64Literal()->val;
+  } else {
+    throw_line("Invalid state.");
+  }
+}
+
+void FirstPassListener::exitBoolLiteral(
+    TypedefParser::BoolLiteralContext* ctx) {
+  bail_if_errors();
+  if (ctx->start->getType() == TypedefParser::KW_FALSE) {
+    ctx->val = false;
+  } else if (ctx->start->getType() == TypedefParser::KW_TRUE) {
+    ctx->val = true;
+  } else {
+    throw_line("Invalid state.");
+  }
+}
 
 void FirstPassListener::exitCharLiteral(
     TypedefParser::CharLiteralContext* ctx) {

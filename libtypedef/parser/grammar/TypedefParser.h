@@ -58,11 +58,11 @@ public:
     RuleInlineStructDeclaration = 9, RuleInlineVariantDeclaration = 10, 
     RuleInlineVectorDeclaration = 11, RuleInlineMapDeclaration = 12, RuleTypedefVersionDeclaration = 13, 
     RuleModuleDeclaration = 14, RuleUseDeclaration = 15, RuleUseTree = 16, 
-    RuleSimplePath = 17, RulePrimitiveLiteral = 18, RuleBoolLiteral = 19, 
+    RuleSimplePath = 17, RuleExplicitPrimitiveLiteral = 18, RuleBoolLiteral = 19, 
     RuleCharLiteral = 20, RuleStringLiteral = 21, RuleF32Literal = 22, RuleF64Literal = 23, 
-    RuleFloatLiteral = 24, RuleU8Literal = 25, RuleU16Literal = 26, RuleU32Literal = 27, 
-    RuleU64Literal = 28, RuleI8Literal = 29, RuleI16Literal = 30, RuleI32Literal = 31, 
-    RuleI64Literal = 32, RuleIntLiteral = 33, RuleIdentifier = 34, RulePrimitiveTypeIdentifier = 35, 
+    RuleU8Literal = 24, RuleU16Literal = 25, RuleU32Literal = 26, RuleU64Literal = 27, 
+    RuleI8Literal = 28, RuleI16Literal = 29, RuleI32Literal = 30, RuleI64Literal = 31, 
+    RuleFloatLiteral = 32, RuleIntLiteral = 33, RuleIdentifier = 34, RulePrimitiveTypeIdentifier = 35, 
     RuleKeyword = 36
   };
 
@@ -94,13 +94,12 @@ public:
   class UseDeclarationContext;
   class UseTreeContext;
   class SimplePathContext;
-  class PrimitiveLiteralContext;
+  class ExplicitPrimitiveLiteralContext;
   class BoolLiteralContext;
   class CharLiteralContext;
   class StringLiteralContext;
   class F32LiteralContext;
   class F64LiteralContext;
-  class FloatLiteralContext;
   class U8LiteralContext;
   class U16LiteralContext;
   class U32LiteralContext;
@@ -109,6 +108,7 @@ public:
   class I16LiteralContext;
   class I32LiteralContext;
   class I64LiteralContext;
+  class FloatLiteralContext;
   class IntLiteralContext;
   class IdentifierContext;
   class PrimitiveTypeIdentifierContext;
@@ -305,10 +305,12 @@ public:
     IdentifierContext *identifier();
     antlr4::tree::TerminalNode *COLON();
     PrimitiveTypeIdentifierContext *primitiveTypeIdentifier();
+    antlr4::tree::TerminalNode *EQ();
     std::vector<antlr4::tree::TerminalNode *> WS();
     antlr4::tree::TerminalNode* WS(size_t i);
-    antlr4::tree::TerminalNode *EQ();
-    PrimitiveLiteralContext *primitiveLiteral();
+    FloatLiteralContext *floatLiteral();
+    IntLiteralContext *intLiteral();
+    ExplicitPrimitiveLiteralContext *explicitPrimitiveLiteral();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -527,10 +529,10 @@ public:
 
   SimplePathContext* simplePath();
 
-  class  PrimitiveLiteralContext : public antlr4::ParserRuleContext {
+  class  ExplicitPrimitiveLiteralContext : public antlr4::ParserRuleContext {
   public:
     td::table::PrimitiveValue val;
-    PrimitiveLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ExplicitPrimitiveLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     BoolLiteralContext *boolLiteral();
     CharLiteralContext *charLiteral();
@@ -553,7 +555,7 @@ public:
    
   };
 
-  PrimitiveLiteralContext* primitiveLiteral();
+  ExplicitPrimitiveLiteralContext* explicitPrimitiveLiteral();
 
   class  BoolLiteralContext : public antlr4::ParserRuleContext {
   public:
@@ -638,21 +640,6 @@ public:
   };
 
   F64LiteralContext* f64Literal();
-
-  class  FloatLiteralContext : public antlr4::ParserRuleContext {
-  public:
-    FloatLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *FLOAT_LITERAL();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  FloatLiteralContext* floatLiteral();
 
   class  U8LiteralContext : public antlr4::ParserRuleContext {
   public:
@@ -789,6 +776,21 @@ public:
   };
 
   I64LiteralContext* i64Literal();
+
+  class  FloatLiteralContext : public antlr4::ParserRuleContext {
+  public:
+    FloatLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *FLOAT_LITERAL();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  FloatLiteralContext* floatLiteral();
 
   class  IntLiteralContext : public antlr4::ParserRuleContext {
   public:

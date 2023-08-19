@@ -74,8 +74,8 @@ public:
   virtual void enterSimplePath(TypedefParser::SimplePathContext * /*ctx*/) override { }
   virtual void exitSimplePath(TypedefParser::SimplePathContext * /*ctx*/) override { }
 
-  virtual void enterPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext * /*ctx*/) override { }
-  virtual void exitPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext * /*ctx*/) override { }
+  virtual void enterExplicitPrimitiveLiteral(TypedefParser::ExplicitPrimitiveLiteralContext * /*ctx*/) override { }
+  virtual void exitExplicitPrimitiveLiteral(TypedefParser::ExplicitPrimitiveLiteralContext * /*ctx*/) override { }
 
   virtual void enterBoolLiteral(TypedefParser::BoolLiteralContext * /*ctx*/) override { }
   virtual void exitBoolLiteral(TypedefParser::BoolLiteralContext * /*ctx*/) override { }
@@ -91,9 +91,6 @@ public:
 
   virtual void enterF64Literal(TypedefParser::F64LiteralContext * /*ctx*/) override { }
   virtual void exitF64Literal(TypedefParser::F64LiteralContext * /*ctx*/) override { }
-
-  virtual void enterFloatLiteral(TypedefParser::FloatLiteralContext * /*ctx*/) override { }
-  virtual void exitFloatLiteral(TypedefParser::FloatLiteralContext * /*ctx*/) override { }
 
   virtual void enterU8Literal(TypedefParser::U8LiteralContext * /*ctx*/) override { }
   virtual void exitU8Literal(TypedefParser::U8LiteralContext * /*ctx*/) override { }
@@ -118,6 +115,9 @@ public:
 
   virtual void enterI64Literal(TypedefParser::I64LiteralContext * /*ctx*/) override { }
   virtual void exitI64Literal(TypedefParser::I64LiteralContext * /*ctx*/) override { }
+
+  virtual void enterFloatLiteral(TypedefParser::FloatLiteralContext * /*ctx*/) override { }
+  virtual void exitFloatLiteral(TypedefParser::FloatLiteralContext * /*ctx*/) override { }
 
   virtual void enterIntLiteral(TypedefParser::IntLiteralContext * /*ctx*/) override { }
   virtual void exitIntLiteral(TypedefParser::IntLiteralContext * /*ctx*/) override { }

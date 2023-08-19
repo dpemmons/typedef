@@ -61,8 +61,8 @@ class FirstPassListener : public TypedefParserBaseListener {
 
   virtual void exitSimplePath(TypedefParser::SimplePathContext *ctx) override;
 
-  virtual void exitPrimitiveLiteral(
-      TypedefParser::PrimitiveLiteralContext *ctx) override;
+  virtual void exitExplicitPrimitiveLiteral(
+      TypedefParser::ExplicitPrimitiveLiteralContext *ctx) override;
 
   virtual void exitBoolLiteral(TypedefParser::BoolLiteralContext *ctx) override;
   virtual void exitCharLiteral(TypedefParser::CharLiteralContext *ctx) override;

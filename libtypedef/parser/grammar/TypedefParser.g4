@@ -74,9 +74,17 @@ fieldDeclaration
 
 primitiveMemberDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier WS* COLON WS* primitiveTypeIdentifier (
-		WS* EQ WS* primitiveLiteral
-	)?;
+	identifier WS* COLON WS* (
+		primitiveTypeIdentifier WS* EQ WS* (
+			floatLiteral
+			| intLiteral
+		)
+		| (
+			primitiveTypeIdentifier (
+				WS* EQ WS* explicitPrimitiveLiteral
+			)?
+		)
+	);
 
 inlineStructDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
@@ -129,7 +137,7 @@ simplePath
 	returns[std::shared_ptr<td::SymbolPath> path]:
 	(leading_pathsep = PATHSEP)? identifier (PATHSEP identifier)*;
 
-primitiveLiteral
+explicitPrimitiveLiteral
 	returns[td::table::PrimitiveValue val]:
 	boolLiteral
 	| charLiteral
@@ -154,10 +162,9 @@ stringLiteral
 	STRING_LITERAL
 	| RAW_STRING_LITERAL;
 f32Literal
-	returns[float val]: floatLiteral 'f32'?;
+	returns[float val]: floatLiteral 'f32';
 f64Literal
 	returns[double val]: floatLiteral 'f64';
-floatLiteral: FLOAT_LITERAL;
 u8Literal
 	returns[uint8_t val]: intLiteral 'u8';
 u16Literal
@@ -171,9 +178,11 @@ i8Literal
 i16Literal
 	returns[int16_t val]: intLiteral 'i16';
 i32Literal
-	returns[int32_t val]: intLiteral 'i32'?;
+	returns[int32_t val]: intLiteral 'i32';
 i64Literal
 	returns[int64_t val]: intLiteral 'i64';
+
+floatLiteral: FLOAT_LITERAL;
 intLiteral:
 	(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
 	| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))

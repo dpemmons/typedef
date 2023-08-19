@@ -72,8 +72,8 @@ public:
   virtual void enterSimplePath(TypedefParser::SimplePathContext *ctx) = 0;
   virtual void exitSimplePath(TypedefParser::SimplePathContext *ctx) = 0;
 
-  virtual void enterPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext *ctx) = 0;
-  virtual void exitPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext *ctx) = 0;
+  virtual void enterExplicitPrimitiveLiteral(TypedefParser::ExplicitPrimitiveLiteralContext *ctx) = 0;
+  virtual void exitExplicitPrimitiveLiteral(TypedefParser::ExplicitPrimitiveLiteralContext *ctx) = 0;
 
   virtual void enterBoolLiteral(TypedefParser::BoolLiteralContext *ctx) = 0;
   virtual void exitBoolLiteral(TypedefParser::BoolLiteralContext *ctx) = 0;
@@ -89,9 +89,6 @@ public:
 
   virtual void enterF64Literal(TypedefParser::F64LiteralContext *ctx) = 0;
   virtual void exitF64Literal(TypedefParser::F64LiteralContext *ctx) = 0;
-
-  virtual void enterFloatLiteral(TypedefParser::FloatLiteralContext *ctx) = 0;
-  virtual void exitFloatLiteral(TypedefParser::FloatLiteralContext *ctx) = 0;
 
   virtual void enterU8Literal(TypedefParser::U8LiteralContext *ctx) = 0;
   virtual void exitU8Literal(TypedefParser::U8LiteralContext *ctx) = 0;
@@ -116,6 +113,9 @@ public:
 
   virtual void enterI64Literal(TypedefParser::I64LiteralContext *ctx) = 0;
   virtual void exitI64Literal(TypedefParser::I64LiteralContext *ctx) = 0;
+
+  virtual void enterFloatLiteral(TypedefParser::FloatLiteralContext *ctx) = 0;
+  virtual void exitFloatLiteral(TypedefParser::FloatLiteralContext *ctx) = 0;
 
   virtual void enterIntLiteral(TypedefParser::IntLiteralContext *ctx) = 0;
   virtual void exitIntLiteral(TypedefParser::IntLiteralContext *ctx) = 0;

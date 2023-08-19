@@ -91,7 +91,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext *ctx) override {
+  virtual antlrcpp::Any visitExplicitPrimitiveLiteral(TypedefParser::ExplicitPrimitiveLiteralContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -112,10 +112,6 @@ public:
   }
 
   virtual antlrcpp::Any visitF64Literal(TypedefParser::F64LiteralContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitFloatLiteral(TypedefParser::FloatLiteralContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -148,6 +144,10 @@ public:
   }
 
   virtual antlrcpp::Any visitI64Literal(TypedefParser::I64LiteralContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitFloatLiteral(TypedefParser::FloatLiteralContext *ctx) override {
     return visitChildren(ctx);
   }
 
