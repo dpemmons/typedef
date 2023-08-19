@@ -40,10 +40,7 @@ struct SomeStruct {
 
   std::shared_ptr<td::table::TypeDeclaration> ss =
       parsed_file->mod->Get("SomeStruct");
-  REQUIRE(ss);
-  REQUIRE(ss->IsStruct());
-
-  auto st = ss->st;
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_bool"));
@@ -91,10 +88,7 @@ struct SomeStruct {
   REQUIRE(!parsed_file->HasErrors());
   std::shared_ptr<td::table::TypeDeclaration> ss =
       parsed_file->mod->Get("SomeStruct");
-  REQUIRE(ss);
-  REQUIRE(ss->IsStruct());
-
-  auto st = ss->st;
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_bool"));
@@ -131,10 +125,7 @@ struct SomeStruct {
   REQUIRE(!parsed_file->HasErrors());
   std::shared_ptr<td::table::TypeDeclaration> ss =
       parsed_file->mod->Get("SomeStruct");
-  REQUIRE(ss);
-  REQUIRE(ss->IsStruct());
-
-  auto st = ss->st;
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_f32"));
@@ -193,10 +184,7 @@ struct SomeStruct {
   REQUIRE(!parsed_file->HasErrors());
   std::shared_ptr<td::table::TypeDeclaration> ss =
       parsed_file->mod->Get("SomeStruct");
-  REQUIRE(ss);
-  REQUIRE(ss->IsStruct());
-
-  auto st = ss->st;
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_f32"));
@@ -255,10 +243,7 @@ struct SomeStruct {
   REQUIRE(!parsed_file->HasErrors());
   std::shared_ptr<td::table::TypeDeclaration> ss =
       parsed_file->mod->Get("SomeStruct");
-  REQUIRE(ss);
-  REQUIRE(ss->IsStruct());
-
-  auto st = ss->st;
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_f32"));
@@ -312,10 +297,7 @@ struct SomeStruct {
   REQUIRE(!parsed_file->HasErrors());
   std::shared_ptr<td::table::TypeDeclaration> ss =
       parsed_file->mod->Get("SomeStruct");
-  REQUIRE(ss);
-  REQUIRE(ss->IsStruct());
-
-  auto st = ss->st;
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_bool"));
@@ -347,10 +329,8 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-
-  auto ss = parsed_file->mod->Get("SomeStruct");
-  REQUIRE(ss);
-  REQUIRE(ss->IsStruct());
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  REQUIRE(st);
 
   // optional<td::SymbolTable::Value> value =
   //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));

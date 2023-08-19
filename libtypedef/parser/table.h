@@ -94,27 +94,6 @@ struct StructMember {
   bool IsField() const { return field_decl.operator bool(); }
 };
 
-struct TypeDeclaration {
-  NonPrimitiveType declaration_type = NONPRIMITIVE_TYPE_UNKNOWN;
-  // May be one of the following.
-  shared_ptr<Struct> st;
-  shared_ptr<Variant> var;
-  shared_ptr<Vector> vec;
-  shared_ptr<Map> map;
-  bool IsStruct() const {
-    return (declaration_type == NONPRIMITIVE_TYPE_STRUCT && st);
-  }
-  bool IsVariant() const {
-    return (declaration_type == NONPRIMITIVE_TYPE_VARIANT && var);
-  }
-  bool IsVector() const {
-    return (declaration_type == NONPRIMITIVE_TYPE_VECTOR && vec);
-  }
-  bool IsMap() const {
-    return (declaration_type == NONPRIMITIVE_TYPE_MAP && map);
-  }
-};
-
 struct FieldDeclaration {
   shared_ptr<string> identifier;
   Type member_type = TYPE_UNKNOWN;
@@ -201,6 +180,39 @@ struct Map : public NonPrimitive {
   shared_ptr<Map> map_val;
 };
 
+struct TypeDeclaration {
+  NonPrimitiveType declaration_type = NONPRIMITIVE_TYPE_UNKNOWN;
+  // May be one of the following.
+  shared_ptr<Struct> st;
+  shared_ptr<Variant> var;
+  shared_ptr<Vector> vec;
+  shared_ptr<Map> map;
+  bool IsStruct() const {
+    return (declaration_type == NONPRIMITIVE_TYPE_STRUCT && st);
+  }
+  bool HasStructIdentifier(const string& identifier) const {
+    return (st && *st->identifier == identifier);
+  }
+  bool IsVariant() const {
+    return (declaration_type == NONPRIMITIVE_TYPE_VARIANT && var);
+  }
+  bool HasVaraintIdentifier(const string& identifier) const {
+    return (var && *var->identifier == identifier);
+  }
+  bool IsVector() const {
+    return (declaration_type == NONPRIMITIVE_TYPE_VECTOR && vec);
+  }
+  bool HasVectorIdentifier(const string& identifier) const {
+    return (vec && *vec->identifier == identifier);
+  }
+  bool IsMap() const {
+    return (declaration_type == NONPRIMITIVE_TYPE_MAP && map);
+  }
+  bool HasMapIdentifier(const string& identifier) const {
+    return (map && *map->identifier == identifier);
+  }
+};
+
 struct Module {
   shared_ptr<string> name;
   vector<shared_ptr<TypeDeclaration>> types;
@@ -215,6 +227,15 @@ struct Module {
         return t;
       } else if (t->map && *t->map->identifier == identifier) {
         return t;
+      }
+    }
+    return nullptr;
+  }
+
+  shared_ptr<Struct> GetStruct(const string& identifier) {
+    for (auto t : types) {
+      if (t->IsStruct() && t->HasStructIdentifier(identifier)) {
+        return t->st;
       }
     }
     return nullptr;
