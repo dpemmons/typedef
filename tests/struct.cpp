@@ -37,9 +37,6 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-
-  std::shared_ptr<td::table::TypeDeclaration> ss =
-      parsed_file->mod->Get("SomeStruct");
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
@@ -86,8 +83,6 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  std::shared_ptr<td::table::TypeDeclaration> ss =
-      parsed_file->mod->Get("SomeStruct");
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
@@ -123,8 +118,6 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  std::shared_ptr<td::table::TypeDeclaration> ss =
-      parsed_file->mod->Get("SomeStruct");
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
@@ -182,8 +175,6 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  std::shared_ptr<td::table::TypeDeclaration> ss =
-      parsed_file->mod->Get("SomeStruct");
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
@@ -241,8 +232,6 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  std::shared_ptr<td::table::TypeDeclaration> ss =
-      parsed_file->mod->Get("SomeStruct");
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
@@ -295,8 +284,6 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  std::shared_ptr<td::table::TypeDeclaration> ss =
-      parsed_file->mod->Get("SomeStruct");
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
@@ -359,11 +346,8 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-
-  auto ss = parsed_file->mod->Get("SomeStruct");
-  REQUIRE(ss);
-  REQUIRE(ss->declaration_type ==
-          td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_STRUCT);
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  REQUIRE(st);
 
   // optional<td::SymbolTable::Value> value =
   //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
@@ -390,11 +374,8 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-
-  auto ss = parsed_file->mod->Get("SomeStruct");
-  REQUIRE(ss);
-  REQUIRE(ss->declaration_type ==
-          td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_STRUCT);
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  REQUIRE(st);
 
   // optional<td::SymbolTable::Value> value =
   //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
@@ -420,11 +401,8 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-
-  auto ss = parsed_file->mod->Get("SomeStruct");
-  REQUIRE(ss);
-  REQUIRE(ss->declaration_type ==
-          td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_STRUCT);
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  REQUIRE(st);
 
   // optional<td::SymbolTable::Value> value =
   //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
