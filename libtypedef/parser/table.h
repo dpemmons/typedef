@@ -315,6 +315,10 @@ struct Module {
   }
 };
 
+struct SymRef {
+  shared_ptr<string> id;
+};
+
 }  // namespace table
 }  // namespace td
 

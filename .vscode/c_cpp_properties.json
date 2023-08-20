@@ -8,6 +8,8 @@
                 "${workspaceFolder}/external/CLI-2.3.2",
                 "${workspaceFolder}/external/fmtlib-9.1.0",
                 "${workspaceFolder}/external/antlr4-runtime-4.7.2",
+                "${workspaceFolder}/external/nlohmann-json-3.11.2/json/include",
+                "${workspaceFolder}/external/inja-3.4.0/inja/include",
                 "${workspaceFolder}/libtypedef",
                 "${workspaceFolder}/typedef",
                 "${workspaceFolder}/tests"

@@ -1,9 +1,10 @@
 #ifndef CODEGEN_CODEGEN_CPP_HELPERS_H__
 #define CODEGEN_CODEGEN_CPP_HELPERS_H__
 
+#include <memory>
 #include <string>
 
-#include "libtypedef/parser/symbol_table.h"
+#include "libtypedef/parser/table.h"
 
 namespace td {
 
@@ -27,8 +28,8 @@ std::string_view StructAlignmentMacro();
 std::string escape_utf8_to_cpp_identifier(const std::string& utf8_str);
 
 inline std::string escape_utf8_to_cpp_identifier(
-    const td::SymbolRef& symbol_ref) {
-  return escape_utf8_to_cpp_identifier(symbol_ref.id);
+    std::shared_ptr<td::table::SymRef> symbol_ref) {
+  return escape_utf8_to_cpp_identifier(*symbol_ref->id);
 }
 
 }  // namespace td

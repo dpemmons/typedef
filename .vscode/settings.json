@@ -87,7 +87,10 @@
         "version": "cpp",
         "expected": "cpp",
         "ranges": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "forward_list": "cpp",
+        "valarray": "cpp",
+        "*.ipp": "cpp"
     },
     "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
     "C_Cpp.intelliSenseEngineFallback": "enabled",

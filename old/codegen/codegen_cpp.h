@@ -1,5 +1,5 @@
-#ifndef CODEGEN_CODEGEN_CPP_H__
-#define CODEGEN_CODEGEN_CPP_H__
+#ifndef OLD_CODEGEN_CODEGEN_CPP_H__
+#define OLD_CODEGEN_CODEGEN_CPP_H__
 
 #include <filesystem>
 #include <optional>
@@ -9,7 +9,7 @@
 #include "libtypedef/codegen/codegen_base.h"
 #include "libtypedef/codegen/file_printer_base.h"
 
-namespace td {
+namespace td_old {
 
 using namespace std;
 using namespace td;
@@ -307,6 +307,6 @@ class CodegenCpp : public CodegenBase {
   static CppTmplStr::TmplSegment MakeTmplSegment(TmplStrTable::ItemPtr item);
 };
 
-}  // namespace td
+}  // namespace td_old
 
-#endif  // CODEGEN_CODEGEN_CPP_H__
+#endif  // OLD_CODEGEN_CODEGEN_CPP_H__

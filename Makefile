@@ -13,7 +13,12 @@ LIBTYPEDEF_STATIC_OBJ := $(BASE_BUILD_DIR)/libtypedef.a
 LIBTYPEDEF_SRCS := $(shell find $(LIBTYPEDEF_SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
 LIBTYPEDEF_OBJS := $(LIBTYPEDEF_SRCS:%=$(LIBTYPEDEF_BUILD_DIR)/%.o)
 LIBTYPEDEF_DEPS := $(LIBTYPEDEF_OBJS:.o=.d)
-LIBTYPEDEF_INC_DIRS := $(shell find $(LIBTYPEDEF_SRC_DIRS) -type d) . $(ANTLR4_LIB_HEADERS) $(FMT_LIB_HEADERS)
+LIBTYPEDEF_INC_DIRS := $(shell find $(LIBTYPEDEF_SRC_DIRS) -type d) \
+											. \
+											 $(ANTLR4_LIB_HEADERS) \
+											 $(FMT_LIB_HEADERS) \
+											 $(JSON_LIB_HEADERS) \
+											 $(INJA_LIB_HEADERS)
 LIBTYPEDEF_INC_FLAGS := $(addprefix -I,$(LIBTYPEDEF_INC_DIRS))
 LIBTYPEDEF_CPPFLAGS := $(GLOBAL_CPPFLAGS) $(LIBTYPEDEF_INC_FLAGS) -Werror -Wno-error=attributes # -Wall -Wextra 
 

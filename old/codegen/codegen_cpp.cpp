@@ -16,7 +16,7 @@
 #include "codegen_cpp_helpers.h"
 #include "symbol_table.h"
 
-namespace td {
+namespace td_old {
 
 using namespace std;
 
@@ -1116,4 +1116,4 @@ CodegenCpp::CppTmplStr CodegenCpp::CreateTmplStr(
   return CppTmplStr(cpp_args, segments);
 }
 
-}  // namespace td
+}  // namespace td_old

@@ -11,8 +11,8 @@
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 
-// #include "libtypedef/codegen/codegen_cpp.h"
-// #include "libtypedef/codegen/file_printer.h"
+#include "libtypedef/codegen/codegen_cpp.h"
+#include "libtypedef/codegen/file_printer.h"
 #include "libtypedef/parser/parsed_file.h"
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/table.h"
@@ -33,14 +33,14 @@ int main(int argc, const char** argv) {
     return 1;
   }
 
-  auto parser = td::ParseTypedef(inputStream);
-  if (!parser) {
+  auto parsed_file = td::ParseTypedef(inputStream);
+  if (!parsed_file) {
     fmt::print("Unknown error.\n");
     return 1;
   }
 
-  if (parser->errors.size()) {
-    for (auto err : parser->errors) {
+  if (parsed_file->errors.size()) {
+    for (auto err : parsed_file->errors) {
       inputStream.clear();
       inputStream.seekg(std::ios::beg);
       std::string line;
@@ -61,13 +61,13 @@ int main(int argc, const char** argv) {
   }
 
   if (args.getPrint()) {
-    // fmt::print("File contains {} symbols:\n", parser->symbols2_.table_.size());
-    // fmt::print("{}\n", fmt::streamed(parser->symbols2_));
+    // fmt::print("File contains {} symbols:\n",
+    // parser->symbols2_.table_.size()); fmt::print("{}\n",
+    // fmt::streamed(parser->symbols2_));
   }
   if (!args.GetCppOut().empty()) {
-    // auto outpath = std::make_shared<td::OutPath>(args.GetCppOut());
-    // td::CodegenCpp codegen(args.getInpuFilename(), parser, outpath);
-    // codegen.Generate();
+    auto outpath = std::make_shared<td::OutPath>(args.GetCppOut());
+    td::CodegenCpp(outpath, parsed_file);
   }
 
   // fmt::print("File contains {} symbols:\n", parser->GetSymbols());
