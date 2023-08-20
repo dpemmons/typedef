@@ -15,12 +15,17 @@ namespace {
 const std::vector<td::ParserErrorInfo> empty_errors;
 }  // namespace
 
+/**
+ * This file contains tests of structs. Valid typedef structs (those that should
+ * not produce compile errors) are also contained in examples/tests/structs.td
+ */
+
 TEST_CASE("Struct with explictly typed primitive fields", "[struct]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct0 {
   example_bool: bool;
   example_char: char;
   example_str: str;
@@ -37,7 +42,7 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct0");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_bool"));
@@ -76,14 +81,14 @@ TEST_CASE(
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct1 {
   example_bool: bool = true;
   example_char: char = '🔥';
   example_str: str = "hello world";
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct1");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_bool"));
@@ -104,7 +109,7 @@ TEST_CASE(
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct2 {
   example_f32: f32 = 3.14f32;
   example_f64: f64 = 5.16f64;
   example_u8: u8 = 8u8;
@@ -118,7 +123,7 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct2");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_f32"));
@@ -161,7 +166,7 @@ TEST_CASE(
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct3 {
   example_f32: f32 = 3.14;
   example_f64: f64 = 5.16;
   example_u8: u8 = 8;
@@ -175,7 +180,7 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct3");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_f32"));
@@ -218,7 +223,7 @@ TEST_CASE(
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct4 {
   example_f32 = 3.14f32;
   example_f64 = 5.16f64;
   example_u8 = 8u8;
@@ -232,7 +237,7 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct4");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_f32"));
@@ -275,7 +280,7 @@ TEST_CASE(
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct5 {
   example_bool = true;
   example_char = '🔥';
   example_str = "hello world";
@@ -284,7 +289,7 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct5");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_bool"));
@@ -309,14 +314,14 @@ TEST_CASE("Struct with an inline struct", "[struct]") {
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct10 {
   an_inline_struct: struct {
     a: i32;
   };
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct10");
   REQUIRE(st);
 
   auto inline_struct_field = st->GetField("an_inline_struct");
@@ -332,7 +337,7 @@ TEST_CASE("Struct with an inline variant", "[struct]") {
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct11 {
   an_inline_variant: variant {
     va: i32;
     vb: str;
@@ -340,7 +345,7 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct11");
   REQUIRE(st);
 
   auto inline_varaint_field = st->GetField("an_inline_variant");
@@ -358,12 +363,12 @@ TEST_CASE("Struct with an inline vector", "[struct]") {
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct12 {
   inline_vector: vector<i32>;
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct12");
   REQUIRE(st);
 
   auto inline_vector_field = st->GetField("inline_vector");
@@ -378,12 +383,12 @@ TEST_CASE("Struct with an inline map", "[struct]") {
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct13 {
   inline_map: map<i32, f64>;
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct13");
   REQUIRE(st);
 
   auto inline_map_field = st->GetField("inline_map");
@@ -399,14 +404,14 @@ TEST_CASE("Struct with an nested struct", "[struct]") {
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct20 {
   struct NestedStruct {
     a: i32;
   };
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct20");
   REQUIRE(st);
 
   auto struct_field = st->GetType("NestedStruct");
@@ -421,7 +426,7 @@ TEST_CASE("Struct with an nested variant", "[struct]") {
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct21 {
   variant NestedVariant {
     va: i32;
     vb: str;
@@ -429,7 +434,7 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct21");
   REQUIRE(st);
 
   auto variant_field = st->GetType("NestedVariant");
@@ -446,12 +451,12 @@ TEST_CASE("Struct with an nested vector", "[struct]") {
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct22 {
   vector NestedVector<i32>;
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct22");
   REQUIRE(st);
 
   auto vector_field = st->GetType("NestedVector");
@@ -466,12 +471,12 @@ TEST_CASE("Struct with an nested map", "[struct]") {
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeStruct23 {
   map NestedMap<i32, f64>;
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto st = parsed_file->mod->GetStruct("SomeStruct23");
   REQUIRE(st);
 
   auto map_field = st->GetType("NestedMap");
