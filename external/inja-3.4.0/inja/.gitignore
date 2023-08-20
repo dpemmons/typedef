@@ -1,0 +1,12 @@
+.coveralls.yml
+.vscode
+.vs
+
+build
+build-*
+
+doc/html
+doc/latex
+examples
+
+__pycache__
