@@ -532,7 +532,9 @@ void FirstPassListener::exitInlineStructDeclaration(
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_STRUCT;
   ctx->field_decl->st = make_shared<td::table::Struct>();
-  // TODO: handle all field types.
+  for (TypedefParser::StructMemberContext* stmctx : ctx->structMember()) {
+    ctx->field_decl->st->members.push_back(stmctx->mem);
+  }
 }
 
 void FirstPassListener::exitInlineVariantDeclaration(
@@ -542,7 +544,9 @@ void FirstPassListener::exitInlineVariantDeclaration(
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_VARIANT;
   ctx->field_decl->var = make_shared<td::table::Variant>();
-  // TODO: handle all field types.
+  for (TypedefParser::StructMemberContext* stmctx : ctx->structMember()) {
+    ctx->field_decl->var->members.push_back(stmctx->mem);
+  }
 }
 
 void FirstPassListener::exitInlineVectorDeclaration(

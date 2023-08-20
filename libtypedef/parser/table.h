@@ -14,7 +14,7 @@ using namespace std;
 
 enum PrimitiveType {
   PRIMITIVE_TYPE_UNKNOWN = 0,
-  PRIMITIVE_TYPE_BOOL,
+  PRIMITIVE_TYPE_BOOL = 1,
   PRIMITIVE_TYPE_CHAR,
   PRIMITIVE_TYPE_STRING,
   PRIMITIVE_TYPE_F32,
@@ -32,7 +32,7 @@ enum PrimitiveType {
 
 enum NonPrimitiveType {
   NONPRIMITIVE_TYPE_UNKNOWN = 0,
-  NONPRIMITIVE_TYPE_STRUCT,
+  NONPRIMITIVE_TYPE_STRUCT = 100,
   NONPRIMITIVE_TYPE_VARIANT,
   NONPRIMITIVE_TYPE_VECTOR,
   NONPRIMITIVE_TYPE_MAP
@@ -110,6 +110,7 @@ struct FieldDeclaration {
   bool IsVariant() const { return (member_type == TYPE_VARIANT && var); }
   bool IsVector() const { return (member_type == TYPE_VECTOR && vec); }
   bool IsMap() const { return (member_type == TYPE_MAP && map); }
+
   bool IsPrimitive() const {
     return (member_type > TYPE_UNKNOWN && member_type < TYPE_PRIMITIVE_MAX);
   }
@@ -126,6 +127,11 @@ struct FieldDeclaration {
   bool IsU16() const { return member_type == TYPE_U16; }
   bool IsU32() const { return member_type == TYPE_U32; }
   bool IsU64() const { return member_type == TYPE_U64; }
+
+  shared_ptr<Struct> GetStruct() const { return st; }
+  shared_ptr<Variant> GetVariant() const { return var; }
+  shared_ptr<Vector> GetVector() const { return vec; }
+  shared_ptr<Map> GetMap() const { return map; }
 
   bool GetBool() const { return get<bool>(*primitive_value); }
   char32_t GetChar() const { return get<char32_t>(*primitive_value); }
@@ -157,16 +163,40 @@ struct Struct : public NonPrimitive {
 
 struct Variant : public NonPrimitive {
   vector<shared_ptr<StructMember>> members;
+  shared_ptr<FieldDeclaration> GetField(const string& id);
+  shared_ptr<TypeDeclaration> GetType(const string& id);
 };
 
 struct Vector : public NonPrimitive {
   Type value_type = TYPE_UNKNOWN;
 
   // If non-primitive, then may be any of the following:
-  shared_ptr<Struct> st_val;
-  shared_ptr<Variant> var_val;
-  shared_ptr<Vector> vec_val;
-  shared_ptr<Map> map_val;
+  shared_ptr<Struct> st;
+  shared_ptr<Variant> var;
+  shared_ptr<Vector> vec;
+  shared_ptr<Map> map;
+
+  bool IsStruct() const { return (value_type == TYPE_STRUCT && st); }
+  bool IsVariant() const { return (value_type == TYPE_VARIANT && var); }
+  bool IsVector() const { return (value_type == TYPE_VECTOR && vec); }
+  bool IsMap() const { return (value_type == TYPE_MAP && map); }
+
+  bool IsPrimitive() const {
+    return (value_type > TYPE_UNKNOWN && value_type < TYPE_PRIMITIVE_MAX);
+  }
+  bool IsBool() const { return value_type == TYPE_BOOL; }
+  bool IsChar() const { return value_type == TYPE_CHAR; }
+  bool IsStr() const { return value_type == TYPE_STRING; }
+  bool IsF32() const { return value_type == TYPE_F32; }
+  bool IsF64() const { return value_type == TYPE_F64; }
+  bool IsI8() const { return value_type == TYPE_I8; }
+  bool IsI16() const { return value_type == TYPE_I16; }
+  bool IsI32() const { return value_type == TYPE_I32; }
+  bool IsI64() const { return value_type == TYPE_I64; }
+  bool IsU8() const { return value_type == TYPE_U8; }
+  bool IsU16() const { return value_type == TYPE_U16; }
+  bool IsU32() const { return value_type == TYPE_U32; }
+  bool IsU64() const { return value_type == TYPE_U64; }
 };
 
 struct Map : public NonPrimitive {
@@ -178,6 +208,42 @@ struct Map : public NonPrimitive {
   shared_ptr<Variant> var_val;
   shared_ptr<Vector> vec_val;
   shared_ptr<Map> map_val;
+
+  bool KeyIsBool() const { return key_type == PRIMITIVE_TYPE_BOOL; }
+  bool KeyIsChar() const { return key_type == PRIMITIVE_TYPE_CHAR; }
+  bool KeyIsStr() const { return key_type == PRIMITIVE_TYPE_STRING; }
+  bool KeyIsF32() const { return key_type == PRIMITIVE_TYPE_F32; }
+  bool KeyIsF64() const { return key_type == PRIMITIVE_TYPE_F64; }
+  bool KeyIsI8() const { return key_type == PRIMITIVE_TYPE_I8; }
+  bool KeyIsI16() const { return key_type == PRIMITIVE_TYPE_I16; }
+  bool KeyIsI32() const { return key_type == PRIMITIVE_TYPE_I32; }
+  bool KeyIsI64() const { return key_type == PRIMITIVE_TYPE_I64; }
+  bool KeyIsU8() const { return key_type == PRIMITIVE_TYPE_U8; }
+  bool KeyIsU16() const { return key_type == PRIMITIVE_TYPE_U16; }
+  bool KeyIsU32() const { return key_type == PRIMITIVE_TYPE_U32; }
+  bool KeyIsU64() const { return key_type == PRIMITIVE_TYPE_U64; }
+
+  bool ValueIsStruct() const { return (value_type == TYPE_STRUCT && st_val); }
+  bool ValueIsVariant() const { return (value_type == TYPE_VARIANT && var_val); }
+  bool ValueIsVector() const { return (value_type == TYPE_VECTOR && vec_val); }
+  bool ValueIsMap() const { return (value_type == TYPE_MAP && map_val); }
+
+  bool ValueIsPrimitive() const {
+    return (value_type > TYPE_UNKNOWN && value_type < TYPE_PRIMITIVE_MAX);
+  }
+  bool ValueIsBool() const { return value_type == TYPE_BOOL; }
+  bool ValueIsChar() const { return value_type == TYPE_CHAR; }
+  bool ValueIsStr() const { return value_type == TYPE_STRING; }
+  bool ValueIsF32() const { return value_type == TYPE_F32; }
+  bool ValueIsF64() const { return value_type == TYPE_F64; }
+  bool ValueIsI8() const { return value_type == TYPE_I8; }
+  bool ValueIsI16() const { return value_type == TYPE_I16; }
+  bool ValueIsI32() const { return value_type == TYPE_I32; }
+  bool ValueIsI64() const { return value_type == TYPE_I64; }
+  bool ValueIsU8() const { return value_type == TYPE_U8; }
+  bool ValueIsU16() const { return value_type == TYPE_U16; }
+  bool ValueIsU32() const { return value_type == TYPE_U32; }
+  bool ValueIsU64() const { return value_type == TYPE_U64; }
 };
 
 struct TypeDeclaration {

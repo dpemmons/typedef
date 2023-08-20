@@ -319,18 +319,12 @@ struct SomeStruct {
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
-  // optional<td::SymbolTable::Value> value =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
-  // REQUIRE(value);
-  // REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*value));
-  // auto s = get<shared_ptr<td::Struct>>(*value);
-
-  // optional<td::SymbolTable::Value> struct_val =
-  //     s->table.Get(td::Identifier::ValueIdentifier("an_inline_struct"));
-  // REQUIRE(struct_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*struct_val));
-  // shared_ptr<td::Struct> the_sturct =
-  // get<shared_ptr<td::Struct>>(*struct_val); REQUIRE(the_sturct);
+  auto inline_struct_field = st->GetField("an_inline_struct");
+  REQUIRE(inline_struct_field);
+  REQUIRE(inline_struct_field->IsStruct());
+  REQUIRE(inline_struct_field->GetStruct());
+  REQUIRE(inline_struct_field->GetStruct()->GetField("a"));
+  REQUIRE(inline_struct_field->GetStruct()->GetField("a")->IsI32());
 }
 
 TEST_CASE("Struct with an inline variant", "[struct]") {
@@ -349,19 +343,14 @@ struct SomeStruct {
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
-  // optional<td::SymbolTable::Value> value =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
-  // REQUIRE(value);
-  // REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*value));
-  // auto s = get<shared_ptr<td::Struct>>(*value);
-
-  // optional<td::SymbolTable::Value> variant_val =
-  //     s->table.Get(td::Identifier::ValueIdentifier("an_inline_variant"));
-  // REQUIRE(variant_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Variant>>(*variant_val));
-  // shared_ptr<td::Variant> the_variant =
-  //     get<shared_ptr<td::Variant>>(*variant_val);
-  // REQUIRE(the_variant);
+  auto inline_varaint_field = st->GetField("an_inline_variant");
+  REQUIRE(inline_varaint_field);
+  REQUIRE(inline_varaint_field->IsVariant());
+  REQUIRE(inline_varaint_field->GetVariant());
+  REQUIRE(inline_varaint_field->GetVariant()->GetField("va"));
+  REQUIRE(inline_varaint_field->GetVariant()->GetField("va")->IsI32());
+  REQUIRE(inline_varaint_field->GetVariant()->GetField("vb"));
+  REQUIRE(inline_varaint_field->GetVariant()->GetField("vb")->IsStr());
 }
 
 TEST_CASE("Struct with an inline vector", "[struct]") {
@@ -370,25 +359,18 @@ typedef=alpha;
 module test;
 
 struct SomeStruct {
-  inlineVector: vector<i32>;
+  inline_vector: vector<i32>;
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
-  // optional<td::SymbolTable::Value> value =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
-  // REQUIRE(value);
-  // REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*value));
-  // auto s = get<shared_ptr<td::Struct>>(*value);
-
-  // optional<td::SymbolTable::Value> vector_val =
-  //     s->table.Get(td::Identifier::ValueIdentifier("inlineVector"));
-  // REQUIRE(vector_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Vector>>(*vector_val));
-  // shared_ptr<td::Vector> the_vector =
-  // get<shared_ptr<td::Vector>>(*vector_val); REQUIRE(the_vector);
+  auto inline_vector_field = st->GetField("inline_vector");
+  REQUIRE(inline_vector_field);
+  REQUIRE(inline_vector_field->IsVector());
+  REQUIRE(inline_vector_field->GetVector());
+  REQUIRE(inline_vector_field->GetVector()->IsI32());
 }
 
 TEST_CASE("Struct with an inline map", "[struct]") {
@@ -397,23 +379,17 @@ typedef=alpha;
 module test;
 
 struct SomeStruct {
-  inlineMap: map<i32, f64>;
+  inline_map: map<i32, f64>;
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st);
 
-  // optional<td::SymbolTable::Value> value =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
-  // REQUIRE(value);
-  // REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*value));
-  // auto s = get<shared_ptr<td::Struct>>(*value);
-
-  // optional<td::SymbolTable::Value> map_val =
-  //     s->table.Get(td::Identifier::ValueIdentifier("inlineMap"));
-  // REQUIRE(map_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Map>>(*map_val));
-  // shared_ptr<td::Map> the_map = get<shared_ptr<td::Map>>(*map_val);
-  // REQUIRE(the_map);
+  auto inline_map_field = st->GetField("inline_map");
+  REQUIRE(inline_map_field);
+  REQUIRE(inline_map_field->IsMap());
+  REQUIRE(inline_map_field->GetMap());
+  REQUIRE(inline_map_field->GetMap()->KeyIsI32());
+  REQUIRE(inline_map_field->GetMap()->ValueIsF64());
 }
