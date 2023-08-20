@@ -347,7 +347,6 @@ void FirstPassListener::exitVectorDeclaration(
   bail_if_errors();
   ctx->vec = make_shared<td::table::Vector>();
   ctx->vec->identifier = ctx->identifier()->id;
-  ctx->vec = make_shared<td::table::Vector>();
   ctx->vec->value_type = (td::table::Type)ctx->val->primitive_type;
   // TODO: handle non-primitive value types.
 }

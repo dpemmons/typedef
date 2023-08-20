@@ -23,7 +23,7 @@ compilationUnit
 	]:
 	WS* typedefVersionDeclaration WS* (moduleDeclaration)? (
 		WS* useDeclaration
-	)* (WS* typeDeclaration)* WS* EOF;
+	)* (WS* typeDeclaration WS* SEMI WS*)* WS* EOF;
 
 // variant SomeVariant { optionA: i32; optionB: str; }
 structDeclaration
@@ -62,7 +62,7 @@ typeDeclaration
 		| variantDeclaration
 		| vectorDeclaration
 		| mapDeclaration
-	) WS* SEMI;
+	);
 
 fieldDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:

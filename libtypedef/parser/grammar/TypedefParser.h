@@ -130,6 +130,8 @@ public:
     UseDeclarationContext* useDeclaration(size_t i);
     std::vector<TypeDeclarationContext *> typeDeclaration();
     TypeDeclarationContext* typeDeclaration(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> SEMI();
+    antlr4::tree::TerminalNode* SEMI(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -261,13 +263,10 @@ public:
     std::shared_ptr<td::table::TypeDeclaration> type_decl;
     TypeDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *SEMI();
     StructDeclarationContext *structDeclaration();
     VariantDeclarationContext *variantDeclaration();
     VectorDeclarationContext *vectorDeclaration();
     MapDeclarationContext *mapDeclaration();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

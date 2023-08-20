@@ -393,3 +393,91 @@ struct SomeStruct {
   REQUIRE(inline_map_field->GetMap()->KeyIsI32());
   REQUIRE(inline_map_field->GetMap()->ValueIsF64());
 }
+
+TEST_CASE("Struct with an nested struct", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  struct NestedStruct {
+    a: i32;
+  };
+};
+    )");
+  REQUIRE(!parsed_file->HasErrors());
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  REQUIRE(st);
+
+  auto struct_field = st->GetType("NestedStruct");
+  REQUIRE(struct_field);
+  REQUIRE(struct_field->IsStruct());
+  REQUIRE(struct_field->GetStruct()->GetField("a"));
+  REQUIRE(struct_field->GetStruct()->GetField("a")->IsI32());
+}
+
+TEST_CASE("Struct with an nested variant", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  variant NestedVariant {
+    va: i32;
+    vb: str;
+  };
+};
+    )");
+  REQUIRE(!parsed_file->HasErrors());
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  REQUIRE(st);
+
+  auto variant_field = st->GetType("NestedVariant");
+  REQUIRE(variant_field);
+  REQUIRE(variant_field->IsVariant());
+  REQUIRE(variant_field->GetVariant()->GetField("va"));
+  REQUIRE(variant_field->GetVariant()->GetField("va")->IsI32());
+  REQUIRE(variant_field->GetVariant()->GetField("vb"));
+  REQUIRE(variant_field->GetVariant()->GetField("vb")->IsStr());
+}
+
+TEST_CASE("Struct with an nested vector", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  vector NestedVector<i32>;
+};
+    )");
+  REQUIRE(!parsed_file->HasErrors());
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  REQUIRE(st);
+
+  auto vector_field = st->GetType("NestedVector");
+  REQUIRE(vector_field);
+  REQUIRE(vector_field->IsVector());
+  REQUIRE(vector_field->GetVector());
+  REQUIRE(vector_field->GetVector()->IsI32());
+}
+
+TEST_CASE("Struct with an nested map", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  map NestedMap<i32, f64>;
+};
+    )");
+  REQUIRE(!parsed_file->HasErrors());
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  REQUIRE(st);
+
+  auto map_field = st->GetType("NestedMap");
+  REQUIRE(map_field);
+  REQUIRE(map_field->IsMap());
+  REQUIRE(map_field->GetMap());
+  REQUIRE(map_field->GetMap()->KeyIsI32());
+  REQUIRE(map_field->GetMap()->ValueIsF64());
+}

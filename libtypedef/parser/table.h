@@ -224,7 +224,9 @@ struct Map : public NonPrimitive {
   bool KeyIsU64() const { return key_type == PRIMITIVE_TYPE_U64; }
 
   bool ValueIsStruct() const { return (value_type == TYPE_STRUCT && st_val); }
-  bool ValueIsVariant() const { return (value_type == TYPE_VARIANT && var_val); }
+  bool ValueIsVariant() const {
+    return (value_type == TYPE_VARIANT && var_val);
+  }
   bool ValueIsVector() const { return (value_type == TYPE_VECTOR && vec_val); }
   bool ValueIsMap() const { return (value_type == TYPE_MAP && map_val); }
 
@@ -277,6 +279,11 @@ struct TypeDeclaration {
   bool HasMapIdentifier(const string& identifier) const {
     return (map && *map->identifier == identifier);
   }
+
+  shared_ptr<Struct> GetStruct() { return st; };
+  shared_ptr<Variant> GetVariant() { return var; };
+  shared_ptr<Vector> GetVector() { return vec; };
+  shared_ptr<Map> GetMap() { return map; };
 };
 
 struct Module {
