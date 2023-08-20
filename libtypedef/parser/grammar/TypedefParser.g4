@@ -21,34 +21,29 @@ compilationUnit
 		std::shared_ptr<std::string> version,
 		std::shared_ptr<td::table::Module> mod
 	]:
-	WS* typedefVersionDeclaration WS* (moduleDeclaration)? (
-		WS* useDeclaration
-	)* (WS* typeDeclaration WS* SEMI WS*)* WS* EOF;
+	typedefVersionDeclaration (moduleDeclaration)? (
+		useDeclaration
+	)* (typeDeclaration SEMI)* EOF;
 
 // variant SomeVariant { optionA: i32; optionB: str; }
 structDeclaration
 	returns[std::shared_ptr<td::table::Struct> st]:
-	KW_STRUCT WS* identifier WS* LBRACE WS* (
-		structMember WS* SEMI WS*
-	)* WS* RBRACE;
+	KW_STRUCT identifier LBRACE (structMember SEMI)* RBRACE;
 
 // variant SomeVariant { optionA: i32; optionB: str; }
 variantDeclaration
 	returns[std::shared_ptr<td::table::Variant> var]:
-	KW_VARIANT WS* identifier WS* LBRACE (
-		WS* structMember WS* SEMI WS*
-	)* RBRACE;
+	KW_VARIANT identifier LBRACE (structMember SEMI)* RBRACE;
 
 // vector SomeVector<i32>
 vectorDeclaration
 	returns[std::shared_ptr<td::table::Vector> vec]:
-	KW_VECTOR WS* identifier WS* LT WS* val = primitiveTypeIdentifier WS* GT;
+	KW_VECTOR identifier LT val = primitiveTypeIdentifier GT;
 
 // map SomeMap<str, StructA>
 mapDeclaration
 	returns[std::shared_ptr<td::table::Map> map]:
-	KW_MAP WS* identifier WS* LT WS* key = primitiveTypeIdentifier WS* COMMA WS* val =
-		primitiveTypeIdentifier WS* GT;
+	KW_MAP identifier LT key = primitiveTypeIdentifier COMMA val = primitiveTypeIdentifier GT;
 
 structMember
 	returns[std::shared_ptr<td::table::StructMember> mem]:
@@ -76,14 +71,14 @@ primitiveMemberDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
 	impliedTypePrimitiveMemberDeclaration
 	| (
-		identifier WS* COLON WS* (
-			primitiveTypeIdentifier WS* EQ WS* (
+		identifier COLON (
+			primitiveTypeIdentifier EQ (
 				floatLiteral
 				| intLiteral
 			)
 			| (
 				primitiveTypeIdentifier (
-					WS* EQ WS* explicitPrimitiveLiteral
+					EQ explicitPrimitiveLiteral
 				)?
 			)
 		)
@@ -91,7 +86,7 @@ primitiveMemberDeclaration
 
 impliedTypePrimitiveMemberDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier WS* EQ WS* (
+	identifier EQ (
 		floatLiteral
 		| intLiteral
 		| explicitPrimitiveLiteral
@@ -99,45 +94,39 @@ impliedTypePrimitiveMemberDeclaration
 
 inlineStructDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier WS* COLON WS* KW_STRUCT WS* LBRACE WS* (
-		structMember WS* SEMI WS*
-	)* WS* RBRACE;
+	identifier COLON KW_STRUCT LBRACE (structMember SEMI)* RBRACE;
 
 inlineVariantDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier WS* COLON WS* KW_VARIANT WS* LBRACE WS* (
-		structMember WS* SEMI WS*
-	)* WS* RBRACE;
+	identifier COLON KW_VARIANT LBRACE (structMember SEMI)* RBRACE;
 
 inlineVectorDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier WS* COLON WS* KW_VECTOR WS* LT WS* val = primitiveTypeIdentifier WS* GT;
+	identifier COLON KW_VECTOR LT val = primitiveTypeIdentifier GT;
 
 inlineMapDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier WS* COLON WS* KW_MAP WS* LT WS* key = primitiveTypeIdentifier WS* COMMA WS* val =
-		primitiveTypeIdentifier WS* GT;
+	identifier COLON KW_MAP LT key = primitiveTypeIdentifier COMMA val = primitiveTypeIdentifier GT;
 
 // valuedTemplateStringType returns[std::optional<td::SymbolTable::Value> maybe_val]
-// locals[std::shared_ptr<td::TmplStr> s] @init { $s = std::make_shared<td::TmplStr>(); }: COLON WS*
-// KW_TEMPLATESTRING WS* LT WS* ( unvaluedSymbol { TryInsertArgSymbol($s, this,
-// $unvaluedSymbol.ctx); } ( WS* COMMA WS* unvaluedSymbol { TryInsertArgSymbol($s, this,
-// $unvaluedSymbol.ctx); } )* ) WS* GT WS* EQ WS* stringLiteral { $s->str =
-// $stringLiteral.ctx->maybe_val; $maybe_val = $s; };
+// locals[std::shared_ptr<td::TmplStr> s] @init { $s = std::make_shared<td::TmplStr>(); }: COLON
+// KW_TEMPLATESTRING LT ( unvaluedSymbol { TryInsertArgSymbol($s, this, $unvaluedSymbol.ctx); } (
+// COMMA unvaluedSymbol { TryInsertArgSymbol($s, this, $unvaluedSymbol.ctx); } )* ) GT EQ
+// stringLiteral { $s->str = $stringLiteral.ctx->maybe_val; $maybe_val = $s; };
 
 // TODO probably get rid of valuedPrimitiveType, etc. and just do primitive type resolution in a
 // separate pass?
 
 typedefVersionDeclaration
 	returns[std::shared_ptr<std::string> version]:
-	KW_TYPEDEF WS* EQ WS* identifier WS* SEMI;
+	KW_TYPEDEF EQ identifier SEMI;
 
 moduleDeclaration
 	returns[std::shared_ptr<td::SymbolPath> path]:
-	KW_MODULE WS+ simplePath WS* SEMI;
+	KW_MODULE simplePath SEMI;
 
 // TODO use declarations.
-useDeclaration: 'use' WS+ useTree WS* ';';
+useDeclaration: 'use' useTree ';';
 useTree: (simplePath? '::')? (
 		'*'
 		| '{' ( useTree (',' useTree)* ','?)? '}'

@@ -186,7 +186,7 @@ SHEBANG:
 
 // whitespace https://doc.rust-lang.org/reference/whitespace.html WS: [\p{Zs}] -> channel(HIDDEN);
 // NEWLINE: ('\r\n' | [\r\n]) -> channel(HIDDEN);
-WS: [\p{Zs}] | ('\r\n' | [\r\n]);
+// WS: [\p{Zs}] | ('\r\n' | [\r\n]);
 
 // tokens char and string
 CHAR_LITERAL:
@@ -312,3 +312,5 @@ LBRACK: '[';
 RBRACK: ']';
 LPAREN: '(';
 RPAREN: ')';
+
+WS: ([\p{Zs}] | ('\r\n' | [\r\n]))+ -> skip ; 

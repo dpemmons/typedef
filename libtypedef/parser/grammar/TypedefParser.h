@@ -34,21 +34,21 @@ public:
     KW_U8 = 77, KW_U16 = 78, KW_U32 = 79, KW_U64 = 80, KW_I8 = 81, KW_I16 = 82, 
     KW_I32 = 83, KW_I64 = 84, NON_KEYWORD_IDENTIFIER = 85, LINE_COMMENT = 86, 
     BLOCK_COMMENT = 87, INNER_LINE_DOC = 88, INNER_BLOCK_DOC = 89, OUTER_LINE_DOC = 90, 
-    OUTER_BLOCK_DOC = 91, BLOCK_COMMENT_OR_DOC = 92, SHEBANG = 93, WS = 94, 
-    CHAR_LITERAL = 95, STRING_LITERAL = 96, RAW_STRING_LITERAL = 97, DEC_DIGITS = 98, 
-    DEC_DIGITS_UNDERSCORE = 99, HEX_DIGITS = 100, HEX_DIGITS_UNDERSCORE = 101, 
-    OCT_DIGITS = 102, OCT_DIGITS_UNDERSCORE = 103, BIN_DIGITS = 104, BIN_DIGITS_UNDERSCORE = 105, 
-    FLOAT_LITERAL = 106, OCT_DIGIT = 107, DEC_DIGIT = 108, HEX_DIGIT = 109, 
-    HEX_PREFIX = 110, OCT_PREFIX = 111, BIN_PREFIX = 112, RAW_ESCAPE = 113, 
-    PLUS = 114, MINUS = 115, STAR = 116, SLASH = 117, PERCENT = 118, CARET = 119, 
-    NOT = 120, AND = 121, OR = 122, ANDAND = 123, OROR = 124, PLUSEQ = 125, 
-    MINUSEQ = 126, STAREQ = 127, SLASHEQ = 128, PERCENTEQ = 129, CARETEQ = 130, 
-    ANDEQ = 131, OREQ = 132, SHLEQ = 133, SHREQ = 134, EQ = 135, EQEQ = 136, 
-    NE = 137, GT = 138, LT = 139, GE = 140, LE = 141, AT = 142, UNDERSCORE = 143, 
-    DOT = 144, DOTDOT = 145, DOTDOTDOT = 146, COMMA = 147, SEMI = 148, COLON = 149, 
-    PATHSEP = 150, RARROW = 151, FATARROW = 152, POUND = 153, DOLLAR = 154, 
-    QUESTION = 155, LBRACE = 156, RBRACE = 157, LBRACK = 158, RBRACK = 159, 
-    LPAREN = 160, RPAREN = 161
+    OUTER_BLOCK_DOC = 91, BLOCK_COMMENT_OR_DOC = 92, SHEBANG = 93, CHAR_LITERAL = 94, 
+    STRING_LITERAL = 95, RAW_STRING_LITERAL = 96, DEC_DIGITS = 97, DEC_DIGITS_UNDERSCORE = 98, 
+    HEX_DIGITS = 99, HEX_DIGITS_UNDERSCORE = 100, OCT_DIGITS = 101, OCT_DIGITS_UNDERSCORE = 102, 
+    BIN_DIGITS = 103, BIN_DIGITS_UNDERSCORE = 104, FLOAT_LITERAL = 105, 
+    OCT_DIGIT = 106, DEC_DIGIT = 107, HEX_DIGIT = 108, HEX_PREFIX = 109, 
+    OCT_PREFIX = 110, BIN_PREFIX = 111, RAW_ESCAPE = 112, PLUS = 113, MINUS = 114, 
+    STAR = 115, SLASH = 116, PERCENT = 117, CARET = 118, NOT = 119, AND = 120, 
+    OR = 121, ANDAND = 122, OROR = 123, PLUSEQ = 124, MINUSEQ = 125, STAREQ = 126, 
+    SLASHEQ = 127, PERCENTEQ = 128, CARETEQ = 129, ANDEQ = 130, OREQ = 131, 
+    SHLEQ = 132, SHREQ = 133, EQ = 134, EQEQ = 135, NE = 136, GT = 137, 
+    LT = 138, GE = 139, LE = 140, AT = 141, UNDERSCORE = 142, DOT = 143, 
+    DOTDOT = 144, DOTDOTDOT = 145, COMMA = 146, SEMI = 147, COLON = 148, 
+    PATHSEP = 149, RARROW = 150, FATARROW = 151, POUND = 152, DOLLAR = 153, 
+    QUESTION = 154, LBRACE = 155, RBRACE = 156, LBRACK = 157, RBRACK = 158, 
+    LPAREN = 159, RPAREN = 160, WS = 161
   };
 
   enum {
@@ -123,8 +123,6 @@ public:
     virtual size_t getRuleIndex() const override;
     TypedefVersionDeclarationContext *typedefVersionDeclaration();
     antlr4::tree::TerminalNode *EOF();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
     ModuleDeclarationContext *moduleDeclaration();
     std::vector<UseDeclarationContext *> useDeclaration();
     UseDeclarationContext* useDeclaration(size_t i);
@@ -151,8 +149,6 @@ public:
     IdentifierContext *identifier();
     antlr4::tree::TerminalNode *LBRACE();
     antlr4::tree::TerminalNode *RBRACE();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
     std::vector<StructMemberContext *> structMember();
     StructMemberContext* structMember(size_t i);
     std::vector<antlr4::tree::TerminalNode *> SEMI();
@@ -176,8 +172,6 @@ public:
     IdentifierContext *identifier();
     antlr4::tree::TerminalNode *LBRACE();
     antlr4::tree::TerminalNode *RBRACE();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
     std::vector<StructMemberContext *> structMember();
     StructMemberContext* structMember(size_t i);
     std::vector<antlr4::tree::TerminalNode *> SEMI();
@@ -203,8 +197,6 @@ public:
     antlr4::tree::TerminalNode *LT();
     antlr4::tree::TerminalNode *GT();
     PrimitiveTypeIdentifierContext *primitiveTypeIdentifier();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -229,8 +221,6 @@ public:
     antlr4::tree::TerminalNode *GT();
     std::vector<PrimitiveTypeIdentifierContext *> primitiveTypeIdentifier();
     PrimitiveTypeIdentifierContext* primitiveTypeIdentifier(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -307,8 +297,6 @@ public:
     antlr4::tree::TerminalNode *COLON();
     PrimitiveTypeIdentifierContext *primitiveTypeIdentifier();
     antlr4::tree::TerminalNode *EQ();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
     FloatLiteralContext *floatLiteral();
     IntLiteralContext *intLiteral();
     ExplicitPrimitiveLiteralContext *explicitPrimitiveLiteral();
@@ -332,8 +320,6 @@ public:
     FloatLiteralContext *floatLiteral();
     IntLiteralContext *intLiteral();
     ExplicitPrimitiveLiteralContext *explicitPrimitiveLiteral();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -354,8 +340,6 @@ public:
     antlr4::tree::TerminalNode *KW_STRUCT();
     antlr4::tree::TerminalNode *LBRACE();
     antlr4::tree::TerminalNode *RBRACE();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
     std::vector<StructMemberContext *> structMember();
     StructMemberContext* structMember(size_t i);
     std::vector<antlr4::tree::TerminalNode *> SEMI();
@@ -380,8 +364,6 @@ public:
     antlr4::tree::TerminalNode *KW_VARIANT();
     antlr4::tree::TerminalNode *LBRACE();
     antlr4::tree::TerminalNode *RBRACE();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
     std::vector<StructMemberContext *> structMember();
     StructMemberContext* structMember(size_t i);
     std::vector<antlr4::tree::TerminalNode *> SEMI();
@@ -408,8 +390,6 @@ public:
     antlr4::tree::TerminalNode *LT();
     antlr4::tree::TerminalNode *GT();
     PrimitiveTypeIdentifierContext *primitiveTypeIdentifier();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -435,8 +415,6 @@ public:
     antlr4::tree::TerminalNode *GT();
     std::vector<PrimitiveTypeIdentifierContext *> primitiveTypeIdentifier();
     PrimitiveTypeIdentifierContext* primitiveTypeIdentifier(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -456,8 +434,6 @@ public:
     antlr4::tree::TerminalNode *EQ();
     IdentifierContext *identifier();
     antlr4::tree::TerminalNode *SEMI();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -476,8 +452,6 @@ public:
     antlr4::tree::TerminalNode *KW_MODULE();
     SimplePathContext *simplePath();
     antlr4::tree::TerminalNode *SEMI();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -495,8 +469,6 @@ public:
     antlr4::tree::TerminalNode *KW_USE();
     UseTreeContext *useTree();
     antlr4::tree::TerminalNode *SEMI();
-    std::vector<antlr4::tree::TerminalNode *> WS();
-    antlr4::tree::TerminalNode* WS(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
