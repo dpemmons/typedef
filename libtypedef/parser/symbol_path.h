@@ -20,9 +20,19 @@ class SymbolPath : public std::vector<std::shared_ptr<std::string>> {
   void SetIsRoot(bool is_root) { is_root_ = is_root; }
   bool IsRoot() const { return is_root_; }
 
-  std::string ToString(const std::string& delineator = "::") {
+  std::string ToString(const std::string& delineator = "::",
+                       bool leading_delineator = true) {
+    if (size() == 0) {
+      return std::string();
+    }
+
     std::stringstream ss;
-    for (int i = 0; i < size(); i++) {
+    int i = 0;
+    if (!leading_delineator) {
+      fmt::print(ss, "{}", *at(i));
+      i = 1;
+    }
+    for (; i < size(); i++) {
       fmt::print(ss, "{}{}", delineator, *at(i));
     }
     return ss.str();

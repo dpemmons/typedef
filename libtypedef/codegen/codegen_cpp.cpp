@@ -22,9 +22,9 @@ string HeaderGuard(const filesystem::path& source_filename) {
 void CodegenCpp(std::shared_ptr<OutPathBase> out_path,
                 std::shared_ptr<ParsedFile> parsed_file) {
   filesystem::path hdr_filename =
-      parsed_file->mod->module_name->ToString("_") + ".h";
+      parsed_file->mod->module_name->ToString("_", false) + ".h";
   filesystem::path source_filename =
-      parsed_file->mod->module_name->ToString("_") + ".cpp";
+      parsed_file->mod->module_name->ToString("_", false) + ".cpp";
 
   auto hdr_file = out_path->OpenOutputFile(hdr_filename);
   hdr_file->Open();
