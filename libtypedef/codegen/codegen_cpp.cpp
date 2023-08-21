@@ -26,12 +26,87 @@ string HeaderGuard(const filesystem::path& source_filename) {
 
 json GetType(const TypeDeclaration& type);
 
-string GetCppFieldType();
-
 json GetField(const FieldDeclaration& field) {
   json f;
   f["identifier"] = *field.identifier;
-  f["cpp_type"] = "";
+  if (field.IsPrimitive()) {
+    if (field.IsBool()) {
+      f["cpp_type"] = "bool";
+      f["pass_by"] = "value";
+    } else if (field.IsChar()) {
+      f["cpp_type"] = "char32_t";
+      f["pass_by"] = "value";
+    } else if (field.IsStr()) {
+      f["cpp_type"] = "std::string";
+      f["pass_by"] = "reference";
+    } else if (field.IsF32()) {
+      f["cpp_type"] = "float";
+      f["pass_by"] = "value";
+    } else if (field.IsF64()) {
+      f["cpp_type"] = "double";
+      f["pass_by"] = "value";
+    } else if (field.IsU8()) {
+      f["cpp_type"] = "uint8_t";
+      f["pass_by"] = "value";
+    } else if (field.IsU16()) {
+      f["cpp_type"] = "uint16_t";
+      f["pass_by"] = "value";
+    } else if (field.IsU32()) {
+      f["cpp_type"] = "uint32_t";
+      f["pass_by"] = "value";
+    } else if (field.IsU64()) {
+      f["cpp_type"] = "uint64_t";
+      f["pass_by"] = "value";
+    } else if (field.IsI8()) {
+      f["cpp_type"] = "int8_t";
+      f["pass_by"] = "value";
+    } else if (field.IsI16()) {
+      f["cpp_type"] = "int16_t";
+      f["pass_by"] = "value";
+    } else if (field.IsI32()) {
+      f["cpp_type"] = "int32_t";
+      f["pass_by"] = "value";
+    } else if (field.IsI64()) {
+      f["cpp_type"] = "int64_t";
+      f["pass_by"] = "value";
+    } else {
+      throw_line("invalid state");
+    }
+  } else if (field.IsStruct()) {
+    // TODO escaping and namespacing...
+    if (field.GetStruct()->identifier) {
+      f["cpp_type"] = *field.GetStruct()->identifier;
+    } else {
+      // TODO inline types
+      f["cpp_type"] = "AnInlineThingy";
+    }
+  } else if (field.IsVariant()) {
+    // TODO escaping and namespacing...
+    if (field.GetVariant()->identifier) {
+      f["cpp_type"] = *field.GetVariant()->identifier;
+    } else {
+      // TODO inline types
+      f["cpp_type"] = "AnInlineThingy";
+    }
+  } else if (field.IsVector()) {
+    // TODO escaping and namespacing...
+    if (field.GetVector()->identifier) {
+      f["cpp_type"] = *field.GetVector()->identifier;
+    } else {
+      // TODO inline types
+      f["cpp_type"] = "AnInlineThingy";
+    }
+  } else if (field.IsMap()) {
+    // TODO escaping and namespacing...
+    if (field.GetMap()->identifier) {
+      f["cpp_type"] = *field.GetMap()->identifier;
+    } else {
+      // TODO inline types
+      f["cpp_type"] = "AnInlineThingy";
+    }
+  } else {
+    throw_line("invalid state");
+  }
   return f;
 }
 
@@ -128,17 +203,56 @@ void CodegenCpp(std::shared_ptr<OutPathBase> out_path,
   env.set_trim_blocks(true);
   env.set_lstrip_blocks(true);
 
+  Template struct_tmpl;
+  env.add_callback("struct", 1, [&](Arguments& args) mutable {
+    json arg = args.at(0)->get<json>();
+    // std::cout << arg.dump(1) << std::endl;
+    return env.render(struct_tmpl, arg);
+  });
+
+  struct_tmpl = env.parse(R"(
+class {{identifier}} {
+public:
+## if exists("type_decls")
+## for type_decl in type_decls
+## if existsIn(type_decl, "struct")
+  {{ struct(type_decl.struct) }}
+## else if existsIn(type_decl, "variant")
+  // variant decl
+## else if existsIn(type_decl, "vector")
+  // vector decl
+## else if existsIn(type_decl, "map")
+  // map decl
+## endif
+## endfor
+## endif
+
+  {{identifier}}() {}
+  ~{{identifier}}() {}
+private:
+## if exists("fields")
+## for field in fields
+{{field.cpp_type}} {{field.identifier}};
+## endfor
+## endif
+};  // class {{identifier}}
+  )");
+
   auto header_tmpl = env.parse(R"(
-#ifndef {{header_guard}}
-#define {{header_guard}}
+#ifndef CODEGEN_CODEGEN_CPP_H__
+#define CODEGEN_CODEGEN_CPP_H__
 
 namespace {{namespace}} {
 
-
+## for type_decl in type_decls
+## if existsIn(type_decl, "struct")
+{{ struct(type_decl.struct) }}
+## endif
+## endfor
 
 }  // namespace {{namespace}}
 
-#endif  // {{header_guard}}
+#endif  // CODEGEN_CODEGEN_CPP_H__
   )");
 
   auto source_tmpl = env.parse(R"(
