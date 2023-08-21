@@ -24,6 +24,7 @@ string HeaderGuard(const filesystem::path& source_filename) {
   return hdr_guard;
 }
 
+// forward declaration.
 json GetType(const TypeDeclaration& type);
 
 json GetField(const FieldDeclaration& field) {
@@ -116,6 +117,7 @@ json GetStruct(const Struct& st) {
   for (const auto& m : st.members) {
     if (m->IsField()) {
       s["fields"].push_back(GetField(*m->field_decl));
+      // TODO add type_decls for inline types.
     } else if (m->IsType()) {
       s["type_decls"].push_back(GetType(*m->type_decl));
     } else {
