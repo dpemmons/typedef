@@ -317,6 +317,7 @@ void FirstPassListener::exitCompilationUnit(
   bail_if_errors();
   ctx->version = ctx->typedefVersionDeclaration()->version;
   ctx->mod = make_shared<td::table::Module>();
+  ctx->mod->module_name = ctx->moduleDeclaration()->path;
   for (TypedefParser::TypeDeclarationContext* td : ctx->typeDeclaration()) {
     ctx->mod->types.push_back(td->type_decl);
   }

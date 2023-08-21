@@ -1,5 +1,5 @@
-#ifndef PARSER_LISTENER_H__
-#define PARSER_LISTENER_H__
+#ifndef PARSER_FIRST_PASS_H__
+#define PARSER_FIRST_PASS_H__
 
 #include <antlr4/antlr4-runtime.h>
 
@@ -29,16 +29,6 @@ class FirstPassListener : public TypedefParserBaseListener {
   virtual void exitMapDeclaration(
       TypedefParser::MapDeclarationContext *ctx) override;
 
-  virtual void exitTypedefVersionDeclaration(
-      TypedefParser::TypedefVersionDeclarationContext *ctx) override {
-    ctx->version = ctx->identifier()->id;
-  }
-
-  virtual void exitModuleDeclaration(
-      TypedefParser::ModuleDeclarationContext *ctx) override {
-    ctx->path = ctx->simplePath()->path;
-  }
-
   virtual void exitStructMember(
       TypedefParser::StructMemberContext *ctx) override;
 
@@ -62,6 +52,14 @@ class FirstPassListener : public TypedefParserBaseListener {
   virtual void exitInlineMapDeclaration(
       TypedefParser::InlineMapDeclarationContext *ctx) override;
 
+  virtual void exitTypedefVersionDeclaration(
+      TypedefParser::TypedefVersionDeclarationContext *ctx) override {
+    ctx->version = ctx->identifier()->id;
+  }
+  virtual void exitModuleDeclaration(
+      TypedefParser::ModuleDeclarationContext *ctx) override {
+    ctx->path = ctx->simplePath()->path;
+  }
   virtual void exitSimplePath(TypedefParser::SimplePathContext *ctx) override;
 
   virtual void exitExplicitPrimitiveLiteral(
@@ -91,4 +89,4 @@ class FirstPassListener : public TypedefParserBaseListener {
   std::vector<td::ParserErrorInfo> &errors_list_;
 };
 
-#endif  // PARSER_LISTENER_H__
+#endif  // PARSER_FIRST_PASS_H__

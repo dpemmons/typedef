@@ -7,6 +7,8 @@
 #include <variant>
 #include <vector>
 
+#include "libtypedef/parser/symbol_path.h"
+
 namespace td {
 namespace table {
 
@@ -287,7 +289,7 @@ struct TypeDeclaration {
 };
 
 struct Module {
-  shared_ptr<string> name;
+  shared_ptr<SymbolPath> module_name;
   vector<shared_ptr<TypeDeclaration>> types;
 
   shared_ptr<TypeDeclaration> Get(const string& identifier) {
