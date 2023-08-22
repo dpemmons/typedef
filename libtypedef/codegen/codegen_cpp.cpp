@@ -5,6 +5,8 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
+#include "libtypedef/codegen/codegen_cpp_helpers.h"
+
 #define throw_line(str) \
   throw fmt::format("Exception \"{}\" in {}:{}", str, __FILE__, __LINE__);
 
@@ -29,82 +31,90 @@ json GetType(const TypeDeclaration& type);
 
 json GetField(const FieldDeclaration& field) {
   json f;
-  f["identifier"] = *field.identifier;
+  f["identifier"] = escape_utf8_to_cpp_identifier(*field.identifier);
   if (field.IsPrimitive()) {
     if (field.IsBool()) {
       f["cpp_type"] = "bool";
-      f["pass_by"] = "value";
+      f["access_by"] = "value";
     } else if (field.IsChar()) {
       f["cpp_type"] = "char32_t";
-      f["pass_by"] = "value";
+      f["access_by"] = "value";
     } else if (field.IsStr()) {
       f["cpp_type"] = "std::string";
-      f["pass_by"] = "reference";
+      f["access_by"] = "reference";
     } else if (field.IsF32()) {
       f["cpp_type"] = "float";
-      f["pass_by"] = "value";
+      f["access_by"] = "value";
     } else if (field.IsF64()) {
       f["cpp_type"] = "double";
-      f["pass_by"] = "value";
+      f["access_by"] = "value";
     } else if (field.IsU8()) {
       f["cpp_type"] = "uint8_t";
-      f["pass_by"] = "value";
+      f["access_by"] = "value";
     } else if (field.IsU16()) {
       f["cpp_type"] = "uint16_t";
-      f["pass_by"] = "value";
+      f["access_by"] = "value";
     } else if (field.IsU32()) {
       f["cpp_type"] = "uint32_t";
-      f["pass_by"] = "value";
+      f["access_by"] = "value";
     } else if (field.IsU64()) {
       f["cpp_type"] = "uint64_t";
-      f["pass_by"] = "value";
+      f["access_by"] = "value";
     } else if (field.IsI8()) {
       f["cpp_type"] = "int8_t";
-      f["pass_by"] = "value";
+      f["access_by"] = "value";
     } else if (field.IsI16()) {
       f["cpp_type"] = "int16_t";
-      f["pass_by"] = "value";
+      f["access_by"] = "value";
     } else if (field.IsI32()) {
       f["cpp_type"] = "int32_t";
-      f["pass_by"] = "value";
+      f["access_by"] = "value";
     } else if (field.IsI64()) {
       f["cpp_type"] = "int64_t";
-      f["pass_by"] = "value";
+      f["access_by"] = "value";
     } else {
       throw_line("invalid state");
     }
   } else if (field.IsStruct()) {
     // TODO escaping and namespacing...
     if (field.GetStruct()->identifier) {
-      f["cpp_type"] = *field.GetStruct()->identifier;
+      f["cpp_type"] =
+          escape_utf8_to_cpp_identifier(*field.GetStruct()->identifier);
     } else {
       // TODO inline types
-      f["cpp_type"] = "AnInlineThingy";
+      f["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
     }
+    f["access_by"] = "pointer";
   } else if (field.IsVariant()) {
     // TODO escaping and namespacing...
     if (field.GetVariant()->identifier) {
-      f["cpp_type"] = *field.GetVariant()->identifier;
+      f["cpp_type"] =
+          escape_utf8_to_cpp_identifier(*field.GetVariant()->identifier);
     } else {
       // TODO inline types
-      f["cpp_type"] = "AnInlineThingy";
+      f["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
     }
+    f["access_by"] = "pointer";
   } else if (field.IsVector()) {
     // TODO escaping and namespacing...
     if (field.GetVector()->identifier) {
-      f["cpp_type"] = *field.GetVector()->identifier;
+      f["cpp_type"] =
+          escape_utf8_to_cpp_identifier(*field.GetVector()->identifier);
     } else {
       // TODO inline types
-      f["cpp_type"] = "AnInlineThingy";
+      f["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
     }
+    f["access_by"] = "reference";
   } else if (field.IsMap()) {
     // TODO escaping and namespacing...
     if (field.GetMap()->identifier) {
-      f["cpp_type"] = *field.GetMap()->identifier;
+      f["cpp_type"] =
+          escape_utf8_to_cpp_identifier(*field.GetMap()->identifier);
     } else {
       // TODO inline types
-      f["cpp_type"] = "AnInlineThingy";
+      f["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
     }
+    f["access_by"] = "reference";
   } else {
     throw_line("invalid state");
   }
@@ -195,7 +205,10 @@ void CodegenCpp(std::shared_ptr<OutPathBase> out_path,
   json data;
   data["header_guard"] = HeaderGuard(source_filename);
   data["header_filename"] = hdr_filename;
-  data["namespace"] = "test_namespace";
+  data["namespaces"] = json::array();
+  for (const auto& path_part : *parsed_file->mod->module_name) {
+    data["namespaces"].push_back(*path_part);
+  }
 
   data["type_decls"] = GetTypeDecls(parsed_file->mod->types);
 
@@ -214,7 +227,7 @@ void CodegenCpp(std::shared_ptr<OutPathBase> out_path,
 
   struct_tmpl = env.parse(R"(
 class {{identifier}} {
-public:
+ public:
 ## if exists("type_decls")
 ## for type_decl in type_decls
 ## if existsIn(type_decl, "struct")
@@ -231,10 +244,28 @@ public:
 
   {{identifier}}() {}
   ~{{identifier}}() {}
-private:
+
 ## if exists("fields")
 ## for field in fields
-{{field.cpp_type}} {{field.identifier}};
+## if field.access_by == "value" 
+  void {{field.identifier}}({{field.cpp_type}} val) {
+    {{field.identifier}}_ = val;
+  }
+  {{field.cpp_type}} {{field.identifier}}() {
+    return {{field.identifier}}_;
+  }
+## else if field.access_by == "reference" 
+  {{field.cpp_type}}& {{field.identifier}}() {
+    return {{field.identifier}}_;
+  }
+## endif
+## endfor
+## endif
+
+ private:
+## if exists("fields")
+## for field in fields
+  {{field.cpp_type}} {{field.identifier}}_;
 ## endfor
 ## endif
 };  // class {{identifier}}
@@ -244,7 +275,13 @@ private:
 #ifndef CODEGEN_CODEGEN_CPP_H__
 #define CODEGEN_CODEGEN_CPP_H__
 
+#include <string>
+#include <vector>
+#include <map>
+
+## for namespace in namespaces
 namespace {{namespace}} {
+## endfor
 
 ## for type_decl in type_decls
 ## if existsIn(type_decl, "struct")
@@ -252,7 +289,9 @@ namespace {{namespace}} {
 ## endif
 ## endfor
 
+## for namespace in namespaces
 }  // namespace {{namespace}}
+## endfor
 
 #endif  // CODEGEN_CODEGEN_CPP_H__
   )");
@@ -260,9 +299,17 @@ namespace {{namespace}} {
   auto source_tmpl = env.parse(R"(
 #include "{{header_filename}}"
 
-namespace {{namespace}} {
+#include <string>
+#include <vector>
+#include <map>
 
+## for namespace in namespaces
+namespace {{namespace}} {
+## endfor
+
+## for namespace in namespaces
 }  // namespace {{namespace}}
+## endfor
   )");
 
   env.render_to(hdr_file->OStream(), header_tmpl, data);

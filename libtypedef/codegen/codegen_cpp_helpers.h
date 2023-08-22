@@ -27,11 +27,6 @@ std::string_view StructAlignmentMacro();
  */
 std::string escape_utf8_to_cpp_identifier(const std::string& utf8_str);
 
-inline std::string escape_utf8_to_cpp_identifier(
-    std::shared_ptr<td::table::SymRef> symbol_ref) {
-  return escape_utf8_to_cpp_identifier(*symbol_ref->id);
-}
-
 }  // namespace td
 
 #endif  // CODEGEN_CODEGEN_CPP_HELPERS_H__

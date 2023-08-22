@@ -1,5 +1,5 @@
 typedef=alpha;
-module test;
+module examples::tests::structs;
 
 // Struct with explictly typed primitive fields
 struct SomeStruct0 {
