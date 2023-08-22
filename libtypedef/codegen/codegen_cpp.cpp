@@ -26,8 +26,9 @@ string HeaderGuard(const filesystem::path& source_filename) {
   return hdr_guard;
 }
 
-// forward declaration.
+// forward declarations.
 json GetType(const TypeDeclaration& type);
+json GetInlineType(const FieldDeclaration& field);
 
 json GetField(const FieldDeclaration& field) {
   json f;
@@ -76,42 +77,38 @@ json GetField(const FieldDeclaration& field) {
       throw_line("invalid state");
     }
   } else if (field.IsStruct()) {
-    // TODO escaping and namespacing...
     if (field.GetStruct()->identifier) {
       f["cpp_type"] =
           escape_utf8_to_cpp_identifier(*field.GetStruct()->identifier);
     } else {
-      // TODO inline types
+      // inline type.
       f["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
     }
     f["access_by"] = "pointer";
   } else if (field.IsVariant()) {
-    // TODO escaping and namespacing...
     if (field.GetVariant()->identifier) {
       f["cpp_type"] =
           escape_utf8_to_cpp_identifier(*field.GetVariant()->identifier);
     } else {
-      // TODO inline types
+      // inline type.
       f["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
     }
     f["access_by"] = "pointer";
   } else if (field.IsVector()) {
-    // TODO escaping and namespacing...
     if (field.GetVector()->identifier) {
       f["cpp_type"] =
           escape_utf8_to_cpp_identifier(*field.GetVector()->identifier);
     } else {
-      // TODO inline types
+      // inline type.
       f["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
     }
     f["access_by"] = "reference";
   } else if (field.IsMap()) {
-    // TODO escaping and namespacing...
     if (field.GetMap()->identifier) {
       f["cpp_type"] =
           escape_utf8_to_cpp_identifier(*field.GetMap()->identifier);
     } else {
-      // TODO inline types
+      // inline type.
       f["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
     }
     f["access_by"] = "reference";
@@ -121,13 +118,19 @@ json GetField(const FieldDeclaration& field) {
   return f;
 }
 
-json GetStruct(const Struct& st) {
+json GetStruct(const Struct& st, std::optional<string> identifier = nullopt) {
   json s;
-  s["identifier"] = *st.identifier;
+  // If it's an inline type, the identifier is the field name which has
+  // to be passed in separately.
+  s["identifier"] = identifier ? *identifier : *st.identifier;
   for (const auto& m : st.members) {
     if (m->IsField()) {
       s["fields"].push_back(GetField(*m->field_decl));
-      // TODO add type_decls for inline types.
+      if (!m->field_decl->IsPrimitive()) {
+        // Non-primitive field types are inlines.
+        // TODO really there should be an IsInline() ?
+        s["type_decls"].push_back(GetInlineType(*m->field_decl));
+      }
     } else if (m->IsType()) {
       s["type_decls"].push_back(GetType(*m->type_decl));
     } else {
@@ -137,9 +140,12 @@ json GetStruct(const Struct& st) {
   return s;
 }
 
-json GetVariant(const Variant& var) {
+json GetVariant(const Variant& var,
+                std::optional<string> identifier = nullopt) {
   json v;
-  v["identifier"] = *var.identifier;
+  // If it's an inline type, the identifier is the field name which has
+  // to be passed in separately.
+  v["identifier"] = identifier ? *identifier : *var.identifier;
   for (const auto& m : var.members) {
     if (m->IsField()) {
       v["fields"].push_back(GetField(*m->field_decl));
@@ -152,18 +158,39 @@ json GetVariant(const Variant& var) {
   return v;
 }
 
-json GetVector(const Vector& vec) {
+json GetVector(const Vector& vec, std::optional<string> identifier = nullopt) {
   json v;
-  v["identifier"] = *vec.identifier;
+  // If it's an inline type, the identifier is the field name which has
+  // to be passed in separately.
+  v["identifier"] = identifier ? *identifier : *vec.identifier;
 
   return v;
 }
 
-json GetMap(const Map& map) {
+json GetMap(const Map& map, std::optional<string> identifier = nullopt) {
   json m;
-  m["identifier"] = *map.identifier;
+  // If it's an inline type, the identifier is the field name which has
+  // to be passed in separately.
+  m["identifier"] = identifier ? *identifier : *map.identifier;
 
   return m;
+}
+
+json GetInlineType(const FieldDeclaration& field) {
+  json r;
+  string identifier = *field.identifier + "T";
+  if (field.IsStruct()) {
+    r["struct"] = GetStruct(*field.st, identifier);
+  } else if (field.IsVariant()) {
+    r["variant"] = GetVariant(*field.var, identifier);
+  } else if (field.IsVector()) {
+    r["vector"] = GetVector(*field.vec, identifier);
+  } else if (field.IsMap()) {
+    r["map"] = GetMap(*field.map, identifier);
+  } else {
+    throw_line("invalid state");
+  }
+  return r;
 }
 
 json GetType(const TypeDeclaration& type) {
@@ -255,8 +282,44 @@ class {{identifier}} {
     return {{field.identifier}}_;
   }
 ## else if field.access_by == "reference" 
-  {{field.cpp_type}}& {{field.identifier}}() {
+  void {{field.identifier}}(const {{field.cpp_type}}& val) {
+    {{field.identifier}}_ = val;
+  }
+  {{field.cpp_type}} {{field.identifier}}() {
     return {{field.identifier}}_;
+  }
+  {{field.cpp_type}}& {{field.identifier}}_ref() {
+    return {{field.identifier}}_;
+  }
+## else if field.access_by == "pointer" 
+  bool has_{{field.identifier}}() const {
+    return {{field.identifier}}_.operator bool();
+  }
+  void delete_{{field.identifier}}() {
+    return {{field.identifier}}_.reset(nullptr);
+  }
+  void make_{{field.identifier}}() {
+    {{field.identifier}}_ = std::make_unique<{{field.cpp_type}}>();
+  }
+  void {{field.identifier}}(std::unique_ptr<{{field.cpp_type}}> val) {
+    {{field.identifier}}_ = std::move(val);
+  }
+  void {{field.identifier}}({{field.cpp_type}}* val) {
+    {{field.identifier}}_.reset(std::move(val));
+  }
+  {{field.cpp_type}}* {{field.identifier}}() {
+    #ifdef TD_AUTO_ALLOC
+    if (!has_{{field.identifier}}()) {
+      make_{{field.identifier}}();
+    }
+    #endif
+    #ifdef DEBUG
+    if (!has_{{field.identifier}}()) {
+      throw "Attempted null reference at " +
+        std::string(__FILE__) + ": " + std::string(__LINE__);
+    }
+    #endif
+    return {{field.identifier}}_.get();
   }
 ## endif
 ## endfor
@@ -265,7 +328,11 @@ class {{identifier}} {
  private:
 ## if exists("fields")
 ## for field in fields
+## if field.access_by == "pointer" 
+  std::unique_ptr<{{field.cpp_type}}> {{field.identifier}}_;
+## else
   {{field.cpp_type}} {{field.identifier}}_;
+## endif
 ## endfor
 ## endif
 };  // class {{identifier}}
@@ -275,6 +342,7 @@ class {{identifier}} {
 #ifndef CODEGEN_CODEGEN_CPP_H__
 #define CODEGEN_CODEGEN_CPP_H__
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <map>
