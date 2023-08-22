@@ -50,28 +50,28 @@ json GetField(const FieldDeclaration& field) {
       f["cpp_type"] = "double";
       f["access_by"] = "value";
     } else if (field.IsU8()) {
-      f["cpp_type"] = "uint8_t";
+      f["cpp_type"] = "std::uint8_t";
       f["access_by"] = "value";
     } else if (field.IsU16()) {
-      f["cpp_type"] = "uint16_t";
+      f["cpp_type"] = "std::uint16_t";
       f["access_by"] = "value";
     } else if (field.IsU32()) {
-      f["cpp_type"] = "uint32_t";
+      f["cpp_type"] = "std::uint32_t";
       f["access_by"] = "value";
     } else if (field.IsU64()) {
-      f["cpp_type"] = "uint64_t";
+      f["cpp_type"] = "std::uint64_t";
       f["access_by"] = "value";
     } else if (field.IsI8()) {
-      f["cpp_type"] = "int8_t";
+      f["cpp_type"] = "std::int8_t";
       f["access_by"] = "value";
     } else if (field.IsI16()) {
-      f["cpp_type"] = "int16_t";
+      f["cpp_type"] = "std::int16_t";
       f["access_by"] = "value";
     } else if (field.IsI32()) {
-      f["cpp_type"] = "int32_t";
+      f["cpp_type"] = "std::int32_t";
       f["access_by"] = "value";
     } else if (field.IsI64()) {
-      f["cpp_type"] = "int64_t";
+      f["cpp_type"] = "std::int64_t";
       f["access_by"] = "value";
     } else {
       throw_line("invalid state");
@@ -252,6 +252,27 @@ void CodegenCpp(std::shared_ptr<OutPathBase> out_path,
     return env.render(struct_tmpl, arg);
   });
 
+  Template variant_tmpl;
+  env.add_callback("variant", 1, [&](Arguments& args) mutable {
+    json arg = args.at(0)->get<json>();
+    // std::cout << arg.dump(1) << std::endl;
+    return env.render(variant_tmpl, arg);
+  });
+
+  Template vector_tmpl;
+  env.add_callback("vector", 1, [&](Arguments& args) mutable {
+    json arg = args.at(0)->get<json>();
+    // std::cout << arg.dump(1) << std::endl;
+    return env.render(vector_tmpl, arg);
+  });
+
+  Template map_tmpl;
+  env.add_callback("map", 1, [&](Arguments& args) mutable {
+    json arg = args.at(0)->get<json>();
+    // std::cout << arg.dump(1) << std::endl;
+    return env.render(map_tmpl, arg);
+  });
+
   struct_tmpl = env.parse(R"(
 class {{identifier}} {
  public:
@@ -260,15 +281,14 @@ class {{identifier}} {
 ## if existsIn(type_decl, "struct")
   {{ struct(type_decl.struct) }}
 ## else if existsIn(type_decl, "variant")
-  // variant decl
+  {{ variant(type_decl.variant) }}
 ## else if existsIn(type_decl, "vector")
-  // vector decl
+  {{ vector(type_decl.vector) }}
 ## else if existsIn(type_decl, "map")
-  // map decl
+  {{ map(type_decl.map) }}
 ## endif
 ## endfor
 ## endif
-
   {{identifier}}() {}
   ~{{identifier}}() {}
 
@@ -308,20 +328,20 @@ class {{identifier}} {
     {{field.identifier}}_.reset(std::move(val));
   }
   {{field.cpp_type}}* {{field.identifier}}() {
-    #ifdef TD_AUTO_ALLOC
+    #if TD_AUTO_ALLOC
     if (!has_{{field.identifier}}()) {
       make_{{field.identifier}}();
     }
     #endif
     #ifdef DEBUG
     if (!has_{{field.identifier}}()) {
-      throw "Attempted null reference at " +
-        std::string(__FILE__) + ": " + std::string(__LINE__);
+      TD_THROW("Attempted null reference");
     }
     #endif
     return {{field.identifier}}_.get();
   }
 ## endif
+
 ## endfor
 ## endif
 
@@ -338,14 +358,178 @@ class {{identifier}} {
 };  // class {{identifier}}
   )");
 
+  variant_tmpl = env.parse(R"(
+class {{identifier}} {
+ public:
+## if exists("type_decls")
+## for type_decl in type_decls
+## if existsIn(type_decl, "struct")
+  {{ struct(type_decl.struct) }}
+## else if existsIn(type_decl, "variant")
+  {{ variant(type_decl.variant) }}
+## else if existsIn(type_decl, "vector")
+  {{ vector(type_decl.vector) }}
+## else if existsIn(type_decl, "map")
+  {{ map(type_decl.map) }}
+## endif
+## endfor
+## endif
+  {{identifier}}() {}
+  ~{{identifier}}() {
+    MaybeDeleteExistingMember();
+    tag = Tag::__TAGS_BEGIN;
+  }
+
+
+## if exists("fields")
+## for field in fields
+  bool is_{{field.identifier}}() const {
+    return (tag == Tag::TAG_{{field.identifier}});
+  }
+## if field.access_by == "value" 
+  void {{field.identifier}}({{field.cpp_type}} val) {
+    MaybeDeleteExistingMember();
+    tag = Tag::TAG_{{field.identifier}};
+    {{field.identifier}}_ = val;
+  }
+  {{field.cpp_type}} {{field.identifier}}() {
+    if (!is_{{field.identifier}}()) {
+      TD_THROW("Attempted invalid variant access");
+    }
+    return {{field.identifier}}_;
+  }
+## else if field.access_by == "reference" 
+  void {{field.identifier}}(const {{field.cpp_type}}& val) {
+    MaybeDeleteExistingMember();
+    tag = Tag::TAG_{{field.identifier}};
+    {{field.identifier}}_ = val;
+  }
+  {{field.cpp_type}} {{field.identifier}}() {
+    if (!is_{{field.identifier}}()) {
+      TD_THROW("Attempted invalid variant access");
+    }
+    return {{field.identifier}}_;
+  }
+  {{field.cpp_type}}& {{field.identifier}}_ref() {
+    return {{field.identifier}}_;
+  }
+## else if field.access_by == "pointer" 
+  bool has_{{field.identifier}}() const {
+    if (!is_{{field.identifier}}()) {
+      TD_THROW("Attempted invalid variant access");
+    }
+    return {{field.identifier}}_.operator bool();
+  }
+  void delete_{{field.identifier}}() {
+    if (!is_{{field.identifier}}()) {
+      TD_THROW("Attempted invalid variant access");
+    }
+    return {{field.identifier}}_.reset(nullptr);
+  }
+  void make_{{field.identifier}}() {
+    MaybeDeleteExistingMember();
+    tag = Tag::TAG_{{field.identifier}};
+    {{field.identifier}}_ = std::make_unique<{{field.cpp_type}}>();
+  }
+  void {{field.identifier}}(std::unique_ptr<{{field.cpp_type}}> val) {
+    MaybeDeleteExistingMember();
+    tag = Tag::TAG_{{field.identifier}};
+    {{field.identifier}}_ = std::move(val);
+  }
+  void {{field.identifier}}({{field.cpp_type}}* val) {
+    MaybeDeleteExistingMember();
+    tag = Tag::TAG_{{field.identifier}};
+    {{field.identifier}}_.reset(std::move(val));
+  }
+  {{field.cpp_type}}* {{field.identifier}}() {
+    #if TD_AUTO_ALLOC
+    if (!has_{{field.identifier}}()) {
+      make_{{field.identifier}}();
+    }
+    #endif
+    #ifdef DEBUG
+    if (!has_{{field.identifier}}()) {
+      TD_THROW("Attempted null reference");
+    }
+    #endif
+    return {{field.identifier}}_.get();
+  }
+## endif
+
+## endfor
+## endif
+ private:
+  enum class Tag {
+    __TAGS_BEGIN = 0,
+## if exists("fields")
+## for field in fields
+    TAG_{{field.identifier}},
+## endfor
+## endif
+    __TAGS_END
+  } tag = Tag::__TAGS_BEGIN;
+
+  union {
+## if exists("fields")
+## for field in fields
+## if field.access_by == "pointer" 
+  std::unique_ptr<{{field.cpp_type}}> {{field.identifier}}_;
+## else
+  {{field.cpp_type}} {{field.identifier}}_;
+## endif
+## endfor
+## endif
+  };  // union
+
+  void MaybeDeleteExistingMember() {
+    switch (tag) {
+## if exists("fields")
+## for field in fields
+      case Tag::TAG_{{field.identifier}}:
+## if field.access_by == "pointer" 
+        {{field.identifier}}_.reset(nullptr);
+## else if field.cpp_type == "std::string" 
+        {{field.identifier}}_.~basic_string();
+## endif
+        break;
+## endfor
+## endif
+    }
+  }
+
+};  // class {{identifier}}
+  )");
+
+  vector_tmpl = env.parse(R"(
+class {{identifier}} {
+ public:
+ private:
+};  // class {{identifier}}
+  )");
+  map_tmpl = env.parse(R"(
+class {{identifier}} {
+ public:
+ private:
+};  // class {{identifier}}
+  )");
+
   auto header_tmpl = env.parse(R"(
 #ifndef CODEGEN_CODEGEN_CPP_H__
 #define CODEGEN_CODEGEN_CPP_H__
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
 #include <map>
+
+#define TD_STRINGIZE_DETAIL(x) #x
+#define TD_STRINGIZE(x) TD_STRINGIZE_DETAIL(x)
+#define TD_THROW(msg) (throw msg __FILE__ ":" TD_STRINGIZE(__LINE__))
+
+#ifndef TD_AUTO_ALLOC
+#define TD_AUTO_ALLOC 1
+#endif
 
 ## for namespace in namespaces
 namespace {{namespace}} {
@@ -353,7 +537,13 @@ namespace {{namespace}} {
 
 ## for type_decl in type_decls
 ## if existsIn(type_decl, "struct")
-{{ struct(type_decl.struct) }}
+  {{ struct(type_decl.struct) }}
+## else if existsIn(type_decl, "variant")
+  {{ variant(type_decl.variant) }}
+## else if existsIn(type_decl, "vector")
+  {{ vector(type_decl.vector) }}
+## else if existsIn(type_decl, "map")
+  {{ map(type_decl.map) }}
 ## endif
 ## endfor
 
