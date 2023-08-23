@@ -122,6 +122,12 @@ KW_I16: 'i16';
 KW_I32: 'i32';
 KW_I64: 'i64';
 
+// Other reserved words
+KW_READ: 'read';
+KW_READ2: 'Read';
+KW_WRITE: 'write';
+KW_WRITE2: 'Write';
+
 // rule itself allow any identifier, but keyword has been matched before
 NON_KEYWORD_IDENTIFIER:
 	XID_Start XID_Continue*
