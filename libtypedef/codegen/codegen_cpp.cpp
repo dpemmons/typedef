@@ -31,131 +31,131 @@ json GetType(const TypeDeclaration& type);
 json GetInlineType(const FieldDeclaration& field);
 
 json GetField(const FieldDeclaration& field) {
-  json f;
-  f["identifier"] = escape_utf8_to_cpp_identifier(*field.identifier);
+  json j;
+  j["identifier"] = escape_utf8_to_cpp_identifier(*field.identifier);
   if (field.IsPrimitive()) {
     if (field.IsBool()) {
-      f["cpp_type"] = "bool";
-      f["access_by"] = "value";
+      j["cpp_type"] = "bool";
+      j["access_by"] = "value";
     } else if (field.IsChar()) {
-      f["cpp_type"] = "char32_t";
-      f["access_by"] = "value";
+      j["cpp_type"] = "char32_t";
+      j["access_by"] = "value";
     } else if (field.IsStr()) {
-      f["cpp_type"] = "std::string";
-      f["access_by"] = "reference";
+      j["cpp_type"] = "std::string";
+      j["access_by"] = "reference";
     } else if (field.IsF32()) {
-      f["cpp_type"] = "float";
-      f["access_by"] = "value";
+      j["cpp_type"] = "float";
+      j["access_by"] = "value";
     } else if (field.IsF64()) {
-      f["cpp_type"] = "double";
-      f["access_by"] = "value";
+      j["cpp_type"] = "double";
+      j["access_by"] = "value";
     } else if (field.IsU8()) {
-      f["cpp_type"] = "std::uint8_t";
-      f["access_by"] = "value";
+      j["cpp_type"] = "std::uint8_t";
+      j["access_by"] = "value";
     } else if (field.IsU16()) {
-      f["cpp_type"] = "std::uint16_t";
-      f["access_by"] = "value";
+      j["cpp_type"] = "std::uint16_t";
+      j["access_by"] = "value";
     } else if (field.IsU32()) {
-      f["cpp_type"] = "std::uint32_t";
-      f["access_by"] = "value";
+      j["cpp_type"] = "std::uint32_t";
+      j["access_by"] = "value";
     } else if (field.IsU64()) {
-      f["cpp_type"] = "std::uint64_t";
-      f["access_by"] = "value";
+      j["cpp_type"] = "std::uint64_t";
+      j["access_by"] = "value";
     } else if (field.IsI8()) {
-      f["cpp_type"] = "std::int8_t";
-      f["access_by"] = "value";
+      j["cpp_type"] = "std::int8_t";
+      j["access_by"] = "value";
     } else if (field.IsI16()) {
-      f["cpp_type"] = "std::int16_t";
-      f["access_by"] = "value";
+      j["cpp_type"] = "std::int16_t";
+      j["access_by"] = "value";
     } else if (field.IsI32()) {
-      f["cpp_type"] = "std::int32_t";
-      f["access_by"] = "value";
+      j["cpp_type"] = "std::int32_t";
+      j["access_by"] = "value";
     } else if (field.IsI64()) {
-      f["cpp_type"] = "std::int64_t";
-      f["access_by"] = "value";
+      j["cpp_type"] = "std::int64_t";
+      j["access_by"] = "value";
     } else {
       throw_line("invalid state");
     }
   } else if (field.IsStruct()) {
     if (field.GetStruct()->identifier) {
-      f["cpp_type"] =
+      j["cpp_type"] =
           escape_utf8_to_cpp_identifier(*field.GetStruct()->identifier);
     } else {
       // inline type.
-      f["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
+      j["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
     }
-    f["access_by"] = "pointer";
+    j["access_by"] = "pointer";
   } else if (field.IsVariant()) {
     if (field.GetVariant()->identifier) {
-      f["cpp_type"] =
+      j["cpp_type"] =
           escape_utf8_to_cpp_identifier(*field.GetVariant()->identifier);
     } else {
       // inline type.
-      f["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
+      j["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
     }
-    f["access_by"] = "pointer";
+    j["access_by"] = "pointer";
   } else if (field.IsVector()) {
     if (field.GetVector()->identifier) {
-      f["cpp_type"] =
+      j["cpp_type"] =
           escape_utf8_to_cpp_identifier(*field.GetVector()->identifier);
     } else {
       // inline type.
-      f["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
+      j["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
     }
-    f["access_by"] = "reference";
+    j["access_by"] = "reference";
   } else if (field.IsMap()) {
     if (field.GetMap()->identifier) {
-      f["cpp_type"] =
+      j["cpp_type"] =
           escape_utf8_to_cpp_identifier(*field.GetMap()->identifier);
     } else {
       // inline type.
-      f["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
+      j["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
     }
-    f["access_by"] = "reference";
+    j["access_by"] = "reference";
   } else {
     throw_line("invalid state");
   }
-  return f;
+  return j;
 }
 
 json GetStruct(const Struct& st, std::optional<string> identifier = nullopt) {
-  json s;
+  json j;
   // If it's an inline type, the identifier is the field name which has
   // to be passed in separately.
-  s["identifier"] = identifier ? *identifier : *st.identifier;
+  j["identifier"] = identifier ? *identifier : *st.identifier;
   for (const auto& m : st.members) {
     if (m->IsField()) {
-      s["fields"].push_back(GetField(*m->field_decl));
+      j["fields"].push_back(GetField(*m->field_decl));
       if (!m->field_decl->IsPrimitive()) {
         // Non-primitive field types are inlines.
         // TODO really there should be an IsInline() ?
-        s["type_decls"].push_back(GetInlineType(*m->field_decl));
+        j["type_decls"].push_back(GetInlineType(*m->field_decl));
       }
     } else if (m->IsType()) {
-      s["type_decls"].push_back(GetType(*m->type_decl));
+      j["type_decls"].push_back(GetType(*m->type_decl));
     } else {
       throw_line("invalid state");
     }
   }
-  return s;
+  return j;
 }
 
 json GetVariant(const Variant& var,
                 std::optional<string> identifier = nullopt) {
-  json v;
+  json j;
   // If it's an inline type, the identifier is the field name which has
   // to be passed in separately.
-  v["identifier"] = identifier ? *identifier : *var.identifier;
+  j["identifier"] = identifier ? *identifier : *var.identifier;
   for (const auto& m : var.members) {
     if (m->IsField()) {
-      v["fields"].push_back(GetField(*m->field_decl));
+      j["fields"].push_back(GetField(*m->field_decl));
     } else if (m->IsType()) {
-      v["type_decls"].push_back(GetType(*m->type_decl));
+      j["type_decls"].push_back(GetType(*m->type_decl));
     } else {
       throw_line("invalid state");
     }
   }
-  return v;
+  return j;
 }
 
 json GetVector(const Vector& vec, std::optional<string> identifier = nullopt) {
@@ -274,36 +274,36 @@ json GetMap(const Map& map, std::optional<string> identifier = nullopt) {
 }
 
 json GetInlineType(const FieldDeclaration& field) {
-  json r;
+  json j;
   string identifier = *field.identifier + "T";
   if (field.IsStruct()) {
-    r["struct"] = GetStruct(*field.st, identifier);
+    j["struct"] = GetStruct(*field.st, identifier);
   } else if (field.IsVariant()) {
-    r["variant"] = GetVariant(*field.var, identifier);
+    j["variant"] = GetVariant(*field.var, identifier);
   } else if (field.IsVector()) {
-    r["vector"] = GetVector(*field.vec, identifier);
+    j["vector"] = GetVector(*field.vec, identifier);
   } else if (field.IsMap()) {
-    r["map"] = GetMap(*field.map, identifier);
+    j["map"] = GetMap(*field.map, identifier);
   } else {
     throw_line("invalid state");
   }
-  return r;
+  return j;
 }
 
 json GetType(const TypeDeclaration& type) {
-  json r;
+  json j;
   if (type.IsStruct()) {
-    r["struct"] = GetStruct(*type.st);
+    j["struct"] = GetStruct(*type.st);
   } else if (type.IsVariant()) {
-    r["variant"] = GetVariant(*type.var);
+    j["variant"] = GetVariant(*type.var);
   } else if (type.IsVector()) {
-    r["vector"] = GetVector(*type.vec);
+    j["vector"] = GetVector(*type.vec);
   } else if (type.IsMap()) {
-    r["map"] = GetMap(*type.map);
+    j["map"] = GetMap(*type.map);
   } else {
     throw_line("invalid state");
   }
-  return r;
+  return j;
 }
 
 json GetTypeDecls(const vector<shared_ptr<TypeDeclaration>>& types) {
