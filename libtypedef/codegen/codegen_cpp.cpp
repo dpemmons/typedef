@@ -295,17 +295,17 @@ class {{identifier}} {
 ## if exists("fields")
 ## for field in fields
 ## if field.access_by == "value" 
-  void {{field.identifier}}({{field.cpp_type}} val) {
+  void set_{{field.identifier}}({{field.cpp_type}} val) {
     {{field.identifier}}_ = val;
   }
-  {{field.cpp_type}} {{field.identifier}}() {
+  {{field.cpp_type}} get_{{field.identifier}}() {
     return {{field.identifier}}_;
   }
 ## else if field.access_by == "reference" 
-  void {{field.identifier}}(const {{field.cpp_type}}& val) {
+  void set_{{field.identifier}}(const {{field.cpp_type}}& val) {
     {{field.identifier}}_ = val;
   }
-  {{field.cpp_type}} {{field.identifier}}() {
+  {{field.cpp_type}} get_{{field.identifier}}() {
     return {{field.identifier}}_;
   }
   {{field.cpp_type}}& {{field.identifier}}_ref() {
@@ -315,22 +315,22 @@ class {{identifier}} {
   bool has_{{field.identifier}}() const {
     return {{field.identifier}}_.operator bool();
   }
+  void alloc_{{field.identifier}}() {
+    {{field.identifier}}_ = std::make_unique<{{field.cpp_type}}>();
+  }
   void delete_{{field.identifier}}() {
     return {{field.identifier}}_.reset(nullptr);
   }
-  void make_{{field.identifier}}() {
-    {{field.identifier}}_ = std::make_unique<{{field.cpp_type}}>();
-  }
-  void {{field.identifier}}(std::unique_ptr<{{field.cpp_type}}> val) {
+  void set_{{field.identifier}}(std::unique_ptr<{{field.cpp_type}}> val) {
     {{field.identifier}}_ = std::move(val);
   }
-  void {{field.identifier}}({{field.cpp_type}}* val) {
+  void set_{{field.identifier}}({{field.cpp_type}}* val) {
     {{field.identifier}}_.reset(std::move(val));
   }
-  {{field.cpp_type}}* {{field.identifier}}() {
+  {{field.cpp_type}}* {{field.identifier}}_ptr() {
     #if TD_AUTO_ALLOC
     if (!has_{{field.identifier}}()) {
-      make_{{field.identifier}}();
+      alloc_{{field.identifier}}();
     }
     #endif
     #ifdef DEBUG
@@ -380,6 +380,16 @@ class {{identifier}} {
     tag = Tag::__TAGS_BEGIN;
   }
 
+  enum class Tag {
+    __TAGS_BEGIN = 0,
+## if exists("fields")
+## for field in fields
+    TAG_{{field.identifier}},
+## endfor
+## endif
+    __TAGS_END
+  };
+  Tag Which() const { return tag; }
 
 ## if exists("fields")
 ## for field in fields
@@ -387,24 +397,24 @@ class {{identifier}} {
     return (tag == Tag::TAG_{{field.identifier}});
   }
 ## if field.access_by == "value" 
-  void {{field.identifier}}({{field.cpp_type}} val) {
+  void set_{{field.identifier}}({{field.cpp_type}} val) {
     MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
     {{field.identifier}}_ = val;
   }
-  {{field.cpp_type}} {{field.identifier}}() {
+  {{field.cpp_type}} get_{{field.identifier}}() {
     if (!is_{{field.identifier}}()) {
       TD_THROW("Attempted invalid variant access");
     }
     return {{field.identifier}}_;
   }
 ## else if field.access_by == "reference" 
-  void {{field.identifier}}(const {{field.cpp_type}}& val) {
+  void set_{{field.identifier}}(const {{field.cpp_type}}& val) {
     MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
     {{field.identifier}}_ = val;
   }
-  {{field.cpp_type}} {{field.identifier}}() {
+  {{field.cpp_type}} get_{{field.identifier}}() {
     if (!is_{{field.identifier}}()) {
       TD_THROW("Attempted invalid variant access");
     }
@@ -420,31 +430,31 @@ class {{identifier}} {
     }
     return {{field.identifier}}_.operator bool();
   }
+  void alloc_{{field.identifier}}() {
+    MaybeDeleteExistingMember();
+    tag = Tag::TAG_{{field.identifier}};
+    {{field.identifier}}_ = std::make_unique<{{field.cpp_type}}>();
+  }
   void delete_{{field.identifier}}() {
     if (!is_{{field.identifier}}()) {
       TD_THROW("Attempted invalid variant access");
     }
     return {{field.identifier}}_.reset(nullptr);
   }
-  void make_{{field.identifier}}() {
-    MaybeDeleteExistingMember();
-    tag = Tag::TAG_{{field.identifier}};
-    {{field.identifier}}_ = std::make_unique<{{field.cpp_type}}>();
-  }
-  void {{field.identifier}}(std::unique_ptr<{{field.cpp_type}}> val) {
+  void set_{{field.identifier}}(std::unique_ptr<{{field.cpp_type}}> val) {
     MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
     {{field.identifier}}_ = std::move(val);
   }
-  void {{field.identifier}}({{field.cpp_type}}* val) {
+  void set_{{field.identifier}}({{field.cpp_type}}* val) {
     MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
     {{field.identifier}}_.reset(std::move(val));
   }
-  {{field.cpp_type}}* {{field.identifier}}() {
+  {{field.cpp_type}}* {{field.identifier}}_ptr() {
     #if TD_AUTO_ALLOC
     if (!has_{{field.identifier}}()) {
-      make_{{field.identifier}}();
+      alloc_{{field.identifier}}();
     }
     #endif
     #ifdef DEBUG
@@ -459,23 +469,15 @@ class {{identifier}} {
 ## endfor
 ## endif
  private:
-  enum class Tag {
-    __TAGS_BEGIN = 0,
-## if exists("fields")
-## for field in fields
-    TAG_{{field.identifier}},
-## endfor
-## endif
-    __TAGS_END
-  } tag = Tag::__TAGS_BEGIN;
+  Tag tag = Tag::__TAGS_BEGIN;
 
   union {
 ## if exists("fields")
 ## for field in fields
 ## if field.access_by == "pointer" 
-  std::unique_ptr<{{field.cpp_type}}> {{field.identifier}}_;
+    std::unique_ptr<{{field.cpp_type}}> {{field.identifier}}_;
 ## else
-  {{field.cpp_type}} {{field.identifier}}_;
+    {{field.cpp_type}} {{field.identifier}}_;
 ## endif
 ## endfor
 ## endif

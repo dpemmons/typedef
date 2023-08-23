@@ -33,21 +33,22 @@ public class TypedefParser extends Parser {
 		KW_SUPER=62, KW_SWITCH=63, KW_TYPEOF=64, KW_UNION=65, KW_UNSAFE=66, KW_UNSIGNED=67, 
 		KW_UNSIZED=68, KW_VIRTUAL=69, KW_VOID=70, KW_VOLATILE=71, KW_BOOL=72, 
 		KW_CHAR=73, KW_STRING=74, KW_F32=75, KW_F64=76, KW_U8=77, KW_U16=78, KW_U32=79, 
-		KW_U64=80, KW_I8=81, KW_I16=82, KW_I32=83, KW_I64=84, NON_KEYWORD_IDENTIFIER=85, 
-		LINE_COMMENT=86, BLOCK_COMMENT=87, INNER_LINE_DOC=88, INNER_BLOCK_DOC=89, 
-		OUTER_LINE_DOC=90, OUTER_BLOCK_DOC=91, BLOCK_COMMENT_OR_DOC=92, SHEBANG=93, 
-		CHAR_LITERAL=94, STRING_LITERAL=95, RAW_STRING_LITERAL=96, DEC_DIGITS=97, 
-		DEC_DIGITS_UNDERSCORE=98, HEX_DIGITS=99, HEX_DIGITS_UNDERSCORE=100, OCT_DIGITS=101, 
-		OCT_DIGITS_UNDERSCORE=102, BIN_DIGITS=103, BIN_DIGITS_UNDERSCORE=104, 
-		FLOAT_LITERAL=105, OCT_DIGIT=106, DEC_DIGIT=107, HEX_DIGIT=108, HEX_PREFIX=109, 
-		OCT_PREFIX=110, BIN_PREFIX=111, RAW_ESCAPE=112, PLUS=113, MINUS=114, STAR=115, 
-		SLASH=116, PERCENT=117, CARET=118, NOT=119, AND=120, OR=121, ANDAND=122, 
-		OROR=123, PLUSEQ=124, MINUSEQ=125, STAREQ=126, SLASHEQ=127, PERCENTEQ=128, 
-		CARETEQ=129, ANDEQ=130, OREQ=131, SHLEQ=132, SHREQ=133, EQ=134, EQEQ=135, 
-		NE=136, GT=137, LT=138, GE=139, LE=140, AT=141, UNDERSCORE=142, DOT=143, 
-		DOTDOT=144, DOTDOTDOT=145, COMMA=146, SEMI=147, COLON=148, PATHSEP=149, 
-		RARROW=150, FATARROW=151, POUND=152, DOLLAR=153, QUESTION=154, LBRACE=155, 
-		RBRACE=156, LBRACK=157, RBRACK=158, LPAREN=159, RPAREN=160, WS=161;
+		KW_U64=80, KW_I8=81, KW_I16=82, KW_I32=83, KW_I64=84, KW_READ=85, KW_READ2=86, 
+		KW_WRITE=87, KW_WRITE2=88, NON_KEYWORD_IDENTIFIER=89, LINE_COMMENT=90, 
+		BLOCK_COMMENT=91, INNER_LINE_DOC=92, INNER_BLOCK_DOC=93, OUTER_LINE_DOC=94, 
+		OUTER_BLOCK_DOC=95, BLOCK_COMMENT_OR_DOC=96, SHEBANG=97, CHAR_LITERAL=98, 
+		STRING_LITERAL=99, RAW_STRING_LITERAL=100, DEC_DIGITS=101, DEC_DIGITS_UNDERSCORE=102, 
+		HEX_DIGITS=103, HEX_DIGITS_UNDERSCORE=104, OCT_DIGITS=105, OCT_DIGITS_UNDERSCORE=106, 
+		BIN_DIGITS=107, BIN_DIGITS_UNDERSCORE=108, FLOAT_LITERAL=109, OCT_DIGIT=110, 
+		DEC_DIGIT=111, HEX_DIGIT=112, HEX_PREFIX=113, OCT_PREFIX=114, BIN_PREFIX=115, 
+		RAW_ESCAPE=116, PLUS=117, MINUS=118, STAR=119, SLASH=120, PERCENT=121, 
+		CARET=122, NOT=123, AND=124, OR=125, ANDAND=126, OROR=127, PLUSEQ=128, 
+		MINUSEQ=129, STAREQ=130, SLASHEQ=131, PERCENTEQ=132, CARETEQ=133, ANDEQ=134, 
+		OREQ=135, SHLEQ=136, SHREQ=137, EQ=138, EQEQ=139, NE=140, GT=141, LT=142, 
+		GE=143, LE=144, AT=145, UNDERSCORE=146, DOT=147, DOTDOT=148, DOTDOTDOT=149, 
+		COMMA=150, SEMI=151, COLON=152, PATHSEP=153, RARROW=154, FATARROW=155, 
+		POUND=156, DOLLAR=157, QUESTION=158, LBRACE=159, RBRACE=160, LBRACK=161, 
+		RBRACK=162, LPAREN=163, RPAREN=164, WS=165;
 	public static final int
 		RULE_compilationUnit = 0, RULE_structDeclaration = 1, RULE_variantDeclaration = 2, 
 		RULE_vectorDeclaration = 3, RULE_mapDeclaration = 4, RULE_structMember = 5, 
@@ -91,14 +92,15 @@ public class TypedefParser extends Parser {
 			"'switch'", "'typeof'", "'union'", "'unsafe'", "'unsigned'", "'unsized'", 
 			"'virtual'", "'void'", "'volatile'", "'bool'", "'char'", "'str'", "'f32'", 
 			"'f64'", "'u8'", "'u16'", "'u32'", "'u64'", "'i8'", "'i16'", "'i32'", 
-			"'i64'", null, null, null, null, null, null, null, null, null, null, 
+			"'i64'", "'read'", "'Read'", "'write'", "'Write'", null, null, null, 
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, "'0x'", "'0o'", "'0b'", "'r#'", "'+'", "'-'", "'*'", "'/'", 
-			"'%'", "'^'", "'!'", "'&'", "'|'", "'&&'", "'||'", "'+='", "'-='", "'*='", 
-			"'/='", "'%='", "'^='", "'&='", "'|='", "'<<='", "'>>='", "'='", "'=='", 
-			"'!='", "'>'", "'<'", "'>='", "'<='", "'@'", "'_'", "'.'", "'..'", "'...'", 
-			"','", "';'", "':'", "'::'", "'->'", "'=>'", "'#'", "'$'", "'?'", "'{'", 
-			"'}'", "'['", "']'", "'('", "')'"
+			null, null, null, null, null, null, null, null, null, "'0x'", "'0o'", 
+			"'0b'", "'r#'", "'+'", "'-'", "'*'", "'/'", "'%'", "'^'", "'!'", "'&'", 
+			"'|'", "'&&'", "'||'", "'+='", "'-='", "'*='", "'/='", "'%='", "'^='", 
+			"'&='", "'|='", "'<<='", "'>>='", "'='", "'=='", "'!='", "'>'", "'<'", 
+			"'>='", "'<='", "'@'", "'_'", "'.'", "'..'", "'...'", "','", "';'", "':'", 
+			"'::'", "'->'", "'=>'", "'#'", "'$'", "'?'", "'{'", "'}'", "'['", "']'", 
+			"'('", "')'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -117,19 +119,20 @@ public class TypedefParser extends Parser {
 			"KW_SWITCH", "KW_TYPEOF", "KW_UNION", "KW_UNSAFE", "KW_UNSIGNED", "KW_UNSIZED", 
 			"KW_VIRTUAL", "KW_VOID", "KW_VOLATILE", "KW_BOOL", "KW_CHAR", "KW_STRING", 
 			"KW_F32", "KW_F64", "KW_U8", "KW_U16", "KW_U32", "KW_U64", "KW_I8", "KW_I16", 
-			"KW_I32", "KW_I64", "NON_KEYWORD_IDENTIFIER", "LINE_COMMENT", "BLOCK_COMMENT", 
-			"INNER_LINE_DOC", "INNER_BLOCK_DOC", "OUTER_LINE_DOC", "OUTER_BLOCK_DOC", 
-			"BLOCK_COMMENT_OR_DOC", "SHEBANG", "CHAR_LITERAL", "STRING_LITERAL", 
-			"RAW_STRING_LITERAL", "DEC_DIGITS", "DEC_DIGITS_UNDERSCORE", "HEX_DIGITS", 
-			"HEX_DIGITS_UNDERSCORE", "OCT_DIGITS", "OCT_DIGITS_UNDERSCORE", "BIN_DIGITS", 
-			"BIN_DIGITS_UNDERSCORE", "FLOAT_LITERAL", "OCT_DIGIT", "DEC_DIGIT", "HEX_DIGIT", 
-			"HEX_PREFIX", "OCT_PREFIX", "BIN_PREFIX", "RAW_ESCAPE", "PLUS", "MINUS", 
-			"STAR", "SLASH", "PERCENT", "CARET", "NOT", "AND", "OR", "ANDAND", "OROR", 
-			"PLUSEQ", "MINUSEQ", "STAREQ", "SLASHEQ", "PERCENTEQ", "CARETEQ", "ANDEQ", 
-			"OREQ", "SHLEQ", "SHREQ", "EQ", "EQEQ", "NE", "GT", "LT", "GE", "LE", 
-			"AT", "UNDERSCORE", "DOT", "DOTDOT", "DOTDOTDOT", "COMMA", "SEMI", "COLON", 
-			"PATHSEP", "RARROW", "FATARROW", "POUND", "DOLLAR", "QUESTION", "LBRACE", 
-			"RBRACE", "LBRACK", "RBRACK", "LPAREN", "RPAREN", "WS"
+			"KW_I32", "KW_I64", "KW_READ", "KW_READ2", "KW_WRITE", "KW_WRITE2", "NON_KEYWORD_IDENTIFIER", 
+			"LINE_COMMENT", "BLOCK_COMMENT", "INNER_LINE_DOC", "INNER_BLOCK_DOC", 
+			"OUTER_LINE_DOC", "OUTER_BLOCK_DOC", "BLOCK_COMMENT_OR_DOC", "SHEBANG", 
+			"CHAR_LITERAL", "STRING_LITERAL", "RAW_STRING_LITERAL", "DEC_DIGITS", 
+			"DEC_DIGITS_UNDERSCORE", "HEX_DIGITS", "HEX_DIGITS_UNDERSCORE", "OCT_DIGITS", 
+			"OCT_DIGITS_UNDERSCORE", "BIN_DIGITS", "BIN_DIGITS_UNDERSCORE", "FLOAT_LITERAL", 
+			"OCT_DIGIT", "DEC_DIGIT", "HEX_DIGIT", "HEX_PREFIX", "OCT_PREFIX", "BIN_PREFIX", 
+			"RAW_ESCAPE", "PLUS", "MINUS", "STAR", "SLASH", "PERCENT", "CARET", "NOT", 
+			"AND", "OR", "ANDAND", "OROR", "PLUSEQ", "MINUSEQ", "STAREQ", "SLASHEQ", 
+			"PERCENTEQ", "CARETEQ", "ANDEQ", "OREQ", "SHLEQ", "SHREQ", "EQ", "EQEQ", 
+			"NE", "GT", "LT", "GE", "LE", "AT", "UNDERSCORE", "DOT", "DOTDOT", "DOTDOTDOT", 
+			"COMMA", "SEMI", "COLON", "PATHSEP", "RARROW", "FATARROW", "POUND", "DOLLAR", 
+			"QUESTION", "LBRACE", "RBRACE", "LBRACK", "RBRACK", "LPAREN", "RPAREN", 
+			"WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -1350,7 +1353,7 @@ public class TypedefParser extends Parser {
 					setState(254);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-					if (((((_la - 85)) & ~0x3f) == 0 && ((1L << (_la - 85)) & ((1L << (NON_KEYWORD_IDENTIFIER - 85)) | (1L << (RAW_ESCAPE - 85)) | (1L << (STAR - 85)))) != 0) || _la==PATHSEP || _la==LBRACE) {
+					if (((((_la - 89)) & ~0x3f) == 0 && ((1L << (_la - 89)) & ((1L << (NON_KEYWORD_IDENTIFIER - 89)) | (1L << (RAW_ESCAPE - 89)) | (1L << (STAR - 89)))) != 0) || _la==PATHSEP || _la==LBRACE) {
 						{
 						setState(243);
 						useTree();
@@ -2478,7 +2481,7 @@ public class TypedefParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u00a3\u0162\4\2\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u00a7\u0162\4\2\t"+
 		"\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -2504,8 +2507,8 @@ public class TypedefParser extends Parser {
 		"\3\34\3\34\3\35\3\35\3\35\3\36\3\36\3\36\3\37\3\37\3\37\3 \3 \3 \3!\3"+
 		"!\3!\3\"\3\"\3\"\3#\3#\3$\5$\u014e\n$\3$\3$\3$\3$\3$\3$\3$\5$\u0157\n"+
 		"$\3%\3%\3%\5%\u015c\n%\3&\3&\3\'\3\'\3\'\2\2(\2\4\6\b\n\f\16\20\22\24"+
-		"\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJL\2\n\4\2\6\6\f\f\3\2ab"+
-		"\3\2cd\3\2ef\3\2gh\3\2ij\3\2JV\5\2\4\b\n\22\24I\2\u016b\2N\3\2\2\2\4b"+
+		"\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJL\2\n\4\2\6\6\f\f\3\2ef"+
+		"\3\2gh\3\2ij\3\2kl\3\2mn\3\2JV\5\2\4\b\n\22\24I\2\u016b\2N\3\2\2\2\4b"+
 		"\3\2\2\2\6o\3\2\2\2\b|\3\2\2\2\n\u0082\3\2\2\2\f\u008c\3\2\2\2\16\u0092"+
 		"\3\2\2\2\20\u0099\3\2\2\2\22\u00ab\3\2\2\2\24\u00ad\3\2\2\2\26\u00b4\3"+
 		"\2\2\2\30\u00c2\3\2\2\2\32\u00d0\3\2\2\2\34\u00d7\3\2\2\2\36\u00e0\3\2"+
@@ -2516,16 +2519,16 @@ public class TypedefParser extends Parser {
 		"\u014a\3\2\2\2F\u0156\3\2\2\2H\u015b\3\2\2\2J\u015d\3\2\2\2L\u015f\3\2"+
 		"\2\2NP\5\36\20\2OQ\5 \21\2PO\3\2\2\2PQ\3\2\2\2QU\3\2\2\2RT\5\"\22\2SR"+
 		"\3\2\2\2TW\3\2\2\2US\3\2\2\2UV\3\2\2\2V]\3\2\2\2WU\3\2\2\2XY\5\16\b\2"+
-		"YZ\7\u0095\2\2Z\\\3\2\2\2[X\3\2\2\2\\_\3\2\2\2][\3\2\2\2]^\3\2\2\2^`\3"+
-		"\2\2\2_]\3\2\2\2`a\7\2\2\3a\3\3\2\2\2bc\7\13\2\2cd\5H%\2dj\7\u009d\2\2"+
-		"ef\5\f\7\2fg\7\u0095\2\2gi\3\2\2\2he\3\2\2\2il\3\2\2\2jh\3\2\2\2jk\3\2"+
-		"\2\2km\3\2\2\2lj\3\2\2\2mn\7\u009e\2\2n\5\3\2\2\2op\7\20\2\2pq\5H%\2q"+
-		"w\7\u009d\2\2rs\5\f\7\2st\7\u0095\2\2tv\3\2\2\2ur\3\2\2\2vy\3\2\2\2wu"+
-		"\3\2\2\2wx\3\2\2\2xz\3\2\2\2yw\3\2\2\2z{\7\u009e\2\2{\7\3\2\2\2|}\7\21"+
-		"\2\2}~\5H%\2~\177\7\u008c\2\2\177\u0080\5J&\2\u0080\u0081\7\u008b\2\2"+
+		"YZ\7\u0099\2\2Z\\\3\2\2\2[X\3\2\2\2\\_\3\2\2\2][\3\2\2\2]^\3\2\2\2^`\3"+
+		"\2\2\2_]\3\2\2\2`a\7\2\2\3a\3\3\2\2\2bc\7\13\2\2cd\5H%\2dj\7\u00a1\2\2"+
+		"ef\5\f\7\2fg\7\u0099\2\2gi\3\2\2\2he\3\2\2\2il\3\2\2\2jh\3\2\2\2jk\3\2"+
+		"\2\2km\3\2\2\2lj\3\2\2\2mn\7\u00a2\2\2n\5\3\2\2\2op\7\20\2\2pq\5H%\2q"+
+		"w\7\u00a1\2\2rs\5\f\7\2st\7\u0099\2\2tv\3\2\2\2ur\3\2\2\2vy\3\2\2\2wu"+
+		"\3\2\2\2wx\3\2\2\2xz\3\2\2\2yw\3\2\2\2z{\7\u00a2\2\2{\7\3\2\2\2|}\7\21"+
+		"\2\2}~\5H%\2~\177\7\u0090\2\2\177\u0080\5J&\2\u0080\u0081\7\u008f\2\2"+
 		"\u0081\t\3\2\2\2\u0082\u0083\7\22\2\2\u0083\u0084\5H%\2\u0084\u0085\7"+
-		"\u008c\2\2\u0085\u0086\5J&\2\u0086\u0087\7\u0094\2\2\u0087\u0088\5J&\2"+
-		"\u0088\u0089\7\u008b\2\2\u0089\13\3\2\2\2\u008a\u008d\5\16\b\2\u008b\u008d"+
+		"\u0090\2\2\u0085\u0086\5J&\2\u0086\u0087\7\u0098\2\2\u0087\u0088\5J&\2"+
+		"\u0088\u0089\7\u008f\2\2\u0089\13\3\2\2\2\u008a\u008d\5\16\b\2\u008b\u008d"+
 		"\5\20\t\2\u008c\u008a\3\2\2\2\u008c\u008b\3\2\2\2\u008d\r\3\2\2\2\u008e"+
 		"\u0093\5\4\3\2\u008f\u0093\5\6\4\2\u0090\u0093\5\b\5\2\u0091\u0093\5\n"+
 		"\6\2\u0092\u008e\3\2\2\2\u0092\u008f\3\2\2\2\u0092\u0090\3\2\2\2\u0092"+
@@ -2533,44 +2536,44 @@ public class TypedefParser extends Parser {
 		"\f\2\u0096\u009a\5\30\r\2\u0097\u009a\5\32\16\2\u0098\u009a\5\34\17\2"+
 		"\u0099\u0094\3\2\2\2\u0099\u0095\3\2\2\2\u0099\u0096\3\2\2\2\u0099\u0097"+
 		"\3\2\2\2\u0099\u0098\3\2\2\2\u009a\21\3\2\2\2\u009b\u00ac\5\24\13\2\u009c"+
-		"\u009d\5H%\2\u009d\u00a9\7\u0096\2\2\u009e\u009f\5J&\2\u009f\u00a2\7\u0088"+
+		"\u009d\5H%\2\u009d\u00a9\7\u009a\2\2\u009e\u009f\5J&\2\u009f\u00a2\7\u008c"+
 		"\2\2\u00a0\u00a3\5D#\2\u00a1\u00a3\5F$\2\u00a2\u00a0\3\2\2\2\u00a2\u00a1"+
-		"\3\2\2\2\u00a3\u00aa\3\2\2\2\u00a4\u00a7\5J&\2\u00a5\u00a6\7\u0088\2\2"+
+		"\3\2\2\2\u00a3\u00aa\3\2\2\2\u00a4\u00a7\5J&\2\u00a5\u00a6\7\u008c\2\2"+
 		"\u00a6\u00a8\5(\25\2\u00a7\u00a5\3\2\2\2\u00a7\u00a8\3\2\2\2\u00a8\u00aa"+
 		"\3\2\2\2\u00a9\u009e\3\2\2\2\u00a9\u00a4\3\2\2\2\u00aa\u00ac\3\2\2\2\u00ab"+
 		"\u009b\3\2\2\2\u00ab\u009c\3\2\2\2\u00ac\23\3\2\2\2\u00ad\u00ae\5H%\2"+
-		"\u00ae\u00b2\7\u0088\2\2\u00af\u00b3\5D#\2\u00b0\u00b3\5F$\2\u00b1\u00b3"+
+		"\u00ae\u00b2\7\u008c\2\2\u00af\u00b3\5D#\2\u00b0\u00b3\5F$\2\u00b1\u00b3"+
 		"\5(\25\2\u00b2\u00af\3\2\2\2\u00b2\u00b0\3\2\2\2\u00b2\u00b1\3\2\2\2\u00b3"+
-		"\25\3\2\2\2\u00b4\u00b5\5H%\2\u00b5\u00b6\7\u0096\2\2\u00b6\u00b7\7\13"+
-		"\2\2\u00b7\u00bd\7\u009d\2\2\u00b8\u00b9\5\f\7\2\u00b9\u00ba\7\u0095\2"+
+		"\25\3\2\2\2\u00b4\u00b5\5H%\2\u00b5\u00b6\7\u009a\2\2\u00b6\u00b7\7\13"+
+		"\2\2\u00b7\u00bd\7\u00a1\2\2\u00b8\u00b9\5\f\7\2\u00b9\u00ba\7\u0099\2"+
 		"\2\u00ba\u00bc\3\2\2\2\u00bb\u00b8\3\2\2\2\u00bc\u00bf\3\2\2\2\u00bd\u00bb"+
 		"\3\2\2\2\u00bd\u00be\3\2\2\2\u00be\u00c0\3\2\2\2\u00bf\u00bd\3\2\2\2\u00c0"+
-		"\u00c1\7\u009e\2\2\u00c1\27\3\2\2\2\u00c2\u00c3\5H%\2\u00c3\u00c4\7\u0096"+
-		"\2\2\u00c4\u00c5\7\20\2\2\u00c5\u00cb\7\u009d\2\2\u00c6\u00c7\5\f\7\2"+
-		"\u00c7\u00c8\7\u0095\2\2\u00c8\u00ca\3\2\2\2\u00c9\u00c6\3\2\2\2\u00ca"+
+		"\u00c1\7\u00a2\2\2\u00c1\27\3\2\2\2\u00c2\u00c3\5H%\2\u00c3\u00c4\7\u009a"+
+		"\2\2\u00c4\u00c5\7\20\2\2\u00c5\u00cb\7\u00a1\2\2\u00c6\u00c7\5\f\7\2"+
+		"\u00c7\u00c8\7\u0099\2\2\u00c8\u00ca\3\2\2\2\u00c9\u00c6\3\2\2\2\u00ca"+
 		"\u00cd\3\2\2\2\u00cb\u00c9\3\2\2\2\u00cb\u00cc\3\2\2\2\u00cc\u00ce\3\2"+
-		"\2\2\u00cd\u00cb\3\2\2\2\u00ce\u00cf\7\u009e\2\2\u00cf\31\3\2\2\2\u00d0"+
-		"\u00d1\5H%\2\u00d1\u00d2\7\u0096\2\2\u00d2\u00d3\7\21\2\2\u00d3\u00d4"+
-		"\7\u008c\2\2\u00d4\u00d5\5J&\2\u00d5\u00d6\7\u008b\2\2\u00d6\33\3\2\2"+
-		"\2\u00d7\u00d8\5H%\2\u00d8\u00d9\7\u0096\2\2\u00d9\u00da\7\22\2\2\u00da"+
-		"\u00db\7\u008c\2\2\u00db\u00dc\5J&\2\u00dc\u00dd\7\u0094\2\2\u00dd\u00de"+
-		"\5J&\2\u00de\u00df\7\u008b\2\2\u00df\35\3\2\2\2\u00e0\u00e1\7\16\2\2\u00e1"+
-		"\u00e2\7\u0088\2\2\u00e2\u00e3\5H%\2\u00e3\u00e4\7\u0095\2\2\u00e4\37"+
-		"\3\2\2\2\u00e5\u00e6\7\n\2\2\u00e6\u00e7\5&\24\2\u00e7\u00e8\7\u0095\2"+
+		"\2\2\u00cd\u00cb\3\2\2\2\u00ce\u00cf\7\u00a2\2\2\u00cf\31\3\2\2\2\u00d0"+
+		"\u00d1\5H%\2\u00d1\u00d2\7\u009a\2\2\u00d2\u00d3\7\21\2\2\u00d3\u00d4"+
+		"\7\u0090\2\2\u00d4\u00d5\5J&\2\u00d5\u00d6\7\u008f\2\2\u00d6\33\3\2\2"+
+		"\2\u00d7\u00d8\5H%\2\u00d8\u00d9\7\u009a\2\2\u00d9\u00da\7\22\2\2\u00da"+
+		"\u00db\7\u0090\2\2\u00db\u00dc\5J&\2\u00dc\u00dd\7\u0098\2\2\u00dd\u00de"+
+		"\5J&\2\u00de\u00df\7\u008f\2\2\u00df\35\3\2\2\2\u00e0\u00e1\7\16\2\2\u00e1"+
+		"\u00e2\7\u008c\2\2\u00e2\u00e3\5H%\2\u00e3\u00e4\7\u0099\2\2\u00e4\37"+
+		"\3\2\2\2\u00e5\u00e6\7\n\2\2\u00e6\u00e7\5&\24\2\u00e7\u00e8\7\u0099\2"+
 		"\2\u00e8!\3\2\2\2\u00e9\u00ea\7\17\2\2\u00ea\u00eb\5$\23\2\u00eb\u00ec"+
-		"\7\u0095\2\2\u00ec#\3\2\2\2\u00ed\u00ef\5&\24\2\u00ee\u00ed\3\2\2\2\u00ee"+
-		"\u00ef\3\2\2\2\u00ef\u00f0\3\2\2\2\u00f0\u00f2\7\u0097\2\2\u00f1\u00ee"+
-		"\3\2\2\2\u00f1\u00f2\3\2\2\2\u00f2\u0103\3\2\2\2\u00f3\u0104\7u\2\2\u00f4"+
-		"\u0100\7\u009d\2\2\u00f5\u00fa\5$\23\2\u00f6\u00f7\7\u0094\2\2\u00f7\u00f9"+
+		"\7\u0099\2\2\u00ec#\3\2\2\2\u00ed\u00ef\5&\24\2\u00ee\u00ed\3\2\2\2\u00ee"+
+		"\u00ef\3\2\2\2\u00ef\u00f0\3\2\2\2\u00f0\u00f2\7\u009b\2\2\u00f1\u00ee"+
+		"\3\2\2\2\u00f1\u00f2\3\2\2\2\u00f2\u0103\3\2\2\2\u00f3\u0104\7y\2\2\u00f4"+
+		"\u0100\7\u00a1\2\2\u00f5\u00fa\5$\23\2\u00f6\u00f7\7\u0098\2\2\u00f7\u00f9"+
 		"\5$\23\2\u00f8\u00f6\3\2\2\2\u00f9\u00fc\3\2\2\2\u00fa\u00f8\3\2\2\2\u00fa"+
-		"\u00fb\3\2\2\2\u00fb\u00fe\3\2\2\2\u00fc\u00fa\3\2\2\2\u00fd\u00ff\7\u0094"+
+		"\u00fb\3\2\2\2\u00fb\u00fe\3\2\2\2\u00fc\u00fa\3\2\2\2\u00fd\u00ff\7\u0098"+
 		"\2\2\u00fe\u00fd\3\2\2\2\u00fe\u00ff\3\2\2\2\u00ff\u0101\3\2\2\2\u0100"+
-		"\u00f5\3\2\2\2\u0100\u0101\3\2\2\2\u0101\u0102\3\2\2\2\u0102\u0104\7\u009e"+
+		"\u00f5\3\2\2\2\u0100\u0101\3\2\2\2\u0101\u0102\3\2\2\2\u0102\u0104\7\u00a2"+
 		"\2\2\u0103\u00f3\3\2\2\2\u0103\u00f4\3\2\2\2\u0104\u010b\3\2\2\2\u0105"+
 		"\u0108\5&\24\2\u0106\u0107\7\4\2\2\u0107\u0109\5H%\2\u0108\u0106\3\2\2"+
 		"\2\u0108\u0109\3\2\2\2\u0109\u010b\3\2\2\2\u010a\u00f1\3\2\2\2\u010a\u0105"+
-		"\3\2\2\2\u010b%\3\2\2\2\u010c\u010e\7\u0097\2\2\u010d\u010c\3\2\2\2\u010d"+
-		"\u010e\3\2\2\2\u010e\u010f\3\2\2\2\u010f\u0114\5H%\2\u0110\u0111\7\u0097"+
+		"\3\2\2\2\u010b%\3\2\2\2\u010c\u010e\7\u009b\2\2\u010d\u010c\3\2\2\2\u010d"+
+		"\u010e\3\2\2\2\u010e\u010f\3\2\2\2\u010f\u0114\5H%\2\u0110\u0111\7\u009b"+
 		"\2\2\u0111\u0113\5H%\2\u0112\u0110\3\2\2\2\u0113\u0116\3\2\2\2\u0114\u0112"+
 		"\3\2\2\2\u0114\u0115\3\2\2\2\u0115\'\3\2\2\2\u0116\u0114\3\2\2\2\u0117"+
 		"\u0125\5*\26\2\u0118\u0125\5,\27\2\u0119\u0125\5.\30\2\u011a\u0125\5\60"+
@@ -2581,7 +2584,7 @@ public class TypedefParser extends Parser {
 		"\2\2\u0124\u011c\3\2\2\2\u0124\u011d\3\2\2\2\u0124\u011e\3\2\2\2\u0124"+
 		"\u011f\3\2\2\2\u0124\u0120\3\2\2\2\u0124\u0121\3\2\2\2\u0124\u0122\3\2"+
 		"\2\2\u0124\u0123\3\2\2\2\u0125)\3\2\2\2\u0126\u0127\t\2\2\2\u0127+\3\2"+
-		"\2\2\u0128\u0129\7`\2\2\u0129-\3\2\2\2\u012a\u012b\t\3\2\2\u012b/\3\2"+
+		"\2\2\u0128\u0129\7d\2\2\u0129-\3\2\2\2\u012a\u012b\t\3\2\2\u012b/\3\2"+
 		"\2\2\u012c\u012d\5D#\2\u012d\u012e\7M\2\2\u012e\61\3\2\2\2\u012f\u0130"+
 		"\5D#\2\u0130\u0131\7N\2\2\u0131\63\3\2\2\2\u0132\u0133\5F$\2\u0133\u0134"+
 		"\7O\2\2\u0134\65\3\2\2\2\u0135\u0136\5F$\2\u0136\u0137\7P\2\2\u0137\67"+
@@ -2589,13 +2592,13 @@ public class TypedefParser extends Parser {
 		"\5F$\2\u013c\u013d\7R\2\2\u013d;\3\2\2\2\u013e\u013f\5F$\2\u013f\u0140"+
 		"\7S\2\2\u0140=\3\2\2\2\u0141\u0142\5F$\2\u0142\u0143\7T\2\2\u0143?\3\2"+
 		"\2\2\u0144\u0145\5F$\2\u0145\u0146\7U\2\2\u0146A\3\2\2\2\u0147\u0148\5"+
-		"F$\2\u0148\u0149\7V\2\2\u0149C\3\2\2\2\u014a\u014b\7k\2\2\u014bE\3\2\2"+
-		"\2\u014c\u014e\7t\2\2\u014d\u014c\3\2\2\2\u014d\u014e\3\2\2\2\u014e\u014f"+
-		"\3\2\2\2\u014f\u0157\t\4\2\2\u0150\u0151\7o\2\2\u0151\u0157\t\5\2\2\u0152"+
-		"\u0153\7p\2\2\u0153\u0157\t\6\2\2\u0154\u0155\7q\2\2\u0155\u0157\t\7\2"+
+		"F$\2\u0148\u0149\7V\2\2\u0149C\3\2\2\2\u014a\u014b\7o\2\2\u014bE\3\2\2"+
+		"\2\u014c\u014e\7x\2\2\u014d\u014c\3\2\2\2\u014d\u014e\3\2\2\2\u014e\u014f"+
+		"\3\2\2\2\u014f\u0157\t\4\2\2\u0150\u0151\7s\2\2\u0151\u0157\t\5\2\2\u0152"+
+		"\u0153\7t\2\2\u0153\u0157\t\6\2\2\u0154\u0155\7u\2\2\u0155\u0157\t\7\2"+
 		"\2\u0156\u014d\3\2\2\2\u0156\u0150\3\2\2\2\u0156\u0152\3\2\2\2\u0156\u0154"+
-		"\3\2\2\2\u0157G\3\2\2\2\u0158\u015c\7W\2\2\u0159\u015a\7r\2\2\u015a\u015c"+
-		"\7W\2\2\u015b\u0158\3\2\2\2\u015b\u0159\3\2\2\2\u015cI\3\2\2\2\u015d\u015e"+
+		"\3\2\2\2\u0157G\3\2\2\2\u0158\u015c\7[\2\2\u0159\u015a\7v\2\2\u015a\u015c"+
+		"\7[\2\2\u015b\u0158\3\2\2\2\u015b\u0159\3\2\2\2\u015cI\3\2\2\2\u015d\u015e"+
 		"\t\b\2\2\u015eK\3\2\2\2\u015f\u0160\t\t\2\2\u0160M\3\2\2\2\37PU]jw\u008c"+
 		"\u0092\u0099\u00a2\u00a7\u00a9\u00ab\u00b2\u00bd\u00cb\u00ee\u00f1\u00fa"+
 		"\u00fe\u0100\u0103\u0108\u010a\u010d\u0114\u0124\u014d\u0156\u015b";
