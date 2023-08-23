@@ -159,21 +159,118 @@ json GetVariant(const Variant& var,
 }
 
 json GetVector(const Vector& vec, std::optional<string> identifier = nullopt) {
-  json v;
+  json j;
   // If it's an inline type, the identifier is the field name which has
   // to be passed in separately.
-  v["identifier"] = identifier ? *identifier : *vec.identifier;
+  j["identifier"] = identifier ? *identifier : *vec.identifier;
+  if (vec.IsPrimitive()) {
+    if (vec.IsBool()) {
+      j["element_cpp_type"] = "bool";
+    } else if (vec.IsChar()) {
+      j["element_cpp_type"] = "char32_t";
+    } else if (vec.IsStr()) {
+      j["element_cpp_type"] = "std::string";
+    } else if (vec.IsF32()) {
+      j["element_cpp_type"] = "float";
+    } else if (vec.IsF64()) {
+      j["element_cpp_type"] = "double";
+    } else if (vec.IsU8()) {
+      j["element_cpp_type"] = "std::uint8_t";
+    } else if (vec.IsU16()) {
+      j["element_cpp_type"] = "std::uint16_t";
+    } else if (vec.IsU32()) {
+      j["element_cpp_type"] = "std::uint32_t";
+    } else if (vec.IsU64()) {
+      j["element_cpp_type"] = "std::uint64_t";
+    } else if (vec.IsI8()) {
+      j["element_cpp_type"] = "std::int8_t";
+    } else if (vec.IsI16()) {
+      j["element_cpp_type"] = "std::int16_t";
+    } else if (vec.IsI32()) {
+      j["element_cpp_type"] = "std::int32_t";
+    } else if (vec.IsI64()) {
+      j["element_cpp_type"] = "std::int64_t";
+    } else {
+      throw_line("invalid state");
+    }
+  } else {
+    throw_line("invalid state");
+  }
 
-  return v;
+  return j;
 }
 
 json GetMap(const Map& map, std::optional<string> identifier = nullopt) {
-  json m;
+  json j;
   // If it's an inline type, the identifier is the field name which has
   // to be passed in separately.
-  m["identifier"] = identifier ? *identifier : *map.identifier;
+  j["identifier"] = identifier ? *identifier : *map.identifier;
 
-  return m;
+  if (map.KeyIsBool()) {
+    j["key_cpp_type"] = "bool";
+  } else if (map.KeyIsChar()) {
+    j["key_cpp_type"] = "char32_t";
+  } else if (map.KeyIsStr()) {
+    j["key_cpp_type"] = "std::string";
+  } else if (map.KeyIsF32()) {
+    j["key_cpp_type"] = "float";
+  } else if (map.KeyIsF64()) {
+    j["key_cpp_type"] = "double";
+  } else if (map.KeyIsU8()) {
+    j["key_cpp_type"] = "std::uint8_t";
+  } else if (map.KeyIsU16()) {
+    j["key_cpp_type"] = "std::uint16_t";
+  } else if (map.KeyIsU32()) {
+    j["key_cpp_type"] = "std::uint32_t";
+  } else if (map.KeyIsU64()) {
+    j["key_cpp_type"] = "std::uint64_t";
+  } else if (map.KeyIsI8()) {
+    j["key_cpp_type"] = "std::int8_t";
+  } else if (map.KeyIsI16()) {
+    j["key_cpp_type"] = "std::int16_t";
+  } else if (map.KeyIsI32()) {
+    j["key_cpp_type"] = "std::int32_t";
+  } else if (map.KeyIsI64()) {
+    j["key_cpp_type"] = "std::int64_t";
+  } else {
+    throw_line("invalid state");
+  }
+
+  if (map.ValueIsPrimitive()) {
+    if (map.ValueIsBool()) {
+      j["value_cpp_type"] = "bool";
+    } else if (map.ValueIsChar()) {
+      j["value_cpp_type"] = "char32_t";
+    } else if (map.ValueIsStr()) {
+      j["value_cpp_type"] = "std::string";
+    } else if (map.ValueIsF32()) {
+      j["value_cpp_type"] = "float";
+    } else if (map.ValueIsF64()) {
+      j["value_cpp_type"] = "double";
+    } else if (map.ValueIsU8()) {
+      j["value_cpp_type"] = "std::uint8_t";
+    } else if (map.ValueIsU16()) {
+      j["value_cpp_type"] = "std::uint16_t";
+    } else if (map.ValueIsU32()) {
+      j["value_cpp_type"] = "std::uint32_t";
+    } else if (map.ValueIsU64()) {
+      j["value_cpp_type"] = "std::uint64_t";
+    } else if (map.ValueIsI8()) {
+      j["value_cpp_type"] = "std::int8_t";
+    } else if (map.ValueIsI16()) {
+      j["value_cpp_type"] = "std::int16_t";
+    } else if (map.ValueIsI32()) {
+      j["value_cpp_type"] = "std::int32_t";
+    } else if (map.ValueIsI64()) {
+      j["value_cpp_type"] = "std::int64_t";
+    } else {
+      throw_line("invalid state");
+    }
+  } else {
+    throw_line("invalid state");
+  }
+
+  return j;
 }
 
 json GetInlineType(const FieldDeclaration& field) {
@@ -503,21 +600,25 @@ class {{identifier}} {
   )");
 
   vector_tmpl = env.parse(R"(
-class {{identifier}} {
+class {{identifier}} : public std::vector<{{element_cpp_type}}> {
  public:
+  {{identifier}}() {}
+  ~{{identifier}}() {}
  private:
 };  // class {{identifier}}
   )");
   map_tmpl = env.parse(R"(
-class {{identifier}} {
+class {{identifier}} : public std::map<{{key_cpp_type}}, {{value_cpp_type}}> {
  public:
+   {{identifier}}() {}
+   ~{{identifier}}() {}
  private:
 };  // class {{identifier}}
   )");
 
   auto header_tmpl = env.parse(R"(
-#ifndef CODEGEN_CODEGEN_CPP_H__
-#define CODEGEN_CODEGEN_CPP_H__
+#ifndef {{header_guard}}
+#define {{header_guard}}
 
 #include <cstdint>
 #include <memory>
@@ -553,7 +654,7 @@ namespace {{namespace}} {
 }  // namespace {{namespace}}
 ## endfor
 
-#endif  // CODEGEN_CODEGEN_CPP_H__
+#endif  // {{header_guard}}
   )");
 
   auto source_tmpl = env.parse(R"(
