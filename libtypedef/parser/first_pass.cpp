@@ -413,6 +413,8 @@ void FirstPassListener::exitFieldDeclaration(
     ctx->field_decl = ctx->inlineVectorDeclaration()->field_decl;
   } else if (ctx->inlineMapDeclaration()) {
     ctx->field_decl = ctx->inlineMapDeclaration()->field_decl;
+  } else if (ctx->symrefMemberDeclaration()) {
+    ctx->field_decl = ctx->symrefMemberDeclaration()->field_decl;
   } else {
     throw_line("Invalid state.");
   }
@@ -421,7 +423,9 @@ void FirstPassListener::exitFieldDeclaration(
 void FirstPassListener::exitSymrefMemberDeclaration(
     TypedefParser::SymrefMemberDeclarationContext* ctx) {
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
-  // TODO this.
+  ctx->field_decl->identifier = ctx->field_identifier->id;
+  ctx->field_decl->symrmef_identifier = ctx->symref_identifier->id;
+  ctx->field_decl->member_type = td::table::Type::TYPE_SYMREF;
 }
 
 void FirstPassListener::exitPrimitiveMemberDeclaration(

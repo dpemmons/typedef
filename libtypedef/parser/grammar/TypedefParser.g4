@@ -87,7 +87,7 @@ primitiveMemberDeclaration
 
 symrefMemberDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier COLON identifier;
+	field_identifier = identifier COLON symref_identifier = identifier;
 
 impliedTypePrimitiveMemberDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:

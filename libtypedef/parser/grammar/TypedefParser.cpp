@@ -1021,16 +1021,16 @@ TypedefParser::SymrefMemberDeclarationContext::SymrefMemberDeclarationContext(Pa
   : ParserRuleContext(parent, invokingState) {
 }
 
+tree::TerminalNode* TypedefParser::SymrefMemberDeclarationContext::COLON() {
+  return getToken(TypedefParser::COLON, 0);
+}
+
 std::vector<TypedefParser::IdentifierContext *> TypedefParser::SymrefMemberDeclarationContext::identifier() {
   return getRuleContexts<TypedefParser::IdentifierContext>();
 }
 
 TypedefParser::IdentifierContext* TypedefParser::SymrefMemberDeclarationContext::identifier(size_t i) {
   return getRuleContext<TypedefParser::IdentifierContext>(i);
-}
-
-tree::TerminalNode* TypedefParser::SymrefMemberDeclarationContext::COLON() {
-  return getToken(TypedefParser::COLON, 0);
 }
 
 
@@ -1068,11 +1068,11 @@ TypedefParser::SymrefMemberDeclarationContext* TypedefParser::symrefMemberDeclar
   try {
     enterOuterAlt(_localctx, 1);
     setState(174);
-    identifier();
+    dynamic_cast<SymrefMemberDeclarationContext *>(_localctx)->field_identifier = identifier();
     setState(175);
     match(TypedefParser::COLON);
     setState(176);
-    identifier();
+    dynamic_cast<SymrefMemberDeclarationContext *>(_localctx)->symref_identifier = identifier();
    
   }
   catch (RecognitionException &e) {

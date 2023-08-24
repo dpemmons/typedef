@@ -63,6 +63,8 @@ enum Type {
   TYPE_VARIANT = NONPRIMITIVE_TYPE_VARIANT,
   TYPE_VECTOR = NONPRIMITIVE_TYPE_VECTOR,
   TYPE_MAP = NONPRIMITIVE_TYPE_MAP,
+
+  TYPE_SYMREF
 };
 
 typedef std::variant<bool,                // bool
@@ -108,10 +110,21 @@ struct FieldDeclaration {
   shared_ptr<Vector> vec;
   shared_ptr<Map> map;
 
+  shared_ptr<string> symrmef_identifier;
+  // Filled in during second pass.
+  shared_ptr<TypeDeclaration> symref_target;
+
   bool IsStruct() const { return (member_type == TYPE_STRUCT && st); }
   bool IsVariant() const { return (member_type == TYPE_VARIANT && var); }
   bool IsVector() const { return (member_type == TYPE_VECTOR && vec); }
   bool IsMap() const { return (member_type == TYPE_MAP && map); }
+
+  bool IsSymref() const {
+    return (member_type == TYPE_SYMREF && symrmef_identifier->size() > 0);
+  }
+  bool SymrefIsResolved() const {
+    return symref_target.operator bool();
+  }
 
   bool IsPrimitive() const {
     return (member_type > TYPE_UNKNOWN && member_type < TYPE_PRIMITIVE_MAX);

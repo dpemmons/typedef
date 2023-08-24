@@ -854,13 +854,15 @@ public class TypedefParser extends Parser {
 
 	public static class SymrefMemberDeclarationContext extends ParserRuleContext {
 		public std::shared_ptr<td::table::FieldDeclaration> field_decl;
+		public IdentifierContext field_identifier;
+		public IdentifierContext symref_identifier;
+		public TerminalNode COLON() { return getToken(TypedefParser.COLON, 0); }
 		public List<IdentifierContext> identifier() {
 			return getRuleContexts(IdentifierContext.class);
 		}
 		public IdentifierContext identifier(int i) {
 			return getRuleContext(IdentifierContext.class,i);
 		}
-		public TerminalNode COLON() { return getToken(TypedefParser.COLON, 0); }
 		public SymrefMemberDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -874,11 +876,11 @@ public class TypedefParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(174);
-			identifier();
+			((SymrefMemberDeclarationContext)_localctx).field_identifier = identifier();
 			setState(175);
 			match(COLON);
 			setState(176);
-			identifier();
+			((SymrefMemberDeclarationContext)_localctx).symref_identifier = identifier();
 			}
 		}
 		catch (RecognitionException re) {
