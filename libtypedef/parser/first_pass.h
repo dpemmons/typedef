@@ -38,6 +38,9 @@ class FirstPassListener : public TypedefParserBaseListener {
   virtual void exitFieldDeclaration(
       TypedefParser::FieldDeclarationContext *ctx) override;
 
+  virtual void exitSymrefMemberDeclaration(
+      TypedefParser::SymrefMemberDeclarationContext *ctx) override;
+
   virtual void exitPrimitiveMemberDeclaration(
       TypedefParser::PrimitiveMemberDeclarationContext *ctx) override;
   virtual void exitImpliedTypePrimitiveMemberDeclaration(

@@ -45,6 +45,9 @@ public:
   virtual void enterPrimitiveMemberDeclaration(TypedefParser::PrimitiveMemberDeclarationContext *ctx) = 0;
   virtual void exitPrimitiveMemberDeclaration(TypedefParser::PrimitiveMemberDeclarationContext *ctx) = 0;
 
+  virtual void enterSymrefMemberDeclaration(TypedefParser::SymrefMemberDeclarationContext *ctx) = 0;
+  virtual void exitSymrefMemberDeclaration(TypedefParser::SymrefMemberDeclarationContext *ctx) = 0;
+
   virtual void enterImpliedTypePrimitiveMemberDeclaration(TypedefParser::ImpliedTypePrimitiveMemberDeclarationContext *ctx) = 0;
   virtual void exitImpliedTypePrimitiveMemberDeclaration(TypedefParser::ImpliedTypePrimitiveMemberDeclarationContext *ctx) = 0;
 

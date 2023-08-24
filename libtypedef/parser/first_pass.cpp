@@ -418,6 +418,12 @@ void FirstPassListener::exitFieldDeclaration(
   }
 }
 
+void FirstPassListener::exitSymrefMemberDeclaration(
+    TypedefParser::SymrefMemberDeclarationContext* ctx) {
+  ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  // TODO this.
+}
+
 void FirstPassListener::exitPrimitiveMemberDeclaration(
     TypedefParser::PrimitiveMemberDeclarationContext* ctx) {
   bail_if_errors();

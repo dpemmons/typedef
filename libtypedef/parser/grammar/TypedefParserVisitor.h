@@ -41,6 +41,8 @@ public:
 
     virtual antlrcpp::Any visitPrimitiveMemberDeclaration(TypedefParser::PrimitiveMemberDeclarationContext *context) = 0;
 
+    virtual antlrcpp::Any visitSymrefMemberDeclaration(TypedefParser::SymrefMemberDeclarationContext *context) = 0;
+
     virtual antlrcpp::Any visitImpliedTypePrimitiveMemberDeclaration(TypedefParser::ImpliedTypePrimitiveMemberDeclarationContext *context) = 0;
 
     virtual antlrcpp::Any visitInlineStructDeclaration(TypedefParser::InlineStructDeclarationContext *context) = 0;

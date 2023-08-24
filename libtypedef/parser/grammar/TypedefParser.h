@@ -55,15 +55,16 @@ public:
     RuleCompilationUnit = 0, RuleStructDeclaration = 1, RuleVariantDeclaration = 2, 
     RuleVectorDeclaration = 3, RuleMapDeclaration = 4, RuleStructMember = 5, 
     RuleTypeDeclaration = 6, RuleFieldDeclaration = 7, RulePrimitiveMemberDeclaration = 8, 
-    RuleImpliedTypePrimitiveMemberDeclaration = 9, RuleInlineStructDeclaration = 10, 
-    RuleInlineVariantDeclaration = 11, RuleInlineVectorDeclaration = 12, 
-    RuleInlineMapDeclaration = 13, RuleTypedefVersionDeclaration = 14, RuleModuleDeclaration = 15, 
-    RuleUseDeclaration = 16, RuleUseTree = 17, RuleSimplePath = 18, RuleExplicitPrimitiveLiteral = 19, 
-    RuleBoolLiteral = 20, RuleCharLiteral = 21, RuleStringLiteral = 22, 
-    RuleF32Literal = 23, RuleF64Literal = 24, RuleU8Literal = 25, RuleU16Literal = 26, 
-    RuleU32Literal = 27, RuleU64Literal = 28, RuleI8Literal = 29, RuleI16Literal = 30, 
-    RuleI32Literal = 31, RuleI64Literal = 32, RuleFloatLiteral = 33, RuleIntLiteral = 34, 
-    RuleIdentifier = 35, RulePrimitiveTypeIdentifier = 36, RuleKeyword = 37
+    RuleSymrefMemberDeclaration = 9, RuleImpliedTypePrimitiveMemberDeclaration = 10, 
+    RuleInlineStructDeclaration = 11, RuleInlineVariantDeclaration = 12, 
+    RuleInlineVectorDeclaration = 13, RuleInlineMapDeclaration = 14, RuleTypedefVersionDeclaration = 15, 
+    RuleModuleDeclaration = 16, RuleUseDeclaration = 17, RuleUseTree = 18, 
+    RuleSimplePath = 19, RuleExplicitPrimitiveLiteral = 20, RuleBoolLiteral = 21, 
+    RuleCharLiteral = 22, RuleStringLiteral = 23, RuleF32Literal = 24, RuleF64Literal = 25, 
+    RuleU8Literal = 26, RuleU16Literal = 27, RuleU32Literal = 28, RuleU64Literal = 29, 
+    RuleI8Literal = 30, RuleI16Literal = 31, RuleI32Literal = 32, RuleI64Literal = 33, 
+    RuleFloatLiteral = 34, RuleIntLiteral = 35, RuleIdentifier = 36, RulePrimitiveTypeIdentifier = 37, 
+    RuleKeyword = 38
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -85,6 +86,7 @@ public:
   class TypeDeclarationContext;
   class FieldDeclarationContext;
   class PrimitiveMemberDeclarationContext;
+  class SymrefMemberDeclarationContext;
   class ImpliedTypePrimitiveMemberDeclarationContext;
   class InlineStructDeclarationContext;
   class InlineVariantDeclarationContext;
@@ -273,6 +275,7 @@ public:
     FieldDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     PrimitiveMemberDeclarationContext *primitiveMemberDeclaration();
+    SymrefMemberDeclarationContext *symrefMemberDeclaration();
     InlineStructDeclarationContext *inlineStructDeclaration();
     InlineVariantDeclarationContext *inlineVariantDeclaration();
     InlineVectorDeclarationContext *inlineVectorDeclaration();
@@ -309,6 +312,24 @@ public:
   };
 
   PrimitiveMemberDeclarationContext* primitiveMemberDeclaration();
+
+  class  SymrefMemberDeclarationContext : public antlr4::ParserRuleContext {
+  public:
+    std::shared_ptr<td::table::FieldDeclaration> field_decl;
+    SymrefMemberDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<IdentifierContext *> identifier();
+    IdentifierContext* identifier(size_t i);
+    antlr4::tree::TerminalNode *COLON();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  SymrefMemberDeclarationContext* symrefMemberDeclaration();
 
   class  ImpliedTypePrimitiveMemberDeclarationContext : public antlr4::ParserRuleContext {
   public:

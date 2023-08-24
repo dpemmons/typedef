@@ -15,7 +15,6 @@ namespace {
 const std::vector<td::ParserErrorInfo> empty_errors;
 }  // namespace
 
-#if 0
 
 TEST_CASE("Struct with a symbol reference to another struct", "[symref]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
@@ -51,6 +50,8 @@ struct SomeOtherStruct {
   // td::SymbolRef symref = get<td::SymbolRef>(*symref_val);
   // REQUIRE_THAT(symref.id, Equals("SomeStruct"));
 }
+
+#if 0
 
 TEST_CASE("Struct with a symbol reference to an inline value field should fail",
           "[symref]") {
