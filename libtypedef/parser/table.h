@@ -341,6 +341,33 @@ struct Module {
     }
     return nullptr;
   }
+
+  shared_ptr<Variant> GetVariant(const string& identifier) {
+    for (auto t : types) {
+      if (t->IsVariant() && t->HasVaraintIdentifier(identifier)) {
+        return t->var;
+      }
+    }
+    return nullptr;
+  }
+
+  shared_ptr<Vector> GetVector(const string& identifier) {
+    for (auto t : types) {
+      if (t->IsVector() && t->HasVectorIdentifier(identifier)) {
+        return t->vec;
+      }
+    }
+    return nullptr;
+  }
+
+  shared_ptr<Map> GetMap(const string& identifier) {
+    for (auto t : types) {
+      if (t->IsMap() && t->HasMapIdentifier(identifier)) {
+        return t->map;
+      }
+    }
+    return nullptr;
+  }
 };
 
 struct SymRef {

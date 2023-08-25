@@ -108,8 +108,6 @@ struct SomeStruct {
   REQUIRE(target->GetStruct()->GetField("valA"));
 }
 
-#if 0
-
 TEST_CASE("Struct with a symbol reference to a vector type", "[symref]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
@@ -123,18 +121,14 @@ struct SomeStruct {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_struct_val =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
-  // REQUIRE(some_struct_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*some_struct_val));
-  // auto s = get<shared_ptr<td::Struct>>(*some_struct_val);
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  REQUIRE(st->GetField("vec_a"));
 
-  // optional<td::SymbolTable::Value> vec_a_val =
-  //     s->table.Get(td::Identifier::ValueIdentifier("vec_a"));
-  // REQUIRE(vec_a_val);
-  // REQUIRE(holds_alternative<td::SymbolRef>(*vec_a_val));
-  // td::SymbolRef vec_a = get<td::SymbolRef>(*vec_a_val);
-  // REQUIRE_THAT(vec_a.id, Equals("VecA"));
+  // Test that the reference resolves to the right thing.
+  auto target = st->GetField("vec_a")->Symref();
+  REQUIRE(target);
+  REQUIRE(target->IsVector());
+  REQUIRE(*target->GetIdentifier() == "VecA");
 }
 
 TEST_CASE("Struct with a symbol reference to a variant type", "[symref]") {
@@ -153,18 +147,14 @@ struct SomeStruct {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_struct_val =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
-  // REQUIRE(some_struct_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*some_struct_val));
-  // auto s = get<shared_ptr<td::Struct>>(*some_struct_val);
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  REQUIRE(st->GetField("var_a"));
 
-  // optional<td::SymbolTable::Value> var_a_val =
-  //     s->table.Get(td::Identifier::ValueIdentifier("var_a"));
-  // REQUIRE(var_a_val);
-  // REQUIRE(holds_alternative<td::SymbolRef>(*var_a_val));
-  // td::SymbolRef var_a = get<td::SymbolRef>(*var_a_val);
-  // REQUIRE_THAT(var_a.id, Equals("VariantA"));
+  // Test that the reference resolves to the right thing.
+  auto target = st->GetField("var_a")->Symref();
+  REQUIRE(target);
+  REQUIRE(target->IsVariant());
+  REQUIRE(*target->GetIdentifier() == "VariantA");
 }
 
 TEST_CASE("Struct with a symbol reference to a map type", "[symref]") {
@@ -180,18 +170,14 @@ struct SomeStruct {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_struct_val =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
-  // REQUIRE(some_struct_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*some_struct_val));
-  // auto s = get<shared_ptr<td::Struct>>(*some_struct_val);
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  REQUIRE(st->GetField("map_a"));
 
-  // optional<td::SymbolTable::Value> map_a_val =
-  //     s->table.Get(td::Identifier::ValueIdentifier("map_a"));
-  // REQUIRE(map_a_val);
-  // REQUIRE(holds_alternative<td::SymbolRef>(*map_a_val));
-  // td::SymbolRef map_a = get<td::SymbolRef>(*map_a_val);
-  // REQUIRE_THAT(map_a.id, Equals("MapA"));
+  // Test that the reference resolves to the right thing.
+  auto target = st->GetField("map_a")->Symref();
+  REQUIRE(target);
+  REQUIRE(target->IsMap());
+  REQUIRE(*target->GetIdentifier() == "MapA");
 }
 
 TEST_CASE("Variant with a symbol reference to a struct type", "[symref]") {
@@ -211,18 +197,14 @@ variant SomeVariant {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_variant_val =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeVariant"));
-  // REQUIRE(some_variant_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Variant>>(*some_variant_val));
-  // auto s = get<shared_ptr<td::Variant>>(*some_variant_val);
+  auto var = parsed_file->mod->GetVariant("SomeVariant");
+  REQUIRE(var->GetField("some_struct"));
 
-  // optional<td::SymbolTable::Value> some_struct_val =
-  //     s->table.Get(td::Identifier::ValueIdentifier("some_struct"));
-  // REQUIRE(some_struct_val);
-  // REQUIRE(holds_alternative<td::SymbolRef>(*some_struct_val));
-  // td::SymbolRef some_struct = get<td::SymbolRef>(*some_struct_val);
-  // REQUIRE_THAT(some_struct.id, Equals("SomeStruct"));
+  // Test that the reference resolves to the right thing.
+  auto target = var->GetField("some_struct")->Symref();
+  REQUIRE(target);
+  REQUIRE(target->IsStruct());
+  REQUIRE(*target->GetIdentifier() == "SomeStruct");
 }
 
 TEST_CASE("Variant with a symbol reference to another variant type",
@@ -243,18 +225,14 @@ variant SomeVariant {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_variant_val =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeVariant"));
-  // REQUIRE(some_variant_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Variant>>(*some_variant_val));
-  // auto s = get<shared_ptr<td::Variant>>(*some_variant_val);
+  auto var = parsed_file->mod->GetVariant("SomeVariant");
+  REQUIRE(var->GetField("some_other_variant"));
 
-  // optional<td::SymbolTable::Value> some_other_variant_val =
-  //     s->table.Get(td::Identifier::ValueIdentifier("some_other_variant"));
-  // REQUIRE(some_other_variant_val);
-  // REQUIRE(holds_alternative<td::SymbolRef>(*some_other_variant_val));
-  // td::SymbolRef some_var = get<td::SymbolRef>(*some_other_variant_val);
-  // REQUIRE_THAT(some_var.id, Equals("SomeOtherVariant"));
+  // Test that the reference resolves to the right thing.
+  auto target = var->GetField("some_other_variant")->Symref();
+  REQUIRE(target);
+  REQUIRE(target->IsVariant());
+  REQUIRE(*target->GetIdentifier() == "SomeOtherVariant");
 }
 
 TEST_CASE("Variant with a symbol reference to a vector type", "[symref]") {
@@ -271,18 +249,14 @@ variant SomeVariant {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_variant_val =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeVariant"));
-  // REQUIRE(some_variant_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Variant>>(*some_variant_val));
-  // auto s = get<shared_ptr<td::Variant>>(*some_variant_val);
+  auto var = parsed_file->mod->GetVariant("SomeVariant");
+  REQUIRE(var->GetField("vec_a"));
 
-  // optional<td::SymbolTable::Value> vec_a_val =
-  //     s->table.Get(td::Identifier::ValueIdentifier("vec_a"));
-  // REQUIRE(vec_a_val);
-  // REQUIRE(holds_alternative<td::SymbolRef>(*vec_a_val));
-  // td::SymbolRef vec_a = get<td::SymbolRef>(*vec_a_val);
-  // REQUIRE_THAT(vec_a.id, Equals("VecA"));
+  // Test that the reference resolves to the right thing.
+  auto target = var->GetField("vec_a")->Symref();
+  REQUIRE(target);
+  REQUIRE(target->IsVector());
+  REQUIRE(*target->GetIdentifier() == "VecA");
 }
 
 TEST_CASE("Variant with a symbol reference to a map type", "[symref]") {
@@ -299,19 +273,17 @@ variant SomeVariant {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_variant_val =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeVariant"));
-  // REQUIRE(some_variant_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Variant>>(*some_variant_val));
-  // auto s = get<shared_ptr<td::Variant>>(*some_variant_val);
+  auto var = parsed_file->mod->GetVariant("SomeVariant");
+  REQUIRE(var->GetField("map_a"));
 
-  // optional<td::SymbolTable::Value> map_a_val =
-  //     s->table.Get(td::Identifier::ValueIdentifier("map_a"));
-  // REQUIRE(map_a_val);
-  // REQUIRE(holds_alternative<td::SymbolRef>(*map_a_val));
-  // td::SymbolRef map_a = get<td::SymbolRef>(*map_a_val);
-  // REQUIRE_THAT(map_a.id, Equals("MapA"));
+  // Test that the reference resolves to the right thing.
+  auto target = var->GetField("map_a")->Symref();
+  REQUIRE(target);
+  REQUIRE(target->IsMap());
+  REQUIRE(*target->GetIdentifier() == "MapA");
 }
+
+#if 0
 
 TEST_CASE("Vector with a symbol reference to a struct type", "[symref]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
