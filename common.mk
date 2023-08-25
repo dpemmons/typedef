@@ -31,12 +31,12 @@ CXXFLAGS.gcc := -pthread \
                 -fdiagnostics-generate-patch \
                 ${CXXFLAGS.gcc.${BUILD}}
 
-CXXFLAGS.clang.debug := -DDEBUG -gdwarf-4 -O0 -fstack-protector-all
+CXXFLAGS.clang.debug := -DDEBUG -O0 -fstack-protector-all
 CXXFLAGS.clang.release := -O3 -march=native -DNDEBUG
 CXXFLAGS.clang := -pthread \
                   -std=gnu++17 \
                   -march=native \
-                  -g \
+                  -gdwarf-4 \
                   -MMD \
                   -MP \
                   -fmessage-length=0 \
@@ -46,9 +46,9 @@ CXXFLAGS.clang := -pthread \
 CXXFLAGS := ${CXXFLAGS.${COMPILER}}
 CFLAGS := ${CFLAGS.${COMPILER}}
 
-LDFLAGS.debug := -ggdb3
+LDFLAGS.debug := -O0 -gdwarf-4
 LDFLAGS.release :=
-LDFLAGS := -fuse-ld=gold -pthread -g ${LDFLAGS.${BUILD}}
+LDFLAGS := -fuse-ld=lld -pthread ${LDFLAGS.${BUILD}}
 LDLIBS := -ldl
 
 CATCH2_LIB_HEADERS := ${CURDIR}/external/catch2-3.3.1

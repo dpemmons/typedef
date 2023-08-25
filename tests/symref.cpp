@@ -15,14 +15,21 @@ namespace {
 const std::vector<td::ParserErrorInfo> empty_errors;
 }  // namespace
 
-
 TEST_CASE("Struct with a symbol reference to another struct", "[symref]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
+struct SomeUninvolvedStruct {
+  asdf: str;
+};
+
 struct SomeStruct {
   inlineMap: map<i32, f64>;
+};
+
+struct SomeOtherUninvolvedStruct {
+  qwer: i32;
 };
 
 struct SomeOtherStruct {
@@ -30,28 +37,32 @@ struct SomeOtherStruct {
 };
     )");
   REQUIRE(!parsed_file->HasErrors());
+  auto st = parsed_file->mod->GetStruct("SomeOtherStruct");
+  REQUIRE(st->GetField("ref_to_some_struct")->SymrefIsResolved());
 
-  // optional<td::SymbolTable::Value> some_struct_val =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
-  // REQUIRE(some_struct_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*some_struct_val));
-
-  // optional<td::SymbolTable::Value> some_other_struct_val =
-  //     parsed_file->symbols2_.Get(
-  //         td::Identifier::TypeIdentifier("SomeOtherStruct"));
-  // REQUIRE(some_other_struct_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*some_other_struct_val));
-  // auto s = get<shared_ptr<td::Struct>>(*some_other_struct_val);
-
-  // optional<td::SymbolTable::Value> symref_val =
-  //     s->table.Get(td::Identifier::ValueIdentifier("ref_to_some_struct"));
-  // REQUIRE(symref_val);
-  // REQUIRE(holds_alternative<td::SymbolRef>(*symref_val));
-  // td::SymbolRef symref = get<td::SymbolRef>(*symref_val);
-  // REQUIRE_THAT(symref.id, Equals("SomeStruct"));
+  // Test that the reference resolves to the right thing.
+  auto target = st->GetField("ref_to_some_struct")->Symref();
+  REQUIRE(target);
+  REQUIRE(target->IsStruct());
+  REQUIRE(target->HasStructIdentifier("SomeStruct"));
+  REQUIRE(target->GetStruct()->GetField("inlineMap"));
 }
 
-#if 0
+TEST_CASE("Struct with a symbol reference to an non-existant type should fail",
+          "[symref]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeOtherStruct {
+  asdf: DoesNotExist;
+};
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->errors.size() == 1);
+  REQUIRE(parsed_file->errors[0].error_type ==
+          td::ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
+}
 
 TEST_CASE("Struct with a symbol reference to an inline value field should fail",
           "[symref]") {
@@ -59,7 +70,7 @@ TEST_CASE("Struct with a symbol reference to an inline value field should fail",
 typedef=alpha;
 module test;
 
-struct SomeOtherStruct {
+struct SomeStruct {
   ref_to_inline: inlineStruct;
   inlineStruct: struct {
     valA: i32;
@@ -67,9 +78,9 @@ struct SomeOtherStruct {
 };
     )");
   REQUIRE(parsed_file->HasErrors());
-  // REQUIRE(parsed_file->GetErrors().size() == 1);
-  // REQUIRE(parsed_file->GetErrors()[0].error_type ==
-  //         td::ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
+  REQUIRE(parsed_file->errors.size() == 1);
+  REQUIRE(parsed_file->errors[0].error_type ==
+          td::ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
 }
 
 TEST_CASE("Struct with a symbol reference to an nested struct", "[symref]") {
@@ -86,18 +97,15 @@ struct SomeStruct {
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_struct_val =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeStruct"));
-  // REQUIRE(some_struct_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Struct>>(*some_struct_val));
-  // auto s = get<shared_ptr<td::Struct>>(*some_struct_val);
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  REQUIRE(st->GetField("ref_to_nested"));
 
-  // optional<td::SymbolTable::Value> symref_val =
-  //     s->table.Get(td::Identifier::ValueIdentifier("ref_to_nested"));
-  // REQUIRE(symref_val);
-  // REQUIRE(holds_alternative<td::SymbolRef>(*symref_val));
-  // td::SymbolRef symref = get<td::SymbolRef>(*symref_val);
-  // REQUIRE_THAT(symref.id, Equals("NestedStruct"));
+  // Test that the reference resolves to the right thing.
+  auto target = st->GetField("ref_to_nested")->Symref();
+  REQUIRE(target);
+  REQUIRE(target->IsStruct());
+  REQUIRE(target->HasStructIdentifier("NestedStruct"));
+  REQUIRE(target->GetStruct()->GetField("valA"));
 }
 
 // This isn't the ideal location for this test, but right now
@@ -121,6 +129,8 @@ struct SomeStruct {
   // REQUIRE(parsed_file->GetErrors()[0].error_type ==
   //         td::ParserErrorInfo::PARSE_ERROR);
 }
+
+#if 0
 
 TEST_CASE("Struct with a symbol reference to a vector type", "[symref]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(

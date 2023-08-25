@@ -122,9 +122,8 @@ struct FieldDeclaration {
   bool IsSymref() const {
     return (member_type == TYPE_SYMREF && symrmef_identifier->size() > 0);
   }
-  bool SymrefIsResolved() const {
-    return symref_target.operator bool();
-  }
+  bool SymrefIsResolved() const { return symref_target.operator bool(); }
+  shared_ptr<TypeDeclaration> Symref() const { return symref_target; }
 
   bool IsPrimitive() const {
     return (member_type > TYPE_UNKNOWN && member_type < TYPE_PRIMITIVE_MAX);

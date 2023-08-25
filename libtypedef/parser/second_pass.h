@@ -1,5 +1,5 @@
-#ifndef TYPEDEF_LIBTYPEDEF_PARSER_SYM_REF_LISTENER_H_
-#define TYPEDEF_LIBTYPEDEF_PARSER_SYM_REF_LISTENER_H_
+#ifndef PARSER_SECOND_PASS_H__
+#define PARSER_SECOND_PASS_H__
 
 #include <antlr4/antlr4-runtime.h>
 
@@ -27,7 +27,8 @@ class SecondPassListener : public TypedefParserBaseListener {
    *
    * @returns true if found.
    */
-  // bool FindSymbol(TypedefParser::SymbolReferenceContext *unresolved_symbol_ctx,
+  // bool FindSymbol(TypedefParser::SymbolReferenceContext
+  // *unresolved_symbol_ctx,
   //                 antlr4::tree::ParseTree *search_ctx) {
   //   const string &query_identifier = unresolved_symbol_ctx->maybe_symref->id;
 
@@ -46,7 +47,8 @@ class SecondPassListener : public TypedefParserBaseListener {
   //   }
   //   // If the current tree leaf is a variant...
   //   else if (maybeVariant &&
-  //            maybeVariant->v->table.HasTypeIdentifier(query_identifier) > 0) {
+  //            maybeVariant->v->table.HasTypeIdentifier(query_identifier) > 0)
+  //            {
   //     return true;
   //   }
   //   // If the current tree leaf is a comilation unit...
@@ -59,8 +61,9 @@ class SecondPassListener : public TypedefParserBaseListener {
   //   } else {
   //     // top of the tree.
   //     errors_list_.emplace_back(ErrorFromContext(
-  //         unresolved_symbol_ctx, ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE,
-  //         "Unresolved symbol reference."));
+  //         unresolved_symbol_ctx,
+  //         ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE, "Unresolved symbol
+  //         reference."));
   //     return false;
   //   }
   // }
@@ -73,7 +76,11 @@ class SecondPassListener : public TypedefParserBaseListener {
   //   }
   // }
 
+  std::shared_ptr<td::table::TypeDeclaration> FindSymbol(
+      const std::string &identifier, antlr4::tree::ParseTree *ctx);
 
+  virtual void enterSymrefMemberDeclaration(
+      TypedefParser::SymrefMemberDeclarationContext *ctx) override;
 
   // virtual void exitValuedTemplateStringType(
   //     TypedefParser::ValuedTemplateStringTypeContext *ctx) override {
@@ -129,4 +136,4 @@ class SecondPassListener : public TypedefParserBaseListener {
 
 }  // namespace td
 
-#endif  // TYPEDEF_LIBTYPEDEF_PARSER_SYM_REF_LISTENER_H_
+#endif  // PARSER_SECOND_PASS_H__

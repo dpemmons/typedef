@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceRoot}/build/debug/tests",
-      "args": [],
+      "args": ["Struct with a symbol reference to another struct"],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",
       "environment": [],
@@ -23,6 +23,14 @@
           "ignoreFailures": true
         }
       ],
+    },
+    {
+      "name": "(lldb) Launch Test",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceRoot}/build/debug/tests",
+      "args": ["Struct with a symbol reference to another struct"],
+      "cwd": "${workspaceFolder}",
     },
     {
       "name": "(gdb) Launch Cmd",

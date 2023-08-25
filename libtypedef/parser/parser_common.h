@@ -1,5 +1,5 @@
-#ifndef TYPEDEF_LIBTYPEDEF_PARSER_PARSER_COMMON_H_
-#define TYPEDEF_LIBTYPEDEF_PARSER_PARSER_COMMON_H_
+#ifndef PARSER_PARSER_COMMON_H__
+#define PARSER_PARSER_COMMON_H__
 
 #include <antlr4/antlr4-runtime.h>
 
@@ -86,4 +86,4 @@ class ParserErrorListener : public antlr4::BaseErrorListener {
 
 }  // namespace td
 
-#endif  // TYPEDEF_LIBTYPEDEF_PARSER_PARSER_COMMON_H_
+#endif  // PARSER_PARSER_COMMON_H__

@@ -96,9 +96,8 @@ shared_ptr<ParsedFile> ParseTypedef(istream &input) {
     return std::move(parsed_file);
   }
 
-  SecondPassListener symRefListener(errors);
-  antlr4::tree::ParseTreeWalker::DEFAULT.walk(&symRefListener,
-                                              compilation_unit);
+  SecondPassListener second_pass(errors);
+  antlr4::tree::ParseTreeWalker::DEFAULT.walk(&second_pass, compilation_unit);
   if (!errors.empty()) {
     parsed_file->errors = errors;
   }
