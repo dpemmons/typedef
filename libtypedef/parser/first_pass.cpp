@@ -347,19 +347,34 @@ void FirstPassListener::exitVectorDeclaration(
     TypedefParser::VectorDeclarationContext* ctx) {
   bail_if_errors();
   ctx->vec = make_shared<td::table::Vector>();
-  ctx->vec->identifier = ctx->identifier()->id;
-  ctx->vec->value_type = (td::table::Type)ctx->val->primitive_type;
-  // TODO: handle non-primitive value types.
+  ctx->vec->identifier = ctx->symbolName->id;
+  if (ctx->primitiveElementType) {
+    ctx->vec->element_type =
+        (td::table::Type)ctx->primitiveElementType->primitive_type;
+  } else if (ctx->elementType) {
+    ctx->vec->element_type = td::table::Type::TYPE_SYMREF;
+    ctx->vec->element_symrmef_identifier = ctx->elementType->id;
+  } else {
+    throw_line("Invalid state.");
+  }
 }
 
 void FirstPassListener::exitMapDeclaration(
     TypedefParser::MapDeclarationContext* ctx) {
   bail_if_errors();
   ctx->map = make_shared<td::table::Map>();
-  ctx->map->identifier = ctx->identifier()->id;
-  ctx->map->key_type = ctx->key->primitive_type;
-  ctx->map->value_type = (td::table::Type)ctx->val->primitive_type;
-  // TODO: handle non-primitive value types.
+  ctx->map->identifier = ctx->symbolName->id;
+  ctx->map->key_type = ctx->primitiveKeyType->primitive_type;
+
+  if (ctx->primitiveValueType) {
+    ctx->map->value_type =
+        (td::table::Type)ctx->primitiveValueType->primitive_type;
+  } else if (ctx->valueType) {
+    ctx->map->value_type = td::table::Type::TYPE_SYMREF;
+    ctx->map->value_symrmef_identifier = ctx->valueType->id;
+  } else {
+    throw_line("Invalid state.");
+  }
 }
 
 void FirstPassListener::exitStructMember(
@@ -566,7 +581,8 @@ void FirstPassListener::exitInlineVectorDeclaration(
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_VECTOR;
   ctx->field_decl->vec = make_shared<td::table::Vector>();
-  ctx->field_decl->vec->value_type = (td::table::Type)ctx->val->primitive_type;
+  ctx->field_decl->vec->element_type =
+      (td::table::Type)ctx->val->primitive_type;
   // TODO: handle non-primitive value types.
 }
 

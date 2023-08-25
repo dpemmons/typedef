@@ -191,13 +191,16 @@ public:
   class  VectorDeclarationContext : public antlr4::ParserRuleContext {
   public:
     std::shared_ptr<td::table::Vector> vec;
-    TypedefParser::PrimitiveTypeIdentifierContext *val = nullptr;;
+    TypedefParser::IdentifierContext *symbolName = nullptr;;
+    TypedefParser::PrimitiveTypeIdentifierContext *primitiveElementType = nullptr;;
+    TypedefParser::IdentifierContext *elementType = nullptr;;
     VectorDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_VECTOR();
-    IdentifierContext *identifier();
     antlr4::tree::TerminalNode *LT();
     antlr4::tree::TerminalNode *GT();
+    std::vector<IdentifierContext *> identifier();
+    IdentifierContext* identifier(size_t i);
     PrimitiveTypeIdentifierContext *primitiveTypeIdentifier();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -212,15 +215,18 @@ public:
   class  MapDeclarationContext : public antlr4::ParserRuleContext {
   public:
     std::shared_ptr<td::table::Map> map;
-    TypedefParser::PrimitiveTypeIdentifierContext *key = nullptr;;
-    TypedefParser::PrimitiveTypeIdentifierContext *val = nullptr;;
+    TypedefParser::IdentifierContext *symbolName = nullptr;;
+    TypedefParser::PrimitiveTypeIdentifierContext *primitiveKeyType = nullptr;;
+    TypedefParser::PrimitiveTypeIdentifierContext *primitiveValueType = nullptr;;
+    TypedefParser::IdentifierContext *valueType = nullptr;;
     MapDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_MAP();
-    IdentifierContext *identifier();
     antlr4::tree::TerminalNode *LT();
     antlr4::tree::TerminalNode *COMMA();
     antlr4::tree::TerminalNode *GT();
+    std::vector<IdentifierContext *> identifier();
+    IdentifierContext* identifier(size_t i);
     std::vector<PrimitiveTypeIdentifierContext *> primitiveTypeIdentifier();
     PrimitiveTypeIdentifierContext* primitiveTypeIdentifier(size_t i);
 

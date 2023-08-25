@@ -38,12 +38,18 @@ variantDeclaration
 // vector SomeVector<i32>
 vectorDeclaration
 	returns[std::shared_ptr<td::table::Vector> vec]:
-	KW_VECTOR identifier LT val = primitiveTypeIdentifier GT;
+	KW_VECTOR symbolName = identifier LT (
+		primitiveElementType = primitiveTypeIdentifier
+		| elementType = identifier
+	) GT;
 
 // map SomeMap<str, StructA>
 mapDeclaration
 	returns[std::shared_ptr<td::table::Map> map]:
-	KW_MAP identifier LT key = primitiveTypeIdentifier COMMA val = primitiveTypeIdentifier GT;
+	KW_MAP symbolName = identifier LT primitiveKeyType = primitiveTypeIdentifier COMMA (
+		primitiveValueType = primitiveTypeIdentifier
+		| valueType = identifier
+	) GT;
 
 structMember
 	returns[std::shared_ptr<td::table::StructMember> mem]:
@@ -84,6 +90,10 @@ primitiveMemberDeclaration
 			)
 		)
 	);
+
+// TODO: move symref identifier into its own rule so symvol
+// resolution only has to happen in one place during second pass?
+// Or should vector/map value types have a symref type they share?
 
 symrefMemberDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:

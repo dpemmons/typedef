@@ -108,6 +108,34 @@ struct SomeStruct {
   REQUIRE(target->GetStruct()->GetField("valA"));
 }
 
+TEST_CASE("Inline struct with a symbol reference to an nested struct",
+          "[symref]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  inline_struct: struct {
+    nested_struct: NestedStruct;
+  };
+  struct NestedStruct {
+    valA: i32;
+  };
+};
+    )");
+  REQUIRE(!parsed_file->HasErrors());
+  auto st = parsed_file->mod->GetStruct("SomeStruct");
+
+  auto target = st->GetField("inline_struct")
+                           ->GetStruct()
+                           ->GetField("nested_struct")
+                           ->Symref();
+  REQUIRE(target);
+  REQUIRE(target->IsStruct());
+  REQUIRE(target->HasStructIdentifier("NestedStruct"));
+  REQUIRE(target->GetStruct()->GetField("valA"));
+}
+
 TEST_CASE("Struct with a symbol reference to a vector type", "[symref]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
