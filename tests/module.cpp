@@ -14,8 +14,7 @@ namespace {
 const std::vector<td::ParserErrorInfo> empty_errors;
 }  // namespace
 
-TEST_CASE("Module declaration throws an UNIMPLEMENTED error.",
-          "[module_declaration]") {
+TEST_CASE("Module declaration throws an UNIMPLEMENTED error.", "[module]") {
   auto parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module someModule;
@@ -24,4 +23,23 @@ module someModule;
   REQUIRE(parsed_file->mod);
   REQUIRE(parsed_file->mod->module_name);
   REQUIRE(parsed_file->mod->module_name->ToString() == "::someModule");
+}
+
+TEST_CASE("Duplicate structs should error", "[module]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  inlineMap: map<i32, f64>;
+};
+
+struct SomeStruct {
+  inlineMap: map<i32, f64>;
+};
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->errors.size() == 1);
+  REQUIRE(parsed_file->errors[0].error_type ==
+          td::ParserErrorInfo::DUPLICATE_SYMBOL);
 }

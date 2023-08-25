@@ -1,9 +1,24 @@
 #include "libtypedef/parser/second_pass.h"
 
+#include <set>
+
 #include "libtypedef/parser/parser_common.h"
 #include "second_pass.h"
 
 namespace td {
+
+void SecondPassListener::enterCompilationUnit(
+    TypedefParser::CompilationUnitContext* ctx) {
+  std::set<std::string> identifiers;
+  for (auto t : ctx->mod->types) {
+    if (identifiers.count(*t->GetIdentifier())) {
+      errors_list_.emplace_back(
+          ErrorFromContext(ctx, ParserErrorInfo::DUPLICATE_SYMBOL,
+                           "Duplicate symbol or field name."));
+    }
+    identifiers.insert(*t->GetIdentifier());
+  }
+}
 
 std::shared_ptr<table::TypeDeclaration> SecondPassListener::FindSymbol(
     const std::string& identifier, antlr4::tree::ParseTree* ctx) {

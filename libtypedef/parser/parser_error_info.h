@@ -38,6 +38,7 @@ struct ParserErrorInfo {
     INVALID_RAW_STRING_LITERAL = 17,
     TEMPLATE_STRING_PARSE_ERROR = 18,
     UNRESOLVED_SYMBOL_REFERENCE = 19,
+    DUPLICATE_SYMBOL = 20,
   };
   Type error_type;
 

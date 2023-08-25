@@ -108,28 +108,6 @@ struct SomeStruct {
   REQUIRE(target->GetStruct()->GetField("valA"));
 }
 
-// This isn't the ideal location for this test, but right now
-// there's isn't a better spot for it.
-TEST_CASE("Duplicate structs", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
-typedef=alpha;
-module test;
-
-struct SomeStruct {
-  inlineMap: map<i32, f64>;
-};
-
-struct SomeStruct {
-  inlineMap: map<i32, f64>;
-};
-    )");
-  REQUIRE(parsed_file->HasErrors());
-  // REQUIRE(parsed_file->GetErrors().size() == 1);
-  // // TODO this should be something like DUPLICATE_SYMBOL
-  // REQUIRE(parsed_file->GetErrors()[0].error_type ==
-  //         td::ParserErrorInfo::PARSE_ERROR);
-}
-
 #if 0
 
 TEST_CASE("Struct with a symbol reference to a vector type", "[symref]") {

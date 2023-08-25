@@ -269,6 +269,20 @@ struct TypeDeclaration {
   shared_ptr<Variant> var;
   shared_ptr<Vector> vec;
   shared_ptr<Map> map;
+  std::string* GetIdentifier() {
+    if (st) {
+      return st->identifier.get();
+    } else if (var) {
+      return var->identifier.get();
+    } else if (vec) {
+      return vec->identifier.get();
+    } else if (map) {
+      return map->identifier.get();
+    } else {
+      // TODO this should throw.
+      return nullptr;
+    }
+  }
   bool IsStruct() const {
     return (declaration_type == NONPRIMITIVE_TYPE_STRUCT && st);
   }

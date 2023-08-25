@@ -76,6 +76,9 @@ class SecondPassListener : public TypedefParserBaseListener {
   //   }
   // }
 
+  virtual void enterCompilationUnit(
+      TypedefParser::CompilationUnitContext *ctx) override;
+
   std::shared_ptr<td::table::TypeDeclaration> FindSymbol(
       const std::string &identifier, antlr4::tree::ParseTree *ctx);
 

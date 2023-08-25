@@ -357,6 +357,8 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
       return "TEMPLATE_STRING_PARSE_ERROR";
     case UNRESOLVED_SYMBOL_REFERENCE:
       return "UNRESOLVED_SYMBOL_REFERENCE";
+    case DUPLICATE_SYMBOL:
+      return "DUPLICATE_SYMBOL";
     default:
       throw fmt::format("Unhandled error ID in ErrorTypeToString(): {}",
                         (int)error_type);
