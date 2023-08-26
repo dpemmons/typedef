@@ -92,7 +92,6 @@ void SecondPassListener::enterStructDeclaration(
 
 void SecondPassListener::enterInlineStructDeclaration(
     TypedefParser::InlineStructDeclarationContext* ctx) {
-
   std::set<std::string> identifiers;
   for (auto m : ctx->field_decl->st->members) {
     std::string* this_id = nullptr;
@@ -113,14 +112,55 @@ void SecondPassListener::enterInlineStructDeclaration(
     }
     identifiers.insert(*this_id);
   }
-
 }
 
 void SecondPassListener::enterVariantDeclaration(
-    TypedefParser::VariantDeclarationContext* ctx) {}
+    TypedefParser::VariantDeclarationContext* ctx) {
+  std::set<std::string> identifiers;
+  for (auto m : ctx->var->members) {
+    std::string* this_id = nullptr;
+    antlr4::ParserRuleContext* this_ctx = nullptr;
+    if (m->IsType()) {
+      this_id = m->type_decl->GetIdentifier();
+      this_ctx = m->type_decl->ctx;
+    } else if (m->IsField()) {
+      this_id = m->field_decl->identifier.get();
+      this_ctx = m->field_decl->ctx;
+    } else {
+      throw_line("Invalid state.");
+    }
+    if (identifiers.count(*this_id)) {
+      errors_list_.emplace_back(
+          ErrorFromContext(this_ctx, ParserErrorInfo::DUPLICATE_SYMBOL,
+                           "Duplicate symbol found here."));
+    }
+    identifiers.insert(*this_id);
+  }
+}
 
 void SecondPassListener::enterInlineVariantDeclaration(
-    TypedefParser::InlineVariantDeclarationContext* ctx) {}
+    TypedefParser::InlineVariantDeclarationContext* ctx) {
+  std::set<std::string> identifiers;
+  for (auto m : ctx->field_decl->var->members) {
+    std::string* this_id = nullptr;
+    antlr4::ParserRuleContext* this_ctx = nullptr;
+    if (m->IsType()) {
+      this_id = m->type_decl->GetIdentifier();
+      this_ctx = m->type_decl->ctx;
+    } else if (m->IsField()) {
+      this_id = m->field_decl->identifier.get();
+      this_ctx = m->field_decl->ctx;
+    } else {
+      throw_line("Invalid state.");
+    }
+    if (identifiers.count(*this_id)) {
+      errors_list_.emplace_back(
+          ErrorFromContext(this_ctx, ParserErrorInfo::DUPLICATE_SYMBOL,
+                           "Duplicate symbol found here."));
+    }
+    identifiers.insert(*this_id);
+  }
+}
 
 void SecondPassListener::enterMapDeclaration(
     TypedefParser::MapDeclarationContext* ctx) {
