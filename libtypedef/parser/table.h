@@ -9,6 +9,10 @@
 
 #include "libtypedef/parser/symbol_path.h"
 
+namespace antlr4 {
+class ParserRuleContext;
+}  // namespace antlr4;
+
 namespace td {
 namespace table {
 
@@ -137,6 +141,7 @@ struct StructMember {
 };
 
 struct FieldDeclaration {
+  antlr4::ParserRuleContext* ctx;
   shared_ptr<string> identifier;
   Type member_type = TYPE_UNKNOWN;
 
@@ -229,6 +234,7 @@ struct Map : public NonPrimitive {
 };
 
 struct TypeDeclaration {
+  antlr4::ParserRuleContext* ctx;
   NonPrimitiveType declaration_type = NONPRIMITIVE_TYPE_UNKNOWN;
   // May be one of the following.
   shared_ptr<Struct> st;

@@ -391,6 +391,7 @@ void FirstPassListener::exitTypeDeclaration(
     TypedefParser::TypeDeclarationContext* ctx) {
   bail_if_errors();
   ctx->type_decl = make_shared<td::table::TypeDeclaration>();
+  ctx->type_decl->ctx = ctx;
   if (ctx->structDeclaration()) {
     ctx->type_decl->declaration_type =
         td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_STRUCT;
@@ -435,6 +436,7 @@ void FirstPassListener::exitFieldDeclaration(
 void FirstPassListener::exitSymrefMemberDeclaration(
     TypedefParser::SymrefMemberDeclarationContext* ctx) {
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  ctx->field_decl->ctx = ctx;
   ctx->field_decl->identifier = ctx->fieldIdentifier->id;
   ctx->field_decl->symrmef_identifier = ctx->symrefIdentifier->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_SYMREF;
@@ -449,6 +451,7 @@ void FirstPassListener::exitPrimitiveMemberDeclaration(
   }
 
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  ctx->field_decl->ctx = ctx;
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type =
       (td::table::Type)ctx->primitiveTypeIdentifier()->primitive_type;
@@ -531,6 +534,7 @@ void FirstPassListener::exitPrimitiveMemberDeclaration(
 void FirstPassListener::exitImpliedTypePrimitiveMemberDeclaration(
     TypedefParser::ImpliedTypePrimitiveMemberDeclarationContext* ctx) {
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  ctx->field_decl->ctx = ctx;
   ctx->field_decl->identifier = ctx->identifier()->id;
   if (ctx->floatLiteral()) {
     ctx->field_decl->member_type = td::table::Type::TYPE_F32;
@@ -551,6 +555,7 @@ void FirstPassListener::exitInlineStructDeclaration(
     TypedefParser::InlineStructDeclarationContext* ctx) {
   bail_if_errors();
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  ctx->field_decl->ctx = ctx;
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_STRUCT;
   ctx->field_decl->st = make_shared<td::table::Struct>();
@@ -563,6 +568,7 @@ void FirstPassListener::exitInlineVariantDeclaration(
     TypedefParser::InlineVariantDeclarationContext* ctx) {
   bail_if_errors();
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  ctx->field_decl->ctx = ctx;
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_VARIANT;
   ctx->field_decl->var = make_shared<td::table::Variant>();
@@ -575,6 +581,7 @@ void FirstPassListener::exitInlineVectorDeclaration(
     TypedefParser::InlineVectorDeclarationContext* ctx) {
   bail_if_errors();
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  ctx->field_decl->ctx = ctx;
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_VECTOR;
   ctx->field_decl->vec = make_shared<td::table::Vector>();
@@ -585,6 +592,7 @@ void FirstPassListener::exitInlineMapDeclaration(
     TypedefParser::InlineMapDeclarationContext* ctx) {
   bail_if_errors();
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
+  ctx->field_decl->ctx = ctx;
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_MAP;
   ctx->field_decl->map = make_shared<td::table::Map>();

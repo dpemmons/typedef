@@ -12,9 +12,11 @@ void SecondPassListener::enterCompilationUnit(
   std::set<std::string> identifiers;
   for (auto t : ctx->mod->types) {
     if (identifiers.count(*t->GetIdentifier())) {
+      // TODO duplicate symbol errors should refernce both
+      // symbols.
       errors_list_.emplace_back(
-          ErrorFromContext(ctx, ParserErrorInfo::DUPLICATE_SYMBOL,
-                           "Duplicate symbol or field name."));
+          ErrorFromContext(t->ctx, ParserErrorInfo::DUPLICATE_SYMBOL,
+                           "Duplicate symbol found here."));
     }
     identifiers.insert(*t->GetIdentifier());
   }
