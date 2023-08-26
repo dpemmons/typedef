@@ -5,6 +5,9 @@
 #include "libtypedef/parser/parser_common.h"
 #include "second_pass.h"
 
+#define throw_line(str) \
+  throw fmt::format("Exception \"{}\" in {}:{}", str, __FILE__, __LINE__);
+
 namespace td {
 
 void SecondPassListener::enterCompilationUnit(
@@ -62,6 +65,62 @@ void SecondPassListener::enterSymrefMemberDeclaration(
                          "Unresolved symbol reference."));
   }
 }
+
+void SecondPassListener::enterStructDeclaration(
+    TypedefParser::StructDeclarationContext* ctx) {
+  std::set<std::string> identifiers;
+  for (auto m : ctx->st->members) {
+    std::string* this_id = nullptr;
+    antlr4::ParserRuleContext* this_ctx = nullptr;
+    if (m->IsType()) {
+      this_id = m->type_decl->GetIdentifier();
+      this_ctx = m->type_decl->ctx;
+    } else if (m->IsField()) {
+      this_id = m->field_decl->identifier.get();
+      this_ctx = m->field_decl->ctx;
+    } else {
+      throw_line("Invalid state.");
+    }
+    if (identifiers.count(*this_id)) {
+      errors_list_.emplace_back(
+          ErrorFromContext(this_ctx, ParserErrorInfo::DUPLICATE_SYMBOL,
+                           "Duplicate symbol found here."));
+    }
+    identifiers.insert(*this_id);
+  }
+}
+
+void SecondPassListener::enterInlineStructDeclaration(
+    TypedefParser::InlineStructDeclarationContext* ctx) {
+
+  std::set<std::string> identifiers;
+  for (auto m : ctx->field_decl->st->members) {
+    std::string* this_id = nullptr;
+    antlr4::ParserRuleContext* this_ctx = nullptr;
+    if (m->IsType()) {
+      this_id = m->type_decl->GetIdentifier();
+      this_ctx = m->type_decl->ctx;
+    } else if (m->IsField()) {
+      this_id = m->field_decl->identifier.get();
+      this_ctx = m->field_decl->ctx;
+    } else {
+      throw_line("Invalid state.");
+    }
+    if (identifiers.count(*this_id)) {
+      errors_list_.emplace_back(
+          ErrorFromContext(this_ctx, ParserErrorInfo::DUPLICATE_SYMBOL,
+                           "Duplicate symbol found here."));
+    }
+    identifiers.insert(*this_id);
+  }
+
+}
+
+void SecondPassListener::enterVariantDeclaration(
+    TypedefParser::VariantDeclarationContext* ctx) {}
+
+void SecondPassListener::enterInlineVariantDeclaration(
+    TypedefParser::InlineVariantDeclarationContext* ctx) {}
 
 void SecondPassListener::enterMapDeclaration(
     TypedefParser::MapDeclarationContext* ctx) {

@@ -486,3 +486,153 @@ struct SomeStruct23 {
   REQUIRE(map_field->GetMap()->key_type->IsI32());
   REQUIRE(map_field->GetMap()->value_type->IsF64());
 }
+
+TEST_CASE("Struct with an duplicate fields should error", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  an_int: i32;
+  an_int: i32;
+};
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->errors.size() == 1);
+  REQUIRE(parsed_file->errors[0].error_type ==
+          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+};
+
+TEST_CASE("Struct with an duplicate types should error", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  struct StructA {};
+  struct StructA {};
+};
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->errors.size() == 1);
+  REQUIRE(parsed_file->errors[0].error_type ==
+          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+};
+
+TEST_CASE("Struct with an duplicate types of different types should error",
+          "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  struct TypeA {};
+  variant TypeA {};
+  vector TypeA<i32>;
+  map TypeA<i32, i32>;
+};
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->errors.size() == 3);
+  REQUIRE(parsed_file->errors[0].error_type ==
+          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parsed_file->errors[1].error_type ==
+          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parsed_file->errors[2].error_type ==
+          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+};
+
+TEST_CASE("Struct with an duplicate and field names should error", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  a_field: i32;
+  struct a_field {};
+};
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->errors.size() == 1);
+  REQUIRE(parsed_file->errors[0].error_type ==
+          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+};
+
+TEST_CASE("Inline struct with an duplicate fields should error", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  inline_struct: struct {
+    an_int: i32;
+    an_int: i32;
+  };
+};
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->errors.size() == 1);
+  REQUIRE(parsed_file->errors[0].error_type ==
+          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+};
+
+TEST_CASE("Inline struct with an duplicate types should error", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  inline_struct: struct {
+    struct StructA {};
+    struct StructA {};
+  };
+};
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->errors.size() == 1);
+  REQUIRE(parsed_file->errors[0].error_type ==
+          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+};
+
+TEST_CASE("Inline struct with an duplicate types of different types should error",
+          "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  inline_struct: struct {
+    struct TypeA {};
+    variant TypeA {};
+    vector TypeA<i32>;
+    map TypeA<i32, i32>;
+  };
+};
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->errors.size() == 3);
+  REQUIRE(parsed_file->errors[0].error_type ==
+          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parsed_file->errors[1].error_type ==
+          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parsed_file->errors[2].error_type ==
+          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+};
+
+TEST_CASE("Inline struct with an duplicate and field names should error", "[struct]") {
+  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  inline_struct: struct {
+    a_field: i32;
+    struct a_field {};
+  };
+};
+    )");
+  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parsed_file->errors.size() == 1);
+  REQUIRE(parsed_file->errors[0].error_type ==
+          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+};

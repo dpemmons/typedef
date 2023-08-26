@@ -28,6 +28,15 @@ class SecondPassListener : public TypedefParserBaseListener {
   virtual void enterSymrefMemberDeclaration(
       TypedefParser::SymrefMemberDeclarationContext *ctx) override;
 
+  virtual void enterStructDeclaration(
+      TypedefParser::StructDeclarationContext *ctx) override;
+  virtual void enterInlineStructDeclaration(
+      TypedefParser::InlineStructDeclarationContext *ctx) override;
+  virtual void enterVariantDeclaration(
+      TypedefParser::VariantDeclarationContext *ctx) override;
+  virtual void enterInlineVariantDeclaration(
+      TypedefParser::InlineVariantDeclarationContext *ctx) override;
+
   virtual void enterMapDeclaration(
       TypedefParser::MapDeclarationContext *ctx) override;
 
