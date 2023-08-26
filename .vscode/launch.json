@@ -29,7 +29,7 @@
       "type": "lldb",
       "request": "launch",
       "program": "${workspaceRoot}/build/debug/tests",
-      "args": ["Struct with a symbol reference to another struct"],
+      "args": [],
       "cwd": "${workspaceFolder}",
     },
     {

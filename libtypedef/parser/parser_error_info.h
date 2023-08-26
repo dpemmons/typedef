@@ -39,6 +39,7 @@ struct ParserErrorInfo {
     TEMPLATE_STRING_PARSE_ERROR = 18,
     UNRESOLVED_SYMBOL_REFERENCE = 19,
     DUPLICATE_SYMBOL = 20,
+    TYPE_CONSTRAINT_VIOLATION = 21,
   };
   Type error_type;
 

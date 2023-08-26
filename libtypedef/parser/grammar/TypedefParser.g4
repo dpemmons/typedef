@@ -38,18 +38,17 @@ variantDeclaration
 // vector SomeVector<i32>
 vectorDeclaration
 	returns[std::shared_ptr<td::table::Vector> vec]:
-	KW_VECTOR symbolName = identifier LT (
-		primitiveElementType = primitiveTypeIdentifier
-		| elementType = identifier
-	) GT;
+	KW_VECTOR symbolName = identifier LT typeParameter GT;
 
 // map SomeMap<str, StructA>
 mapDeclaration
 	returns[std::shared_ptr<td::table::Map> map]:
-	KW_MAP symbolName = identifier LT primitiveKeyType = primitiveTypeIdentifier COMMA (
-		primitiveValueType = primitiveTypeIdentifier
-		| valueType = identifier
-	) GT;
+	KW_MAP symbolName = identifier LT key = typeParameter COMMA val = typeParameter GT;
+
+typeParameter
+	returns[std::shared_ptr<td::table::TypeParameter> type_param]:
+	identifier
+	| primitiveTypeIdentifier;
 
 structMember
 	returns[std::shared_ptr<td::table::StructMember> mem]:
@@ -91,13 +90,12 @@ primitiveMemberDeclaration
 		)
 	);
 
-// TODO: move symref identifier into its own rule so symvol
-// resolution only has to happen in one place during second pass?
-// Or should vector/map value types have a symref type they share?
+// TODO: move symref identifier into its own rule so symvol resolution only has to happen in one
+// place during second pass? Or should vector/map value types have a symref type they share?
 
 symrefMemberDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	field_identifier = identifier COLON symref_identifier = identifier;
+	fieldIdentifier = identifier COLON symrefIdentifier = identifier;
 
 impliedTypePrimitiveMemberDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
@@ -117,11 +115,11 @@ inlineVariantDeclaration
 
 inlineVectorDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier COLON KW_VECTOR LT val = primitiveTypeIdentifier GT;
+	identifier COLON KW_VECTOR LT typeParameter GT;
 
 inlineMapDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier COLON KW_MAP LT key = primitiveTypeIdentifier COMMA val = primitiveTypeIdentifier GT;
+	identifier COLON KW_MAP LT key = typeParameter COMMA val = typeParameter GT;
 
 // valuedTemplateStringType returns[std::optional<td::SymbolTable::Value> maybe_val]
 // locals[std::shared_ptr<td::TmplStr> s] @init { $s = std::make_shared<td::TmplStr>(); }: COLON

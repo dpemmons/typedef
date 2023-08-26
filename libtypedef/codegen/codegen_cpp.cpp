@@ -163,32 +163,32 @@ json GetVector(const Vector& vec, std::optional<string> identifier = nullopt) {
   // If it's an inline type, the identifier is the field name which has
   // to be passed in separately.
   j["identifier"] = identifier ? *identifier : *vec.identifier;
-  if (vec.IsPrimitive()) {
-    if (vec.IsBool()) {
+  if (vec.element_type->IsPrimitive()) {
+    if (vec.element_type->IsBool()) {
       j["element_cpp_type"] = "bool";
-    } else if (vec.IsChar()) {
+    } else if (vec.element_type->IsChar()) {
       j["element_cpp_type"] = "char32_t";
-    } else if (vec.IsStr()) {
+    } else if (vec.element_type->IsStr()) {
       j["element_cpp_type"] = "std::string";
-    } else if (vec.IsF32()) {
+    } else if (vec.element_type->IsF32()) {
       j["element_cpp_type"] = "float";
-    } else if (vec.IsF64()) {
+    } else if (vec.element_type->IsF64()) {
       j["element_cpp_type"] = "double";
-    } else if (vec.IsU8()) {
+    } else if (vec.element_type->IsU8()) {
       j["element_cpp_type"] = "std::uint8_t";
-    } else if (vec.IsU16()) {
+    } else if (vec.element_type->IsU16()) {
       j["element_cpp_type"] = "std::uint16_t";
-    } else if (vec.IsU32()) {
+    } else if (vec.element_type->IsU32()) {
       j["element_cpp_type"] = "std::uint32_t";
-    } else if (vec.IsU64()) {
+    } else if (vec.element_type->IsU64()) {
       j["element_cpp_type"] = "std::uint64_t";
-    } else if (vec.IsI8()) {
+    } else if (vec.element_type->IsI8()) {
       j["element_cpp_type"] = "std::int8_t";
-    } else if (vec.IsI16()) {
+    } else if (vec.element_type->IsI16()) {
       j["element_cpp_type"] = "std::int16_t";
-    } else if (vec.IsI32()) {
+    } else if (vec.element_type->IsI32()) {
       j["element_cpp_type"] = "std::int32_t";
-    } else if (vec.IsI64()) {
+    } else if (vec.element_type->IsI64()) {
       j["element_cpp_type"] = "std::int64_t";
     } else {
       throw_line("invalid state");
@@ -206,62 +206,62 @@ json GetMap(const Map& map, std::optional<string> identifier = nullopt) {
   // to be passed in separately.
   j["identifier"] = identifier ? *identifier : *map.identifier;
 
-  if (map.KeyIsBool()) {
+  if (map.key_type->IsBool()) {
     j["key_cpp_type"] = "bool";
-  } else if (map.KeyIsChar()) {
+  } else if (map.key_type->IsChar()) {
     j["key_cpp_type"] = "char32_t";
-  } else if (map.KeyIsStr()) {
+  } else if (map.key_type->IsStr()) {
     j["key_cpp_type"] = "std::string";
-  } else if (map.KeyIsF32()) {
+  } else if (map.key_type->IsF32()) {
     j["key_cpp_type"] = "float";
-  } else if (map.KeyIsF64()) {
+  } else if (map.key_type->IsF64()) {
     j["key_cpp_type"] = "double";
-  } else if (map.KeyIsU8()) {
+  } else if (map.key_type->IsU8()) {
     j["key_cpp_type"] = "std::uint8_t";
-  } else if (map.KeyIsU16()) {
+  } else if (map.key_type->IsU16()) {
     j["key_cpp_type"] = "std::uint16_t";
-  } else if (map.KeyIsU32()) {
+  } else if (map.key_type->IsU32()) {
     j["key_cpp_type"] = "std::uint32_t";
-  } else if (map.KeyIsU64()) {
+  } else if (map.key_type->IsU64()) {
     j["key_cpp_type"] = "std::uint64_t";
-  } else if (map.KeyIsI8()) {
+  } else if (map.key_type->IsI8()) {
     j["key_cpp_type"] = "std::int8_t";
-  } else if (map.KeyIsI16()) {
+  } else if (map.key_type->IsI16()) {
     j["key_cpp_type"] = "std::int16_t";
-  } else if (map.KeyIsI32()) {
+  } else if (map.key_type->IsI32()) {
     j["key_cpp_type"] = "std::int32_t";
-  } else if (map.KeyIsI64()) {
+  } else if (map.key_type->IsI64()) {
     j["key_cpp_type"] = "std::int64_t";
   } else {
     throw_line("invalid state");
   }
 
-  if (map.ValueIsPrimitive()) {
-    if (map.ValueIsBool()) {
+  if (map.value_type->IsPrimitive()) {
+    if (map.value_type->IsBool()) {
       j["value_cpp_type"] = "bool";
-    } else if (map.ValueIsChar()) {
+    } else if (map.value_type->IsChar()) {
       j["value_cpp_type"] = "char32_t";
-    } else if (map.ValueIsStr()) {
+    } else if (map.value_type->IsStr()) {
       j["value_cpp_type"] = "std::string";
-    } else if (map.ValueIsF32()) {
+    } else if (map.value_type->IsF32()) {
       j["value_cpp_type"] = "float";
-    } else if (map.ValueIsF64()) {
+    } else if (map.value_type->IsF64()) {
       j["value_cpp_type"] = "double";
-    } else if (map.ValueIsU8()) {
+    } else if (map.value_type->IsU8()) {
       j["value_cpp_type"] = "std::uint8_t";
-    } else if (map.ValueIsU16()) {
+    } else if (map.value_type->IsU16()) {
       j["value_cpp_type"] = "std::uint16_t";
-    } else if (map.ValueIsU32()) {
+    } else if (map.value_type->IsU32()) {
       j["value_cpp_type"] = "std::uint32_t";
-    } else if (map.ValueIsU64()) {
+    } else if (map.value_type->IsU64()) {
       j["value_cpp_type"] = "std::uint64_t";
-    } else if (map.ValueIsI8()) {
+    } else if (map.value_type->IsI8()) {
       j["value_cpp_type"] = "std::int8_t";
-    } else if (map.ValueIsI16()) {
+    } else if (map.value_type->IsI16()) {
       j["value_cpp_type"] = "std::int16_t";
-    } else if (map.ValueIsI32()) {
+    } else if (map.value_type->IsI32()) {
       j["value_cpp_type"] = "std::int32_t";
-    } else if (map.ValueIsI64()) {
+    } else if (map.value_type->IsI64()) {
       j["value_cpp_type"] = "std::int64_t";
     } else {
       throw_line("invalid state");

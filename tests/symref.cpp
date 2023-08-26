@@ -127,9 +127,9 @@ struct SomeStruct {
   auto st = parsed_file->mod->GetStruct("SomeStruct");
 
   auto target = st->GetField("inline_struct")
-                           ->GetStruct()
-                           ->GetField("nested_struct")
-                           ->Symref();
+                    ->GetStruct()
+                    ->GetField("nested_struct")
+                    ->Symref();
   REQUIRE(target);
   REQUIRE(target->IsStruct());
   REQUIRE(target->HasStructIdentifier("NestedStruct"));
@@ -311,8 +311,6 @@ variant SomeVariant {
   REQUIRE(*target->GetIdentifier() == "MapA");
 }
 
-#if 0
-
 TEST_CASE("Vector with a symbol reference to a struct type", "[symref]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
@@ -327,14 +325,11 @@ vector SomeVector<SomeStruct>;
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_vec_value =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeVector"));
-  // REQUIRE(some_vec_value);
-  // REQUIRE(holds_alternative<shared_ptr<td::Vector>>(*some_vec_value));
-  // auto s = get<shared_ptr<td::Vector>>(*some_vec_value);
-
-  // REQUIRE(holds_alternative<td::SymbolRef>(s->type));
-  // REQUIRE_THAT(get<td::SymbolRef>(s->type).id, Equals("SomeStruct"));
+  auto vec = parsed_file->mod->GetVector("SomeVector");
+  REQUIRE(vec->element_type->IsSymref());
+  REQUIRE(vec->element_type->SymrefIsResolved());
+  REQUIRE(*vec->element_type->Symref()->GetIdentifier() == "SomeStruct");
+  REQUIRE(vec->element_type->Symref()->GetStruct()->GetField("an_int"));
 }
 
 TEST_CASE("Vector with a symbol reference to a variant type", "[symref]") {
@@ -351,14 +346,11 @@ vector SomeVector<SomeOtherVariant>;
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_vec_value =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeVector"));
-  // REQUIRE(some_vec_value);
-  // REQUIRE(holds_alternative<shared_ptr<td::Vector>>(*some_vec_value));
-  // auto s = get<shared_ptr<td::Vector>>(*some_vec_value);
-
-  // REQUIRE(holds_alternative<td::SymbolRef>(s->type));
-  // REQUIRE_THAT(get<td::SymbolRef>(s->type).id, Equals("SomeOtherVariant"));
+  auto vec = parsed_file->mod->GetVector("SomeVector");
+  REQUIRE(vec->element_type->IsSymref());
+  REQUIRE(vec->element_type->SymrefIsResolved());
+  REQUIRE(*vec->element_type->Symref()->GetIdentifier() == "SomeOtherVariant");
+  REQUIRE(vec->element_type->Symref()->GetVariant()->GetField("an_int"));
 }
 
 TEST_CASE("Vector with a symbol reference to another vector type", "[symref]") {
@@ -372,14 +364,11 @@ vector SomeVector<VecA>;
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_vec_value =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeVector"));
-  // REQUIRE(some_vec_value);
-  // REQUIRE(holds_alternative<shared_ptr<td::Vector>>(*some_vec_value));
-  // auto s = get<shared_ptr<td::Vector>>(*some_vec_value);
-
-  // REQUIRE(holds_alternative<td::SymbolRef>(s->type));
-  // REQUIRE_THAT(get<td::SymbolRef>(s->type).id, Equals("VecA"));
+  auto vec = parsed_file->mod->GetVector("SomeVector");
+  REQUIRE(vec->element_type->IsSymref());
+  REQUIRE(vec->element_type->SymrefIsResolved());
+  REQUIRE(*vec->element_type->Symref()->GetIdentifier() == "VecA");
+  REQUIRE(vec->element_type->Symref()->GetVector()->element_type->IsU8());
 }
 
 TEST_CASE("Vector with a symbol reference to a map type", "[symref]") {
@@ -393,14 +382,11 @@ vector SomeVector<MapA>;
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_vec_value =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeVector"));
-  // REQUIRE(some_vec_value);
-  // REQUIRE(holds_alternative<shared_ptr<td::Vector>>(*some_vec_value));
-  // auto s = get<shared_ptr<td::Vector>>(*some_vec_value);
-
-  // REQUIRE(holds_alternative<td::SymbolRef>(s->type));
-  // REQUIRE_THAT(get<td::SymbolRef>(s->type).id, Equals("MapA"));
+  auto vec = parsed_file->mod->GetVector("SomeVector");
+  REQUIRE(vec->element_type->IsSymref());
+  REQUIRE(vec->element_type->SymrefIsResolved());
+  REQUIRE(*vec->element_type->Symref()->GetIdentifier() == "MapA");
+  REQUIRE(vec->element_type->Symref()->GetMap()->key_type->IsI32());
 }
 
 TEST_CASE("Map with a symbol reference to a struct type", "[symref]") {
@@ -417,14 +403,11 @@ map SomeMap<i32, SomeStruct>;
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_map_val =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeMap"));
-  // REQUIRE(some_map_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Map>>(*some_map_val));
-  // auto s = get<shared_ptr<td::Map>>(*some_map_val);
-
-  // REQUIRE(holds_alternative<td::SymbolRef>(s->value_type));
-  // REQUIRE_THAT(get<td::SymbolRef>(s->value_type).id, Equals("SomeStruct"));
+  auto map = parsed_file->mod->GetMap("SomeMap");
+  REQUIRE(map->value_type->IsSymref());
+  REQUIRE(map->value_type->SymrefIsResolved());
+  REQUIRE(*map->value_type->Symref()->GetIdentifier() == "SomeStruct");
+  REQUIRE(map->value_type->Symref()->GetStruct()->GetField("an_int")->IsI32());
 }
 
 TEST_CASE("Map with a symbol reference to a variant type", "[symref]") {
@@ -441,14 +424,11 @@ map SomeMap<i32, SomeVariant>;
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_map_val =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeMap"));
-  // REQUIRE(some_map_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Map>>(*some_map_val));
-  // auto s = get<shared_ptr<td::Map>>(*some_map_val);
-
-  // REQUIRE(holds_alternative<td::SymbolRef>(s->value_type));
-  // REQUIRE_THAT(get<td::SymbolRef>(s->value_type).id, Equals("SomeVariant"));
+  auto map = parsed_file->mod->GetMap("SomeMap");
+  REQUIRE(map->value_type->IsSymref());
+  REQUIRE(map->value_type->SymrefIsResolved());
+  REQUIRE(*map->value_type->Symref()->GetIdentifier() == "SomeVariant");
+  REQUIRE(map->value_type->Symref()->GetVariant()->GetField("an_int")->IsI32());
 }
 
 TEST_CASE("Map with a symbol reference to a vector type", "[symref]") {
@@ -462,14 +442,11 @@ map SomeMap<i32, VecA>;
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_map_val =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeMap"));
-  // REQUIRE(some_map_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Map>>(*some_map_val));
-  // auto s = get<shared_ptr<td::Map>>(*some_map_val);
-
-  // REQUIRE(holds_alternative<td::SymbolRef>(s->value_type));
-  // REQUIRE_THAT(get<td::SymbolRef>(s->value_type).id, Equals("VecA"));
+  auto map = parsed_file->mod->GetMap("SomeMap");
+  REQUIRE(map->value_type->IsSymref());
+  REQUIRE(map->value_type->SymrefIsResolved());
+  REQUIRE(*map->value_type->Symref()->GetIdentifier() == "VecA");
+  REQUIRE(map->value_type->Symref()->GetVector()->element_type->IsU8());
 }
 
 TEST_CASE("Map with a symbol reference to another map type", "[symref]") {
@@ -483,14 +460,9 @@ map SomeMap<i32, MapA>;
     )");
   REQUIRE(!parsed_file->HasErrors());
 
-  // optional<td::SymbolTable::Value> some_map_val =
-  //     parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier("SomeMap"));
-  // REQUIRE(some_map_val);
-  // REQUIRE(holds_alternative<shared_ptr<td::Map>>(*some_map_val));
-  // auto s = get<shared_ptr<td::Map>>(*some_map_val);
-
-  // REQUIRE(holds_alternative<td::SymbolRef>(s->value_type));
-  // REQUIRE_THAT(get<td::SymbolRef>(s->value_type).id, Equals("MapA"));
+  auto map = parsed_file->mod->GetMap("SomeMap");
+  REQUIRE(map->value_type->IsSymref());
+  REQUIRE(map->value_type->SymrefIsResolved());
+  REQUIRE(*map->value_type->Symref()->GetIdentifier() == "MapA");
+  REQUIRE(map->value_type->Symref()->GetMap()->key_type->IsI32());
 }
-
-#endif

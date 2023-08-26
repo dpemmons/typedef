@@ -53,18 +53,18 @@ public:
 
   enum {
     RuleCompilationUnit = 0, RuleStructDeclaration = 1, RuleVariantDeclaration = 2, 
-    RuleVectorDeclaration = 3, RuleMapDeclaration = 4, RuleStructMember = 5, 
-    RuleTypeDeclaration = 6, RuleFieldDeclaration = 7, RulePrimitiveMemberDeclaration = 8, 
-    RuleSymrefMemberDeclaration = 9, RuleImpliedTypePrimitiveMemberDeclaration = 10, 
-    RuleInlineStructDeclaration = 11, RuleInlineVariantDeclaration = 12, 
-    RuleInlineVectorDeclaration = 13, RuleInlineMapDeclaration = 14, RuleTypedefVersionDeclaration = 15, 
-    RuleModuleDeclaration = 16, RuleUseDeclaration = 17, RuleUseTree = 18, 
-    RuleSimplePath = 19, RuleExplicitPrimitiveLiteral = 20, RuleBoolLiteral = 21, 
-    RuleCharLiteral = 22, RuleStringLiteral = 23, RuleF32Literal = 24, RuleF64Literal = 25, 
-    RuleU8Literal = 26, RuleU16Literal = 27, RuleU32Literal = 28, RuleU64Literal = 29, 
-    RuleI8Literal = 30, RuleI16Literal = 31, RuleI32Literal = 32, RuleI64Literal = 33, 
-    RuleFloatLiteral = 34, RuleIntLiteral = 35, RuleIdentifier = 36, RulePrimitiveTypeIdentifier = 37, 
-    RuleKeyword = 38
+    RuleVectorDeclaration = 3, RuleMapDeclaration = 4, RuleTypeParameter = 5, 
+    RuleStructMember = 6, RuleTypeDeclaration = 7, RuleFieldDeclaration = 8, 
+    RulePrimitiveMemberDeclaration = 9, RuleSymrefMemberDeclaration = 10, 
+    RuleImpliedTypePrimitiveMemberDeclaration = 11, RuleInlineStructDeclaration = 12, 
+    RuleInlineVariantDeclaration = 13, RuleInlineVectorDeclaration = 14, 
+    RuleInlineMapDeclaration = 15, RuleTypedefVersionDeclaration = 16, RuleModuleDeclaration = 17, 
+    RuleUseDeclaration = 18, RuleUseTree = 19, RuleSimplePath = 20, RuleExplicitPrimitiveLiteral = 21, 
+    RuleBoolLiteral = 22, RuleCharLiteral = 23, RuleStringLiteral = 24, 
+    RuleF32Literal = 25, RuleF64Literal = 26, RuleU8Literal = 27, RuleU16Literal = 28, 
+    RuleU32Literal = 29, RuleU64Literal = 30, RuleI8Literal = 31, RuleI16Literal = 32, 
+    RuleI32Literal = 33, RuleI64Literal = 34, RuleFloatLiteral = 35, RuleIntLiteral = 36, 
+    RuleIdentifier = 37, RulePrimitiveTypeIdentifier = 38, RuleKeyword = 39
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -82,6 +82,7 @@ public:
   class VariantDeclarationContext;
   class VectorDeclarationContext;
   class MapDeclarationContext;
+  class TypeParameterContext;
   class StructMemberContext;
   class TypeDeclarationContext;
   class FieldDeclarationContext;
@@ -192,16 +193,13 @@ public:
   public:
     std::shared_ptr<td::table::Vector> vec;
     TypedefParser::IdentifierContext *symbolName = nullptr;;
-    TypedefParser::PrimitiveTypeIdentifierContext *primitiveElementType = nullptr;;
-    TypedefParser::IdentifierContext *elementType = nullptr;;
     VectorDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_VECTOR();
     antlr4::tree::TerminalNode *LT();
+    TypeParameterContext *typeParameter();
     antlr4::tree::TerminalNode *GT();
-    std::vector<IdentifierContext *> identifier();
-    IdentifierContext* identifier(size_t i);
-    PrimitiveTypeIdentifierContext *primitiveTypeIdentifier();
+    IdentifierContext *identifier();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -216,19 +214,17 @@ public:
   public:
     std::shared_ptr<td::table::Map> map;
     TypedefParser::IdentifierContext *symbolName = nullptr;;
-    TypedefParser::PrimitiveTypeIdentifierContext *primitiveKeyType = nullptr;;
-    TypedefParser::PrimitiveTypeIdentifierContext *primitiveValueType = nullptr;;
-    TypedefParser::IdentifierContext *valueType = nullptr;;
+    TypedefParser::TypeParameterContext *key = nullptr;;
+    TypedefParser::TypeParameterContext *val = nullptr;;
     MapDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_MAP();
     antlr4::tree::TerminalNode *LT();
     antlr4::tree::TerminalNode *COMMA();
     antlr4::tree::TerminalNode *GT();
-    std::vector<IdentifierContext *> identifier();
-    IdentifierContext* identifier(size_t i);
-    std::vector<PrimitiveTypeIdentifierContext *> primitiveTypeIdentifier();
-    PrimitiveTypeIdentifierContext* primitiveTypeIdentifier(size_t i);
+    IdentifierContext *identifier();
+    std::vector<TypeParameterContext *> typeParameter();
+    TypeParameterContext* typeParameter(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -238,6 +234,23 @@ public:
   };
 
   MapDeclarationContext* mapDeclaration();
+
+  class  TypeParameterContext : public antlr4::ParserRuleContext {
+  public:
+    std::shared_ptr<td::table::TypeParameter> type_param;
+    TypeParameterContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IdentifierContext *identifier();
+    PrimitiveTypeIdentifierContext *primitiveTypeIdentifier();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  TypeParameterContext* typeParameter();
 
   class  StructMemberContext : public antlr4::ParserRuleContext {
   public:
@@ -322,8 +335,8 @@ public:
   class  SymrefMemberDeclarationContext : public antlr4::ParserRuleContext {
   public:
     std::shared_ptr<td::table::FieldDeclaration> field_decl;
-    TypedefParser::IdentifierContext *field_identifier = nullptr;;
-    TypedefParser::IdentifierContext *symref_identifier = nullptr;;
+    TypedefParser::IdentifierContext *fieldIdentifier = nullptr;;
+    TypedefParser::IdentifierContext *symrefIdentifier = nullptr;;
     SymrefMemberDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
@@ -410,15 +423,14 @@ public:
   class  InlineVectorDeclarationContext : public antlr4::ParserRuleContext {
   public:
     std::shared_ptr<td::table::FieldDeclaration> field_decl;
-    TypedefParser::PrimitiveTypeIdentifierContext *val = nullptr;;
     InlineVectorDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     IdentifierContext *identifier();
     antlr4::tree::TerminalNode *COLON();
     antlr4::tree::TerminalNode *KW_VECTOR();
     antlr4::tree::TerminalNode *LT();
+    TypeParameterContext *typeParameter();
     antlr4::tree::TerminalNode *GT();
-    PrimitiveTypeIdentifierContext *primitiveTypeIdentifier();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -432,8 +444,8 @@ public:
   class  InlineMapDeclarationContext : public antlr4::ParserRuleContext {
   public:
     std::shared_ptr<td::table::FieldDeclaration> field_decl;
-    TypedefParser::PrimitiveTypeIdentifierContext *key = nullptr;;
-    TypedefParser::PrimitiveTypeIdentifierContext *val = nullptr;;
+    TypedefParser::TypeParameterContext *key = nullptr;;
+    TypedefParser::TypeParameterContext *val = nullptr;;
     InlineMapDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     IdentifierContext *identifier();
@@ -442,8 +454,8 @@ public:
     antlr4::tree::TerminalNode *LT();
     antlr4::tree::TerminalNode *COMMA();
     antlr4::tree::TerminalNode *GT();
-    std::vector<PrimitiveTypeIdentifierContext *> primitiveTypeIdentifier();
-    PrimitiveTypeIdentifierContext* primitiveTypeIdentifier(size_t i);
+    std::vector<TypeParameterContext *> typeParameter();
+    TypeParameterContext* typeParameter(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

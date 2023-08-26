@@ -348,15 +348,7 @@ void FirstPassListener::exitVectorDeclaration(
   bail_if_errors();
   ctx->vec = make_shared<td::table::Vector>();
   ctx->vec->identifier = ctx->symbolName->id;
-  if (ctx->primitiveElementType) {
-    ctx->vec->element_type =
-        (td::table::Type)ctx->primitiveElementType->primitive_type;
-  } else if (ctx->elementType) {
-    ctx->vec->element_type = td::table::Type::TYPE_SYMREF;
-    ctx->vec->element_symrmef_identifier = ctx->elementType->id;
-  } else {
-    throw_line("Invalid state.");
-  }
+  ctx->vec->element_type = ctx->typeParameter()->type_param;
 }
 
 void FirstPassListener::exitMapDeclaration(
@@ -364,14 +356,19 @@ void FirstPassListener::exitMapDeclaration(
   bail_if_errors();
   ctx->map = make_shared<td::table::Map>();
   ctx->map->identifier = ctx->symbolName->id;
-  ctx->map->key_type = ctx->primitiveKeyType->primitive_type;
+  ctx->map->key_type = ctx->key->type_param;
+  ctx->map->value_type = ctx->val->type_param;
+}
 
-  if (ctx->primitiveValueType) {
-    ctx->map->value_type =
-        (td::table::Type)ctx->primitiveValueType->primitive_type;
-  } else if (ctx->valueType) {
-    ctx->map->value_type = td::table::Type::TYPE_SYMREF;
-    ctx->map->value_symrmef_identifier = ctx->valueType->id;
+void FirstPassListener::exitTypeParameter(
+    TypedefParser::TypeParameterContext* ctx) {
+  ctx->type_param = make_shared<td::table::TypeParameter>();
+  if (ctx->primitiveTypeIdentifier()) {
+    ctx->type_param->type =
+        (td::table::Type)ctx->primitiveTypeIdentifier()->primitive_type;
+  } else if (ctx->identifier()) {
+    ctx->type_param->type = td::table::Type::TYPE_SYMREF;
+    ctx->type_param->symrmef_identifier = ctx->identifier()->id;
   } else {
     throw_line("Invalid state.");
   }
@@ -438,8 +435,8 @@ void FirstPassListener::exitFieldDeclaration(
 void FirstPassListener::exitSymrefMemberDeclaration(
     TypedefParser::SymrefMemberDeclarationContext* ctx) {
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
-  ctx->field_decl->identifier = ctx->field_identifier->id;
-  ctx->field_decl->symrmef_identifier = ctx->symref_identifier->id;
+  ctx->field_decl->identifier = ctx->fieldIdentifier->id;
+  ctx->field_decl->symrmef_identifier = ctx->symrefIdentifier->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_SYMREF;
 }
 
@@ -581,9 +578,7 @@ void FirstPassListener::exitInlineVectorDeclaration(
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_VECTOR;
   ctx->field_decl->vec = make_shared<td::table::Vector>();
-  ctx->field_decl->vec->element_type =
-      (td::table::Type)ctx->val->primitive_type;
-  // TODO: handle non-primitive value types.
+  ctx->field_decl->vec->element_type = ctx->typeParameter()->type_param;
 }
 
 void FirstPassListener::exitInlineMapDeclaration(
@@ -593,9 +588,8 @@ void FirstPassListener::exitInlineMapDeclaration(
   ctx->field_decl->identifier = ctx->identifier()->id;
   ctx->field_decl->member_type = td::table::Type::TYPE_MAP;
   ctx->field_decl->map = make_shared<td::table::Map>();
-  ctx->field_decl->map->key_type = ctx->key->primitive_type;
-  ctx->field_decl->map->value_type = (td::table::Type)ctx->val->primitive_type;
-  // TODO: handle non-primitive value types.
+  ctx->field_decl->map->key_type = ctx->key->type_param;
+  ctx->field_decl->map->value_type = ctx->val->type_param;
 }
 
 void FirstPassListener::exitSimplePath(TypedefParser::SimplePathContext* ctx) {

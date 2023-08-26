@@ -61,4 +61,37 @@ void SecondPassListener::enterSymrefMemberDeclaration(
   }
 }
 
+void SecondPassListener::enterMapDeclaration(
+    TypedefParser::MapDeclarationContext* ctx) {
+  if (!ctx->map->key_type->IsTriviallyComparable()) {
+    errors_list_.emplace_back(
+        ErrorFromContext(ctx, ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+                         "Only trivially comparable types supported here."));
+  }
+}
+
+void SecondPassListener::enterInlineMapDeclaration(
+    TypedefParser::InlineMapDeclarationContext* ctx) {
+  if (!ctx->field_decl->map->key_type->IsTriviallyComparable()) {
+    errors_list_.emplace_back(
+        ErrorFromContext(ctx, ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+                         "Only trivially comparable types supported here."));
+  }
+}
+
+void SecondPassListener::enterTypeParameter(
+    TypedefParser::TypeParameterContext* ctx) {
+  if (ctx->identifier()) {
+    // start searching at the parent, since matching the parent
+    // itself would be invalid.
+    ctx->type_param->symref_target =
+        FindSymbol(*ctx->type_param->symrmef_identifier, ctx->parent);
+    if (!ctx->type_param->symref_target) {
+      errors_list_.emplace_back(
+          ErrorFromContext(ctx, ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE,
+                           "Unresolved symbol reference."));
+    }
+  }
+}
+
 }  // namespace td

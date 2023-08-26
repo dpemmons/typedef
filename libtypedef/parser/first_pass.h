@@ -29,6 +29,9 @@ class FirstPassListener : public TypedefParserBaseListener {
   virtual void exitMapDeclaration(
       TypedefParser::MapDeclarationContext *ctx) override;
 
+  virtual void exitTypeParameter(
+      TypedefParser::TypeParameterContext *ctx) override;
+
   virtual void exitStructMember(
       TypedefParser::StructMemberContext *ctx) override;
 

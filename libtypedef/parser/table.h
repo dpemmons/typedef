@@ -90,6 +90,44 @@ struct Map;
 struct TypeDeclaration;
 struct FieldDeclaration;
 
+struct TypeParameter {
+  Type type = TYPE_UNKNOWN;
+
+  // Inline type parameters are not currently supported.
+
+  shared_ptr<string> symrmef_identifier;
+  // Filled in during second pass.
+  shared_ptr<TypeDeclaration> symref_target;
+
+  bool IsPrimitive() const {
+    return (type > TYPE_UNKNOWN && type < TYPE_PRIMITIVE_MAX);
+  }
+  bool IsBool() const { return type == TYPE_BOOL; }
+  bool IsChar() const { return type == TYPE_CHAR; }
+  bool IsStr() const { return type == TYPE_STRING; }
+  bool IsF32() const { return type == TYPE_F32; }
+  bool IsF64() const { return type == TYPE_F64; }
+  bool IsI8() const { return type == TYPE_I8; }
+  bool IsI16() const { return type == TYPE_I16; }
+  bool IsI32() const { return type == TYPE_I32; }
+  bool IsI64() const { return type == TYPE_I64; }
+  bool IsU8() const { return type == TYPE_U8; }
+  bool IsU16() const { return type == TYPE_U16; }
+  bool IsU32() const { return type == TYPE_U32; }
+  bool IsU64() const { return type == TYPE_U64; }
+
+  bool IsTriviallyComparable() const {
+    return IsBool() || IsChar() || IsStr() || IsI8() || IsI16() || IsI32() ||
+           IsI64() || IsU8() || IsU16() || IsU32() || IsU64();
+  }
+
+  bool IsSymref() const {
+    return (type == TYPE_SYMREF && symrmef_identifier->size() > 0);
+  }
+  bool SymrefIsResolved() const { return symref_target.operator bool(); }
+  shared_ptr<TypeDeclaration> Symref() const { return symref_target; }
+};
+
 struct StructMember {
   // One of the following:
   shared_ptr<TypeDeclaration> type_decl;
@@ -182,92 +220,12 @@ struct Variant : public NonPrimitive {
 };
 
 struct Vector : public NonPrimitive {
-  Type element_type = TYPE_UNKNOWN;
-
-  // If non-primitive, then may be any of the following:
-  shared_ptr<Struct> st;
-  shared_ptr<Variant> var;
-  shared_ptr<Vector> vec;
-  shared_ptr<Map> map;
-
-  shared_ptr<string> element_symrmef_identifier;
-  // Filled in during second pass.
-  shared_ptr<TypeDeclaration> element_symref_target;
-
-  bool IsStruct() const { return (element_type == TYPE_STRUCT && st); }
-  bool IsVariant() const { return (element_type == TYPE_VARIANT && var); }
-  bool IsVector() const { return (element_type == TYPE_VECTOR && vec); }
-  bool IsMap() const { return (element_type == TYPE_MAP && map); }
-
-  bool IsPrimitive() const {
-    return (element_type > TYPE_UNKNOWN && element_type < TYPE_PRIMITIVE_MAX);
-  }
-  bool IsBool() const { return element_type == TYPE_BOOL; }
-  bool IsChar() const { return element_type == TYPE_CHAR; }
-  bool IsStr() const { return element_type == TYPE_STRING; }
-  bool IsF32() const { return element_type == TYPE_F32; }
-  bool IsF64() const { return element_type == TYPE_F64; }
-  bool IsI8() const { return element_type == TYPE_I8; }
-  bool IsI16() const { return element_type == TYPE_I16; }
-  bool IsI32() const { return element_type == TYPE_I32; }
-  bool IsI64() const { return element_type == TYPE_I64; }
-  bool IsU8() const { return element_type == TYPE_U8; }
-  bool IsU16() const { return element_type == TYPE_U16; }
-  bool IsU32() const { return element_type == TYPE_U32; }
-  bool IsU64() const { return element_type == TYPE_U64; }
+  shared_ptr<TypeParameter> element_type;
 };
 
 struct Map : public NonPrimitive {
-  PrimitiveType key_type = PrimitiveType::PRIMITIVE_TYPE_UNKNOWN;
-
-  Type value_type = TYPE_UNKNOWN;
-  // If non-primitive, then may be any of the following:
-  shared_ptr<Struct> st_val;
-  shared_ptr<Variant> var_val;
-  shared_ptr<Vector> vec_val;
-  shared_ptr<Map> map_val;
-
-  shared_ptr<string> value_symrmef_identifier;
-  // Filled in during second pass.
-  shared_ptr<TypeDeclaration> value_symref_target;
-
-  bool KeyIsBool() const { return key_type == PRIMITIVE_TYPE_BOOL; }
-  bool KeyIsChar() const { return key_type == PRIMITIVE_TYPE_CHAR; }
-  bool KeyIsStr() const { return key_type == PRIMITIVE_TYPE_STRING; }
-  bool KeyIsF32() const { return key_type == PRIMITIVE_TYPE_F32; }
-  bool KeyIsF64() const { return key_type == PRIMITIVE_TYPE_F64; }
-  bool KeyIsI8() const { return key_type == PRIMITIVE_TYPE_I8; }
-  bool KeyIsI16() const { return key_type == PRIMITIVE_TYPE_I16; }
-  bool KeyIsI32() const { return key_type == PRIMITIVE_TYPE_I32; }
-  bool KeyIsI64() const { return key_type == PRIMITIVE_TYPE_I64; }
-  bool KeyIsU8() const { return key_type == PRIMITIVE_TYPE_U8; }
-  bool KeyIsU16() const { return key_type == PRIMITIVE_TYPE_U16; }
-  bool KeyIsU32() const { return key_type == PRIMITIVE_TYPE_U32; }
-  bool KeyIsU64() const { return key_type == PRIMITIVE_TYPE_U64; }
-
-  bool ValueIsStruct() const { return (value_type == TYPE_STRUCT && st_val); }
-  bool ValueIsVariant() const {
-    return (value_type == TYPE_VARIANT && var_val);
-  }
-  bool ValueIsVector() const { return (value_type == TYPE_VECTOR && vec_val); }
-  bool ValueIsMap() const { return (value_type == TYPE_MAP && map_val); }
-
-  bool ValueIsPrimitive() const {
-    return (value_type > TYPE_UNKNOWN && value_type < TYPE_PRIMITIVE_MAX);
-  }
-  bool ValueIsBool() const { return value_type == TYPE_BOOL; }
-  bool ValueIsChar() const { return value_type == TYPE_CHAR; }
-  bool ValueIsStr() const { return value_type == TYPE_STRING; }
-  bool ValueIsF32() const { return value_type == TYPE_F32; }
-  bool ValueIsF64() const { return value_type == TYPE_F64; }
-  bool ValueIsI8() const { return value_type == TYPE_I8; }
-  bool ValueIsI16() const { return value_type == TYPE_I16; }
-  bool ValueIsI32() const { return value_type == TYPE_I32; }
-  bool ValueIsI64() const { return value_type == TYPE_I64; }
-  bool ValueIsU8() const { return value_type == TYPE_U8; }
-  bool ValueIsU16() const { return value_type == TYPE_U16; }
-  bool ValueIsU32() const { return value_type == TYPE_U32; }
-  bool ValueIsU64() const { return value_type == TYPE_U64; }
+  shared_ptr<TypeParameter> key_type;
+  shared_ptr<TypeParameter> value_type;
 };
 
 struct TypeDeclaration {

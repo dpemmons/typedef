@@ -50,26 +50,26 @@ public class TypedefParser extends Parser {
 		RBRACE=156, LBRACK=157, RBRACK=158, LPAREN=159, RPAREN=160, WS=161;
 	public static final int
 		RULE_compilationUnit = 0, RULE_structDeclaration = 1, RULE_variantDeclaration = 2, 
-		RULE_vectorDeclaration = 3, RULE_mapDeclaration = 4, RULE_structMember = 5, 
-		RULE_typeDeclaration = 6, RULE_fieldDeclaration = 7, RULE_primitiveMemberDeclaration = 8, 
-		RULE_symrefMemberDeclaration = 9, RULE_impliedTypePrimitiveMemberDeclaration = 10, 
-		RULE_inlineStructDeclaration = 11, RULE_inlineVariantDeclaration = 12, 
-		RULE_inlineVectorDeclaration = 13, RULE_inlineMapDeclaration = 14, RULE_typedefVersionDeclaration = 15, 
-		RULE_moduleDeclaration = 16, RULE_useDeclaration = 17, RULE_useTree = 18, 
-		RULE_simplePath = 19, RULE_explicitPrimitiveLiteral = 20, RULE_boolLiteral = 21, 
-		RULE_charLiteral = 22, RULE_stringLiteral = 23, RULE_f32Literal = 24, 
-		RULE_f64Literal = 25, RULE_u8Literal = 26, RULE_u16Literal = 27, RULE_u32Literal = 28, 
-		RULE_u64Literal = 29, RULE_i8Literal = 30, RULE_i16Literal = 31, RULE_i32Literal = 32, 
-		RULE_i64Literal = 33, RULE_floatLiteral = 34, RULE_intLiteral = 35, RULE_identifier = 36, 
-		RULE_primitiveTypeIdentifier = 37, RULE_keyword = 38;
+		RULE_vectorDeclaration = 3, RULE_mapDeclaration = 4, RULE_typeParameter = 5, 
+		RULE_structMember = 6, RULE_typeDeclaration = 7, RULE_fieldDeclaration = 8, 
+		RULE_primitiveMemberDeclaration = 9, RULE_symrefMemberDeclaration = 10, 
+		RULE_impliedTypePrimitiveMemberDeclaration = 11, RULE_inlineStructDeclaration = 12, 
+		RULE_inlineVariantDeclaration = 13, RULE_inlineVectorDeclaration = 14, 
+		RULE_inlineMapDeclaration = 15, RULE_typedefVersionDeclaration = 16, RULE_moduleDeclaration = 17, 
+		RULE_useDeclaration = 18, RULE_useTree = 19, RULE_simplePath = 20, RULE_explicitPrimitiveLiteral = 21, 
+		RULE_boolLiteral = 22, RULE_charLiteral = 23, RULE_stringLiteral = 24, 
+		RULE_f32Literal = 25, RULE_f64Literal = 26, RULE_u8Literal = 27, RULE_u16Literal = 28, 
+		RULE_u32Literal = 29, RULE_u64Literal = 30, RULE_i8Literal = 31, RULE_i16Literal = 32, 
+		RULE_i32Literal = 33, RULE_i64Literal = 34, RULE_floatLiteral = 35, RULE_intLiteral = 36, 
+		RULE_identifier = 37, RULE_primitiveTypeIdentifier = 38, RULE_keyword = 39;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"compilationUnit", "structDeclaration", "variantDeclaration", "vectorDeclaration", 
-			"mapDeclaration", "structMember", "typeDeclaration", "fieldDeclaration", 
-			"primitiveMemberDeclaration", "symrefMemberDeclaration", "impliedTypePrimitiveMemberDeclaration", 
-			"inlineStructDeclaration", "inlineVariantDeclaration", "inlineVectorDeclaration", 
-			"inlineMapDeclaration", "typedefVersionDeclaration", "moduleDeclaration", 
-			"useDeclaration", "useTree", "simplePath", "explicitPrimitiveLiteral", 
+			"mapDeclaration", "typeParameter", "structMember", "typeDeclaration", 
+			"fieldDeclaration", "primitiveMemberDeclaration", "symrefMemberDeclaration", 
+			"impliedTypePrimitiveMemberDeclaration", "inlineStructDeclaration", "inlineVariantDeclaration", 
+			"inlineVectorDeclaration", "inlineMapDeclaration", "typedefVersionDeclaration", 
+			"moduleDeclaration", "useDeclaration", "useTree", "simplePath", "explicitPrimitiveLiteral", 
 			"boolLiteral", "charLiteral", "stringLiteral", "f32Literal", "f64Literal", 
 			"u8Literal", "u16Literal", "u32Literal", "u64Literal", "i8Literal", "i16Literal", 
 			"i32Literal", "i64Literal", "floatLiteral", "intLiteral", "identifier", 
@@ -223,49 +223,49 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(78);
-			typedefVersionDeclaration();
 			setState(80);
+			typedefVersionDeclaration();
+			setState(82);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==KW_MODULE) {
 				{
-				setState(79);
+				setState(81);
 				moduleDeclaration();
 				}
 			}
 
-			setState(85);
+			setState(87);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==KW_USE) {
 				{
 				{
-				setState(82);
+				setState(84);
 				useDeclaration();
 				}
 				}
-				setState(87);
+				setState(89);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(93);
+			setState(95);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << KW_STRUCT) | (1L << KW_VARIANT) | (1L << KW_VECTOR) | (1L << KW_MAP))) != 0)) {
 				{
 				{
-				setState(88);
+				setState(90);
 				typeDeclaration();
-				setState(89);
+				setState(91);
 				match(SEMI);
 				}
 				}
-				setState(95);
+				setState(97);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(96);
+			setState(98);
 			match(EOF);
 			}
 		}
@@ -311,29 +311,29 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(98);
-			match(KW_STRUCT);
-			setState(99);
-			identifier();
 			setState(100);
+			match(KW_STRUCT);
+			setState(101);
+			identifier();
+			setState(102);
 			match(LBRACE);
-			setState(106);
+			setState(108);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << KW_STRUCT) | (1L << KW_VARIANT) | (1L << KW_VECTOR) | (1L << KW_MAP))) != 0) || _la==NON_KEYWORD_IDENTIFIER || _la==RAW_ESCAPE) {
 				{
 				{
-				setState(101);
+				setState(103);
 				structMember();
-				setState(102);
+				setState(104);
 				match(SEMI);
 				}
 				}
-				setState(108);
+				setState(110);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(109);
+			setState(111);
 			match(RBRACE);
 			}
 		}
@@ -379,29 +379,29 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(111);
-			match(KW_VARIANT);
-			setState(112);
-			identifier();
 			setState(113);
+			match(KW_VARIANT);
+			setState(114);
+			identifier();
+			setState(115);
 			match(LBRACE);
-			setState(119);
+			setState(121);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << KW_STRUCT) | (1L << KW_VARIANT) | (1L << KW_VECTOR) | (1L << KW_MAP))) != 0) || _la==NON_KEYWORD_IDENTIFIER || _la==RAW_ESCAPE) {
 				{
 				{
-				setState(114);
+				setState(116);
 				structMember();
-				setState(115);
+				setState(117);
 				match(SEMI);
 				}
 				}
-				setState(121);
+				setState(123);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(122);
+			setState(124);
 			match(RBRACE);
 			}
 		}
@@ -419,19 +419,14 @@ public class TypedefParser extends Parser {
 	public static class VectorDeclarationContext extends ParserRuleContext {
 		public std::shared_ptr<td::table::Vector> vec;
 		public IdentifierContext symbolName;
-		public PrimitiveTypeIdentifierContext primitiveElementType;
-		public IdentifierContext elementType;
 		public TerminalNode KW_VECTOR() { return getToken(TypedefParser.KW_VECTOR, 0); }
 		public TerminalNode LT() { return getToken(TypedefParser.LT, 0); }
+		public TypeParameterContext typeParameter() {
+			return getRuleContext(TypeParameterContext.class,0);
+		}
 		public TerminalNode GT() { return getToken(TypedefParser.GT, 0); }
-		public List<IdentifierContext> identifier() {
-			return getRuleContexts(IdentifierContext.class);
-		}
-		public IdentifierContext identifier(int i) {
-			return getRuleContext(IdentifierContext.class,i);
-		}
-		public PrimitiveTypeIdentifierContext primitiveTypeIdentifier() {
-			return getRuleContext(PrimitiveTypeIdentifierContext.class,0);
+		public IdentifierContext identifier() {
+			return getRuleContext(IdentifierContext.class,0);
 		}
 		public VectorDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -445,44 +440,15 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(124);
-			match(KW_VECTOR);
-			setState(125);
-			((VectorDeclarationContext)_localctx).symbolName = identifier();
 			setState(126);
+			match(KW_VECTOR);
+			setState(127);
+			((VectorDeclarationContext)_localctx).symbolName = identifier();
+			setState(128);
 			match(LT);
 			setState(129);
-			_errHandler.sync(this);
-			switch (_input.LA(1)) {
-			case KW_BOOL:
-			case KW_CHAR:
-			case KW_STRING:
-			case KW_F32:
-			case KW_F64:
-			case KW_U8:
-			case KW_U16:
-			case KW_U32:
-			case KW_U64:
-			case KW_I8:
-			case KW_I16:
-			case KW_I32:
-			case KW_I64:
-				{
-				setState(127);
-				((VectorDeclarationContext)_localctx).primitiveElementType = primitiveTypeIdentifier();
-				}
-				break;
-			case NON_KEYWORD_IDENTIFIER:
-			case RAW_ESCAPE:
-				{
-				setState(128);
-				((VectorDeclarationContext)_localctx).elementType = identifier();
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
-			setState(131);
+			typeParameter();
+			setState(130);
 			match(GT);
 			}
 		}
@@ -500,24 +466,20 @@ public class TypedefParser extends Parser {
 	public static class MapDeclarationContext extends ParserRuleContext {
 		public std::shared_ptr<td::table::Map> map;
 		public IdentifierContext symbolName;
-		public PrimitiveTypeIdentifierContext primitiveKeyType;
-		public PrimitiveTypeIdentifierContext primitiveValueType;
-		public IdentifierContext valueType;
+		public TypeParameterContext key;
+		public TypeParameterContext val;
 		public TerminalNode KW_MAP() { return getToken(TypedefParser.KW_MAP, 0); }
 		public TerminalNode LT() { return getToken(TypedefParser.LT, 0); }
 		public TerminalNode COMMA() { return getToken(TypedefParser.COMMA, 0); }
 		public TerminalNode GT() { return getToken(TypedefParser.GT, 0); }
-		public List<IdentifierContext> identifier() {
-			return getRuleContexts(IdentifierContext.class);
+		public IdentifierContext identifier() {
+			return getRuleContext(IdentifierContext.class,0);
 		}
-		public IdentifierContext identifier(int i) {
-			return getRuleContext(IdentifierContext.class,i);
+		public List<TypeParameterContext> typeParameter() {
+			return getRuleContexts(TypeParameterContext.class);
 		}
-		public List<PrimitiveTypeIdentifierContext> primitiveTypeIdentifier() {
-			return getRuleContexts(PrimitiveTypeIdentifierContext.class);
-		}
-		public PrimitiveTypeIdentifierContext primitiveTypeIdentifier(int i) {
-			return getRuleContext(PrimitiveTypeIdentifierContext.class,i);
+		public TypeParameterContext typeParameter(int i) {
+			return getRuleContext(TypeParameterContext.class,i);
 		}
 		public MapDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -531,19 +493,62 @@ public class TypedefParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(133);
+			setState(132);
 			match(KW_MAP);
-			setState(134);
+			setState(133);
 			((MapDeclarationContext)_localctx).symbolName = identifier();
-			setState(135);
+			setState(134);
 			match(LT);
+			setState(135);
+			((MapDeclarationContext)_localctx).key = typeParameter();
 			setState(136);
-			((MapDeclarationContext)_localctx).primitiveKeyType = primitiveTypeIdentifier();
-			setState(137);
 			match(COMMA);
-			setState(140);
+			setState(137);
+			((MapDeclarationContext)_localctx).val = typeParameter();
+			setState(138);
+			match(GT);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class TypeParameterContext extends ParserRuleContext {
+		public std::shared_ptr<td::table::TypeParameter> type_param;
+		public IdentifierContext identifier() {
+			return getRuleContext(IdentifierContext.class,0);
+		}
+		public PrimitiveTypeIdentifierContext primitiveTypeIdentifier() {
+			return getRuleContext(PrimitiveTypeIdentifierContext.class,0);
+		}
+		public TypeParameterContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_typeParameter; }
+	}
+
+	public final TypeParameterContext typeParameter() throws RecognitionException {
+		TypeParameterContext _localctx = new TypeParameterContext(_ctx, getState());
+		enterRule(_localctx, 10, RULE_typeParameter);
+		try {
+			setState(142);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
+			case NON_KEYWORD_IDENTIFIER:
+			case RAW_ESCAPE:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(140);
+				identifier();
+				}
+				break;
 			case KW_BOOL:
 			case KW_CHAR:
 			case KW_STRING:
@@ -557,23 +562,14 @@ public class TypedefParser extends Parser {
 			case KW_I16:
 			case KW_I32:
 			case KW_I64:
+				enterOuterAlt(_localctx, 2);
 				{
-				setState(138);
-				((MapDeclarationContext)_localctx).primitiveValueType = primitiveTypeIdentifier();
-				}
-				break;
-			case NON_KEYWORD_IDENTIFIER:
-			case RAW_ESCAPE:
-				{
-				setState(139);
-				((MapDeclarationContext)_localctx).valueType = identifier();
+				setState(141);
+				primitiveTypeIdentifier();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
-			}
-			setState(142);
-			match(GT);
 			}
 		}
 		catch (RecognitionException re) {
@@ -603,7 +599,7 @@ public class TypedefParser extends Parser {
 
 	public final StructMemberContext structMember() throws RecognitionException {
 		StructMemberContext _localctx = new StructMemberContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_structMember);
+		enterRule(_localctx, 12, RULE_structMember);
 		try {
 			setState(146);
 			_errHandler.sync(this);
@@ -663,7 +659,7 @@ public class TypedefParser extends Parser {
 
 	public final TypeDeclarationContext typeDeclaration() throws RecognitionException {
 		TypeDeclarationContext _localctx = new TypeDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_typeDeclaration);
+		enterRule(_localctx, 14, RULE_typeDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -738,11 +734,11 @@ public class TypedefParser extends Parser {
 
 	public final FieldDeclarationContext fieldDeclaration() throws RecognitionException {
 		FieldDeclarationContext _localctx = new FieldDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_fieldDeclaration);
+		enterRule(_localctx, 16, RULE_fieldDeclaration);
 		try {
 			setState(160);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,9,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -828,12 +824,12 @@ public class TypedefParser extends Parser {
 
 	public final PrimitiveMemberDeclarationContext primitiveMemberDeclaration() throws RecognitionException {
 		PrimitiveMemberDeclarationContext _localctx = new PrimitiveMemberDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_primitiveMemberDeclaration);
+		enterRule(_localctx, 18, RULE_primitiveMemberDeclaration);
 		int _la;
 		try {
 			setState(178);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -851,7 +847,7 @@ public class TypedefParser extends Parser {
 				match(COLON);
 				setState(176);
 				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
+				switch ( getInterpreter().adaptivePredict(_input,11,_ctx) ) {
 				case 1:
 					{
 					setState(165);
@@ -922,8 +918,8 @@ public class TypedefParser extends Parser {
 
 	public static class SymrefMemberDeclarationContext extends ParserRuleContext {
 		public std::shared_ptr<td::table::FieldDeclaration> field_decl;
-		public IdentifierContext field_identifier;
-		public IdentifierContext symref_identifier;
+		public IdentifierContext fieldIdentifier;
+		public IdentifierContext symrefIdentifier;
 		public TerminalNode COLON() { return getToken(TypedefParser.COLON, 0); }
 		public List<IdentifierContext> identifier() {
 			return getRuleContexts(IdentifierContext.class);
@@ -939,16 +935,16 @@ public class TypedefParser extends Parser {
 
 	public final SymrefMemberDeclarationContext symrefMemberDeclaration() throws RecognitionException {
 		SymrefMemberDeclarationContext _localctx = new SymrefMemberDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_symrefMemberDeclaration);
+		enterRule(_localctx, 20, RULE_symrefMemberDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(180);
-			((SymrefMemberDeclarationContext)_localctx).field_identifier = identifier();
+			((SymrefMemberDeclarationContext)_localctx).fieldIdentifier = identifier();
 			setState(181);
 			match(COLON);
 			setState(182);
-			((SymrefMemberDeclarationContext)_localctx).symref_identifier = identifier();
+			((SymrefMemberDeclarationContext)_localctx).symrefIdentifier = identifier();
 			}
 		}
 		catch (RecognitionException re) {
@@ -985,7 +981,7 @@ public class TypedefParser extends Parser {
 
 	public final ImpliedTypePrimitiveMemberDeclarationContext impliedTypePrimitiveMemberDeclaration() throws RecognitionException {
 		ImpliedTypePrimitiveMemberDeclarationContext _localctx = new ImpliedTypePrimitiveMemberDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_impliedTypePrimitiveMemberDeclaration);
+		enterRule(_localctx, 22, RULE_impliedTypePrimitiveMemberDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -995,7 +991,7 @@ public class TypedefParser extends Parser {
 			match(EQ);
 			setState(189);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
 			case 1:
 				{
 				setState(186);
@@ -1055,7 +1051,7 @@ public class TypedefParser extends Parser {
 
 	public final InlineStructDeclarationContext inlineStructDeclaration() throws RecognitionException {
 		InlineStructDeclarationContext _localctx = new InlineStructDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_inlineStructDeclaration);
+		enterRule(_localctx, 24, RULE_inlineStructDeclaration);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -1126,7 +1122,7 @@ public class TypedefParser extends Parser {
 
 	public final InlineVariantDeclarationContext inlineVariantDeclaration() throws RecognitionException {
 		InlineVariantDeclarationContext _localctx = new InlineVariantDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_inlineVariantDeclaration);
+		enterRule(_localctx, 26, RULE_inlineVariantDeclaration);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -1172,17 +1168,16 @@ public class TypedefParser extends Parser {
 
 	public static class InlineVectorDeclarationContext extends ParserRuleContext {
 		public std::shared_ptr<td::table::FieldDeclaration> field_decl;
-		public PrimitiveTypeIdentifierContext val;
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
 		}
 		public TerminalNode COLON() { return getToken(TypedefParser.COLON, 0); }
 		public TerminalNode KW_VECTOR() { return getToken(TypedefParser.KW_VECTOR, 0); }
 		public TerminalNode LT() { return getToken(TypedefParser.LT, 0); }
-		public TerminalNode GT() { return getToken(TypedefParser.GT, 0); }
-		public PrimitiveTypeIdentifierContext primitiveTypeIdentifier() {
-			return getRuleContext(PrimitiveTypeIdentifierContext.class,0);
+		public TypeParameterContext typeParameter() {
+			return getRuleContext(TypeParameterContext.class,0);
 		}
+		public TerminalNode GT() { return getToken(TypedefParser.GT, 0); }
 		public InlineVectorDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1191,7 +1186,7 @@ public class TypedefParser extends Parser {
 
 	public final InlineVectorDeclarationContext inlineVectorDeclaration() throws RecognitionException {
 		InlineVectorDeclarationContext _localctx = new InlineVectorDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 26, RULE_inlineVectorDeclaration);
+		enterRule(_localctx, 28, RULE_inlineVectorDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -1204,7 +1199,7 @@ public class TypedefParser extends Parser {
 			setState(222);
 			match(LT);
 			setState(223);
-			((InlineVectorDeclarationContext)_localctx).val = primitiveTypeIdentifier();
+			typeParameter();
 			setState(224);
 			match(GT);
 			}
@@ -1222,8 +1217,8 @@ public class TypedefParser extends Parser {
 
 	public static class InlineMapDeclarationContext extends ParserRuleContext {
 		public std::shared_ptr<td::table::FieldDeclaration> field_decl;
-		public PrimitiveTypeIdentifierContext key;
-		public PrimitiveTypeIdentifierContext val;
+		public TypeParameterContext key;
+		public TypeParameterContext val;
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
 		}
@@ -1232,11 +1227,11 @@ public class TypedefParser extends Parser {
 		public TerminalNode LT() { return getToken(TypedefParser.LT, 0); }
 		public TerminalNode COMMA() { return getToken(TypedefParser.COMMA, 0); }
 		public TerminalNode GT() { return getToken(TypedefParser.GT, 0); }
-		public List<PrimitiveTypeIdentifierContext> primitiveTypeIdentifier() {
-			return getRuleContexts(PrimitiveTypeIdentifierContext.class);
+		public List<TypeParameterContext> typeParameter() {
+			return getRuleContexts(TypeParameterContext.class);
 		}
-		public PrimitiveTypeIdentifierContext primitiveTypeIdentifier(int i) {
-			return getRuleContext(PrimitiveTypeIdentifierContext.class,i);
+		public TypeParameterContext typeParameter(int i) {
+			return getRuleContext(TypeParameterContext.class,i);
 		}
 		public InlineMapDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1246,7 +1241,7 @@ public class TypedefParser extends Parser {
 
 	public final InlineMapDeclarationContext inlineMapDeclaration() throws RecognitionException {
 		InlineMapDeclarationContext _localctx = new InlineMapDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 28, RULE_inlineMapDeclaration);
+		enterRule(_localctx, 30, RULE_inlineMapDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -1259,11 +1254,11 @@ public class TypedefParser extends Parser {
 			setState(229);
 			match(LT);
 			setState(230);
-			((InlineMapDeclarationContext)_localctx).key = primitiveTypeIdentifier();
+			((InlineMapDeclarationContext)_localctx).key = typeParameter();
 			setState(231);
 			match(COMMA);
 			setState(232);
-			((InlineMapDeclarationContext)_localctx).val = primitiveTypeIdentifier();
+			((InlineMapDeclarationContext)_localctx).val = typeParameter();
 			setState(233);
 			match(GT);
 			}
@@ -1295,7 +1290,7 @@ public class TypedefParser extends Parser {
 
 	public final TypedefVersionDeclarationContext typedefVersionDeclaration() throws RecognitionException {
 		TypedefVersionDeclarationContext _localctx = new TypedefVersionDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 30, RULE_typedefVersionDeclaration);
+		enterRule(_localctx, 32, RULE_typedefVersionDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -1335,7 +1330,7 @@ public class TypedefParser extends Parser {
 
 	public final ModuleDeclarationContext moduleDeclaration() throws RecognitionException {
 		ModuleDeclarationContext _localctx = new ModuleDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 32, RULE_moduleDeclaration);
+		enterRule(_localctx, 34, RULE_moduleDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -1372,7 +1367,7 @@ public class TypedefParser extends Parser {
 
 	public final UseDeclarationContext useDeclaration() throws RecognitionException {
 		UseDeclarationContext _localctx = new UseDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 34, RULE_useDeclaration);
+		enterRule(_localctx, 36, RULE_useDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -1425,13 +1420,13 @@ public class TypedefParser extends Parser {
 
 	public final UseTreeContext useTree() throws RecognitionException {
 		UseTreeContext _localctx = new UseTreeContext(_ctx, getState());
-		enterRule(_localctx, 36, RULE_useTree);
+		enterRule(_localctx, 38, RULE_useTree);
 		int _la;
 		try {
 			int _alt;
 			setState(277);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,24,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,23,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -1442,7 +1437,7 @@ public class TypedefParser extends Parser {
 					{
 					setState(249);
 					_errHandler.sync(this);
-					switch ( getInterpreter().adaptivePredict(_input,17,_ctx) ) {
+					switch ( getInterpreter().adaptivePredict(_input,16,_ctx) ) {
 					case 1:
 						{
 						setState(248);
@@ -1477,7 +1472,7 @@ public class TypedefParser extends Parser {
 						useTree();
 						setState(261);
 						_errHandler.sync(this);
-						_alt = getInterpreter().adaptivePredict(_input,19,_ctx);
+						_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
 						while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 							if ( _alt==1 ) {
 								{
@@ -1491,7 +1486,7 @@ public class TypedefParser extends Parser {
 							}
 							setState(263);
 							_errHandler.sync(this);
-							_alt = getInterpreter().adaptivePredict(_input,19,_ctx);
+							_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
 						}
 						setState(265);
 						_errHandler.sync(this);
@@ -1568,7 +1563,7 @@ public class TypedefParser extends Parser {
 
 	public final SimplePathContext simplePath() throws RecognitionException {
 		SimplePathContext _localctx = new SimplePathContext(_ctx, getState());
-		enterRule(_localctx, 38, RULE_simplePath);
+		enterRule(_localctx, 40, RULE_simplePath);
 		int _la;
 		try {
 			int _alt;
@@ -1588,7 +1583,7 @@ public class TypedefParser extends Parser {
 			identifier();
 			setState(287);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,26,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,25,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
@@ -1602,7 +1597,7 @@ public class TypedefParser extends Parser {
 				}
 				setState(289);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,26,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,25,_ctx);
 			}
 			}
 		}
@@ -1667,11 +1662,11 @@ public class TypedefParser extends Parser {
 
 	public final ExplicitPrimitiveLiteralContext explicitPrimitiveLiteral() throws RecognitionException {
 		ExplicitPrimitiveLiteralContext _localctx = new ExplicitPrimitiveLiteralContext(_ctx, getState());
-		enterRule(_localctx, 40, RULE_explicitPrimitiveLiteral);
+		enterRule(_localctx, 42, RULE_explicitPrimitiveLiteral);
 		try {
 			setState(303);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,27,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,26,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -1788,7 +1783,7 @@ public class TypedefParser extends Parser {
 
 	public final BoolLiteralContext boolLiteral() throws RecognitionException {
 		BoolLiteralContext _localctx = new BoolLiteralContext(_ctx, getState());
-		enterRule(_localctx, 42, RULE_boolLiteral);
+		enterRule(_localctx, 44, RULE_boolLiteral);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -1827,7 +1822,7 @@ public class TypedefParser extends Parser {
 
 	public final CharLiteralContext charLiteral() throws RecognitionException {
 		CharLiteralContext _localctx = new CharLiteralContext(_ctx, getState());
-		enterRule(_localctx, 44, RULE_charLiteral);
+		enterRule(_localctx, 46, RULE_charLiteral);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -1858,7 +1853,7 @@ public class TypedefParser extends Parser {
 
 	public final StringLiteralContext stringLiteral() throws RecognitionException {
 		StringLiteralContext _localctx = new StringLiteralContext(_ctx, getState());
-		enterRule(_localctx, 46, RULE_stringLiteral);
+		enterRule(_localctx, 48, RULE_stringLiteral);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -1900,7 +1895,7 @@ public class TypedefParser extends Parser {
 
 	public final F32LiteralContext f32Literal() throws RecognitionException {
 		F32LiteralContext _localctx = new F32LiteralContext(_ctx, getState());
-		enterRule(_localctx, 48, RULE_f32Literal);
+		enterRule(_localctx, 50, RULE_f32Literal);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -1935,7 +1930,7 @@ public class TypedefParser extends Parser {
 
 	public final F64LiteralContext f64Literal() throws RecognitionException {
 		F64LiteralContext _localctx = new F64LiteralContext(_ctx, getState());
-		enterRule(_localctx, 50, RULE_f64Literal);
+		enterRule(_localctx, 52, RULE_f64Literal);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -1970,7 +1965,7 @@ public class TypedefParser extends Parser {
 
 	public final U8LiteralContext u8Literal() throws RecognitionException {
 		U8LiteralContext _localctx = new U8LiteralContext(_ctx, getState());
-		enterRule(_localctx, 52, RULE_u8Literal);
+		enterRule(_localctx, 54, RULE_u8Literal);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -2005,7 +2000,7 @@ public class TypedefParser extends Parser {
 
 	public final U16LiteralContext u16Literal() throws RecognitionException {
 		U16LiteralContext _localctx = new U16LiteralContext(_ctx, getState());
-		enterRule(_localctx, 54, RULE_u16Literal);
+		enterRule(_localctx, 56, RULE_u16Literal);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -2040,7 +2035,7 @@ public class TypedefParser extends Parser {
 
 	public final U32LiteralContext u32Literal() throws RecognitionException {
 		U32LiteralContext _localctx = new U32LiteralContext(_ctx, getState());
-		enterRule(_localctx, 56, RULE_u32Literal);
+		enterRule(_localctx, 58, RULE_u32Literal);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -2075,7 +2070,7 @@ public class TypedefParser extends Parser {
 
 	public final U64LiteralContext u64Literal() throws RecognitionException {
 		U64LiteralContext _localctx = new U64LiteralContext(_ctx, getState());
-		enterRule(_localctx, 58, RULE_u64Literal);
+		enterRule(_localctx, 60, RULE_u64Literal);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -2110,7 +2105,7 @@ public class TypedefParser extends Parser {
 
 	public final I8LiteralContext i8Literal() throws RecognitionException {
 		I8LiteralContext _localctx = new I8LiteralContext(_ctx, getState());
-		enterRule(_localctx, 60, RULE_i8Literal);
+		enterRule(_localctx, 62, RULE_i8Literal);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -2145,7 +2140,7 @@ public class TypedefParser extends Parser {
 
 	public final I16LiteralContext i16Literal() throws RecognitionException {
 		I16LiteralContext _localctx = new I16LiteralContext(_ctx, getState());
-		enterRule(_localctx, 62, RULE_i16Literal);
+		enterRule(_localctx, 64, RULE_i16Literal);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -2180,7 +2175,7 @@ public class TypedefParser extends Parser {
 
 	public final I32LiteralContext i32Literal() throws RecognitionException {
 		I32LiteralContext _localctx = new I32LiteralContext(_ctx, getState());
-		enterRule(_localctx, 64, RULE_i32Literal);
+		enterRule(_localctx, 66, RULE_i32Literal);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -2215,7 +2210,7 @@ public class TypedefParser extends Parser {
 
 	public final I64LiteralContext i64Literal() throws RecognitionException {
 		I64LiteralContext _localctx = new I64LiteralContext(_ctx, getState());
-		enterRule(_localctx, 66, RULE_i64Literal);
+		enterRule(_localctx, 68, RULE_i64Literal);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -2246,7 +2241,7 @@ public class TypedefParser extends Parser {
 
 	public final FloatLiteralContext floatLiteral() throws RecognitionException {
 		FloatLiteralContext _localctx = new FloatLiteralContext(_ctx, getState());
-		enterRule(_localctx, 68, RULE_floatLiteral);
+		enterRule(_localctx, 70, RULE_floatLiteral);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -2286,7 +2281,7 @@ public class TypedefParser extends Parser {
 
 	public final IntLiteralContext intLiteral() throws RecognitionException {
 		IntLiteralContext _localctx = new IntLiteralContext(_ctx, getState());
-		enterRule(_localctx, 70, RULE_intLiteral);
+		enterRule(_localctx, 72, RULE_intLiteral);
 		int _la;
 		try {
 			setState(353);
@@ -2406,7 +2401,7 @@ public class TypedefParser extends Parser {
 
 	public final IdentifierContext identifier() throws RecognitionException {
 		IdentifierContext _localctx = new IdentifierContext(_ctx, getState());
-		enterRule(_localctx, 72, RULE_identifier);
+		enterRule(_localctx, 74, RULE_identifier);
 		try {
 			setState(358);
 			_errHandler.sync(this);
@@ -2465,7 +2460,7 @@ public class TypedefParser extends Parser {
 
 	public final PrimitiveTypeIdentifierContext primitiveTypeIdentifier() throws RecognitionException {
 		PrimitiveTypeIdentifierContext _localctx = new PrimitiveTypeIdentifierContext(_ctx, getState());
-		enterRule(_localctx, 74, RULE_primitiveTypeIdentifier);
+		enterRule(_localctx, 76, RULE_primitiveTypeIdentifier);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -2570,7 +2565,7 @@ public class TypedefParser extends Parser {
 
 	public final KeywordContext keyword() throws RecognitionException {
 		KeywordContext _localctx = new KeywordContext(_ctx, getState());
-		enterRule(_localctx, 76, RULE_keyword);
+		enterRule(_localctx, 78, RULE_keyword);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -2604,128 +2599,128 @@ public class TypedefParser extends Parser {
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
 		"\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\4\36\t\36\4\37\t\37\4 \t \4!"+
-		"\t!\4\"\t\"\4#\t#\4$\t$\4%\t%\4&\t&\4\'\t\'\4(\t(\3\2\3\2\5\2S\n\2\3\2"+
-		"\7\2V\n\2\f\2\16\2Y\13\2\3\2\3\2\3\2\7\2^\n\2\f\2\16\2a\13\2\3\2\3\2\3"+
-		"\3\3\3\3\3\3\3\3\3\3\3\7\3k\n\3\f\3\16\3n\13\3\3\3\3\3\3\4\3\4\3\4\3\4"+
-		"\3\4\3\4\7\4x\n\4\f\4\16\4{\13\4\3\4\3\4\3\5\3\5\3\5\3\5\3\5\5\5\u0084"+
-		"\n\5\3\5\3\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6\u008f\n\6\3\6\3\6\3\7\3\7"+
-		"\5\7\u0095\n\7\3\b\3\b\3\b\3\b\5\b\u009b\n\b\3\t\3\t\3\t\3\t\3\t\3\t\5"+
-		"\t\u00a3\n\t\3\n\3\n\3\n\3\n\3\n\3\n\3\n\5\n\u00ac\n\n\3\n\3\n\3\n\5\n"+
-		"\u00b1\n\n\5\n\u00b3\n\n\5\n\u00b5\n\n\3\13\3\13\3\13\3\13\3\f\3\f\3\f"+
-		"\3\f\3\f\5\f\u00c0\n\f\3\r\3\r\3\r\3\r\3\r\3\r\3\r\7\r\u00c9\n\r\f\r\16"+
-		"\r\u00cc\13\r\3\r\3\r\3\16\3\16\3\16\3\16\3\16\3\16\3\16\7\16\u00d7\n"+
-		"\16\f\16\16\16\u00da\13\16\3\16\3\16\3\17\3\17\3\17\3\17\3\17\3\17\3\17"+
-		"\3\20\3\20\3\20\3\20\3\20\3\20\3\20\3\20\3\20\3\21\3\21\3\21\3\21\3\21"+
-		"\3\22\3\22\3\22\3\22\3\23\3\23\3\23\3\23\3\24\5\24\u00fc\n\24\3\24\5\24"+
-		"\u00ff\n\24\3\24\3\24\3\24\3\24\3\24\7\24\u0106\n\24\f\24\16\24\u0109"+
-		"\13\24\3\24\5\24\u010c\n\24\5\24\u010e\n\24\3\24\5\24\u0111\n\24\3\24"+
-		"\3\24\3\24\5\24\u0116\n\24\5\24\u0118\n\24\3\25\5\25\u011b\n\25\3\25\3"+
-		"\25\3\25\7\25\u0120\n\25\f\25\16\25\u0123\13\25\3\26\3\26\3\26\3\26\3"+
-		"\26\3\26\3\26\3\26\3\26\3\26\3\26\3\26\3\26\5\26\u0132\n\26\3\27\3\27"+
-		"\3\30\3\30\3\31\3\31\3\32\3\32\3\32\3\33\3\33\3\33\3\34\3\34\3\34\3\35"+
-		"\3\35\3\35\3\36\3\36\3\36\3\37\3\37\3\37\3 \3 \3 \3!\3!\3!\3\"\3\"\3\""+
-		"\3#\3#\3#\3$\3$\3%\5%\u015b\n%\3%\3%\3%\3%\3%\3%\3%\5%\u0164\n%\3&\3&"+
-		"\3&\5&\u0169\n&\3\'\3\'\3(\3(\3(\2\2)\2\4\6\b\n\f\16\20\22\24\26\30\32"+
-		"\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLN\2\n\4\2\6\6\f\f\3\2ab\3\2cd\3"+
-		"\2ef\3\2gh\3\2ij\3\2JV\5\2\4\b\n\22\24I\2\u017a\2P\3\2\2\2\4d\3\2\2\2"+
-		"\6q\3\2\2\2\b~\3\2\2\2\n\u0087\3\2\2\2\f\u0094\3\2\2\2\16\u009a\3\2\2"+
-		"\2\20\u00a2\3\2\2\2\22\u00b4\3\2\2\2\24\u00b6\3\2\2\2\26\u00ba\3\2\2\2"+
-		"\30\u00c1\3\2\2\2\32\u00cf\3\2\2\2\34\u00dd\3\2\2\2\36\u00e4\3\2\2\2 "+
-		"\u00ed\3\2\2\2\"\u00f2\3\2\2\2$\u00f6\3\2\2\2&\u0117\3\2\2\2(\u011a\3"+
-		"\2\2\2*\u0131\3\2\2\2,\u0133\3\2\2\2.\u0135\3\2\2\2\60\u0137\3\2\2\2\62"+
-		"\u0139\3\2\2\2\64\u013c\3\2\2\2\66\u013f\3\2\2\28\u0142\3\2\2\2:\u0145"+
-		"\3\2\2\2<\u0148\3\2\2\2>\u014b\3\2\2\2@\u014e\3\2\2\2B\u0151\3\2\2\2D"+
-		"\u0154\3\2\2\2F\u0157\3\2\2\2H\u0163\3\2\2\2J\u0168\3\2\2\2L\u016a\3\2"+
-		"\2\2N\u016c\3\2\2\2PR\5 \21\2QS\5\"\22\2RQ\3\2\2\2RS\3\2\2\2SW\3\2\2\2"+
-		"TV\5$\23\2UT\3\2\2\2VY\3\2\2\2WU\3\2\2\2WX\3\2\2\2X_\3\2\2\2YW\3\2\2\2"+
-		"Z[\5\16\b\2[\\\7\u0095\2\2\\^\3\2\2\2]Z\3\2\2\2^a\3\2\2\2_]\3\2\2\2_`"+
-		"\3\2\2\2`b\3\2\2\2a_\3\2\2\2bc\7\2\2\3c\3\3\2\2\2de\7\13\2\2ef\5J&\2f"+
-		"l\7\u009d\2\2gh\5\f\7\2hi\7\u0095\2\2ik\3\2\2\2jg\3\2\2\2kn\3\2\2\2lj"+
-		"\3\2\2\2lm\3\2\2\2mo\3\2\2\2nl\3\2\2\2op\7\u009e\2\2p\5\3\2\2\2qr\7\20"+
-		"\2\2rs\5J&\2sy\7\u009d\2\2tu\5\f\7\2uv\7\u0095\2\2vx\3\2\2\2wt\3\2\2\2"+
-		"x{\3\2\2\2yw\3\2\2\2yz\3\2\2\2z|\3\2\2\2{y\3\2\2\2|}\7\u009e\2\2}\7\3"+
-		"\2\2\2~\177\7\21\2\2\177\u0080\5J&\2\u0080\u0083\7\u008c\2\2\u0081\u0084"+
-		"\5L\'\2\u0082\u0084\5J&\2\u0083\u0081\3\2\2\2\u0083\u0082\3\2\2\2\u0084"+
-		"\u0085\3\2\2\2\u0085\u0086\7\u008b\2\2\u0086\t\3\2\2\2\u0087\u0088\7\22"+
-		"\2\2\u0088\u0089\5J&\2\u0089\u008a\7\u008c\2\2\u008a\u008b\5L\'\2\u008b"+
-		"\u008e\7\u0094\2\2\u008c\u008f\5L\'\2\u008d\u008f\5J&\2\u008e\u008c\3"+
-		"\2\2\2\u008e\u008d\3\2\2\2\u008f\u0090\3\2\2\2\u0090\u0091\7\u008b\2\2"+
-		"\u0091\13\3\2\2\2\u0092\u0095\5\16\b\2\u0093\u0095\5\20\t\2\u0094\u0092"+
-		"\3\2\2\2\u0094\u0093\3\2\2\2\u0095\r\3\2\2\2\u0096\u009b\5\4\3\2\u0097"+
-		"\u009b\5\6\4\2\u0098\u009b\5\b\5\2\u0099\u009b\5\n\6\2\u009a\u0096\3\2"+
-		"\2\2\u009a\u0097\3\2\2\2\u009a\u0098\3\2\2\2\u009a\u0099\3\2\2\2\u009b"+
-		"\17\3\2\2\2\u009c\u00a3\5\22\n\2\u009d\u00a3\5\24\13\2\u009e\u00a3\5\30"+
-		"\r\2\u009f\u00a3\5\32\16\2\u00a0\u00a3\5\34\17\2\u00a1\u00a3\5\36\20\2"+
-		"\u00a2\u009c\3\2\2\2\u00a2\u009d\3\2\2\2\u00a2\u009e\3\2\2\2\u00a2\u009f"+
-		"\3\2\2\2\u00a2\u00a0\3\2\2\2\u00a2\u00a1\3\2\2\2\u00a3\21\3\2\2\2\u00a4"+
-		"\u00b5\5\26\f\2\u00a5\u00a6\5J&\2\u00a6\u00b2\7\u0096\2\2\u00a7\u00a8"+
-		"\5L\'\2\u00a8\u00ab\7\u0088\2\2\u00a9\u00ac\5F$\2\u00aa\u00ac\5H%\2\u00ab"+
-		"\u00a9\3\2\2\2\u00ab\u00aa\3\2\2\2\u00ac\u00b3\3\2\2\2\u00ad\u00b0\5L"+
-		"\'\2\u00ae\u00af\7\u0088\2\2\u00af\u00b1\5*\26\2\u00b0\u00ae\3\2\2\2\u00b0"+
-		"\u00b1\3\2\2\2\u00b1\u00b3\3\2\2\2\u00b2\u00a7\3\2\2\2\u00b2\u00ad\3\2"+
-		"\2\2\u00b3\u00b5\3\2\2\2\u00b4\u00a4\3\2\2\2\u00b4\u00a5\3\2\2\2\u00b5"+
-		"\23\3\2\2\2\u00b6\u00b7\5J&\2\u00b7\u00b8\7\u0096\2\2\u00b8\u00b9\5J&"+
-		"\2\u00b9\25\3\2\2\2\u00ba\u00bb\5J&\2\u00bb\u00bf\7\u0088\2\2\u00bc\u00c0"+
-		"\5F$\2\u00bd\u00c0\5H%\2\u00be\u00c0\5*\26\2\u00bf\u00bc\3\2\2\2\u00bf"+
-		"\u00bd\3\2\2\2\u00bf\u00be\3\2\2\2\u00c0\27\3\2\2\2\u00c1\u00c2\5J&\2"+
-		"\u00c2\u00c3\7\u0096\2\2\u00c3\u00c4\7\13\2\2\u00c4\u00ca\7\u009d\2\2"+
-		"\u00c5\u00c6\5\f\7\2\u00c6\u00c7\7\u0095\2\2\u00c7\u00c9\3\2\2\2\u00c8"+
-		"\u00c5\3\2\2\2\u00c9\u00cc\3\2\2\2\u00ca\u00c8\3\2\2\2\u00ca\u00cb\3\2"+
-		"\2\2\u00cb\u00cd\3\2\2\2\u00cc\u00ca\3\2\2\2\u00cd\u00ce\7\u009e\2\2\u00ce"+
-		"\31\3\2\2\2\u00cf\u00d0\5J&\2\u00d0\u00d1\7\u0096\2\2\u00d1\u00d2\7\20"+
-		"\2\2\u00d2\u00d8\7\u009d\2\2\u00d3\u00d4\5\f\7\2\u00d4\u00d5\7\u0095\2"+
-		"\2\u00d5\u00d7\3\2\2\2\u00d6\u00d3\3\2\2\2\u00d7\u00da\3\2\2\2\u00d8\u00d6"+
-		"\3\2\2\2\u00d8\u00d9\3\2\2\2\u00d9\u00db\3\2\2\2\u00da\u00d8\3\2\2\2\u00db"+
-		"\u00dc\7\u009e\2\2\u00dc\33\3\2\2\2\u00dd\u00de\5J&\2\u00de\u00df\7\u0096"+
-		"\2\2\u00df\u00e0\7\21\2\2\u00e0\u00e1\7\u008c\2\2\u00e1\u00e2\5L\'\2\u00e2"+
-		"\u00e3\7\u008b\2\2\u00e3\35\3\2\2\2\u00e4\u00e5\5J&\2\u00e5\u00e6\7\u0096"+
-		"\2\2\u00e6\u00e7\7\22\2\2\u00e7\u00e8\7\u008c\2\2\u00e8\u00e9\5L\'\2\u00e9"+
-		"\u00ea\7\u0094\2\2\u00ea\u00eb\5L\'\2\u00eb\u00ec\7\u008b\2\2\u00ec\37"+
-		"\3\2\2\2\u00ed\u00ee\7\16\2\2\u00ee\u00ef\7\u0088\2\2\u00ef\u00f0\5J&"+
-		"\2\u00f0\u00f1\7\u0095\2\2\u00f1!\3\2\2\2\u00f2\u00f3\7\n\2\2\u00f3\u00f4"+
-		"\5(\25\2\u00f4\u00f5\7\u0095\2\2\u00f5#\3\2\2\2\u00f6\u00f7\7\17\2\2\u00f7"+
-		"\u00f8\5&\24\2\u00f8\u00f9\7\u0095\2\2\u00f9%\3\2\2\2\u00fa\u00fc\5(\25"+
-		"\2\u00fb\u00fa\3\2\2\2\u00fb\u00fc\3\2\2\2\u00fc\u00fd\3\2\2\2\u00fd\u00ff"+
-		"\7\u0097\2\2\u00fe\u00fb\3\2\2\2\u00fe\u00ff\3\2\2\2\u00ff\u0110\3\2\2"+
-		"\2\u0100\u0111\7u\2\2\u0101\u010d\7\u009d\2\2\u0102\u0107\5&\24\2\u0103"+
-		"\u0104\7\u0094\2\2\u0104\u0106\5&\24\2\u0105\u0103\3\2\2\2\u0106\u0109"+
-		"\3\2\2\2\u0107\u0105\3\2\2\2\u0107\u0108\3\2\2\2\u0108\u010b\3\2\2\2\u0109"+
-		"\u0107\3\2\2\2\u010a\u010c\7\u0094\2\2\u010b\u010a\3\2\2\2\u010b\u010c"+
-		"\3\2\2\2\u010c\u010e\3\2\2\2\u010d\u0102\3\2\2\2\u010d\u010e\3\2\2\2\u010e"+
-		"\u010f\3\2\2\2\u010f\u0111\7\u009e\2\2\u0110\u0100\3\2\2\2\u0110\u0101"+
-		"\3\2\2\2\u0111\u0118\3\2\2\2\u0112\u0115\5(\25\2\u0113\u0114\7\4\2\2\u0114"+
-		"\u0116\5J&\2\u0115\u0113\3\2\2\2\u0115\u0116\3\2\2\2\u0116\u0118\3\2\2"+
-		"\2\u0117\u00fe\3\2\2\2\u0117\u0112\3\2\2\2\u0118\'\3\2\2\2\u0119\u011b"+
-		"\7\u0097\2\2\u011a\u0119\3\2\2\2\u011a\u011b\3\2\2\2\u011b\u011c\3\2\2"+
-		"\2\u011c\u0121\5J&\2\u011d\u011e\7\u0097\2\2\u011e\u0120\5J&\2\u011f\u011d"+
-		"\3\2\2\2\u0120\u0123\3\2\2\2\u0121\u011f\3\2\2\2\u0121\u0122\3\2\2\2\u0122"+
-		")\3\2\2\2\u0123\u0121\3\2\2\2\u0124\u0132\5,\27\2\u0125\u0132\5.\30\2"+
-		"\u0126\u0132\5\60\31\2\u0127\u0132\5\62\32\2\u0128\u0132\5\64\33\2\u0129"+
-		"\u0132\5\66\34\2\u012a\u0132\58\35\2\u012b\u0132\5:\36\2\u012c\u0132\5"+
-		"<\37\2\u012d\u0132\5> \2\u012e\u0132\5@!\2\u012f\u0132\5B\"\2\u0130\u0132"+
-		"\5D#\2\u0131\u0124\3\2\2\2\u0131\u0125\3\2\2\2\u0131\u0126\3\2\2\2\u0131"+
-		"\u0127\3\2\2\2\u0131\u0128\3\2\2\2\u0131\u0129\3\2\2\2\u0131\u012a\3\2"+
-		"\2\2\u0131\u012b\3\2\2\2\u0131\u012c\3\2\2\2\u0131\u012d\3\2\2\2\u0131"+
-		"\u012e\3\2\2\2\u0131\u012f\3\2\2\2\u0131\u0130\3\2\2\2\u0132+\3\2\2\2"+
-		"\u0133\u0134\t\2\2\2\u0134-\3\2\2\2\u0135\u0136\7`\2\2\u0136/\3\2\2\2"+
-		"\u0137\u0138\t\3\2\2\u0138\61\3\2\2\2\u0139\u013a\5F$\2\u013a\u013b\7"+
-		"M\2\2\u013b\63\3\2\2\2\u013c\u013d\5F$\2\u013d\u013e\7N\2\2\u013e\65\3"+
-		"\2\2\2\u013f\u0140\5H%\2\u0140\u0141\7O\2\2\u0141\67\3\2\2\2\u0142\u0143"+
-		"\5H%\2\u0143\u0144\7P\2\2\u01449\3\2\2\2\u0145\u0146\5H%\2\u0146\u0147"+
-		"\7Q\2\2\u0147;\3\2\2\2\u0148\u0149\5H%\2\u0149\u014a\7R\2\2\u014a=\3\2"+
-		"\2\2\u014b\u014c\5H%\2\u014c\u014d\7S\2\2\u014d?\3\2\2\2\u014e\u014f\5"+
-		"H%\2\u014f\u0150\7T\2\2\u0150A\3\2\2\2\u0151\u0152\5H%\2\u0152\u0153\7"+
-		"U\2\2\u0153C\3\2\2\2\u0154\u0155\5H%\2\u0155\u0156\7V\2\2\u0156E\3\2\2"+
-		"\2\u0157\u0158\7k\2\2\u0158G\3\2\2\2\u0159\u015b\7t\2\2\u015a\u0159\3"+
-		"\2\2\2\u015a\u015b\3\2\2\2\u015b\u015c\3\2\2\2\u015c\u0164\t\4\2\2\u015d"+
-		"\u015e\7o\2\2\u015e\u0164\t\5\2\2\u015f\u0160\7p\2\2\u0160\u0164\t\6\2"+
-		"\2\u0161\u0162\7q\2\2\u0162\u0164\t\7\2\2\u0163\u015a\3\2\2\2\u0163\u015d"+
-		"\3\2\2\2\u0163\u015f\3\2\2\2\u0163\u0161\3\2\2\2\u0164I\3\2\2\2\u0165"+
-		"\u0169\7W\2\2\u0166\u0167\7r\2\2\u0167\u0169\7W\2\2\u0168\u0165\3\2\2"+
-		"\2\u0168\u0166\3\2\2\2\u0169K\3\2\2\2\u016a\u016b\t\b\2\2\u016bM\3\2\2"+
-		"\2\u016c\u016d\t\t\2\2\u016dO\3\2\2\2!RW_ly\u0083\u008e\u0094\u009a\u00a2"+
-		"\u00ab\u00b0\u00b2\u00b4\u00bf\u00ca\u00d8\u00fb\u00fe\u0107\u010b\u010d"+
-		"\u0110\u0115\u0117\u011a\u0121\u0131\u015a\u0163\u0168";
+		"\t!\4\"\t\"\4#\t#\4$\t$\4%\t%\4&\t&\4\'\t\'\4(\t(\4)\t)\3\2\3\2\5\2U\n"+
+		"\2\3\2\7\2X\n\2\f\2\16\2[\13\2\3\2\3\2\3\2\7\2`\n\2\f\2\16\2c\13\2\3\2"+
+		"\3\2\3\3\3\3\3\3\3\3\3\3\3\3\7\3m\n\3\f\3\16\3p\13\3\3\3\3\3\3\4\3\4\3"+
+		"\4\3\4\3\4\3\4\7\4z\n\4\f\4\16\4}\13\4\3\4\3\4\3\5\3\5\3\5\3\5\3\5\3\5"+
+		"\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\7\3\7\5\7\u0091\n\7\3\b\3\b\5\b\u0095"+
+		"\n\b\3\t\3\t\3\t\3\t\5\t\u009b\n\t\3\n\3\n\3\n\3\n\3\n\3\n\5\n\u00a3\n"+
+		"\n\3\13\3\13\3\13\3\13\3\13\3\13\3\13\5\13\u00ac\n\13\3\13\3\13\3\13\5"+
+		"\13\u00b1\n\13\5\13\u00b3\n\13\5\13\u00b5\n\13\3\f\3\f\3\f\3\f\3\r\3\r"+
+		"\3\r\3\r\3\r\5\r\u00c0\n\r\3\16\3\16\3\16\3\16\3\16\3\16\3\16\7\16\u00c9"+
+		"\n\16\f\16\16\16\u00cc\13\16\3\16\3\16\3\17\3\17\3\17\3\17\3\17\3\17\3"+
+		"\17\7\17\u00d7\n\17\f\17\16\17\u00da\13\17\3\17\3\17\3\20\3\20\3\20\3"+
+		"\20\3\20\3\20\3\20\3\21\3\21\3\21\3\21\3\21\3\21\3\21\3\21\3\21\3\22\3"+
+		"\22\3\22\3\22\3\22\3\23\3\23\3\23\3\23\3\24\3\24\3\24\3\24\3\25\5\25\u00fc"+
+		"\n\25\3\25\5\25\u00ff\n\25\3\25\3\25\3\25\3\25\3\25\7\25\u0106\n\25\f"+
+		"\25\16\25\u0109\13\25\3\25\5\25\u010c\n\25\5\25\u010e\n\25\3\25\5\25\u0111"+
+		"\n\25\3\25\3\25\3\25\5\25\u0116\n\25\5\25\u0118\n\25\3\26\5\26\u011b\n"+
+		"\26\3\26\3\26\3\26\7\26\u0120\n\26\f\26\16\26\u0123\13\26\3\27\3\27\3"+
+		"\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\3\27\5\27\u0132\n\27"+
+		"\3\30\3\30\3\31\3\31\3\32\3\32\3\33\3\33\3\33\3\34\3\34\3\34\3\35\3\35"+
+		"\3\35\3\36\3\36\3\36\3\37\3\37\3\37\3 \3 \3 \3!\3!\3!\3\"\3\"\3\"\3#\3"+
+		"#\3#\3$\3$\3$\3%\3%\3&\5&\u015b\n&\3&\3&\3&\3&\3&\3&\3&\5&\u0164\n&\3"+
+		"\'\3\'\3\'\5\'\u0169\n\'\3(\3(\3)\3)\3)\2\2*\2\4\6\b\n\f\16\20\22\24\26"+
+		"\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNP\2\n\4\2\6\6\f\f\3\2ab\3"+
+		"\2cd\3\2ef\3\2gh\3\2ij\3\2JV\5\2\4\b\n\22\24I\2\u0178\2R\3\2\2\2\4f\3"+
+		"\2\2\2\6s\3\2\2\2\b\u0080\3\2\2\2\n\u0086\3\2\2\2\f\u0090\3\2\2\2\16\u0094"+
+		"\3\2\2\2\20\u009a\3\2\2\2\22\u00a2\3\2\2\2\24\u00b4\3\2\2\2\26\u00b6\3"+
+		"\2\2\2\30\u00ba\3\2\2\2\32\u00c1\3\2\2\2\34\u00cf\3\2\2\2\36\u00dd\3\2"+
+		"\2\2 \u00e4\3\2\2\2\"\u00ed\3\2\2\2$\u00f2\3\2\2\2&\u00f6\3\2\2\2(\u0117"+
+		"\3\2\2\2*\u011a\3\2\2\2,\u0131\3\2\2\2.\u0133\3\2\2\2\60\u0135\3\2\2\2"+
+		"\62\u0137\3\2\2\2\64\u0139\3\2\2\2\66\u013c\3\2\2\28\u013f\3\2\2\2:\u0142"+
+		"\3\2\2\2<\u0145\3\2\2\2>\u0148\3\2\2\2@\u014b\3\2\2\2B\u014e\3\2\2\2D"+
+		"\u0151\3\2\2\2F\u0154\3\2\2\2H\u0157\3\2\2\2J\u0163\3\2\2\2L\u0168\3\2"+
+		"\2\2N\u016a\3\2\2\2P\u016c\3\2\2\2RT\5\"\22\2SU\5$\23\2TS\3\2\2\2TU\3"+
+		"\2\2\2UY\3\2\2\2VX\5&\24\2WV\3\2\2\2X[\3\2\2\2YW\3\2\2\2YZ\3\2\2\2Za\3"+
+		"\2\2\2[Y\3\2\2\2\\]\5\20\t\2]^\7\u0095\2\2^`\3\2\2\2_\\\3\2\2\2`c\3\2"+
+		"\2\2a_\3\2\2\2ab\3\2\2\2bd\3\2\2\2ca\3\2\2\2de\7\2\2\3e\3\3\2\2\2fg\7"+
+		"\13\2\2gh\5L\'\2hn\7\u009d\2\2ij\5\16\b\2jk\7\u0095\2\2km\3\2\2\2li\3"+
+		"\2\2\2mp\3\2\2\2nl\3\2\2\2no\3\2\2\2oq\3\2\2\2pn\3\2\2\2qr\7\u009e\2\2"+
+		"r\5\3\2\2\2st\7\20\2\2tu\5L\'\2u{\7\u009d\2\2vw\5\16\b\2wx\7\u0095\2\2"+
+		"xz\3\2\2\2yv\3\2\2\2z}\3\2\2\2{y\3\2\2\2{|\3\2\2\2|~\3\2\2\2}{\3\2\2\2"+
+		"~\177\7\u009e\2\2\177\7\3\2\2\2\u0080\u0081\7\21\2\2\u0081\u0082\5L\'"+
+		"\2\u0082\u0083\7\u008c\2\2\u0083\u0084\5\f\7\2\u0084\u0085\7\u008b\2\2"+
+		"\u0085\t\3\2\2\2\u0086\u0087\7\22\2\2\u0087\u0088\5L\'\2\u0088\u0089\7"+
+		"\u008c\2\2\u0089\u008a\5\f\7\2\u008a\u008b\7\u0094\2\2\u008b\u008c\5\f"+
+		"\7\2\u008c\u008d\7\u008b\2\2\u008d\13\3\2\2\2\u008e\u0091\5L\'\2\u008f"+
+		"\u0091\5N(\2\u0090\u008e\3\2\2\2\u0090\u008f\3\2\2\2\u0091\r\3\2\2\2\u0092"+
+		"\u0095\5\20\t\2\u0093\u0095\5\22\n\2\u0094\u0092\3\2\2\2\u0094\u0093\3"+
+		"\2\2\2\u0095\17\3\2\2\2\u0096\u009b\5\4\3\2\u0097\u009b\5\6\4\2\u0098"+
+		"\u009b\5\b\5\2\u0099\u009b\5\n\6\2\u009a\u0096\3\2\2\2\u009a\u0097\3\2"+
+		"\2\2\u009a\u0098\3\2\2\2\u009a\u0099\3\2\2\2\u009b\21\3\2\2\2\u009c\u00a3"+
+		"\5\24\13\2\u009d\u00a3\5\26\f\2\u009e\u00a3\5\32\16\2\u009f\u00a3\5\34"+
+		"\17\2\u00a0\u00a3\5\36\20\2\u00a1\u00a3\5 \21\2\u00a2\u009c\3\2\2\2\u00a2"+
+		"\u009d\3\2\2\2\u00a2\u009e\3\2\2\2\u00a2\u009f\3\2\2\2\u00a2\u00a0\3\2"+
+		"\2\2\u00a2\u00a1\3\2\2\2\u00a3\23\3\2\2\2\u00a4\u00b5\5\30\r\2\u00a5\u00a6"+
+		"\5L\'\2\u00a6\u00b2\7\u0096\2\2\u00a7\u00a8\5N(\2\u00a8\u00ab\7\u0088"+
+		"\2\2\u00a9\u00ac\5H%\2\u00aa\u00ac\5J&\2\u00ab\u00a9\3\2\2\2\u00ab\u00aa"+
+		"\3\2\2\2\u00ac\u00b3\3\2\2\2\u00ad\u00b0\5N(\2\u00ae\u00af\7\u0088\2\2"+
+		"\u00af\u00b1\5,\27\2\u00b0\u00ae\3\2\2\2\u00b0\u00b1\3\2\2\2\u00b1\u00b3"+
+		"\3\2\2\2\u00b2\u00a7\3\2\2\2\u00b2\u00ad\3\2\2\2\u00b3\u00b5\3\2\2\2\u00b4"+
+		"\u00a4\3\2\2\2\u00b4\u00a5\3\2\2\2\u00b5\25\3\2\2\2\u00b6\u00b7\5L\'\2"+
+		"\u00b7\u00b8\7\u0096\2\2\u00b8\u00b9\5L\'\2\u00b9\27\3\2\2\2\u00ba\u00bb"+
+		"\5L\'\2\u00bb\u00bf\7\u0088\2\2\u00bc\u00c0\5H%\2\u00bd\u00c0\5J&\2\u00be"+
+		"\u00c0\5,\27\2\u00bf\u00bc\3\2\2\2\u00bf\u00bd\3\2\2\2\u00bf\u00be\3\2"+
+		"\2\2\u00c0\31\3\2\2\2\u00c1\u00c2\5L\'\2\u00c2\u00c3\7\u0096\2\2\u00c3"+
+		"\u00c4\7\13\2\2\u00c4\u00ca\7\u009d\2\2\u00c5\u00c6\5\16\b\2\u00c6\u00c7"+
+		"\7\u0095\2\2\u00c7\u00c9\3\2\2\2\u00c8\u00c5\3\2\2\2\u00c9\u00cc\3\2\2"+
+		"\2\u00ca\u00c8\3\2\2\2\u00ca\u00cb\3\2\2\2\u00cb\u00cd\3\2\2\2\u00cc\u00ca"+
+		"\3\2\2\2\u00cd\u00ce\7\u009e\2\2\u00ce\33\3\2\2\2\u00cf\u00d0\5L\'\2\u00d0"+
+		"\u00d1\7\u0096\2\2\u00d1\u00d2\7\20\2\2\u00d2\u00d8\7\u009d\2\2\u00d3"+
+		"\u00d4\5\16\b\2\u00d4\u00d5\7\u0095\2\2\u00d5\u00d7\3\2\2\2\u00d6\u00d3"+
+		"\3\2\2\2\u00d7\u00da\3\2\2\2\u00d8\u00d6\3\2\2\2\u00d8\u00d9\3\2\2\2\u00d9"+
+		"\u00db\3\2\2\2\u00da\u00d8\3\2\2\2\u00db\u00dc\7\u009e\2\2\u00dc\35\3"+
+		"\2\2\2\u00dd\u00de\5L\'\2\u00de\u00df\7\u0096\2\2\u00df\u00e0\7\21\2\2"+
+		"\u00e0\u00e1\7\u008c\2\2\u00e1\u00e2\5\f\7\2\u00e2\u00e3\7\u008b\2\2\u00e3"+
+		"\37\3\2\2\2\u00e4\u00e5\5L\'\2\u00e5\u00e6\7\u0096\2\2\u00e6\u00e7\7\22"+
+		"\2\2\u00e7\u00e8\7\u008c\2\2\u00e8\u00e9\5\f\7\2\u00e9\u00ea\7\u0094\2"+
+		"\2\u00ea\u00eb\5\f\7\2\u00eb\u00ec\7\u008b\2\2\u00ec!\3\2\2\2\u00ed\u00ee"+
+		"\7\16\2\2\u00ee\u00ef\7\u0088\2\2\u00ef\u00f0\5L\'\2\u00f0\u00f1\7\u0095"+
+		"\2\2\u00f1#\3\2\2\2\u00f2\u00f3\7\n\2\2\u00f3\u00f4\5*\26\2\u00f4\u00f5"+
+		"\7\u0095\2\2\u00f5%\3\2\2\2\u00f6\u00f7\7\17\2\2\u00f7\u00f8\5(\25\2\u00f8"+
+		"\u00f9\7\u0095\2\2\u00f9\'\3\2\2\2\u00fa\u00fc\5*\26\2\u00fb\u00fa\3\2"+
+		"\2\2\u00fb\u00fc\3\2\2\2\u00fc\u00fd\3\2\2\2\u00fd\u00ff\7\u0097\2\2\u00fe"+
+		"\u00fb\3\2\2\2\u00fe\u00ff\3\2\2\2\u00ff\u0110\3\2\2\2\u0100\u0111\7u"+
+		"\2\2\u0101\u010d\7\u009d\2\2\u0102\u0107\5(\25\2\u0103\u0104\7\u0094\2"+
+		"\2\u0104\u0106\5(\25\2\u0105\u0103\3\2\2\2\u0106\u0109\3\2\2\2\u0107\u0105"+
+		"\3\2\2\2\u0107\u0108\3\2\2\2\u0108\u010b\3\2\2\2\u0109\u0107\3\2\2\2\u010a"+
+		"\u010c\7\u0094\2\2\u010b\u010a\3\2\2\2\u010b\u010c\3\2\2\2\u010c\u010e"+
+		"\3\2\2\2\u010d\u0102\3\2\2\2\u010d\u010e\3\2\2\2\u010e\u010f\3\2\2\2\u010f"+
+		"\u0111\7\u009e\2\2\u0110\u0100\3\2\2\2\u0110\u0101\3\2\2\2\u0111\u0118"+
+		"\3\2\2\2\u0112\u0115\5*\26\2\u0113\u0114\7\4\2\2\u0114\u0116\5L\'\2\u0115"+
+		"\u0113\3\2\2\2\u0115\u0116\3\2\2\2\u0116\u0118\3\2\2\2\u0117\u00fe\3\2"+
+		"\2\2\u0117\u0112\3\2\2\2\u0118)\3\2\2\2\u0119\u011b\7\u0097\2\2\u011a"+
+		"\u0119\3\2\2\2\u011a\u011b\3\2\2\2\u011b\u011c\3\2\2\2\u011c\u0121\5L"+
+		"\'\2\u011d\u011e\7\u0097\2\2\u011e\u0120\5L\'\2\u011f\u011d\3\2\2\2\u0120"+
+		"\u0123\3\2\2\2\u0121\u011f\3\2\2\2\u0121\u0122\3\2\2\2\u0122+\3\2\2\2"+
+		"\u0123\u0121\3\2\2\2\u0124\u0132\5.\30\2\u0125\u0132\5\60\31\2\u0126\u0132"+
+		"\5\62\32\2\u0127\u0132\5\64\33\2\u0128\u0132\5\66\34\2\u0129\u0132\58"+
+		"\35\2\u012a\u0132\5:\36\2\u012b\u0132\5<\37\2\u012c\u0132\5> \2\u012d"+
+		"\u0132\5@!\2\u012e\u0132\5B\"\2\u012f\u0132\5D#\2\u0130\u0132\5F$\2\u0131"+
+		"\u0124\3\2\2\2\u0131\u0125\3\2\2\2\u0131\u0126\3\2\2\2\u0131\u0127\3\2"+
+		"\2\2\u0131\u0128\3\2\2\2\u0131\u0129\3\2\2\2\u0131\u012a\3\2\2\2\u0131"+
+		"\u012b\3\2\2\2\u0131\u012c\3\2\2\2\u0131\u012d\3\2\2\2\u0131\u012e\3\2"+
+		"\2\2\u0131\u012f\3\2\2\2\u0131\u0130\3\2\2\2\u0132-\3\2\2\2\u0133\u0134"+
+		"\t\2\2\2\u0134/\3\2\2\2\u0135\u0136\7`\2\2\u0136\61\3\2\2\2\u0137\u0138"+
+		"\t\3\2\2\u0138\63\3\2\2\2\u0139\u013a\5H%\2\u013a\u013b\7M\2\2\u013b\65"+
+		"\3\2\2\2\u013c\u013d\5H%\2\u013d\u013e\7N\2\2\u013e\67\3\2\2\2\u013f\u0140"+
+		"\5J&\2\u0140\u0141\7O\2\2\u01419\3\2\2\2\u0142\u0143\5J&\2\u0143\u0144"+
+		"\7P\2\2\u0144;\3\2\2\2\u0145\u0146\5J&\2\u0146\u0147\7Q\2\2\u0147=\3\2"+
+		"\2\2\u0148\u0149\5J&\2\u0149\u014a\7R\2\2\u014a?\3\2\2\2\u014b\u014c\5"+
+		"J&\2\u014c\u014d\7S\2\2\u014dA\3\2\2\2\u014e\u014f\5J&\2\u014f\u0150\7"+
+		"T\2\2\u0150C\3\2\2\2\u0151\u0152\5J&\2\u0152\u0153\7U\2\2\u0153E\3\2\2"+
+		"\2\u0154\u0155\5J&\2\u0155\u0156\7V\2\2\u0156G\3\2\2\2\u0157\u0158\7k"+
+		"\2\2\u0158I\3\2\2\2\u0159\u015b\7t\2\2\u015a\u0159\3\2\2\2\u015a\u015b"+
+		"\3\2\2\2\u015b\u015c\3\2\2\2\u015c\u0164\t\4\2\2\u015d\u015e\7o\2\2\u015e"+
+		"\u0164\t\5\2\2\u015f\u0160\7p\2\2\u0160\u0164\t\6\2\2\u0161\u0162\7q\2"+
+		"\2\u0162\u0164\t\7\2\2\u0163\u015a\3\2\2\2\u0163\u015d\3\2\2\2\u0163\u015f"+
+		"\3\2\2\2\u0163\u0161\3\2\2\2\u0164K\3\2\2\2\u0165\u0169\7W\2\2\u0166\u0167"+
+		"\7r\2\2\u0167\u0169\7W\2\2\u0168\u0165\3\2\2\2\u0168\u0166\3\2\2\2\u0169"+
+		"M\3\2\2\2\u016a\u016b\t\b\2\2\u016bO\3\2\2\2\u016c\u016d\t\t\2\2\u016d"+
+		"Q\3\2\2\2 TYan{\u0090\u0094\u009a\u00a2\u00ab\u00b0\u00b2\u00b4\u00bf"+
+		"\u00ca\u00d8\u00fb\u00fe\u0107\u010b\u010d\u0110\u0115\u0117\u011a\u0121"+
+		"\u0131\u015a\u0163\u0168";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

@@ -35,6 +35,9 @@ public:
   virtual void enterMapDeclaration(TypedefParser::MapDeclarationContext * /*ctx*/) override { }
   virtual void exitMapDeclaration(TypedefParser::MapDeclarationContext * /*ctx*/) override { }
 
+  virtual void enterTypeParameter(TypedefParser::TypeParameterContext * /*ctx*/) override { }
+  virtual void exitTypeParameter(TypedefParser::TypeParameterContext * /*ctx*/) override { }
+
   virtual void enterStructMember(TypedefParser::StructMemberContext * /*ctx*/) override { }
   virtual void exitStructMember(TypedefParser::StructMemberContext * /*ctx*/) override { }
 

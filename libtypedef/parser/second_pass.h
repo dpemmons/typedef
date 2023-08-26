@@ -19,63 +19,6 @@ class SecondPassListener : public TypedefParserBaseListener {
   SecondPassListener(std::vector<ParserErrorInfo> &errors_list)
       : errors_list_(errors_list) {}
 
-  /***
-   * Recursively walk *up* the parse tree to find a symbol.
-   *
-   * @param unresolved_symbol_ctx ths symbol we're searching for.
-   * @param search_ctx the part of the parse tree we're searching in.
-   *
-   * @returns true if found.
-   */
-  // bool FindSymbol(TypedefParser::SymbolReferenceContext
-  // *unresolved_symbol_ctx,
-  //                 antlr4::tree::ParseTree *search_ctx) {
-  //   const string &query_identifier = unresolved_symbol_ctx->maybe_symref->id;
-
-  //   TypedefParser::StructDeclarationContext *maybeStruct =
-  //       dynamic_cast<TypedefParser::StructDeclarationContext *>(search_ctx);
-  //   TypedefParser::VariantDeclarationContext *maybeVariant =
-  //       dynamic_cast<TypedefParser::VariantDeclarationContext *>(search_ctx);
-  //   TypedefParser::CompilationUnitContext *maybeCompilationUnit =
-  //       dynamic_cast<TypedefParser::CompilationUnitContext *>(search_ctx);
-
-  //   // If the current tree leaf is a struct...
-  //   if (maybeStruct &&
-  //       maybeStruct->s->table.HasTypeIdentifier(query_identifier) > 0) {
-  //     maybeStruct->s->table.GetTypeIdentifier(query_identifier);
-  //     return true;
-  //   }
-  //   // If the current tree leaf is a variant...
-  //   else if (maybeVariant &&
-  //            maybeVariant->v->table.HasTypeIdentifier(query_identifier) > 0)
-  //            {
-  //     return true;
-  //   }
-  //   // If the current tree leaf is a comilation unit...
-  //   else if (maybeCompilationUnit &&
-  //            maybeCompilationUnit->symbol_table.HasTypeIdentifier(
-  //                query_identifier) > 0) {
-  //     return true;
-  //   } else if (search_ctx->parent != nullptr) {
-  //     return FindSymbol(unresolved_symbol_ctx, search_ctx->parent);
-  //   } else {
-  //     // top of the tree.
-  //     errors_list_.emplace_back(ErrorFromContext(
-  //         unresolved_symbol_ctx,
-  //         ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE, "Unresolved symbol
-  //         reference."));
-  //     return false;
-  //   }
-  // }
-
-  // virtual void exitSymbolReference(
-  //     TypedefParser::SymbolReferenceContext *ctx) override {
-  //   // walk up the tree to see if the symbol exists.
-  //   if (ctx->parent) {
-  //     FindSymbol(ctx, ctx->parent);
-  //   }
-  // }
-
   virtual void enterCompilationUnit(
       TypedefParser::CompilationUnitContext *ctx) override;
 
@@ -84,6 +27,15 @@ class SecondPassListener : public TypedefParserBaseListener {
 
   virtual void enterSymrefMemberDeclaration(
       TypedefParser::SymrefMemberDeclarationContext *ctx) override;
+
+  virtual void enterMapDeclaration(
+      TypedefParser::MapDeclarationContext *ctx) override;
+
+  virtual void enterInlineMapDeclaration(
+      TypedefParser::InlineMapDeclarationContext *ctx) override;
+
+  virtual void enterTypeParameter(
+      TypedefParser::TypeParameterContext *ctx) override;
 
   // virtual void exitValuedTemplateStringType(
   //     TypedefParser::ValuedTemplateStringTypeContext *ctx) override {

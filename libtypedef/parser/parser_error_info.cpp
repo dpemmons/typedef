@@ -359,6 +359,8 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
       return "UNRESOLVED_SYMBOL_REFERENCE";
     case DUPLICATE_SYMBOL:
       return "DUPLICATE_SYMBOL";
+    case TYPE_CONSTRAINT_VIOLATION:
+      return "TYPE_CONSTRAINT_VIOLATION";
     default:
       throw fmt::format("Unhandled error ID in ErrorTypeToString(): {}",
                         (int)error_type);

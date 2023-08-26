@@ -33,6 +33,9 @@ public:
   virtual void enterMapDeclaration(TypedefParser::MapDeclarationContext *ctx) = 0;
   virtual void exitMapDeclaration(TypedefParser::MapDeclarationContext *ctx) = 0;
 
+  virtual void enterTypeParameter(TypedefParser::TypeParameterContext *ctx) = 0;
+  virtual void exitTypeParameter(TypedefParser::TypeParameterContext *ctx) = 0;
+
   virtual void enterStructMember(TypedefParser::StructMemberContext *ctx) = 0;
   virtual void exitStructMember(TypedefParser::StructMemberContext *ctx) = 0;
 

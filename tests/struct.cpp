@@ -375,7 +375,7 @@ struct SomeStruct12 {
   REQUIRE(inline_vector_field);
   REQUIRE(inline_vector_field->IsVector());
   REQUIRE(inline_vector_field->GetVector());
-  REQUIRE(inline_vector_field->GetVector()->IsI32());
+  REQUIRE(inline_vector_field->GetVector()->element_type->IsI32());
 }
 
 TEST_CASE("Struct with an inline map", "[struct]") {
@@ -395,8 +395,8 @@ struct SomeStruct13 {
   REQUIRE(inline_map_field);
   REQUIRE(inline_map_field->IsMap());
   REQUIRE(inline_map_field->GetMap());
-  REQUIRE(inline_map_field->GetMap()->KeyIsI32());
-  REQUIRE(inline_map_field->GetMap()->ValueIsF64());
+  REQUIRE(inline_map_field->GetMap()->key_type->IsI32());
+  REQUIRE(inline_map_field->GetMap()->value_type->IsF64());
 }
 
 TEST_CASE("Struct with an nested struct", "[struct]") {
@@ -463,7 +463,7 @@ struct SomeStruct22 {
   REQUIRE(vector_field);
   REQUIRE(vector_field->IsVector());
   REQUIRE(vector_field->GetVector());
-  REQUIRE(vector_field->GetVector()->IsI32());
+  REQUIRE(vector_field->GetVector()->element_type->IsI32());
 }
 
 TEST_CASE("Struct with an nested map", "[struct]") {
@@ -483,6 +483,6 @@ struct SomeStruct23 {
   REQUIRE(map_field);
   REQUIRE(map_field->IsMap());
   REQUIRE(map_field->GetMap());
-  REQUIRE(map_field->GetMap()->KeyIsI32());
-  REQUIRE(map_field->GetMap()->ValueIsF64());
+  REQUIRE(map_field->GetMap()->key_type->IsI32());
+  REQUIRE(map_field->GetMap()->value_type->IsF64());
 }
