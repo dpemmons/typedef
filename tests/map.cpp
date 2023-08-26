@@ -15,17 +15,6 @@ namespace {
 const std::vector<td::ParserErrorInfo> empty_errors;
 }  // namespace
 
-// template <typename T>
-// void AssertType(std::shared_ptr<td::ParsedFile> parsed_file, string name) {
-//   optional<td::SymbolTable::Value> some_map_val =
-//       parsed_file->symbols2_.Get(td::Identifier::TypeIdentifier(name));
-//   REQUIRE(some_map_val);
-//   REQUIRE(holds_alternative<shared_ptr<td::Map>>(*some_map_val));
-//   auto s = get<shared_ptr<td::Map>>(*some_map_val);
-//   REQUIRE(holds_alternative<optional<T>>(s->key_type));
-//   REQUIRE(holds_alternative<optional<string>>(s->value_type));
-// }
-
 TEST_CASE("Map with various scalar key types", "[symref]") {
   std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
@@ -44,20 +33,49 @@ map SomeI64Map<i64, str>;
 map SomeStrMap<str, str>;
     )");
   REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(parsed_file->mod->GetMap("SomeBoolMap"));
+  REQUIRE(parsed_file->mod->GetMap("SomeBoolMap")->key_type->IsBool());
+  REQUIRE(parsed_file->mod->GetMap("SomeBoolMap")->value_type->IsStr());
 
-  // AssertType<bool>(parsed_file, "SomeBoolMap");
-  // AssertType<char32_t>(parsed_file, "SomeCharMap");
-  // AssertType<float>(parsed_file, "SomeF32Map");
-  // AssertType<double>(parsed_file, "SomeF64Map");
-  // AssertType<uint8_t>(parsed_file, "SomeU8Map");
-  // AssertType<uint16_t>(parsed_file, "SomeU16Map");
-  // AssertType<uint32_t>(parsed_file, "SomeU32Map");
-  // AssertType<uint64_t>(parsed_file, "SomeU64Map");
-  // AssertType<int8_t>(parsed_file, "SomeI8Map");
-  // AssertType<int16_t>(parsed_file, "SomeI16Map");
-  // AssertType<int32_t>(parsed_file, "SomeI32Map");
-  // AssertType<int64_t>(parsed_file, "SomeI64Map");
-  // AssertType<string>(parsed_file, "SomeStrMap");
+  REQUIRE(parsed_file->mod->GetMap("SomeCharMap"));
+  REQUIRE(parsed_file->mod->GetMap("SomeCharMap")->key_type->IsChar());
+  REQUIRE(parsed_file->mod->GetMap("SomeCharMap")->value_type->IsStr());
+
+  REQUIRE(parsed_file->mod->GetMap("SomeU8Map"));
+  REQUIRE(parsed_file->mod->GetMap("SomeU8Map")->key_type->IsU8());
+  REQUIRE(parsed_file->mod->GetMap("SomeU8Map")->value_type->IsStr());
+
+  REQUIRE(parsed_file->mod->GetMap("SomeU16Map"));
+  REQUIRE(parsed_file->mod->GetMap("SomeU16Map")->key_type->IsU16());
+  REQUIRE(parsed_file->mod->GetMap("SomeU16Map")->value_type->IsStr());
+
+  REQUIRE(parsed_file->mod->GetMap("SomeU32Map"));
+  REQUIRE(parsed_file->mod->GetMap("SomeU32Map")->key_type->IsU32());
+  REQUIRE(parsed_file->mod->GetMap("SomeU32Map")->value_type->IsStr());
+
+  REQUIRE(parsed_file->mod->GetMap("SomeU64Map"));
+  REQUIRE(parsed_file->mod->GetMap("SomeU64Map")->key_type->IsU64());
+  REQUIRE(parsed_file->mod->GetMap("SomeU64Map")->value_type->IsStr());
+
+  REQUIRE(parsed_file->mod->GetMap("SomeI8Map"));
+  REQUIRE(parsed_file->mod->GetMap("SomeI8Map")->key_type->IsI8());
+  REQUIRE(parsed_file->mod->GetMap("SomeI8Map")->value_type->IsStr());
+
+  REQUIRE(parsed_file->mod->GetMap("SomeI16Map"));
+  REQUIRE(parsed_file->mod->GetMap("SomeI16Map")->key_type->IsI16());
+  REQUIRE(parsed_file->mod->GetMap("SomeI16Map")->value_type->IsStr());
+
+  REQUIRE(parsed_file->mod->GetMap("SomeI32Map"));
+  REQUIRE(parsed_file->mod->GetMap("SomeI32Map")->key_type->IsI32());
+  REQUIRE(parsed_file->mod->GetMap("SomeI32Map")->value_type->IsStr());
+
+  REQUIRE(parsed_file->mod->GetMap("SomeI64Map"));
+  REQUIRE(parsed_file->mod->GetMap("SomeI64Map")->key_type->IsI64());
+  REQUIRE(parsed_file->mod->GetMap("SomeI64Map")->value_type->IsStr());
+
+  REQUIRE(parsed_file->mod->GetMap("SomeStrMap"));
+  REQUIRE(parsed_file->mod->GetMap("SomeStrMap")->key_type->IsStr());
+  REQUIRE(parsed_file->mod->GetMap("SomeStrMap")->value_type->IsStr());
 }
 
 TEST_CASE("Map with a struct key type should error", "[symref]") {
@@ -72,7 +90,9 @@ struct StructA {
 map SomeBoolMap<StructA, str>;
     )");
   REQUIRE(parsed_file->HasErrors());
-  // TODO this should throw an appropriate semantic error (not a syntax error)
+  REQUIRE(parsed_file->errors.size() == 1);
+  REQUIRE(parsed_file->errors[0].error_type ==
+          td::ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
 }
 
 TEST_CASE("Map with a float key type should error", "[symref]") {
