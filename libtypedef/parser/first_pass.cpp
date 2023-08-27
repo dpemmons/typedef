@@ -2,6 +2,7 @@
 
 #include <charconv>
 #include <memory>
+#include <stdexcept>
 
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
@@ -11,8 +12,9 @@
 
 using namespace std;
 
-#define throw_line(str) \
-  throw fmt::format("Exception \"{}\" in {}:{}", str, __FILE__, __LINE__);
+#define throw_logic_error(str) \
+  throw std::logic_error(      \
+      fmt::format("\"{}\" in {}:{}", str, __FILE__, __LINE__));
 
 #define bail_if_errors()     \
   if (errors_list_.size()) { \
@@ -370,7 +372,7 @@ void FirstPassListener::exitTypeParameter(
     ctx->type_param->type = td::table::Type::TYPE_SYMREF;
     ctx->type_param->symrmef_identifier = ctx->identifier()->id;
   } else {
-    throw_line("Invalid state.");
+    throw_logic_error("Invalid state.");
   }
 }
 
@@ -383,7 +385,7 @@ void FirstPassListener::exitStructMember(
   } else if (ctx->fieldDeclaration()) {
     ctx->mem->field_decl = ctx->fieldDeclaration()->field_decl;
   } else {
-    throw_line("Invalid state.");
+    throw_logic_error("Invalid state.");
   }
 }
 
@@ -409,7 +411,7 @@ void FirstPassListener::exitTypeDeclaration(
         td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_MAP;
     ctx->type_decl->map = ctx->mapDeclaration()->map;
   } else {
-    throw_line("Invalid state.");
+    throw_logic_error("Invalid state.");
   }
 }
 
@@ -429,7 +431,7 @@ void FirstPassListener::exitFieldDeclaration(
   } else if (ctx->symrefMemberDeclaration()) {
     ctx->field_decl = ctx->symrefMemberDeclaration()->field_decl;
   } else {
-    throw_line("Invalid state.");
+    throw_logic_error("Invalid state.");
   }
 }
 
@@ -490,7 +492,7 @@ void FirstPassListener::exitPrimitiveMemberDeclaration(
         ctx->field_decl->primitive_value = GetFloatValue<int64_t>(ctx);
         break;
       default:
-        throw_line("Invalid state.");
+        throw_logic_error("Invalid state.");
     }
   } else if (ctx->intLiteral()) {
     switch (ctx->primitiveTypeIdentifier()->primitive_type) {
@@ -525,7 +527,7 @@ void FirstPassListener::exitPrimitiveMemberDeclaration(
         ctx->field_decl->primitive_value = GetIntValue<int64_t>(ctx);
         break;
       default:
-        throw_line("Invalid state.");
+        throw_logic_error("Invalid state.");
     }
   }
   // else no value; that's fine.
@@ -547,7 +549,7 @@ void FirstPassListener::exitImpliedTypePrimitiveMemberDeclaration(
         (td::table::Type)ctx->explicitPrimitiveLiteral()->type;
     ctx->field_decl->primitive_value = ctx->explicitPrimitiveLiteral()->val;
   } else {
-    throw_line("Invalid state.");
+    throw_logic_error("Invalid state.");
   }
 }
 
@@ -651,7 +653,7 @@ void FirstPassListener::exitExplicitPrimitiveLiteral(
     ctx->type = td::table::PrimitiveType::PRIMITIVE_TYPE_I64;
     ctx->val = ctx->i64Literal()->val;
   } else {
-    throw_line("Invalid state.");
+    throw_logic_error("Invalid state.");
   }
 }
 
@@ -663,7 +665,7 @@ void FirstPassListener::exitBoolLiteral(
   } else if (ctx->start->getType() == TypedefParser::KW_TRUE) {
     ctx->val = true;
   } else {
-    throw_line("Invalid state.");
+    throw_logic_error("Invalid state.");
   }
 }
 

@@ -11,7 +11,7 @@
 
 namespace antlr4 {
 class ParserRuleContext;
-}  // namespace antlr4;
+}  // namespace antlr4
 
 namespace td {
 namespace table {
@@ -281,9 +281,16 @@ struct TypeDeclaration {
   }
 
   shared_ptr<Struct> GetStruct() { return st; };
+  const shared_ptr<Struct> GetStruct() const { return st; };
+
   shared_ptr<Variant> GetVariant() { return var; };
+  const shared_ptr<Variant> GetVariant() const { return var; };
+
   shared_ptr<Vector> GetVector() { return vec; };
+  const shared_ptr<Vector> GetVector() const { return vec; };
+
   shared_ptr<Map> GetMap() { return map; };
+  const shared_ptr<Map> GetMap() const { return map; };
 };
 
 struct Module {

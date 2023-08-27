@@ -5,11 +5,32 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "(lldb) Launch Test",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceRoot}/build/debug/tests",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+    },
+    {
+      "name": "(lldb) Launch Cmd",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceRoot}/build/debug/typedef",
+      "args": [
+        "--cpp_out=/tmp",
+        "${workspaceRoot}/examples/tests/symref.td"
+      ],
+      "cwd": "${workspaceFolder}",
+    },
+    {
       "name": "(gdb) Launch Test",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceRoot}/build/debug/tests",
-      "args": ["Struct with a symbol reference to another struct"],
+      "args": [
+        "Struct with a symbol reference to another struct"
+      ],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",
       "environment": [],
@@ -25,19 +46,14 @@
       ],
     },
     {
-      "name": "(lldb) Launch Test",
-      "type": "lldb",
-      "request": "launch",
-      "program": "${workspaceRoot}/build/debug/tests",
-      "args": [],
-      "cwd": "${workspaceFolder}",
-    },
-    {
       "name": "(gdb) Launch Cmd",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceRoot}/build/debug/typedef",
-      "args": ["--cpp_out=${workspaceRoot}/tmp", "${workspaceRoot}/examples/tests/structs.td"],
+      "args": [
+        "--cpp_out=${workspaceRoot}/tmp",
+        "${workspaceRoot}/examples/tests/structs.td"
+      ],
       "stopAtEntry": true,
       "cwd": "${workspaceRoot}",
       "environment": [],

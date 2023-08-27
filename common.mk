@@ -20,7 +20,7 @@ AR := ${AR.${COMPILER}}
 CXXFLAGS.gcc.debug := -DDEBUG -gdwarf-2 -O0 -fstack-protector-all
 CXXFLAGS.gcc.release := -O3 -march=native -DNDEBUG
 CXXFLAGS.gcc := -pthread \
-                -std=gnu++17 \
+                -std=c++17 \
                 -march=native \
                 -g \
                 -MMD \
@@ -34,7 +34,7 @@ CXXFLAGS.gcc := -pthread \
 CXXFLAGS.clang.debug := -DDEBUG -O0 -fstack-protector-all
 CXXFLAGS.clang.release := -O3 -march=native -DNDEBUG
 CXXFLAGS.clang := -pthread \
-                  -std=gnu++17 \
+                  -std=c++17 \
                   -march=native \
                   -gdwarf-4 \
                   -MMD \
@@ -48,7 +48,7 @@ CFLAGS := ${CFLAGS.${COMPILER}}
 
 LDFLAGS.debug := -O0 -gdwarf-4
 LDFLAGS.release :=
-LDFLAGS := -fuse-ld=lld -pthread ${LDFLAGS.${BUILD}}
+LDFLAGS := -fuse-ld=lld -std=c++17 -pthread ${LDFLAGS.${BUILD}}
 LDLIBS := -ldl
 
 CATCH2_LIB_HEADERS := ${CURDIR}/external/catch2-3.3.1

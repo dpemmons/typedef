@@ -1,12 +1,14 @@
 #include "libtypedef/parser/second_pass.h"
 
 #include <set>
+#include <stdexcept>
 
 #include "libtypedef/parser/parser_common.h"
 #include "second_pass.h"
 
-#define throw_line(str) \
-  throw fmt::format("Exception \"{}\" in {}:{}", str, __FILE__, __LINE__);
+#define throw_logic_error(str) \
+  throw std::logic_error(      \
+      fmt::format("\"{}\" in {}:{}", str, __FILE__, __LINE__));
 
 namespace td {
 
@@ -79,7 +81,7 @@ void SecondPassListener::enterStructDeclaration(
       this_id = m->field_decl->identifier.get();
       this_ctx = m->field_decl->ctx;
     } else {
-      throw_line("Invalid state.");
+      throw_logic_error("Invalid state.");
     }
     if (identifiers.count(*this_id)) {
       errors_list_.emplace_back(
@@ -103,7 +105,7 @@ void SecondPassListener::enterInlineStructDeclaration(
       this_id = m->field_decl->identifier.get();
       this_ctx = m->field_decl->ctx;
     } else {
-      throw_line("Invalid state.");
+      throw_logic_error("Invalid state.");
     }
     if (identifiers.count(*this_id)) {
       errors_list_.emplace_back(
@@ -127,7 +129,7 @@ void SecondPassListener::enterVariantDeclaration(
       this_id = m->field_decl->identifier.get();
       this_ctx = m->field_decl->ctx;
     } else {
-      throw_line("Invalid state.");
+      throw_logic_error("Invalid state.");
     }
     if (identifiers.count(*this_id)) {
       errors_list_.emplace_back(
@@ -151,7 +153,7 @@ void SecondPassListener::enterInlineVariantDeclaration(
       this_id = m->field_decl->identifier.get();
       this_ctx = m->field_decl->ctx;
     } else {
-      throw_line("Invalid state.");
+      throw_logic_error("Invalid state.");
     }
     if (identifiers.count(*this_id)) {
       errors_list_.emplace_back(

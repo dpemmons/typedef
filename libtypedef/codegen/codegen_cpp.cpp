@@ -3,12 +3,14 @@
 #include <filesystem>
 #include <inja/inja.hpp>
 #include <nlohmann/json.hpp>
+#include <stdexcept>
 #include <string>
 
 #include "libtypedef/codegen/codegen_cpp_helpers.h"
 
-#define throw_line(str) \
-  throw fmt::format("Exception \"{}\" in {}:{}", str, __FILE__, __LINE__);
+#define throw_logic_error(str) \
+  throw std::logic_error(      \
+      fmt::format("\"{}\" in {}:{}", str, __FILE__, __LINE__));
 
 namespace td {
 
@@ -27,94 +29,127 @@ string HeaderGuard(const filesystem::path& source_filename) {
 }
 
 // forward declarations.
-json GetType(const TypeDeclaration& type);
-json GetInlineType(const FieldDeclaration& field);
+json GetType(const TypeDeclaration* type);
+json GetInlineType(const FieldDeclaration* field);
 
-json GetField(const FieldDeclaration& field) {
+struct CppTypeInfo {
+  std::string cpp_type;
+  std::string access_by;
+};
+CppTypeInfo GetAccessInfoForType(const TypeDeclaration* type) {
+  CppTypeInfo info;
+  if (type->IsStruct()) {
+    info.cpp_type =
+        escape_utf8_to_cpp_identifier(*type->GetStruct()->identifier);
+    info.access_by = "pointer";
+  } else if (type->IsVariant()) {
+    info.cpp_type =
+        escape_utf8_to_cpp_identifier(*type->GetVariant()->identifier);
+    info.access_by = "pointer";
+  } else if (type->IsVector()) {
+    info.cpp_type =
+        escape_utf8_to_cpp_identifier(*type->GetVector()->identifier);
+    info.access_by = "reference";
+  } else if (type->IsMap()) {
+    info.cpp_type = escape_utf8_to_cpp_identifier(*type->GetMap()->identifier);
+    info.access_by = "reference";
+  }
+  return info;
+}
+
+json GetField(const FieldDeclaration* field) {
   json j;
-  j["identifier"] = escape_utf8_to_cpp_identifier(*field.identifier);
-  if (field.IsPrimitive()) {
-    if (field.IsBool()) {
+  j["identifier"] = escape_utf8_to_cpp_identifier(*field->identifier);
+  if (field->IsPrimitive()) {
+    if (field->IsBool()) {
       j["cpp_type"] = "bool";
       j["access_by"] = "value";
-    } else if (field.IsChar()) {
+    } else if (field->IsChar()) {
       j["cpp_type"] = "char32_t";
       j["access_by"] = "value";
-    } else if (field.IsStr()) {
+    } else if (field->IsStr()) {
       j["cpp_type"] = "std::string";
       j["access_by"] = "reference";
-    } else if (field.IsF32()) {
+    } else if (field->IsF32()) {
       j["cpp_type"] = "float";
       j["access_by"] = "value";
-    } else if (field.IsF64()) {
+    } else if (field->IsF64()) {
       j["cpp_type"] = "double";
       j["access_by"] = "value";
-    } else if (field.IsU8()) {
+    } else if (field->IsU8()) {
       j["cpp_type"] = "std::uint8_t";
       j["access_by"] = "value";
-    } else if (field.IsU16()) {
+    } else if (field->IsU16()) {
       j["cpp_type"] = "std::uint16_t";
       j["access_by"] = "value";
-    } else if (field.IsU32()) {
+    } else if (field->IsU32()) {
       j["cpp_type"] = "std::uint32_t";
       j["access_by"] = "value";
-    } else if (field.IsU64()) {
+    } else if (field->IsU64()) {
       j["cpp_type"] = "std::uint64_t";
       j["access_by"] = "value";
-    } else if (field.IsI8()) {
+    } else if (field->IsI8()) {
       j["cpp_type"] = "std::int8_t";
       j["access_by"] = "value";
-    } else if (field.IsI16()) {
+    } else if (field->IsI16()) {
       j["cpp_type"] = "std::int16_t";
       j["access_by"] = "value";
-    } else if (field.IsI32()) {
+    } else if (field->IsI32()) {
       j["cpp_type"] = "std::int32_t";
       j["access_by"] = "value";
-    } else if (field.IsI64()) {
+    } else if (field->IsI64()) {
       j["cpp_type"] = "std::int64_t";
       j["access_by"] = "value";
     } else {
-      throw_line("invalid state");
+      throw_logic_error("invalid state");
     }
-  } else if (field.IsStruct()) {
-    if (field.GetStruct()->identifier) {
-      j["cpp_type"] =
-          escape_utf8_to_cpp_identifier(*field.GetStruct()->identifier);
-    } else {
-      // inline type.
-      j["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
-    }
-    j["access_by"] = "pointer";
-  } else if (field.IsVariant()) {
-    if (field.GetVariant()->identifier) {
-      j["cpp_type"] =
-          escape_utf8_to_cpp_identifier(*field.GetVariant()->identifier);
-    } else {
-      // inline type.
-      j["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
-    }
-    j["access_by"] = "pointer";
-  } else if (field.IsVector()) {
-    if (field.GetVector()->identifier) {
-      j["cpp_type"] =
-          escape_utf8_to_cpp_identifier(*field.GetVector()->identifier);
-    } else {
-      // inline type.
-      j["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
-    }
-    j["access_by"] = "reference";
-  } else if (field.IsMap()) {
-    if (field.GetMap()->identifier) {
-      j["cpp_type"] =
-          escape_utf8_to_cpp_identifier(*field.GetMap()->identifier);
-    } else {
-      // inline type.
-      j["cpp_type"] = escape_utf8_to_cpp_identifier(*field.identifier) + "T";
-    }
-    j["access_by"] = "reference";
+  } else if (field->IsSymref()) {
+    CppTypeInfo cpp_type_info =
+        GetAccessInfoForType(field->symref_target.get());
+    j["cpp_type"] = cpp_type_info.cpp_type;
+    j["access_by"] = cpp_type_info.access_by;
   } else {
-    throw_line("invalid state");
+    if (field->IsStruct()) {
+      if (field->GetStruct()->identifier) {
+        j["cpp_type"] =
+            escape_utf8_to_cpp_identifier(*field->GetStruct()->identifier);
+      } else {
+        // inline type.
+        j["cpp_type"] = escape_utf8_to_cpp_identifier(*field->identifier) + "T";
+      }
+      j["access_by"] = "pointer";
+    } else if (field->IsVariant()) {
+      if (field->GetVariant()->identifier) {
+        j["cpp_type"] =
+            escape_utf8_to_cpp_identifier(*field->GetVariant()->identifier);
+      } else {
+        // inline type.
+        j["cpp_type"] = escape_utf8_to_cpp_identifier(*field->identifier) + "T";
+      }
+      j["access_by"] = "pointer";
+    } else if (field->IsVector()) {
+      if (field->GetVector()->identifier) {
+        j["cpp_type"] =
+            escape_utf8_to_cpp_identifier(*field->GetVector()->identifier);
+      } else {
+        // inline type.
+        j["cpp_type"] = escape_utf8_to_cpp_identifier(*field->identifier) + "T";
+      }
+      j["access_by"] = "reference";
+    } else if (field->IsMap()) {
+      if (field->GetMap()->identifier) {
+        j["cpp_type"] =
+            escape_utf8_to_cpp_identifier(*field->GetMap()->identifier);
+      } else {
+        // inline type.
+        j["cpp_type"] = escape_utf8_to_cpp_identifier(*field->identifier) + "T";
+      }
+      j["access_by"] = "reference";
+    } else {
+      throw_logic_error("invalid state");
+    }
   }
+
   return j;
 }
 
@@ -125,16 +160,16 @@ json GetStruct(const Struct& st, std::optional<string> identifier = nullopt) {
   j["identifier"] = identifier ? *identifier : *st.identifier;
   for (const auto& m : st.members) {
     if (m->IsField()) {
-      j["fields"].push_back(GetField(*m->field_decl));
-      if (!m->field_decl->IsPrimitive()) {
+      j["fields"].push_back(GetField(m->field_decl.get()));
+      if (!m->field_decl->IsPrimitive() && !m->field_decl->IsSymref()) {
         // Non-primitive field types are inlines.
         // TODO really there should be an IsInline() ?
-        j["type_decls"].push_back(GetInlineType(*m->field_decl));
+        j["type_decls"].push_back(GetInlineType(m->field_decl.get()));
       }
     } else if (m->IsType()) {
-      j["type_decls"].push_back(GetType(*m->type_decl));
+      j["type_decls"].push_back(GetType(m->type_decl.get()));
     } else {
-      throw_line("invalid state");
+      throw_logic_error("invalid state");
     }
   }
   return j;
@@ -148,11 +183,11 @@ json GetVariant(const Variant& var,
   j["identifier"] = identifier ? *identifier : *var.identifier;
   for (const auto& m : var.members) {
     if (m->IsField()) {
-      j["fields"].push_back(GetField(*m->field_decl));
+      j["fields"].push_back(GetField(m->field_decl.get()));
     } else if (m->IsType()) {
-      j["type_decls"].push_back(GetType(*m->type_decl));
+      j["type_decls"].push_back(GetType(m->type_decl.get()));
     } else {
-      throw_line("invalid state");
+      throw_logic_error("invalid state");
     }
   }
   return j;
@@ -191,10 +226,14 @@ json GetVector(const Vector& vec, std::optional<string> identifier = nullopt) {
     } else if (vec.element_type->IsI64()) {
       j["element_cpp_type"] = "std::int64_t";
     } else {
-      throw_line("invalid state");
+      throw_logic_error("invalid state");
     }
+  } else if (vec.element_type->IsSymref()) {
+    CppTypeInfo cpp_type_info =
+        GetAccessInfoForType(vec.element_type->symref_target.get());
+    j["element_cpp_type"] = cpp_type_info.cpp_type;
   } else {
-    throw_line("invalid state");
+    throw_logic_error("invalid state");
   }
 
   return j;
@@ -233,7 +272,7 @@ json GetMap(const Map& map, std::optional<string> identifier = nullopt) {
   } else if (map.key_type->IsI64()) {
     j["key_cpp_type"] = "std::int64_t";
   } else {
-    throw_line("invalid state");
+    throw_logic_error("invalid state");
   }
 
   if (map.value_type->IsPrimitive()) {
@@ -264,44 +303,48 @@ json GetMap(const Map& map, std::optional<string> identifier = nullopt) {
     } else if (map.value_type->IsI64()) {
       j["value_cpp_type"] = "std::int64_t";
     } else {
-      throw_line("invalid state");
+      throw_logic_error("invalid state");
     }
+  } else if (map.value_type->IsSymref()) {
+    CppTypeInfo cpp_type_info =
+        GetAccessInfoForType(map.value_type->symref_target.get());
+    j["value_cpp_type"] = cpp_type_info.cpp_type;
   } else {
-    throw_line("invalid state");
+    throw_logic_error("invalid state");
   }
 
   return j;
 }
 
-json GetInlineType(const FieldDeclaration& field) {
+json GetInlineType(const FieldDeclaration* field) {
   json j;
-  string identifier = *field.identifier + "T";
-  if (field.IsStruct()) {
-    j["struct"] = GetStruct(*field.st, identifier);
-  } else if (field.IsVariant()) {
-    j["variant"] = GetVariant(*field.var, identifier);
-  } else if (field.IsVector()) {
-    j["vector"] = GetVector(*field.vec, identifier);
-  } else if (field.IsMap()) {
-    j["map"] = GetMap(*field.map, identifier);
+  string identifier = *field->identifier + "T";
+  if (field->IsStruct()) {
+    j["struct"] = GetStruct(*field->st, identifier);
+  } else if (field->IsVariant()) {
+    j["variant"] = GetVariant(*field->var, identifier);
+  } else if (field->IsVector()) {
+    j["vector"] = GetVector(*field->vec, identifier);
+  } else if (field->IsMap()) {
+    j["map"] = GetMap(*field->map, identifier);
   } else {
-    throw_line("invalid state");
+    throw_logic_error("invalid state");
   }
   return j;
 }
 
-json GetType(const TypeDeclaration& type) {
+json GetType(const TypeDeclaration* type) {
   json j;
-  if (type.IsStruct()) {
-    j["struct"] = GetStruct(*type.st);
-  } else if (type.IsVariant()) {
-    j["variant"] = GetVariant(*type.var);
-  } else if (type.IsVector()) {
-    j["vector"] = GetVector(*type.vec);
-  } else if (type.IsMap()) {
-    j["map"] = GetMap(*type.map);
+  if (type->IsStruct()) {
+    j["struct"] = GetStruct(*type->st);
+  } else if (type->IsVariant()) {
+    j["variant"] = GetVariant(*type->var);
+  } else if (type->IsVector()) {
+    j["vector"] = GetVector(*type->vec);
+  } else if (type->IsMap()) {
+    j["map"] = GetMap(*type->map);
   } else {
-    throw_line("invalid state");
+    throw_logic_error("invalid state");
   }
   return j;
 }
@@ -309,7 +352,7 @@ json GetType(const TypeDeclaration& type) {
 json GetTypeDecls(const vector<shared_ptr<TypeDeclaration>>& types) {
   json arr = json::array();
   for (const auto& tp : types) {
-    arr.push_back(GetType(*tp));
+    arr.push_back(GetType(tp.get()));
   }
   return arr;
 }
@@ -388,6 +431,11 @@ class {{identifier}} {
 ## endif
   {{identifier}}() {}
   ~{{identifier}}() {}
+
+  {{identifier}}(const {{identifier}}&) = default;
+  {{identifier}}& operator=(const {{identifier}}&) = default;
+  {{identifier}}({{identifier}}&&) = default;
+  {{identifier}}& operator=({{identifier}}&&) = default;
 
 ## if exists("fields")
 ## for field in fields
