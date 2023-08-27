@@ -14,7 +14,6 @@ variant VariantA {
 vector VectorA<i32>;
 map MapA<i32, str>;
 
-
 // Struct containing symref'd fields.
 struct StructB {
   struct_field: StructA;
@@ -22,7 +21,6 @@ struct StructB {
   vector_field: VectorA;
   map_field: MapA;
 };
-
 
 // Variant containing symref'd fields.
 variant VariantB {
@@ -68,8 +66,6 @@ variant VariantC {
   nested_map_field: NestedMapA;
 };
 
-
-
 // Vector and map using symref'd type parameters.
 vector VectorB<StructA>;
 map MapB<i32, StructA>;
@@ -84,7 +80,7 @@ struct StructD {
   nested_mapB: MapB;
 
   inline_vec: vector<StructB>;
-  //inline_map: map<i32, StructB>;
-  
+  inline_map: map<i32, StructB>;
+
 };
 

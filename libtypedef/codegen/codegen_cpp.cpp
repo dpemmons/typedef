@@ -432,28 +432,28 @@ class {{identifier}} {
   {{identifier}}() {}
   ~{{identifier}}() {}
 
-  {{identifier}}(const {{identifier}}&) = default;
-  {{identifier}}& operator=(const {{identifier}}&) = default;
+  {{identifier}}(const {{identifier}}&) = delete;
+  {{identifier}}& operator=(const {{identifier}}&) = delete;
   {{identifier}}({{identifier}}&&) = default;
   {{identifier}}& operator=({{identifier}}&&) = default;
 
 ## if exists("fields")
 ## for field in fields
 ## if field.access_by == "value" 
+  {{field.cpp_type}} get_{{field.identifier}}() {
+    return {{field.identifier}}_;
+  }
   void set_{{field.identifier}}({{field.cpp_type}} val) {
     {{field.identifier}}_ = val;
   }
-  {{field.cpp_type}} get_{{field.identifier}}() {
+  {{field.cpp_type}}& ref_{{field.identifier}}() {
     return {{field.identifier}}_;
   }
 ## else if field.access_by == "reference" 
-  void set_{{field.identifier}}(const {{field.cpp_type}}& val) {
-    {{field.identifier}}_ = val;
+  void set_{{field.identifier}}({{field.cpp_type}}&& val) {
+    {{field.identifier}}_ = std::move(val);
   }
-  {{field.cpp_type}} get_{{field.identifier}}() {
-    return {{field.identifier}}_;
-  }
-  {{field.cpp_type}}& {{field.identifier}}_ref() {
+  {{field.cpp_type}}& ref_{{field.identifier}}() {
     return {{field.identifier}}_;
   }
 ## else if field.access_by == "pointer" 
@@ -472,7 +472,7 @@ class {{identifier}} {
   void set_{{field.identifier}}({{field.cpp_type}}* val) {
     {{field.identifier}}_.reset(std::move(val));
   }
-  {{field.cpp_type}}* {{field.identifier}}_ptr() {
+  {{field.cpp_type}}* ptr_{{field.identifier}}() {
     #if TD_AUTO_ALLOC
     if (!has_{{field.identifier}}()) {
       alloc_{{field.identifier}}();
@@ -525,6 +525,11 @@ class {{identifier}} {
     tag = Tag::__TAGS_BEGIN;
   }
 
+  {{identifier}}(const {{identifier}}&) = delete;
+  {{identifier}}& operator=(const {{identifier}}&) = delete;
+  {{identifier}}({{identifier}}&&) = default;
+  {{identifier}}& operator=({{identifier}}&&) = default;
+
   enum class Tag {
     __TAGS_BEGIN = 0,
 ## if exists("fields")
@@ -542,31 +547,28 @@ class {{identifier}} {
     return (tag == Tag::TAG_{{field.identifier}});
   }
 ## if field.access_by == "value" 
+  {{field.cpp_type}} get_{{field.identifier}}() {
+    if (!is_{{field.identifier}}()) {
+      TD_THROW("Attempted invalid variant access");
+    }
+    return {{field.identifier}}_;
+  }
   void set_{{field.identifier}}({{field.cpp_type}} val) {
     MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
     {{field.identifier}}_ = val;
   }
-  {{field.cpp_type}} get_{{field.identifier}}() {
+## else if field.access_by == "reference"
+  {{field.cpp_type}}& ref_{{field.identifier}}() {
     if (!is_{{field.identifier}}()) {
       TD_THROW("Attempted invalid variant access");
     }
     return {{field.identifier}}_;
   }
-## else if field.access_by == "reference" 
-  void set_{{field.identifier}}(const {{field.cpp_type}}& val) {
+  void set_{{field.identifier}}({{field.cpp_type}}&& val) {
     MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
-    {{field.identifier}}_ = val;
-  }
-  {{field.cpp_type}} get_{{field.identifier}}() {
-    if (!is_{{field.identifier}}()) {
-      TD_THROW("Attempted invalid variant access");
-    }
-    return {{field.identifier}}_;
-  }
-  {{field.cpp_type}}& {{field.identifier}}_ref() {
-    return {{field.identifier}}_;
+    {{field.identifier}}_ = std::move(val);
   }
 ## else if field.access_by == "pointer" 
   bool has_{{field.identifier}}() const {
@@ -596,7 +598,7 @@ class {{identifier}} {
     tag = Tag::TAG_{{field.identifier}};
     {{field.identifier}}_.reset(std::move(val));
   }
-  {{field.cpp_type}}* {{field.identifier}}_ptr() {
+  {{field.cpp_type}}* ptr_{{field.identifier}}() {
     #if TD_AUTO_ALLOC
     if (!has_{{field.identifier}}()) {
       alloc_{{field.identifier}}();
@@ -650,16 +652,24 @@ class {{identifier}} {
   vector_tmpl = env.parse(R"(
 class {{identifier}} : public std::vector<{{element_cpp_type}}> {
  public:
-  {{identifier}}() {}
-  ~{{identifier}}() {}
+  {{identifier}}() = default;
+  ~{{identifier}}() = default;
+
+  {{identifier}}({{identifier}}&& other) noexcept = default;
+  {{identifier}}& operator=({{identifier}}&& other) noexcept = default;
+
  private:
 };  // class {{identifier}}
   )");
   map_tmpl = env.parse(R"(
 class {{identifier}} : public std::map<{{key_cpp_type}}, {{value_cpp_type}}> {
  public:
-   {{identifier}}() {}
-   ~{{identifier}}() {}
+  {{identifier}}() = default;
+  ~{{identifier}}() = default;
+
+  {{identifier}}({{identifier}}&& other) noexcept = default;
+  {{identifier}}& operator=({{identifier}}&& other) noexcept = default;
+
  private:
 };  // class {{identifier}}
   )");
