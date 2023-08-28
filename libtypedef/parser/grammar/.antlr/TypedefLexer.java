@@ -21,8 +21,8 @@ public class TypedefLexer extends TypedefLexerBase {
 	public static final int
 		KW_ARRAY=1, KW_AS=2, KW_ENUM=3, KW_FALSE=4, KW_FN=5, KW_IMPL=6, KW_MESSAGE=7, 
 		KW_MODULE=8, KW_STRUCT=9, KW_TRUE=10, KW_TYPE=11, KW_TYPEDEF=12, KW_USE=13, 
-		KW_VARIANT=14, KW_VECTOR=15, KW_MAP=16, KW_TEMPLATESTRING=17, KW_AND=18, 
-		KW_IN=19, KW_LET=20, KW_NOT=21, KW_OR=22, KW_SIZEOF=23, KW_THIS=24, KW_TRAIT=25, 
+		KW_VARIANT=14, KW_VECTOR=15, KW_MAP=16, KW_TEMPLATE=17, KW_AND=18, KW_IN=19, 
+		KW_LET=20, KW_NOT=21, KW_OR=22, KW_SIZEOF=23, KW_THIS=24, KW_TRAIT=25, 
 		KW_WHERE=26, KW_XOR=27, KW_BREAK=28, KW_CONTINUE=29, KW_DEFAULT=30, KW_DO=31, 
 		KW_ELSE=32, KW_FOR=33, KW_GOTO=34, KW_IF=35, KW_LOOP=36, KW_MATCH=37, 
 		KW_MOVE=38, KW_RETURN=39, KW_TRY=40, KW_WHILE=41, KW_YIELD=42, KW_ABSTRACT=43, 
@@ -59,7 +59,7 @@ public class TypedefLexer extends TypedefLexerBase {
 		return new String[] {
 			"KW_ARRAY", "KW_AS", "KW_ENUM", "KW_FALSE", "KW_FN", "KW_IMPL", "KW_MESSAGE", 
 			"KW_MODULE", "KW_STRUCT", "KW_TRUE", "KW_TYPE", "KW_TYPEDEF", "KW_USE", 
-			"KW_VARIANT", "KW_VECTOR", "KW_MAP", "KW_TEMPLATESTRING", "KW_AND", "KW_IN", 
+			"KW_VARIANT", "KW_VECTOR", "KW_MAP", "KW_TEMPLATE", "KW_AND", "KW_IN", 
 			"KW_LET", "KW_NOT", "KW_OR", "KW_SIZEOF", "KW_THIS", "KW_TRAIT", "KW_WHERE", 
 			"KW_XOR", "KW_BREAK", "KW_CONTINUE", "KW_DEFAULT", "KW_DO", "KW_ELSE", 
 			"KW_FOR", "KW_GOTO", "KW_IF", "KW_LOOP", "KW_MATCH", "KW_MOVE", "KW_RETURN", 
@@ -93,7 +93,7 @@ public class TypedefLexer extends TypedefLexerBase {
 		return new String[] {
 			null, "'array'", "'as'", "'enum'", "'false'", "'fn'", "'impl'", "'message'", 
 			"'module'", "'struct'", "'true'", "'type'", "'typedef'", "'use'", "'variant'", 
-			"'vector'", "'map'", "'tmpl_str'", "'and'", "'in'", "'let'", "'not'", 
+			"'vector'", "'map'", "'template'", "'and'", "'in'", "'let'", "'not'", 
 			"'or'", "'sizeof'", "'this'", "'trait'", "'where'", "'xor'", "'break'", 
 			"'continue'", "'default'", "'do'", "'else'", "'for'", "'goto'", "'if'", 
 			"'loop'", "'match'", "'move'", "'return'", "'try'", "'while'", "'yield'", 
@@ -118,7 +118,7 @@ public class TypedefLexer extends TypedefLexerBase {
 		return new String[] {
 			null, "KW_ARRAY", "KW_AS", "KW_ENUM", "KW_FALSE", "KW_FN", "KW_IMPL", 
 			"KW_MESSAGE", "KW_MODULE", "KW_STRUCT", "KW_TRUE", "KW_TYPE", "KW_TYPEDEF", 
-			"KW_USE", "KW_VARIANT", "KW_VECTOR", "KW_MAP", "KW_TEMPLATESTRING", "KW_AND", 
+			"KW_USE", "KW_VARIANT", "KW_VECTOR", "KW_MAP", "KW_TEMPLATE", "KW_AND", 
 			"KW_IN", "KW_LET", "KW_NOT", "KW_OR", "KW_SIZEOF", "KW_THIS", "KW_TRAIT", 
 			"KW_WHERE", "KW_XOR", "KW_BREAK", "KW_CONTINUE", "KW_DEFAULT", "KW_DO", 
 			"KW_ELSE", "KW_FOR", "KW_GOTO", "KW_IF", "KW_LOOP", "KW_MATCH", "KW_MOVE", 
@@ -643,9 +643,9 @@ public class TypedefLexer extends TypedefLexerBase {
 		"\u01ac\7v\2\2\u01ac\36\3\2\2\2\u01ad\u01ae\7x\2\2\u01ae\u01af\7g\2\2\u01af"+
 		"\u01b0\7e\2\2\u01b0\u01b1\7v\2\2\u01b1\u01b2\7q\2\2\u01b2\u01b3\7t\2\2"+
 		"\u01b3 \3\2\2\2\u01b4\u01b5\7o\2\2\u01b5\u01b6\7c\2\2\u01b6\u01b7\7r\2"+
-		"\2\u01b7\"\3\2\2\2\u01b8\u01b9\7v\2\2\u01b9\u01ba\7o\2\2\u01ba\u01bb\7"+
-		"r\2\2\u01bb\u01bc\7n\2\2\u01bc\u01bd\7a\2\2\u01bd\u01be\7u\2\2\u01be\u01bf"+
-		"\7v\2\2\u01bf\u01c0\7t\2\2\u01c0$\3\2\2\2\u01c1\u01c2\7c\2\2\u01c2\u01c3"+
+		"\2\u01b7\"\3\2\2\2\u01b8\u01b9\7v\2\2\u01b9\u01ba\7g\2\2\u01ba\u01bb\7"+
+		"o\2\2\u01bb\u01bc\7r\2\2\u01bc\u01bd\7n\2\2\u01bd\u01be\7c\2\2\u01be\u01bf"+
+		"\7v\2\2\u01bf\u01c0\7g\2\2\u01c0$\3\2\2\2\u01c1\u01c2\7c\2\2\u01c2\u01c3"+
 		"\7p\2\2\u01c3\u01c4\7f\2\2\u01c4&\3\2\2\2\u01c5\u01c6\7k\2\2\u01c6\u01c7"+
 		"\7p\2\2\u01c7(\3\2\2\2\u01c8\u01c9\7n\2\2\u01c9\u01ca\7g\2\2\u01ca\u01cb"+
 		"\7v\2\2\u01cb*\3\2\2\2\u01cc\u01cd\7p\2\2\u01cd\u01ce\7q\2\2\u01ce\u01cf"+

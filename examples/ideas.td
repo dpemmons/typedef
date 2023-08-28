@@ -168,3 +168,35 @@ MessageV2: message {
 //   * streams
 //   * services
 //   * methods on services
+
+
+something: <Type>(arg: Type): Type;
+
+something<Type>(arg: Type) => Type;
+
+something(arg: int) => string;
+
+interface MyInterface {
+  // define a method.
+  something(arg: str) => str;
+
+  something(arg: str) => str = tmpl_str();
+
+  // define a generic method
+  something<T>(arg: T) => T;
+};
+
+DoTemplate("some string", args) => str;
+
+template DoIt(args) "";
+
+
+struct SomeStruct<T> {
+  t: T;
+};
+
+this: SomeStruct<i32>;
+this: struct { t: i32; };
+
+// implies "array" is a built-in type.
+this: array<i32>;

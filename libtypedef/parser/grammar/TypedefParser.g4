@@ -45,10 +45,18 @@ mapDeclaration
 	returns[std::shared_ptr<td::table::Map> map]:
 	KW_MAP symbolName = identifier LT key = typeParameter COMMA val = typeParameter GT;
 
+// template DoIt(a: i32, b: str) "{a} {b}";
+templateDefinition:
+	KW_TEMPLATE symbolName = identifier '(' (
+		identifier ':' typeParameter (
+			COMMA identifier ':' typeParameter
+		)*
+	) ')' ('=>' KW_STRING)? stringLiteral;
+
 typeParameter
 	returns[std::shared_ptr<td::table::TypeParameter> type_param]:
-	identifier
-	| primitiveTypeIdentifier;
+	primitiveTypeIdentifier
+	| identifier;
 
 structMember
 	returns[std::shared_ptr<td::table::StructMember> mem]:
@@ -120,12 +128,6 @@ inlineVectorDeclaration
 inlineMapDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
 	identifier COLON KW_MAP LT key = typeParameter COMMA val = typeParameter GT;
-
-// valuedTemplateStringType returns[std::optional<td::SymbolTable::Value> maybe_val]
-// locals[std::shared_ptr<td::TmplStr> s] @init { $s = std::make_shared<td::TmplStr>(); }: COLON
-// KW_TEMPLATESTRING LT ( unvaluedSymbol { TryInsertArgSymbol($s, this, $unvaluedSymbol.ctx); } (
-// COMMA unvaluedSymbol { TryInsertArgSymbol($s, this, $unvaluedSymbol.ctx); } )* ) GT EQ
-// stringLiteral { $s->str = $stringLiteral.ctx->maybe_val; $maybe_val = $s; };
 
 // TODO probably get rid of valuedPrimitiveType, etc. and just do primitive type resolution in a
 // separate pass?

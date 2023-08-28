@@ -19,7 +19,7 @@ public:
     KW_ARRAY = 1, KW_AS = 2, KW_ENUM = 3, KW_FALSE = 4, KW_FN = 5, KW_IMPL = 6, 
     KW_MESSAGE = 7, KW_MODULE = 8, KW_STRUCT = 9, KW_TRUE = 10, KW_TYPE = 11, 
     KW_TYPEDEF = 12, KW_USE = 13, KW_VARIANT = 14, KW_VECTOR = 15, KW_MAP = 16, 
-    KW_TEMPLATESTRING = 17, KW_AND = 18, KW_IN = 19, KW_LET = 20, KW_NOT = 21, 
+    KW_TEMPLATE = 17, KW_AND = 18, KW_IN = 19, KW_LET = 20, KW_NOT = 21, 
     KW_OR = 22, KW_SIZEOF = 23, KW_THIS = 24, KW_TRAIT = 25, KW_WHERE = 26, 
     KW_XOR = 27, KW_BREAK = 28, KW_CONTINUE = 29, KW_DEFAULT = 30, KW_DO = 31, 
     KW_ELSE = 32, KW_FOR = 33, KW_GOTO = 34, KW_IF = 35, KW_LOOP = 36, KW_MATCH = 37, 
@@ -53,18 +53,18 @@ public:
 
   enum {
     RuleCompilationUnit = 0, RuleStructDeclaration = 1, RuleVariantDeclaration = 2, 
-    RuleVectorDeclaration = 3, RuleMapDeclaration = 4, RuleTypeParameter = 5, 
-    RuleStructMember = 6, RuleTypeDeclaration = 7, RuleFieldDeclaration = 8, 
-    RulePrimitiveMemberDeclaration = 9, RuleSymrefMemberDeclaration = 10, 
-    RuleImpliedTypePrimitiveMemberDeclaration = 11, RuleInlineStructDeclaration = 12, 
-    RuleInlineVariantDeclaration = 13, RuleInlineVectorDeclaration = 14, 
-    RuleInlineMapDeclaration = 15, RuleTypedefVersionDeclaration = 16, RuleModuleDeclaration = 17, 
-    RuleUseDeclaration = 18, RuleUseTree = 19, RuleSimplePath = 20, RuleExplicitPrimitiveLiteral = 21, 
-    RuleBoolLiteral = 22, RuleCharLiteral = 23, RuleStringLiteral = 24, 
-    RuleF32Literal = 25, RuleF64Literal = 26, RuleU8Literal = 27, RuleU16Literal = 28, 
-    RuleU32Literal = 29, RuleU64Literal = 30, RuleI8Literal = 31, RuleI16Literal = 32, 
-    RuleI32Literal = 33, RuleI64Literal = 34, RuleFloatLiteral = 35, RuleIntLiteral = 36, 
-    RuleIdentifier = 37, RulePrimitiveTypeIdentifier = 38, RuleKeyword = 39
+    RuleVectorDeclaration = 3, RuleMapDeclaration = 4, RuleTemplateDefinition = 5, 
+    RuleTypeParameter = 6, RuleStructMember = 7, RuleTypeDeclaration = 8, 
+    RuleFieldDeclaration = 9, RulePrimitiveMemberDeclaration = 10, RuleSymrefMemberDeclaration = 11, 
+    RuleImpliedTypePrimitiveMemberDeclaration = 12, RuleInlineStructDeclaration = 13, 
+    RuleInlineVariantDeclaration = 14, RuleInlineVectorDeclaration = 15, 
+    RuleInlineMapDeclaration = 16, RuleTypedefVersionDeclaration = 17, RuleModuleDeclaration = 18, 
+    RuleUseDeclaration = 19, RuleUseTree = 20, RuleSimplePath = 21, RuleExplicitPrimitiveLiteral = 22, 
+    RuleBoolLiteral = 23, RuleCharLiteral = 24, RuleStringLiteral = 25, 
+    RuleF32Literal = 26, RuleF64Literal = 27, RuleU8Literal = 28, RuleU16Literal = 29, 
+    RuleU32Literal = 30, RuleU64Literal = 31, RuleI8Literal = 32, RuleI16Literal = 33, 
+    RuleI32Literal = 34, RuleI64Literal = 35, RuleFloatLiteral = 36, RuleIntLiteral = 37, 
+    RuleIdentifier = 38, RulePrimitiveTypeIdentifier = 39, RuleKeyword = 40
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -82,6 +82,7 @@ public:
   class VariantDeclarationContext;
   class VectorDeclarationContext;
   class MapDeclarationContext;
+  class TemplateDefinitionContext;
   class TypeParameterContext;
   class StructMemberContext;
   class TypeDeclarationContext;
@@ -235,13 +236,42 @@ public:
 
   MapDeclarationContext* mapDeclaration();
 
+  class  TemplateDefinitionContext : public antlr4::ParserRuleContext {
+  public:
+    TypedefParser::IdentifierContext *symbolName = nullptr;;
+    TemplateDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *KW_TEMPLATE();
+    antlr4::tree::TerminalNode *LPAREN();
+    antlr4::tree::TerminalNode *RPAREN();
+    StringLiteralContext *stringLiteral();
+    std::vector<IdentifierContext *> identifier();
+    IdentifierContext* identifier(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> COLON();
+    antlr4::tree::TerminalNode* COLON(size_t i);
+    std::vector<TypeParameterContext *> typeParameter();
+    TypeParameterContext* typeParameter(size_t i);
+    antlr4::tree::TerminalNode *FATARROW();
+    antlr4::tree::TerminalNode *KW_STRING();
+    std::vector<antlr4::tree::TerminalNode *> COMMA();
+    antlr4::tree::TerminalNode* COMMA(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  TemplateDefinitionContext* templateDefinition();
+
   class  TypeParameterContext : public antlr4::ParserRuleContext {
   public:
     std::shared_ptr<td::table::TypeParameter> type_param;
     TypeParameterContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    IdentifierContext *identifier();
     PrimitiveTypeIdentifierContext *primitiveTypeIdentifier();
+    IdentifierContext *identifier();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

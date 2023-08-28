@@ -39,6 +39,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitTemplateDefinition(TypedefParser::TemplateDefinitionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitTypeParameter(TypedefParser::TypeParameterContext *ctx) override {
     return visitChildren(ctx);
   }
