@@ -23,7 +23,7 @@ compilationUnit
 	]:
 	typedefVersionDeclaration (moduleDeclaration)? (
 		useDeclaration
-	)* (typeDeclaration SEMI)* EOF;
+	)* ((typeDeclaration SEMI) | templateDefinition)* EOF;
 
 // variant SomeVariant { optionA: i32; optionB: str; }
 structDeclaration
@@ -51,7 +51,12 @@ templateDefinition:
 		identifier ':' typeParameter (
 			COMMA identifier ':' typeParameter
 		)*
-	) ')' ('=>' KW_STRING)? stringLiteral;
+	) ')' ('=>' KW_STRING)? templateBlock;
+
+templateBlock
+	returns[std::shared_ptr<std::string> val]:
+	TEMPLATE_LITERAL
+	| RAW_TEMPLATE_LITERAL;
 
 typeParameter
 	returns[std::shared_ptr<td::table::TypeParameter> type_param]:

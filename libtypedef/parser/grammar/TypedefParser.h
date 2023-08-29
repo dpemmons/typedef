@@ -35,36 +35,38 @@ public:
     KW_I32 = 83, KW_I64 = 84, NON_KEYWORD_IDENTIFIER = 85, LINE_COMMENT = 86, 
     BLOCK_COMMENT = 87, INNER_LINE_DOC = 88, INNER_BLOCK_DOC = 89, OUTER_LINE_DOC = 90, 
     OUTER_BLOCK_DOC = 91, BLOCK_COMMENT_OR_DOC = 92, SHEBANG = 93, CHAR_LITERAL = 94, 
-    STRING_LITERAL = 95, RAW_STRING_LITERAL = 96, DEC_DIGITS = 97, DEC_DIGITS_UNDERSCORE = 98, 
-    HEX_DIGITS = 99, HEX_DIGITS_UNDERSCORE = 100, OCT_DIGITS = 101, OCT_DIGITS_UNDERSCORE = 102, 
-    BIN_DIGITS = 103, BIN_DIGITS_UNDERSCORE = 104, FLOAT_LITERAL = 105, 
-    OCT_DIGIT = 106, DEC_DIGIT = 107, HEX_DIGIT = 108, HEX_PREFIX = 109, 
-    OCT_PREFIX = 110, BIN_PREFIX = 111, RAW_ESCAPE = 112, PLUS = 113, MINUS = 114, 
-    STAR = 115, SLASH = 116, PERCENT = 117, CARET = 118, NOT = 119, AND = 120, 
-    OR = 121, ANDAND = 122, OROR = 123, PLUSEQ = 124, MINUSEQ = 125, STAREQ = 126, 
-    SLASHEQ = 127, PERCENTEQ = 128, CARETEQ = 129, ANDEQ = 130, OREQ = 131, 
-    SHLEQ = 132, SHREQ = 133, EQ = 134, EQEQ = 135, NE = 136, GT = 137, 
-    LT = 138, GE = 139, LE = 140, AT = 141, UNDERSCORE = 142, DOT = 143, 
-    DOTDOT = 144, DOTDOTDOT = 145, COMMA = 146, SEMI = 147, COLON = 148, 
-    PATHSEP = 149, RARROW = 150, FATARROW = 151, POUND = 152, DOLLAR = 153, 
-    QUESTION = 154, LBRACE = 155, RBRACE = 156, LBRACK = 157, RBRACK = 158, 
-    LPAREN = 159, RPAREN = 160, WS = 161
+    STRING_LITERAL = 95, RAW_TEMPLATE_LITERAL = 96, TEMPLATE_LITERAL = 97, 
+    RAW_STRING_LITERAL = 98, DEC_DIGITS = 99, DEC_DIGITS_UNDERSCORE = 100, 
+    HEX_DIGITS = 101, HEX_DIGITS_UNDERSCORE = 102, OCT_DIGITS = 103, OCT_DIGITS_UNDERSCORE = 104, 
+    BIN_DIGITS = 105, BIN_DIGITS_UNDERSCORE = 106, FLOAT_LITERAL = 107, 
+    OCT_DIGIT = 108, DEC_DIGIT = 109, HEX_DIGIT = 110, HEX_PREFIX = 111, 
+    OCT_PREFIX = 112, BIN_PREFIX = 113, RAW_ESCAPE = 114, PLUS = 115, MINUS = 116, 
+    STAR = 117, SLASH = 118, PERCENT = 119, CARET = 120, NOT = 121, AND = 122, 
+    OR = 123, ANDAND = 124, OROR = 125, PLUSEQ = 126, MINUSEQ = 127, STAREQ = 128, 
+    SLASHEQ = 129, PERCENTEQ = 130, CARETEQ = 131, ANDEQ = 132, OREQ = 133, 
+    SHLEQ = 134, SHREQ = 135, EQ = 136, EQEQ = 137, NE = 138, GT = 139, 
+    LT = 140, GE = 141, LE = 142, AT = 143, UNDERSCORE = 144, DOT = 145, 
+    DOTDOT = 146, DOTDOTDOT = 147, COMMA = 148, SEMI = 149, COLON = 150, 
+    PATHSEP = 151, RARROW = 152, FATARROW = 153, POUND = 154, DOLLAR = 155, 
+    QUESTION = 156, LBRACE = 157, RBRACE = 158, LBRACK = 159, RBRACK = 160, 
+    LPAREN = 161, RPAREN = 162, WS = 163
   };
 
   enum {
     RuleCompilationUnit = 0, RuleStructDeclaration = 1, RuleVariantDeclaration = 2, 
     RuleVectorDeclaration = 3, RuleMapDeclaration = 4, RuleTemplateDefinition = 5, 
-    RuleTypeParameter = 6, RuleStructMember = 7, RuleTypeDeclaration = 8, 
-    RuleFieldDeclaration = 9, RulePrimitiveMemberDeclaration = 10, RuleSymrefMemberDeclaration = 11, 
-    RuleImpliedTypePrimitiveMemberDeclaration = 12, RuleInlineStructDeclaration = 13, 
-    RuleInlineVariantDeclaration = 14, RuleInlineVectorDeclaration = 15, 
-    RuleInlineMapDeclaration = 16, RuleTypedefVersionDeclaration = 17, RuleModuleDeclaration = 18, 
-    RuleUseDeclaration = 19, RuleUseTree = 20, RuleSimplePath = 21, RuleExplicitPrimitiveLiteral = 22, 
-    RuleBoolLiteral = 23, RuleCharLiteral = 24, RuleStringLiteral = 25, 
-    RuleF32Literal = 26, RuleF64Literal = 27, RuleU8Literal = 28, RuleU16Literal = 29, 
-    RuleU32Literal = 30, RuleU64Literal = 31, RuleI8Literal = 32, RuleI16Literal = 33, 
-    RuleI32Literal = 34, RuleI64Literal = 35, RuleFloatLiteral = 36, RuleIntLiteral = 37, 
-    RuleIdentifier = 38, RulePrimitiveTypeIdentifier = 39, RuleKeyword = 40
+    RuleTemplateBlock = 6, RuleTypeParameter = 7, RuleStructMember = 8, 
+    RuleTypeDeclaration = 9, RuleFieldDeclaration = 10, RulePrimitiveMemberDeclaration = 11, 
+    RuleSymrefMemberDeclaration = 12, RuleImpliedTypePrimitiveMemberDeclaration = 13, 
+    RuleInlineStructDeclaration = 14, RuleInlineVariantDeclaration = 15, 
+    RuleInlineVectorDeclaration = 16, RuleInlineMapDeclaration = 17, RuleTypedefVersionDeclaration = 18, 
+    RuleModuleDeclaration = 19, RuleUseDeclaration = 20, RuleUseTree = 21, 
+    RuleSimplePath = 22, RuleExplicitPrimitiveLiteral = 23, RuleBoolLiteral = 24, 
+    RuleCharLiteral = 25, RuleStringLiteral = 26, RuleF32Literal = 27, RuleF64Literal = 28, 
+    RuleU8Literal = 29, RuleU16Literal = 30, RuleU32Literal = 31, RuleU64Literal = 32, 
+    RuleI8Literal = 33, RuleI16Literal = 34, RuleI32Literal = 35, RuleI64Literal = 36, 
+    RuleFloatLiteral = 37, RuleIntLiteral = 38, RuleIdentifier = 39, RulePrimitiveTypeIdentifier = 40, 
+    RuleKeyword = 41
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -83,6 +85,7 @@ public:
   class VectorDeclarationContext;
   class MapDeclarationContext;
   class TemplateDefinitionContext;
+  class TemplateBlockContext;
   class TypeParameterContext;
   class StructMemberContext;
   class TypeDeclarationContext;
@@ -130,6 +133,8 @@ public:
     ModuleDeclarationContext *moduleDeclaration();
     std::vector<UseDeclarationContext *> useDeclaration();
     UseDeclarationContext* useDeclaration(size_t i);
+    std::vector<TemplateDefinitionContext *> templateDefinition();
+    TemplateDefinitionContext* templateDefinition(size_t i);
     std::vector<TypeDeclarationContext *> typeDeclaration();
     TypeDeclarationContext* typeDeclaration(size_t i);
     std::vector<antlr4::tree::TerminalNode *> SEMI();
@@ -244,7 +249,7 @@ public:
     antlr4::tree::TerminalNode *KW_TEMPLATE();
     antlr4::tree::TerminalNode *LPAREN();
     antlr4::tree::TerminalNode *RPAREN();
-    StringLiteralContext *stringLiteral();
+    TemplateBlockContext *templateBlock();
     std::vector<IdentifierContext *> identifier();
     IdentifierContext* identifier(size_t i);
     std::vector<antlr4::tree::TerminalNode *> COLON();
@@ -264,6 +269,23 @@ public:
   };
 
   TemplateDefinitionContext* templateDefinition();
+
+  class  TemplateBlockContext : public antlr4::ParserRuleContext {
+  public:
+    std::shared_ptr<std::string> val;
+    TemplateBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *TEMPLATE_LITERAL();
+    antlr4::tree::TerminalNode *RAW_TEMPLATE_LITERAL();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  TemplateBlockContext* templateBlock();
 
   class  TypeParameterContext : public antlr4::ParserRuleContext {
   public:

@@ -293,9 +293,24 @@ struct TypeDeclaration {
   const shared_ptr<Map> GetMap() const { return map; };
 };
 
+struct FunctionParameter {
+  shared_ptr<string> param_name;
+
+  // Type
+  shared_ptr<string> parameter_type_name;
+  // Filled in during second pass.
+  shared_ptr<TypeDeclaration> parameter_type;
+};
+
+struct TemplateFunctionDefinition {
+  shared_ptr<string> identifier;
+  vector<FunctionParameter> params;
+};
+
 struct Module {
   shared_ptr<SymbolPath> module_name;
   vector<shared_ptr<TypeDeclaration>> types;
+  vector<shared_ptr<TemplateFunctionDefinition>> template_functions;
 
   shared_ptr<TypeDeclaration> Get(const string& identifier) {
     for (auto t : types) {

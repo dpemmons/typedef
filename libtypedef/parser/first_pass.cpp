@@ -362,8 +362,25 @@ void FirstPassListener::exitMapDeclaration(
   ctx->map->value_type = ctx->val->type_param;
 }
 
+void FirstPassListener::exitTemplateBlock(
+    TypedefParser::TemplateBlockContext* ctx) {
+  bail_if_errors();
+  try {
+    if (ctx->TEMPLATE_LITERAL()) {
+      ctx->val = GetStringValue(ctx->TEMPLATE_LITERAL()->getSymbol());
+    } else if (ctx->RAW_TEMPLATE_LITERAL()) {
+      ctx->val = GetRawString(ctx->RAW_TEMPLATE_LITERAL()->getSymbol());
+    } else {
+      throw_logic_error("Invalid state.");
+    }
+  } catch (td::ParserErrorInfo& pei) {
+    errors_list_.push_back(pei);
+  }
+}
+
 void FirstPassListener::exitTypeParameter(
     TypedefParser::TypeParameterContext* ctx) {
+  bail_if_errors();
   ctx->type_param = make_shared<td::table::TypeParameter>();
   if (ctx->primitiveTypeIdentifier()) {
     ctx->type_param->type =
@@ -437,6 +454,7 @@ void FirstPassListener::exitFieldDeclaration(
 
 void FirstPassListener::exitSymrefMemberDeclaration(
     TypedefParser::SymrefMemberDeclarationContext* ctx) {
+  bail_if_errors();
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
   ctx->field_decl->ctx = ctx;
   ctx->field_decl->identifier = ctx->fieldIdentifier->id;
@@ -535,6 +553,7 @@ void FirstPassListener::exitPrimitiveMemberDeclaration(
 
 void FirstPassListener::exitImpliedTypePrimitiveMemberDeclaration(
     TypedefParser::ImpliedTypePrimitiveMemberDeclarationContext* ctx) {
+  bail_if_errors();
   ctx->field_decl = make_shared<td::table::FieldDeclaration>();
   ctx->field_decl->ctx = ctx;
   ctx->field_decl->identifier = ctx->identifier()->id;
@@ -762,7 +781,6 @@ void FirstPassListener::exitI32Literal(TypedefParser::I32LiteralContext* ctx) {
 
 void FirstPassListener::exitI64Literal(TypedefParser::I64LiteralContext* ctx) {
   bail_if_errors();
-
   try {
     ctx->val = GetIntValue<int64_t>(ctx);
   } catch (td::ParserErrorInfo& pei) {
@@ -773,12 +791,13 @@ void FirstPassListener::exitI64Literal(TypedefParser::I64LiteralContext* ctx) {
 void FirstPassListener::exitStringLiteral(
     TypedefParser::StringLiteralContext* ctx) {
   bail_if_errors();
-
   try {
     if (ctx->STRING_LITERAL()) {
       ctx->val = GetStringValue(ctx->STRING_LITERAL()->getSymbol());
     } else if (ctx->RAW_STRING_LITERAL()) {
       ctx->val = GetRawString(ctx->RAW_STRING_LITERAL()->getSymbol());
+    } else {
+      throw_logic_error("Invalid state.");
     }
   } catch (td::ParserErrorInfo& pei) {
     errors_list_.push_back(pei);

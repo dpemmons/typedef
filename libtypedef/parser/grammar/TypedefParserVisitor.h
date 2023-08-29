@@ -35,6 +35,8 @@ public:
 
     virtual antlrcpp::Any visitTemplateDefinition(TypedefParser::TemplateDefinitionContext *context) = 0;
 
+    virtual antlrcpp::Any visitTemplateBlock(TypedefParser::TemplateBlockContext *context) = 0;
+
     virtual antlrcpp::Any visitTypeParameter(TypedefParser::TypeParameterContext *context) = 0;
 
     virtual antlrcpp::Any visitStructMember(TypedefParser::StructMemberContext *context) = 0;

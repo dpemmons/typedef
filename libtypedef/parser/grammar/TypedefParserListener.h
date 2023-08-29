@@ -36,6 +36,9 @@ public:
   virtual void enterTemplateDefinition(TypedefParser::TemplateDefinitionContext *ctx) = 0;
   virtual void exitTemplateDefinition(TypedefParser::TemplateDefinitionContext *ctx) = 0;
 
+  virtual void enterTemplateBlock(TypedefParser::TemplateBlockContext *ctx) = 0;
+  virtual void exitTemplateBlock(TypedefParser::TemplateBlockContext *ctx) = 0;
+
   virtual void enterTypeParameter(TypedefParser::TypeParameterContext *ctx) = 0;
   virtual void exitTypeParameter(TypedefParser::TypeParameterContext *ctx) = 0;
 
