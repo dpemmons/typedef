@@ -294,17 +294,35 @@ struct TypeDeclaration {
 };
 
 struct FunctionParameter {
-  shared_ptr<string> param_name;
+  // May be either constructed as a primitive type, or as a symref.
+  FunctionParameter(string* param_name, PrimitiveType member_type)
+      : param_name(param_name),
+        member_type((Type)member_type),
+        parameter_type_name(nullptr) {}
+  FunctionParameter(string* param_name, string* parameter_type_name)
+      : param_name(param_name),
+        member_type(TYPE_SYMREF),
+        parameter_type_name(parameter_type_name) {}
+  FunctionParameter() = delete;
 
-  // Type
-  shared_ptr<string> parameter_type_name;
+  const string* const param_name;
+  const Type member_type;
+  const string* const parameter_type_name;
   // Filled in during second pass.
-  shared_ptr<TypeDeclaration> parameter_type;
+  const TypeDeclaration* parameter_type;
 };
 
 struct TemplateFunctionDefinition {
-  shared_ptr<string> identifier;
-  vector<FunctionParameter> params;
+  TemplateFunctionDefinition(string* identifier,
+                             vector<const FunctionParameter*>&& params,
+                             string* tmpl_string)
+      : identifier(identifier),
+        params(std::move(params)),
+        tmpl_string(tmpl_string) {}
+  const string* const identifier;
+  const vector<const FunctionParameter*> params;
+  // unparsed source.
+  const string* const tmpl_string;
 };
 
 struct Module {

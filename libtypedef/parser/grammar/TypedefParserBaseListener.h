@@ -41,6 +41,9 @@ public:
   virtual void enterTemplateBlock(TypedefParser::TemplateBlockContext * /*ctx*/) override { }
   virtual void exitTemplateBlock(TypedefParser::TemplateBlockContext * /*ctx*/) override { }
 
+  virtual void enterFunctionParameter(TypedefParser::FunctionParameterContext * /*ctx*/) override { }
+  virtual void exitFunctionParameter(TypedefParser::FunctionParameterContext * /*ctx*/) override { }
+
   virtual void enterTypeParameter(TypedefParser::TypeParameterContext * /*ctx*/) override { }
   virtual void exitTypeParameter(TypedefParser::TypeParameterContext * /*ctx*/) override { }
 

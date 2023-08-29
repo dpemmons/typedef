@@ -35,19 +35,18 @@ td::ParserErrorInfo MakeError(td::ParserErrorInfo::Type type, const string& msg,
 
 namespace {
 
-shared_ptr<string> GetStringValue(antlr4::Token* token) {
+shared_ptr<string> GetStringValue(antlr4::Token* token,
+                                  td::ParserErrorInfo::Type err_to_throw) {
   string text = token->getText();
   string_view literal(text);
   if (literal.size() < 2) {
-    throw MakeError(td::ParserErrorInfo::INVALID_STRING_LITERAL,
-                    "Invalid string literal", token);
+    throw MakeError(err_to_throw, "Invalid string literal", token);
   }
   if (literal.front() == '"' && literal.back() == '"') {
     literal.remove_prefix(1);
     literal.remove_suffix(1);
   } else {
-    throw MakeError(td::ParserErrorInfo::INVALID_STRING_LITERAL,
-                    "Invalid string literal", token);
+    throw MakeError(err_to_throw, "Invalid string literal", token);
   }
   ostringstream result;
   wstring_convert<codecvt_utf8<char32_t>, char32_t> converter;
@@ -78,8 +77,7 @@ shared_ptr<string> GetStringValue(antlr4::Token* token) {
           break;
         case 'x': {
           if (i + 2 >= literal.size()) {
-            throw MakeError(td::ParserErrorInfo::INVALID_STRING_LITERAL,
-                            "Invalid string literal", token);
+            throw MakeError(err_to_throw, "Invalid string literal", token);
           }
           int hexValue = 0;
           from_chars(literal.data() + i + 1, literal.data() + i + 3, hexValue,
@@ -91,21 +89,18 @@ shared_ptr<string> GetStringValue(antlr4::Token* token) {
         case 'u': {
           size_t start = i + 2;
           if (start >= literal.size()) {
-            throw MakeError(td::ParserErrorInfo::INVALID_STRING_LITERAL,
-                            "Invalid string literal", token);
+            throw MakeError(err_to_throw, "Invalid string literal", token);
           }
           size_t end = literal.find('}', start);
           if (end == string_view::npos || end >= literal.size() ||
               end - start > 6) {
-            throw MakeError(td::ParserErrorInfo::INVALID_STRING_LITERAL,
-                            "Invalid string literal", token);
+            throw MakeError(err_to_throw, "Invalid string literal", token);
           }
           uint32_t unicodeValue = 0;
           auto [ptr, ec] = from_chars(literal.data() + start,
                                       literal.data() + end, unicodeValue, 16);
           if (ec != errc()) {
-            throw MakeError(td::ParserErrorInfo::INVALID_STRING_LITERAL,
-                            "Invalid string literal", token);
+            throw MakeError(err_to_throw, "Invalid string literal", token);
           }
           result << converter.to_bytes(static_cast<char32_t>(unicodeValue));
           i = end;
@@ -120,12 +115,12 @@ shared_ptr<string> GetStringValue(antlr4::Token* token) {
 }
 
 // From example, from RAW_STRING_LITERAL tokens.
-shared_ptr<string> GetRawString(antlr4::Token* token) {
+shared_ptr<string> GetRawString(antlr4::Token* token, char leading_char,
+                                td::ParserErrorInfo::Type err_to_throw) {
   string text = token->getText();
   string_view literal(text);
-  if (literal.empty() || literal.front() != 'r') {
-    throw MakeError(td::ParserErrorInfo::INVALID_RAW_STRING_LITERAL,
-                    "Invalid raw string literal", token);
+  if (literal.empty() || literal.front() != leading_char) {
+    throw MakeError(err_to_throw, "Invalid raw string literal", token);
   }
 
   // Resize the string_view to skip the initial 'r'
@@ -139,8 +134,7 @@ shared_ptr<string> GetRawString(antlr4::Token* token) {
 
   // Check for matching '"'s and resize the string_view accordingly
   if (literal.empty() || literal.front() != '"' || literal.back() != '"') {
-    throw MakeError(td::ParserErrorInfo::INVALID_RAW_STRING_LITERAL,
-                    "Invalid raw string literal", token);
+    throw MakeError(err_to_throw, "Invalid raw string literal", token);
   }
 
   // remove leading and trailing quotes
@@ -362,19 +356,52 @@ void FirstPassListener::exitMapDeclaration(
   ctx->map->value_type = ctx->val->type_param;
 }
 
+void FirstPassListener::exitTemplateDefinition(
+    TypedefParser::TemplateDefinitionContext* ctx) {
+  bail_if_errors();
+  vector<const td::table::FunctionParameter*> params;
+  for (TypedefParser::FunctionParameterContext* fp_ctx :
+       ctx->functionParameter()) {
+    params.push_back(fp_ctx->func_param.get());
+  }
+  ctx->tmpl = make_unique<td::table::TemplateFunctionDefinition>(
+      ctx->identifier()->id.get(), std::move(params),
+      ctx->templateBlock()->val.get());
+}
+
 void FirstPassListener::exitTemplateBlock(
     TypedefParser::TemplateBlockContext* ctx) {
   bail_if_errors();
   try {
     if (ctx->TEMPLATE_LITERAL()) {
-      ctx->val = GetStringValue(ctx->TEMPLATE_LITERAL()->getSymbol());
+      ctx->val =
+          GetStringValue(ctx->TEMPLATE_LITERAL()->getSymbol(),
+                         td::ParserErrorInfo::INVALID_TEMPLATE_STRING_LITERAL);
     } else if (ctx->RAW_TEMPLATE_LITERAL()) {
-      ctx->val = GetRawString(ctx->RAW_TEMPLATE_LITERAL()->getSymbol());
+      ctx->val = GetRawString(
+          ctx->RAW_TEMPLATE_LITERAL()->getSymbol(), 't',
+          td::ParserErrorInfo::INVALID_RAW_TEMPLATE_STRING_LITERAL);
     } else {
       throw_logic_error("Invalid state.");
     }
   } catch (td::ParserErrorInfo& pei) {
     errors_list_.push_back(pei);
+  }
+}
+
+void FirstPassListener::exitFunctionParameter(
+    TypedefParser::FunctionParameterContext* ctx) {
+  bail_if_errors();
+  if (ctx->typeParameter()->primitiveTypeIdentifier()) {
+    ctx->func_param = make_unique<td::table::FunctionParameter>(
+        ctx->identifier()->id.get(),
+        ctx->typeParameter()->primitiveTypeIdentifier()->primitive_type);
+  } else if (ctx->typeParameter()->identifier()) {
+    ctx->func_param = make_unique<td::table::FunctionParameter>(
+        ctx->identifier()->id.get(),
+        ctx->typeParameter()->identifier()->id.get());
+  } else {
+    throw_logic_error("Invalid state.");
   }
 }
 
@@ -793,9 +820,11 @@ void FirstPassListener::exitStringLiteral(
   bail_if_errors();
   try {
     if (ctx->STRING_LITERAL()) {
-      ctx->val = GetStringValue(ctx->STRING_LITERAL()->getSymbol());
+      ctx->val = GetStringValue(ctx->STRING_LITERAL()->getSymbol(),
+                                td::ParserErrorInfo::INVALID_STRING_LITERAL);
     } else if (ctx->RAW_STRING_LITERAL()) {
-      ctx->val = GetRawString(ctx->RAW_STRING_LITERAL()->getSymbol());
+      ctx->val = GetRawString(ctx->RAW_STRING_LITERAL()->getSymbol(), 'r',
+                              td::ParserErrorInfo::INVALID_RAW_STRING_LITERAL);
     } else {
       throw_logic_error("Invalid state.");
     }

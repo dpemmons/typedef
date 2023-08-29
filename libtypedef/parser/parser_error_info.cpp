@@ -361,6 +361,10 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
       return "DUPLICATE_SYMBOL";
     case TYPE_CONSTRAINT_VIOLATION:
       return "TYPE_CONSTRAINT_VIOLATION";
+    case INVALID_TEMPLATE_STRING_LITERAL:
+      return "INVALID_TEMPLATE_STRING_LITERAL";
+    case INVALID_RAW_TEMPLATE_STRING_LITERAL:
+      return "INVALID_RAW_TEMPLATE_STRING_LITERAL";
     default:
       throw fmt::format("Unhandled error ID in ErrorTypeToString(): {}",
                         (int)error_type);

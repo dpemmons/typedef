@@ -55,18 +55,18 @@ public:
   enum {
     RuleCompilationUnit = 0, RuleStructDeclaration = 1, RuleVariantDeclaration = 2, 
     RuleVectorDeclaration = 3, RuleMapDeclaration = 4, RuleTemplateDefinition = 5, 
-    RuleTemplateBlock = 6, RuleTypeParameter = 7, RuleStructMember = 8, 
-    RuleTypeDeclaration = 9, RuleFieldDeclaration = 10, RulePrimitiveMemberDeclaration = 11, 
-    RuleSymrefMemberDeclaration = 12, RuleImpliedTypePrimitiveMemberDeclaration = 13, 
-    RuleInlineStructDeclaration = 14, RuleInlineVariantDeclaration = 15, 
-    RuleInlineVectorDeclaration = 16, RuleInlineMapDeclaration = 17, RuleTypedefVersionDeclaration = 18, 
-    RuleModuleDeclaration = 19, RuleUseDeclaration = 20, RuleUseTree = 21, 
-    RuleSimplePath = 22, RuleExplicitPrimitiveLiteral = 23, RuleBoolLiteral = 24, 
-    RuleCharLiteral = 25, RuleStringLiteral = 26, RuleF32Literal = 27, RuleF64Literal = 28, 
-    RuleU8Literal = 29, RuleU16Literal = 30, RuleU32Literal = 31, RuleU64Literal = 32, 
-    RuleI8Literal = 33, RuleI16Literal = 34, RuleI32Literal = 35, RuleI64Literal = 36, 
-    RuleFloatLiteral = 37, RuleIntLiteral = 38, RuleIdentifier = 39, RulePrimitiveTypeIdentifier = 40, 
-    RuleKeyword = 41
+    RuleTemplateBlock = 6, RuleFunctionParameter = 7, RuleTypeParameter = 8, 
+    RuleStructMember = 9, RuleTypeDeclaration = 10, RuleFieldDeclaration = 11, 
+    RulePrimitiveMemberDeclaration = 12, RuleSymrefMemberDeclaration = 13, 
+    RuleImpliedTypePrimitiveMemberDeclaration = 14, RuleInlineStructDeclaration = 15, 
+    RuleInlineVariantDeclaration = 16, RuleInlineVectorDeclaration = 17, 
+    RuleInlineMapDeclaration = 18, RuleTypedefVersionDeclaration = 19, RuleModuleDeclaration = 20, 
+    RuleUseDeclaration = 21, RuleUseTree = 22, RuleSimplePath = 23, RuleExplicitPrimitiveLiteral = 24, 
+    RuleBoolLiteral = 25, RuleCharLiteral = 26, RuleStringLiteral = 27, 
+    RuleF32Literal = 28, RuleF64Literal = 29, RuleU8Literal = 30, RuleU16Literal = 31, 
+    RuleU32Literal = 32, RuleU64Literal = 33, RuleI8Literal = 34, RuleI16Literal = 35, 
+    RuleI32Literal = 36, RuleI64Literal = 37, RuleFloatLiteral = 38, RuleIntLiteral = 39, 
+    RuleIdentifier = 40, RulePrimitiveTypeIdentifier = 41, RuleKeyword = 42
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -86,6 +86,7 @@ public:
   class MapDeclarationContext;
   class TemplateDefinitionContext;
   class TemplateBlockContext;
+  class FunctionParameterContext;
   class TypeParameterContext;
   class StructMemberContext;
   class TypeDeclarationContext;
@@ -133,12 +134,12 @@ public:
     ModuleDeclarationContext *moduleDeclaration();
     std::vector<UseDeclarationContext *> useDeclaration();
     UseDeclarationContext* useDeclaration(size_t i);
-    std::vector<TemplateDefinitionContext *> templateDefinition();
-    TemplateDefinitionContext* templateDefinition(size_t i);
-    std::vector<TypeDeclarationContext *> typeDeclaration();
-    TypeDeclarationContext* typeDeclaration(size_t i);
     std::vector<antlr4::tree::TerminalNode *> SEMI();
     antlr4::tree::TerminalNode* SEMI(size_t i);
+    std::vector<TypeDeclarationContext *> typeDeclaration();
+    TypeDeclarationContext* typeDeclaration(size_t i);
+    std::vector<TemplateDefinitionContext *> templateDefinition();
+    TemplateDefinitionContext* templateDefinition(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -243,19 +244,16 @@ public:
 
   class  TemplateDefinitionContext : public antlr4::ParserRuleContext {
   public:
-    TypedefParser::IdentifierContext *symbolName = nullptr;;
+    std::unique_ptr<td::table::TemplateFunctionDefinition> tmpl;
     TemplateDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_TEMPLATE();
+    IdentifierContext *identifier();
     antlr4::tree::TerminalNode *LPAREN();
     antlr4::tree::TerminalNode *RPAREN();
     TemplateBlockContext *templateBlock();
-    std::vector<IdentifierContext *> identifier();
-    IdentifierContext* identifier(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> COLON();
-    antlr4::tree::TerminalNode* COLON(size_t i);
-    std::vector<TypeParameterContext *> typeParameter();
-    TypeParameterContext* typeParameter(size_t i);
+    std::vector<FunctionParameterContext *> functionParameter();
+    FunctionParameterContext* functionParameter(size_t i);
     antlr4::tree::TerminalNode *FATARROW();
     antlr4::tree::TerminalNode *KW_STRING();
     std::vector<antlr4::tree::TerminalNode *> COMMA();
@@ -286,6 +284,24 @@ public:
   };
 
   TemplateBlockContext* templateBlock();
+
+  class  FunctionParameterContext : public antlr4::ParserRuleContext {
+  public:
+    std::unique_ptr<td::table::FunctionParameter> func_param;
+    FunctionParameterContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IdentifierContext *identifier();
+    antlr4::tree::TerminalNode *COLON();
+    TypeParameterContext *typeParameter();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  FunctionParameterContext* functionParameter();
 
   class  TypeParameterContext : public antlr4::ParserRuleContext {
   public:

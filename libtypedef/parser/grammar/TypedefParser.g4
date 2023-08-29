@@ -23,7 +23,7 @@ compilationUnit
 	]:
 	typedefVersionDeclaration (moduleDeclaration)? (
 		useDeclaration
-	)* ((typeDeclaration SEMI) | templateDefinition)* EOF;
+	)* ((typeDeclaration | templateDefinition) SEMI)* EOF;
 
 // variant SomeVariant { optionA: i32; optionB: str; }
 structDeclaration
@@ -46,17 +46,20 @@ mapDeclaration
 	KW_MAP symbolName = identifier LT key = typeParameter COMMA val = typeParameter GT;
 
 // template DoIt(a: i32, b: str) "{a} {b}";
-templateDefinition:
-	KW_TEMPLATE symbolName = identifier '(' (
-		identifier ':' typeParameter (
-			COMMA identifier ':' typeParameter
-		)*
+templateDefinition
+	returns[std::unique_ptr<td::table::TemplateFunctionDefinition> tmpl]:
+	KW_TEMPLATE identifier '(' (
+		functionParameter (COMMA functionParameter)*
 	) ')' ('=>' KW_STRING)? templateBlock;
 
 templateBlock
 	returns[std::shared_ptr<std::string> val]:
 	TEMPLATE_LITERAL
 	| RAW_TEMPLATE_LITERAL;
+
+functionParameter
+	returns[std::unique_ptr<td::table::FunctionParameter> func_param]:
+	identifier ':' typeParameter;
 
 typeParameter
 	returns[std::shared_ptr<td::table::TypeParameter> type_param]:
