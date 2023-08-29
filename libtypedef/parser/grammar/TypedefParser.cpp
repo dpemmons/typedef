@@ -772,9 +772,9 @@ TypedefParser::TemplateBlockContext* TypedefParser::templateBlock() {
     enterOuterAlt(_localctx, 1);
     setState(167);
     _la = _input->LA(1);
-    if (!(_la == TypedefParser::RAW_TEMPLATE_LITERAL
+    if (!(_la == TypedefParser::TEMPLATE_LITERAL
 
-    || _la == TypedefParser::TEMPLATE_LITERAL)) {
+    || _la == TypedefParser::RAW_TEMPLATE_LITERAL)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -4428,7 +4428,7 @@ std::vector<std::string> TypedefParser::_symbolicNames = {
   "KW_F64", "KW_U8", "KW_U16", "KW_U32", "KW_U64", "KW_I8", "KW_I16", "KW_I32", 
   "KW_I64", "NON_KEYWORD_IDENTIFIER", "LINE_COMMENT", "BLOCK_COMMENT", "INNER_LINE_DOC", 
   "INNER_BLOCK_DOC", "OUTER_LINE_DOC", "OUTER_BLOCK_DOC", "BLOCK_COMMENT_OR_DOC", 
-  "SHEBANG", "CHAR_LITERAL", "STRING_LITERAL", "RAW_TEMPLATE_LITERAL", "TEMPLATE_LITERAL", 
+  "SHEBANG", "CHAR_LITERAL", "STRING_LITERAL", "TEMPLATE_LITERAL", "RAW_TEMPLATE_LITERAL", 
   "RAW_STRING_LITERAL", "DEC_DIGITS", "DEC_DIGITS_UNDERSCORE", "HEX_DIGITS", 
   "HEX_DIGITS_UNDERSCORE", "OCT_DIGITS", "OCT_DIGITS_UNDERSCORE", "BIN_DIGITS", 
   "BIN_DIGITS_UNDERSCORE", "FLOAT_LITERAL", "OCT_DIGIT", "DEC_DIGIT", "HEX_DIGIT", 

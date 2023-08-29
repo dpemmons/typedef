@@ -21,7 +21,7 @@ const std::vector<td::ParserErrorInfo> empty_errors;
  */
 
 TEST_CASE("Struct with explictly typed primitive fields", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -77,7 +77,7 @@ TEST_CASE(
     "Struct with explictly typed primitive fields and bool, char and string "
     "literals",
     "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -105,7 +105,7 @@ struct SomeStruct1 {
 TEST_CASE(
     "Struct with explictly typed primitive fields and typed numerical literals",
     "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -162,7 +162,7 @@ TEST_CASE(
     "Struct with explictly typed primitive fields and type-implied numerical "
     "literals",
     "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -219,7 +219,7 @@ TEST_CASE(
     "Struct with implicitly typed primitive fields with explicitly typed "
     "literals.",
     "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -276,7 +276,7 @@ TEST_CASE(
     "Struct with implicitly typed primitive fields with implicitly typed "
     "literals.",
     "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -310,7 +310,7 @@ struct SomeStruct5 {
 }
 
 TEST_CASE("Struct with an inline struct", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -333,7 +333,7 @@ struct SomeStruct10 {
 }
 
 TEST_CASE("Struct with an inline variant", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -359,7 +359,7 @@ struct SomeStruct11 {
 }
 
 TEST_CASE("Struct with an inline vector", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -379,7 +379,7 @@ struct SomeStruct12 {
 }
 
 TEST_CASE("Struct with an inline map", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -400,7 +400,7 @@ struct SomeStruct13 {
 }
 
 TEST_CASE("Struct with an nested struct", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -422,7 +422,7 @@ struct SomeStruct20 {
 }
 
 TEST_CASE("Struct with an nested variant", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -447,7 +447,7 @@ struct SomeStruct21 {
 }
 
 TEST_CASE("Struct with an nested vector", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -467,7 +467,7 @@ struct SomeStruct22 {
 }
 
 TEST_CASE("Struct with an nested map", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -488,7 +488,7 @@ struct SomeStruct23 {
 }
 
 TEST_CASE("Struct with an duplicate fields should error", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -504,7 +504,7 @@ struct SomeStruct {
 };
 
 TEST_CASE("Struct with an duplicate types should error", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -521,7 +521,7 @@ struct SomeStruct {
 
 TEST_CASE("Struct with an duplicate types of different types should error",
           "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -543,7 +543,7 @@ struct SomeStruct {
 };
 
 TEST_CASE("Struct with an duplicate and field names should error", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -559,7 +559,7 @@ struct SomeStruct {
 };
 
 TEST_CASE("Inline struct with an duplicate fields should error", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -577,7 +577,7 @@ struct SomeStruct {
 };
 
 TEST_CASE("Inline struct with an duplicate types should error", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -596,7 +596,7 @@ struct SomeStruct {
 
 TEST_CASE("Inline struct with an duplicate types of different types should error",
           "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -620,7 +620,7 @@ struct SomeStruct {
 };
 
 TEST_CASE("Inline struct with an duplicate and field names should error", "[struct]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 

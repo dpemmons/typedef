@@ -3,7 +3,6 @@
 #include <memory>
 #include <vector>
 
-#include "libtypedef/parser/parsed_file.h"
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/typedef_parser.h"
 
@@ -26,7 +25,7 @@ module someModule;
 }
 
 TEST_CASE("Duplicate structs should error", "[module]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 

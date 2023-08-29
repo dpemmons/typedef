@@ -3,12 +3,11 @@
 #include <memory>
 #include <vector>
 
-#include "libtypedef/parser/parsed_file.h"
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/typedef_parser.h"
 
 TEST_CASE("Simple template function.", "[template]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -21,4 +20,6 @@ template DoIt(foo: i32, bar: SomeVals) t"Hello World!";
   )");
 
   REQUIRE(!parsed_file->HasErrors());
+  auto tmpl = parsed_file->mod->GetTemplate("DoIt");
+  // REQUIRE(tmpl->params.size() == 2);
 }

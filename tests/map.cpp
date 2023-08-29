@@ -16,7 +16,7 @@ const std::vector<td::ParserErrorInfo> empty_errors;
 }  // namespace
 
 TEST_CASE("Map with various scalar key types", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -79,7 +79,7 @@ map SomeStrMap<str, str>;
 }
 
 TEST_CASE("Map with a struct key type should error", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -96,7 +96,7 @@ map SomeBoolMap<StructA, str>;
 }
 
 TEST_CASE("Map with a float key type should error", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -109,7 +109,7 @@ map SomeBoolMap<f32, str>;
 }
 
 TEST_CASE("Map with a variant key type should error", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -126,7 +126,7 @@ map SomeBoolMap<VariantA, str>;
 }
 
 TEST_CASE("Map with a vector key type should error", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -141,7 +141,7 @@ map SomeBoolMap<VecA, str>;
 }
 
 TEST_CASE("Map with a map key type should error", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 

@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "libtypedef/codegen/file_printer.h"
-#include "libtypedef/parser/parsed_file.h"
+#include "libtypedef/parser/typedef_parser.h"
 
 namespace td {
 

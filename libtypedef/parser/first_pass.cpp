@@ -35,12 +35,15 @@ td::ParserErrorInfo MakeError(td::ParserErrorInfo::Type type, const string& msg,
 
 namespace {
 
-shared_ptr<string> GetStringValue(antlr4::Token* token,
+shared_ptr<string> GetStringValue(antlr4::Token* token, char prefix_char,
                                   td::ParserErrorInfo::Type err_to_throw) {
   string text = token->getText();
   string_view literal(text);
-  if (literal.size() < 2) {
+  if ((literal.size() < 2) || (prefix_char && literal.size() < 3)) {
     throw MakeError(err_to_throw, "Invalid string literal", token);
+  }
+  if (prefix_char && literal.front() == prefix_char) {
+    literal.remove_prefix(1);
   }
   if (literal.front() == '"' && literal.back() == '"') {
     literal.remove_prefix(1);
@@ -375,7 +378,7 @@ void FirstPassListener::exitTemplateBlock(
   try {
     if (ctx->TEMPLATE_LITERAL()) {
       ctx->val =
-          GetStringValue(ctx->TEMPLATE_LITERAL()->getSymbol(),
+          GetStringValue(ctx->TEMPLATE_LITERAL()->getSymbol(), 't',
                          td::ParserErrorInfo::INVALID_TEMPLATE_STRING_LITERAL);
     } else if (ctx->RAW_TEMPLATE_LITERAL()) {
       ctx->val = GetRawString(
@@ -820,7 +823,7 @@ void FirstPassListener::exitStringLiteral(
   bail_if_errors();
   try {
     if (ctx->STRING_LITERAL()) {
-      ctx->val = GetStringValue(ctx->STRING_LITERAL()->getSymbol(),
+      ctx->val = GetStringValue(ctx->STRING_LITERAL()->getSymbol(), 0,
                                 td::ParserErrorInfo::INVALID_STRING_LITERAL);
     } else if (ctx->RAW_STRING_LITERAL()) {
       ctx->val = GetRawString(ctx->RAW_STRING_LITERAL()->getSymbol(), 'r',

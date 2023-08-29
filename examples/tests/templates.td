@@ -6,3 +6,4 @@ struct SomeVals {
 };
 
 template DoIt(foo: i32, bar: SomeVals) t"Hello World!";
+template DoIt2(foo: i32, bar: SomeVals) t#"Hello World2!"#;

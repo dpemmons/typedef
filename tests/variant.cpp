@@ -16,7 +16,7 @@ const std::vector<td::ParserErrorInfo> empty_errors;
 }  // namespace
 
 TEST_CASE("Variant with explictly typed primitive fields", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -72,7 +72,7 @@ TEST_CASE(
     "Variant with explictly typed primitive fields and bool, char and string "
     "literals",
     "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -100,7 +100,7 @@ variant SomeVariant1 {
 TEST_CASE(
     "Variant with explictly typed primitive fields and typed numerical literals",
     "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -157,7 +157,7 @@ TEST_CASE(
     "Variant with explictly typed primitive fields and type-implied numerical "
     "literals",
     "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -214,7 +214,7 @@ TEST_CASE(
     "Variant with implicitly typed primitive fields with explicitly typed "
     "literals.",
     "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -271,7 +271,7 @@ TEST_CASE(
     "Variant with implicitly typed primitive fields with implicitly typed "
     "literals.",
     "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -305,7 +305,7 @@ variant SomeVariant5 {
 }
 
 TEST_CASE("Variant with an inline struct", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -328,7 +328,7 @@ variant SomeVariant10 {
 }
 
 TEST_CASE("Variant with an inline variant", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -354,7 +354,7 @@ variant SomeVariant11 {
 }
 
 TEST_CASE("Variant with an inline vector", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -374,7 +374,7 @@ variant SomeVariant12 {
 }
 
 TEST_CASE("Variant with an inline map", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -395,7 +395,7 @@ variant SomeVariant13 {
 }
 
 TEST_CASE("Variant with an nested struct", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -417,7 +417,7 @@ variant SomeVariant20 {
 }
 
 TEST_CASE("Variant with an nested variant", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -442,7 +442,7 @@ variant SomeVariant21 {
 }
 
 TEST_CASE("Variant with an nested vector", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -462,7 +462,7 @@ variant SomeVariant22 {
 }
 
 TEST_CASE("Variant with an nested map", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -483,7 +483,7 @@ variant SomeVariant23 {
 }
 
 TEST_CASE("Variant with an duplicate fields should error", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -499,7 +499,7 @@ variant SomeVariant {
 };
 
 TEST_CASE("Variant with an duplicate types should error", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -516,7 +516,7 @@ variant SomeVariant {
 
 TEST_CASE("Variant with an duplicate types of different types should error",
           "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -538,7 +538,7 @@ variant SomeVariant {
 };
 
 TEST_CASE("Variant with an duplicate and field names should error", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -554,7 +554,7 @@ variant SomeVariant {
 };
 
 TEST_CASE("Inline variant with an duplicate fields should error", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -572,7 +572,7 @@ variant SomeVariant {
 };
 
 TEST_CASE("Inline variant with an duplicate types should error", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -591,7 +591,7 @@ variant SomeVariant {
 
 TEST_CASE("Inline variant with an duplicate types of different types should error",
           "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 
@@ -615,7 +615,7 @@ variant SomeVariant {
 };
 
 TEST_CASE("Inline variant with an duplicate and field names should error", "[variant]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
 typedef=alpha;
 module test;
 

@@ -41,7 +41,8 @@ enum NonPrimitiveType {
   NONPRIMITIVE_TYPE_STRUCT = 100,
   NONPRIMITIVE_TYPE_VARIANT,
   NONPRIMITIVE_TYPE_VECTOR,
-  NONPRIMITIVE_TYPE_MAP
+  NONPRIMITIVE_TYPE_MAP,
+  NONPRIMITIVE_TYPE_TEMPLATE_FUNCTION,
 };
 
 enum Type {
@@ -67,6 +68,7 @@ enum Type {
   TYPE_VARIANT = NONPRIMITIVE_TYPE_VARIANT,
   TYPE_VECTOR = NONPRIMITIVE_TYPE_VECTOR,
   TYPE_MAP = NONPRIMITIVE_TYPE_MAP,
+  TYPE_TEMPLATE_FUNCTION = NONPRIMITIVE_TYPE_TEMPLATE_FUNCTION,
 
   TYPE_SYMREF
 };
@@ -93,6 +95,7 @@ struct Vector;
 struct Map;
 struct TypeDeclaration;
 struct FieldDeclaration;
+struct TemplateFunctionDefinition;
 
 struct TypeParameter {
   Type type = TYPE_UNKNOWN;
@@ -233,66 +236,6 @@ struct Map : public NonPrimitive {
   shared_ptr<TypeParameter> value_type;
 };
 
-struct TypeDeclaration {
-  antlr4::ParserRuleContext* ctx;
-  NonPrimitiveType declaration_type = NONPRIMITIVE_TYPE_UNKNOWN;
-  // May be one of the following.
-  shared_ptr<Struct> st;
-  shared_ptr<Variant> var;
-  shared_ptr<Vector> vec;
-  shared_ptr<Map> map;
-  std::string* GetIdentifier() {
-    if (st) {
-      return st->identifier.get();
-    } else if (var) {
-      return var->identifier.get();
-    } else if (vec) {
-      return vec->identifier.get();
-    } else if (map) {
-      return map->identifier.get();
-    } else {
-      // TODO this should throw.
-      return nullptr;
-    }
-  }
-  bool IsStruct() const {
-    return (declaration_type == NONPRIMITIVE_TYPE_STRUCT && st);
-  }
-  bool HasStructIdentifier(const string& identifier) const {
-    return (st && *st->identifier == identifier);
-  }
-  bool IsVariant() const {
-    return (declaration_type == NONPRIMITIVE_TYPE_VARIANT && var);
-  }
-  bool HasVaraintIdentifier(const string& identifier) const {
-    return (var && *var->identifier == identifier);
-  }
-  bool IsVector() const {
-    return (declaration_type == NONPRIMITIVE_TYPE_VECTOR && vec);
-  }
-  bool HasVectorIdentifier(const string& identifier) const {
-    return (vec && *vec->identifier == identifier);
-  }
-  bool IsMap() const {
-    return (declaration_type == NONPRIMITIVE_TYPE_MAP && map);
-  }
-  bool HasMapIdentifier(const string& identifier) const {
-    return (map && *map->identifier == identifier);
-  }
-
-  shared_ptr<Struct> GetStruct() { return st; };
-  const shared_ptr<Struct> GetStruct() const { return st; };
-
-  shared_ptr<Variant> GetVariant() { return var; };
-  const shared_ptr<Variant> GetVariant() const { return var; };
-
-  shared_ptr<Vector> GetVector() { return vec; };
-  const shared_ptr<Vector> GetVector() const { return vec; };
-
-  shared_ptr<Map> GetMap() { return map; };
-  const shared_ptr<Map> GetMap() const { return map; };
-};
-
 struct FunctionParameter {
   // May be either constructed as a primitive type, or as a symref.
   FunctionParameter(string* param_name, PrimitiveType member_type)
@@ -325,10 +268,80 @@ struct TemplateFunctionDefinition {
   const string* const tmpl_string;
 };
 
+struct TypeDeclaration {
+  antlr4::ParserRuleContext* ctx;
+  NonPrimitiveType declaration_type = NONPRIMITIVE_TYPE_UNKNOWN;
+  // May be one of the following.
+  shared_ptr<Struct> st;
+  shared_ptr<Variant> var;
+  shared_ptr<Vector> vec;
+  shared_ptr<Map> map;
+  TemplateFunctionDefinition* template_function;
+
+  const std::string* const GetIdentifier() {
+    if (st) {
+      return st->identifier.get();
+    } else if (var) {
+      return var->identifier.get();
+    } else if (vec) {
+      return vec->identifier.get();
+    } else if (map) {
+      return map->identifier.get();
+    } else if (template_function) {
+      return template_function->identifier;
+    } else {
+      // TODO this should throw.
+      return nullptr;
+    }
+  }
+  bool IsStruct() const {
+    return (declaration_type == NONPRIMITIVE_TYPE_STRUCT && st);
+  }
+  bool HasStructIdentifier(const string& identifier) const {
+    return (st && *st->identifier == identifier);
+  }
+  bool IsVariant() const {
+    return (declaration_type == NONPRIMITIVE_TYPE_VARIANT && var);
+  }
+  bool HasVaraintIdentifier(const string& identifier) const {
+    return (var && *var->identifier == identifier);
+  }
+  bool IsVector() const {
+    return (declaration_type == NONPRIMITIVE_TYPE_VECTOR && vec);
+  }
+  bool HasVectorIdentifier(const string& identifier) const {
+    return (vec && *vec->identifier == identifier);
+  }
+  bool IsMap() const {
+    return (declaration_type == NONPRIMITIVE_TYPE_MAP && map);
+  }
+  bool HasMapIdentifier(const string& identifier) const {
+    return (map && *map->identifier == identifier);
+  }
+  bool IsTemplate() const {
+    return (declaration_type == NONPRIMITIVE_TYPE_TEMPLATE_FUNCTION &&
+            template_function);
+  }
+  bool HasTemplateIdentifier(const string& identifier) const {
+    return (template_function && *template_function->identifier == identifier);
+  }
+
+  shared_ptr<Struct> GetStruct() { return st; };
+  const shared_ptr<Struct> GetStruct() const { return st; };
+
+  shared_ptr<Variant> GetVariant() { return var; };
+  const shared_ptr<Variant> GetVariant() const { return var; };
+
+  shared_ptr<Vector> GetVector() { return vec; };
+  const shared_ptr<Vector> GetVector() const { return vec; };
+
+  shared_ptr<Map> GetMap() { return map; };
+  const shared_ptr<Map> GetMap() const { return map; };
+};
+
 struct Module {
   shared_ptr<SymbolPath> module_name;
   vector<shared_ptr<TypeDeclaration>> types;
-  vector<shared_ptr<TemplateFunctionDefinition>> template_functions;
 
   shared_ptr<TypeDeclaration> Get(const string& identifier) {
     for (auto t : types) {
@@ -376,6 +389,15 @@ struct Module {
     for (auto t : types) {
       if (t->IsMap() && t->HasMapIdentifier(identifier)) {
         return t->map;
+      }
+    }
+    return nullptr;
+  }
+
+  TemplateFunctionDefinition* GetTemplate(const string& identifier) {
+    for (auto t : types) {
+      if (t->IsTemplate() && t->HasTemplateIdentifier(identifier)) {
+        return t->template_function;
       }
     }
     return nullptr;

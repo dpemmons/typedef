@@ -13,7 +13,6 @@
 
 #include "libtypedef/codegen/codegen_cpp.h"
 #include "libtypedef/codegen/file_printer.h"
-#include "libtypedef/parser/parsed_file.h"
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/table.h"
 #include "libtypedef/parser/typedef_parser.h"

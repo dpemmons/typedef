@@ -72,7 +72,7 @@ void SecondPassListener::enterStructDeclaration(
     TypedefParser::StructDeclarationContext* ctx) {
   std::set<std::string> identifiers;
   for (auto m : ctx->st->members) {
-    std::string* this_id = nullptr;
+    const std::string* this_id = nullptr;
     antlr4::ParserRuleContext* this_ctx = nullptr;
     if (m->IsType()) {
       this_id = m->type_decl->GetIdentifier();
@@ -96,7 +96,7 @@ void SecondPassListener::enterInlineStructDeclaration(
     TypedefParser::InlineStructDeclarationContext* ctx) {
   std::set<std::string> identifiers;
   for (auto m : ctx->field_decl->st->members) {
-    std::string* this_id = nullptr;
+    const std::string* this_id = nullptr;
     antlr4::ParserRuleContext* this_ctx = nullptr;
     if (m->IsType()) {
       this_id = m->type_decl->GetIdentifier();
@@ -120,7 +120,7 @@ void SecondPassListener::enterVariantDeclaration(
     TypedefParser::VariantDeclarationContext* ctx) {
   std::set<std::string> identifiers;
   for (auto m : ctx->var->members) {
-    std::string* this_id = nullptr;
+    const std::string* this_id = nullptr;
     antlr4::ParserRuleContext* this_ctx = nullptr;
     if (m->IsType()) {
       this_id = m->type_decl->GetIdentifier();
@@ -144,7 +144,7 @@ void SecondPassListener::enterInlineVariantDeclaration(
     TypedefParser::InlineVariantDeclarationContext* ctx) {
   std::set<std::string> identifiers;
   for (auto m : ctx->field_decl->var->members) {
-    std::string* this_id = nullptr;
+    const std::string* this_id = nullptr;
     antlr4::ParserRuleContext* this_ctx = nullptr;
     if (m->IsType()) {
       this_id = m->type_decl->GetIdentifier();
