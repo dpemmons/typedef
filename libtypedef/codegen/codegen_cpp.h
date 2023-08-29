@@ -9,7 +9,7 @@
 
 namespace td {
 
-void CodegenCpp(std::shared_ptr<OutPathBase> out_path,
+void CodegenCpp(OutPathBase* out_path,
                 const ParsedFile* parsed_file);
 
 }  // namespace td

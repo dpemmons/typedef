@@ -65,8 +65,8 @@ int main(int argc, const char** argv) {
     // fmt::streamed(parser->symbols2_));
   }
   if (!args.GetCppOut().empty()) {
-    auto outpath = std::make_shared<td::OutPath>(args.GetCppOut());
-    td::CodegenCpp(outpath, parsed_file.get());
+    auto outpath = std::make_unique<td::OutPath>(args.GetCppOut());
+    td::CodegenCpp(outpath.get(), parsed_file.get());
   }
 
   // fmt::print("File contains {} symbols:\n", parser->GetSymbols());

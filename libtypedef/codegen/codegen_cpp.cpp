@@ -357,7 +357,7 @@ json GetTypeDecls(const vector<shared_ptr<TypeDeclaration>>& types) {
   return arr;
 }
 
-void CodegenCpp(std::shared_ptr<OutPathBase> out_path,
+void CodegenCpp(OutPathBase* out_path,
                 const ParsedFile* parsed_file) {
   filesystem::path hdr_filename =
       parsed_file->mod->module_name->ToString("_", false) + ".h";
@@ -675,8 +675,8 @@ class {{identifier}} : public std::map<{{key_cpp_type}}, {{value_cpp_type}}> {
   )");
 
   auto header_tmpl = env.parse(R"(
-#ifndef {{header_guard}}
-#define {{header_guard}}
+#ifndef CODEGEN_CODEGEN_CPP_H__
+#define CODEGEN_CODEGEN_CPP_H__
 
 #include <cstdint>
 #include <memory>
@@ -712,7 +712,7 @@ namespace {{namespace}} {
 }  // namespace {{namespace}}
 ## endfor
 
-#endif  // {{header_guard}}
+#endif  // CODEGEN_CODEGEN_CPP_H__
   )");
 
   auto source_tmpl = env.parse(R"(
