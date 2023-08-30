@@ -1,5 +1,6 @@
 
 #include "libtypedef/parser/symbol_path.h"
+#include "libtypedef/parser/grammar_classes.h"
 #include "libtypedef/parser/table.h"
 
 
@@ -56,12 +57,12 @@ public:
     RuleCompilationUnit = 0, RuleStructDeclaration = 1, RuleVariantDeclaration = 2, 
     RuleVectorDeclaration = 3, RuleMapDeclaration = 4, RuleTemplateDefinition = 5, 
     RuleTemplateBlock = 6, RuleFunctionParameter = 7, RuleTypeParameter = 8, 
-    RuleStructMember = 9, RuleTypeDeclaration = 10, RuleFieldDeclaration = 11, 
-    RulePrimitiveMemberDeclaration = 12, RuleSymrefMemberDeclaration = 13, 
-    RuleImpliedTypePrimitiveMemberDeclaration = 14, RuleInlineStructDeclaration = 15, 
-    RuleInlineVariantDeclaration = 16, RuleInlineVectorDeclaration = 17, 
-    RuleInlineMapDeclaration = 18, RuleTypedefVersionDeclaration = 19, RuleModuleDeclaration = 20, 
-    RuleUseDeclaration = 21, RuleUseTree = 22, RuleSimplePath = 23, RuleExplicitPrimitiveLiteral = 24, 
+    RuleTypeDeclaration = 9, RuleFieldDeclaration = 10, RulePrimitiveMemberDeclaration = 11, 
+    RuleSymrefMemberDeclaration = 12, RuleImpliedTypePrimitiveMemberDeclaration = 13, 
+    RuleInlineStructDeclaration = 14, RuleInlineVariantDeclaration = 15, 
+    RuleFieldBlock = 16, RuleInlineVectorDeclaration = 17, RuleInlineMapDeclaration = 18, 
+    RuleTypedefVersionDeclaration = 19, RuleModuleDeclaration = 20, RuleUseDeclaration = 21, 
+    RuleUseTree = 22, RuleSimplePath = 23, RuleExplicitPrimitiveLiteral = 24, 
     RuleBoolLiteral = 25, RuleCharLiteral = 26, RuleStringLiteral = 27, 
     RuleF32Literal = 28, RuleF64Literal = 29, RuleU8Literal = 30, RuleU16Literal = 31, 
     RuleU32Literal = 32, RuleU64Literal = 33, RuleI8Literal = 34, RuleI16Literal = 35, 
@@ -88,7 +89,6 @@ public:
   class TemplateBlockContext;
   class FunctionParameterContext;
   class TypeParameterContext;
-  class StructMemberContext;
   class TypeDeclarationContext;
   class FieldDeclarationContext;
   class PrimitiveMemberDeclarationContext;
@@ -96,6 +96,7 @@ public:
   class ImpliedTypePrimitiveMemberDeclarationContext;
   class InlineStructDeclarationContext;
   class InlineVariantDeclarationContext;
+  class FieldBlockContext;
   class InlineVectorDeclarationContext;
   class InlineMapDeclarationContext;
   class TypedefVersionDeclarationContext;
@@ -156,11 +157,8 @@ public:
     antlr4::tree::TerminalNode *KW_STRUCT();
     IdentifierContext *identifier();
     antlr4::tree::TerminalNode *LBRACE();
+    FieldBlockContext *fieldBlock();
     antlr4::tree::TerminalNode *RBRACE();
-    std::vector<StructMemberContext *> structMember();
-    StructMemberContext* structMember(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> SEMI();
-    antlr4::tree::TerminalNode* SEMI(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -179,11 +177,8 @@ public:
     antlr4::tree::TerminalNode *KW_VARIANT();
     IdentifierContext *identifier();
     antlr4::tree::TerminalNode *LBRACE();
+    FieldBlockContext *fieldBlock();
     antlr4::tree::TerminalNode *RBRACE();
-    std::vector<StructMemberContext *> structMember();
-    StructMemberContext* structMember(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> SEMI();
-    antlr4::tree::TerminalNode* SEMI(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -318,23 +313,6 @@ public:
 
   TypeParameterContext* typeParameter();
 
-  class  StructMemberContext : public antlr4::ParserRuleContext {
-  public:
-    std::shared_ptr<td::table::StructMember> mem;
-    StructMemberContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    TypeDeclarationContext *typeDeclaration();
-    FieldDeclarationContext *fieldDeclaration();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  StructMemberContext* structMember();
-
   class  TypeDeclarationContext : public antlr4::ParserRuleContext {
   public:
     std::shared_ptr<td::table::TypeDeclaration> type_decl;
@@ -448,11 +426,8 @@ public:
     antlr4::tree::TerminalNode *COLON();
     antlr4::tree::TerminalNode *KW_STRUCT();
     antlr4::tree::TerminalNode *LBRACE();
+    FieldBlockContext *fieldBlock();
     antlr4::tree::TerminalNode *RBRACE();
-    std::vector<StructMemberContext *> structMember();
-    StructMemberContext* structMember(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> SEMI();
-    antlr4::tree::TerminalNode* SEMI(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -472,9 +447,27 @@ public:
     antlr4::tree::TerminalNode *COLON();
     antlr4::tree::TerminalNode *KW_VARIANT();
     antlr4::tree::TerminalNode *LBRACE();
+    FieldBlockContext *fieldBlock();
     antlr4::tree::TerminalNode *RBRACE();
-    std::vector<StructMemberContext *> structMember();
-    StructMemberContext* structMember(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  InlineVariantDeclarationContext* inlineVariantDeclaration();
+
+  class  FieldBlockContext : public antlr4::ParserRuleContext {
+  public:
+    td::FieldBlock field_block;
+    FieldBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<TypeDeclarationContext *> typeDeclaration();
+    TypeDeclarationContext* typeDeclaration(size_t i);
+    std::vector<FieldDeclarationContext *> fieldDeclaration();
+    FieldDeclarationContext* fieldDeclaration(size_t i);
     std::vector<antlr4::tree::TerminalNode *> SEMI();
     antlr4::tree::TerminalNode* SEMI(size_t i);
 
@@ -485,7 +478,7 @@ public:
    
   };
 
-  InlineVariantDeclarationContext* inlineVariantDeclaration();
+  FieldBlockContext* fieldBlock();
 
   class  InlineVectorDeclarationContext : public antlr4::ParserRuleContext {
   public:

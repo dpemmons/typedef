@@ -1,5 +1,6 @@
 
 #include "libtypedef/parser/symbol_path.h"
+#include "libtypedef/parser/grammar_classes.h"
 #include "libtypedef/parser/table.h"
 
 
@@ -45,9 +46,6 @@ public:
   virtual void enterTypeParameter(TypedefParser::TypeParameterContext *ctx) = 0;
   virtual void exitTypeParameter(TypedefParser::TypeParameterContext *ctx) = 0;
 
-  virtual void enterStructMember(TypedefParser::StructMemberContext *ctx) = 0;
-  virtual void exitStructMember(TypedefParser::StructMemberContext *ctx) = 0;
-
   virtual void enterTypeDeclaration(TypedefParser::TypeDeclarationContext *ctx) = 0;
   virtual void exitTypeDeclaration(TypedefParser::TypeDeclarationContext *ctx) = 0;
 
@@ -68,6 +66,9 @@ public:
 
   virtual void enterInlineVariantDeclaration(TypedefParser::InlineVariantDeclarationContext *ctx) = 0;
   virtual void exitInlineVariantDeclaration(TypedefParser::InlineVariantDeclarationContext *ctx) = 0;
+
+  virtual void enterFieldBlock(TypedefParser::FieldBlockContext *ctx) = 0;
+  virtual void exitFieldBlock(TypedefParser::FieldBlockContext *ctx) = 0;
 
   virtual void enterInlineVectorDeclaration(TypedefParser::InlineVectorDeclarationContext *ctx) = 0;
   virtual void exitInlineVectorDeclaration(TypedefParser::InlineVectorDeclarationContext *ctx) = 0;

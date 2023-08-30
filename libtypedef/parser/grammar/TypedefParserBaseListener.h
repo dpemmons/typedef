@@ -1,5 +1,6 @@
 
 #include "libtypedef/parser/symbol_path.h"
+#include "libtypedef/parser/grammar_classes.h"
 #include "libtypedef/parser/table.h"
 
 
@@ -47,9 +48,6 @@ public:
   virtual void enterTypeParameter(TypedefParser::TypeParameterContext * /*ctx*/) override { }
   virtual void exitTypeParameter(TypedefParser::TypeParameterContext * /*ctx*/) override { }
 
-  virtual void enterStructMember(TypedefParser::StructMemberContext * /*ctx*/) override { }
-  virtual void exitStructMember(TypedefParser::StructMemberContext * /*ctx*/) override { }
-
   virtual void enterTypeDeclaration(TypedefParser::TypeDeclarationContext * /*ctx*/) override { }
   virtual void exitTypeDeclaration(TypedefParser::TypeDeclarationContext * /*ctx*/) override { }
 
@@ -70,6 +68,9 @@ public:
 
   virtual void enterInlineVariantDeclaration(TypedefParser::InlineVariantDeclarationContext * /*ctx*/) override { }
   virtual void exitInlineVariantDeclaration(TypedefParser::InlineVariantDeclarationContext * /*ctx*/) override { }
+
+  virtual void enterFieldBlock(TypedefParser::FieldBlockContext * /*ctx*/) override { }
+  virtual void exitFieldBlock(TypedefParser::FieldBlockContext * /*ctx*/) override { }
 
   virtual void enterInlineVectorDeclaration(TypedefParser::InlineVectorDeclarationContext * /*ctx*/) override { }
   virtual void exitInlineVectorDeclaration(TypedefParser::InlineVectorDeclarationContext * /*ctx*/) override { }

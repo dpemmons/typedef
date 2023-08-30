@@ -9,7 +9,7 @@
       "type": "lldb",
       "request": "launch",
       "program": "${workspaceRoot}/build/debug/tests",
-      "args": [],
+      "args": ["Simple template function."],
       "cwd": "${workspaceFolder}",
     },
     {
@@ -19,7 +19,7 @@
       "program": "${workspaceRoot}/build/debug/typedef",
       "args": [
         "--cpp_out=/tmp",
-        "${workspaceRoot}/examples/tests/symref.td"
+        "${workspaceRoot}/examples/tests/templates.td"
       ],
       "cwd": "${workspaceFolder}",
     },

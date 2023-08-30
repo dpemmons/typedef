@@ -1,5 +1,6 @@
 
 #include "libtypedef/parser/symbol_path.h"
+#include "libtypedef/parser/grammar_classes.h"
 #include "libtypedef/parser/table.h"
 
 
@@ -41,8 +42,6 @@ public:
 
     virtual antlrcpp::Any visitTypeParameter(TypedefParser::TypeParameterContext *context) = 0;
 
-    virtual antlrcpp::Any visitStructMember(TypedefParser::StructMemberContext *context) = 0;
-
     virtual antlrcpp::Any visitTypeDeclaration(TypedefParser::TypeDeclarationContext *context) = 0;
 
     virtual antlrcpp::Any visitFieldDeclaration(TypedefParser::FieldDeclarationContext *context) = 0;
@@ -56,6 +55,8 @@ public:
     virtual antlrcpp::Any visitInlineStructDeclaration(TypedefParser::InlineStructDeclarationContext *context) = 0;
 
     virtual antlrcpp::Any visitInlineVariantDeclaration(TypedefParser::InlineVariantDeclarationContext *context) = 0;
+
+    virtual antlrcpp::Any visitFieldBlock(TypedefParser::FieldBlockContext *context) = 0;
 
     virtual antlrcpp::Any visitInlineVectorDeclaration(TypedefParser::InlineVectorDeclarationContext *context) = 0;
 

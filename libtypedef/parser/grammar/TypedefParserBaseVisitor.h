@@ -1,5 +1,6 @@
 
 #include "libtypedef/parser/symbol_path.h"
+#include "libtypedef/parser/grammar_classes.h"
 #include "libtypedef/parser/table.h"
 
 
@@ -55,10 +56,6 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitStructMember(TypedefParser::StructMemberContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual antlrcpp::Any visitTypeDeclaration(TypedefParser::TypeDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -84,6 +81,10 @@ public:
   }
 
   virtual antlrcpp::Any visitInlineVariantDeclaration(TypedefParser::InlineVariantDeclarationContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitFieldBlock(TypedefParser::FieldBlockContext *ctx) override {
     return visitChildren(ctx);
   }
 

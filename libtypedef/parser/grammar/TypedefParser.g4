@@ -6,6 +6,7 @@ options {
 
 @header {
 #include "libtypedef/parser/symbol_path.h"
+#include "libtypedef/parser/grammar_classes.h"
 #include "libtypedef/parser/table.h"
 }
 
@@ -23,17 +24,17 @@ compilationUnit
 	]:
 	typedefVersionDeclaration (moduleDeclaration)? (
 		useDeclaration
-	)* (typeDeclaration SEMI)* EOF;
+	)* (typeDeclaration SEMI?)* EOF;
 
-// variant SomeVariant { optionA: i32; optionB: str; }
+// struct SomeVariant { optionA: i32; optionB: str; }
 structDeclaration
 	returns[std::shared_ptr<td::table::Struct> st]:
-	KW_STRUCT identifier LBRACE (structMember SEMI)* RBRACE;
+	KW_STRUCT identifier LBRACE fieldBlock RBRACE;
 
 // variant SomeVariant { optionA: i32; optionB: str; }
 variantDeclaration
 	returns[std::shared_ptr<td::table::Variant> var]:
-	KW_VARIANT identifier LBRACE (structMember SEMI)* RBRACE;
+	KW_VARIANT identifier LBRACE fieldBlock RBRACE;
 
 // vector SomeVector<i32>
 vectorDeclaration
@@ -65,11 +66,6 @@ typeParameter
 	returns[std::shared_ptr<td::table::TypeParameter> type_param]:
 	primitiveTypeIdentifier
 	| identifier;
-
-structMember
-	returns[std::shared_ptr<td::table::StructMember> mem]:
-	typeDeclaration
-	| fieldDeclaration;
 
 typeDeclaration
 	returns[std::shared_ptr<td::table::TypeDeclaration> type_decl]:
@@ -124,11 +120,15 @@ impliedTypePrimitiveMemberDeclaration
 
 inlineStructDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier COLON KW_STRUCT LBRACE (structMember SEMI)* RBRACE;
+	identifier COLON KW_STRUCT LBRACE fieldBlock RBRACE;
 
 inlineVariantDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier COLON KW_VARIANT LBRACE (structMember SEMI)* RBRACE;
+	identifier COLON KW_VARIANT LBRACE fieldBlock RBRACE;
+
+fieldBlock
+	returns[td::FieldBlock field_block]
+	@init {$field_block.Set($ctx);}: ( typeDeclaration | (fieldDeclaration SEMI))*;
 
 inlineVectorDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
