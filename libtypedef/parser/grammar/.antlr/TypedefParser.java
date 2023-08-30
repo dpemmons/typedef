@@ -1218,7 +1218,6 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class FieldBlockContext extends ParserRuleContext {
-		public td::FieldBlock field_block;
 		public List<TypeDeclarationContext> typeDeclaration() {
 			return getRuleContexts(TypeDeclarationContext.class);
 		}
@@ -1244,7 +1243,6 @@ public class TypedefParser extends Parser {
 	public final FieldBlockContext fieldBlock() throws RecognitionException {
 		FieldBlockContext _localctx = new FieldBlockContext(_ctx, getState());
 		enterRule(_localctx, 32, RULE_fieldBlock);
-		_localctx.field_block.Set(_localctx);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);

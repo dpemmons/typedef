@@ -126,9 +126,7 @@ inlineVariantDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
 	identifier COLON KW_VARIANT LBRACE fieldBlock RBRACE;
 
-fieldBlock
-	returns[td::FieldBlock field_block]
-	@init {$field_block.Set($ctx);}: ( typeDeclaration | (fieldDeclaration SEMI))*;
+fieldBlock: ( typeDeclaration | (fieldDeclaration SEMI))*;
 
 inlineVectorDeclaration
 	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
