@@ -23,7 +23,7 @@ compilationUnit
 	]:
 	typedefVersionDeclaration (moduleDeclaration)? (
 		useDeclaration
-	)* ((typeDeclaration | templateDefinition) SEMI)* EOF;
+	)* (typeDeclaration SEMI)* EOF;
 
 // variant SomeVariant { optionA: i32; optionB: str; }
 structDeclaration
@@ -78,6 +78,7 @@ typeDeclaration
 		| variantDeclaration
 		| vectorDeclaration
 		| mapDeclaration
+		| templateDefinition
 	);
 
 fieldDeclaration

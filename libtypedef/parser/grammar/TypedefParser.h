@@ -134,12 +134,10 @@ public:
     ModuleDeclarationContext *moduleDeclaration();
     std::vector<UseDeclarationContext *> useDeclaration();
     UseDeclarationContext* useDeclaration(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> SEMI();
-    antlr4::tree::TerminalNode* SEMI(size_t i);
     std::vector<TypeDeclarationContext *> typeDeclaration();
     TypeDeclarationContext* typeDeclaration(size_t i);
-    std::vector<TemplateDefinitionContext *> templateDefinition();
-    TemplateDefinitionContext* templateDefinition(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> SEMI();
+    antlr4::tree::TerminalNode* SEMI(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -346,6 +344,7 @@ public:
     VariantDeclarationContext *variantDeclaration();
     VectorDeclarationContext *vectorDeclaration();
     MapDeclarationContext *mapDeclaration();
+    TemplateDefinitionContext *templateDefinition();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

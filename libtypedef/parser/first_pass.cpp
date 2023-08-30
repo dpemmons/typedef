@@ -395,17 +395,8 @@ void FirstPassListener::exitTemplateBlock(
 void FirstPassListener::exitFunctionParameter(
     TypedefParser::FunctionParameterContext* ctx) {
   bail_if_errors();
-  if (ctx->typeParameter()->primitiveTypeIdentifier()) {
-    ctx->func_param = make_unique<td::table::FunctionParameter>(
-        ctx->identifier()->id.get(),
-        ctx->typeParameter()->primitiveTypeIdentifier()->primitive_type);
-  } else if (ctx->typeParameter()->identifier()) {
-    ctx->func_param = make_unique<td::table::FunctionParameter>(
-        ctx->identifier()->id.get(),
-        ctx->typeParameter()->identifier()->id.get());
-  } else {
-    throw_logic_error("Invalid state.");
-  }
+  ctx->func_param = make_unique<td::table::FunctionParameter>(
+      ctx->identifier()->id.get(), ctx->typeParameter()->type_param);
 }
 
 void FirstPassListener::exitTypeParameter(
@@ -457,6 +448,10 @@ void FirstPassListener::exitTypeDeclaration(
     ctx->type_decl->declaration_type =
         td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_MAP;
     ctx->type_decl->map = ctx->mapDeclaration()->map;
+  } else if (ctx->templateDefinition()) {
+    ctx->type_decl->declaration_type =
+        td::table::NonPrimitiveType::NONPRIMITIVE_TYPE_TEMPLATE_FUNCTION;
+    ctx->type_decl->template_function = ctx->templateDefinition()->tmpl.get();
   } else {
     throw_logic_error("Invalid state.");
   }

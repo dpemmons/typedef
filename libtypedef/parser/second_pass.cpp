@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 #include "libtypedef/parser/parser_common.h"
-#include "second_pass.h"
+#include "libtypedef/parser/tmpl_str_parser.h"
 
 #define throw_logic_error(str) \
   throw std::logic_error(      \
@@ -180,6 +180,31 @@ void SecondPassListener::enterInlineMapDeclaration(
         ErrorFromContext(ctx, ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
                          "Only trivially comparable types supported here."));
   }
+}
+
+void SecondPassListener::enterTemplateDefinition(
+    TypedefParser::TemplateDefinitionContext* ctx) {
+  auto parsedTmplStr = ParseTmplStr(*ctx->tmpl->tmpl_string);
+  if (!parsedTmplStr->errors.empty()) {
+    antlr4::Token* token = ctx->templateBlock()->getStart();
+    int line_offset = 0;
+    for (auto& err : parsedTmplStr->errors) {
+      errors_list_.emplace_back(
+          PEIBuilder()
+              .SetType(ParserErrorInfo::TEMPLATE_STRING_PARSE_ERROR)
+              .SetMessage(err.message)
+              .SetTokenType(antlr4::Token::INVALID_TYPE)
+              .SetCharOffset(token->getStartIndex() + err.char_offset)
+              .SetLine(token->getLine() + err.line - 1)
+              .SetLineOffset(token->getCharPositionInLine() + err.line_offset +
+                             line_offset)
+              .SetLength(err.length)
+              .build());
+    }
+    return;
+  }
+  // TODO: test (and resolve) symbols.
+  ctx->tmpl->tmpl_string_table = parsedTmplStr->table;
 }
 
 void SecondPassListener::enterTypeParameter(

@@ -22,9 +22,6 @@ class SecondPassListener : public TypedefParserBaseListener {
   virtual void enterCompilationUnit(
       TypedefParser::CompilationUnitContext *ctx) override;
 
-  std::shared_ptr<td::table::TypeDeclaration> FindSymbol(
-      const std::string &identifier, antlr4::tree::ParseTree *ctx);
-
   virtual void enterSymrefMemberDeclaration(
       TypedefParser::SymrefMemberDeclarationContext *ctx) override;
 
@@ -43,59 +40,17 @@ class SecondPassListener : public TypedefParserBaseListener {
   virtual void enterInlineMapDeclaration(
       TypedefParser::InlineMapDeclarationContext *ctx) override;
 
+  virtual void enterTemplateDefinition(
+      TypedefParser::TemplateDefinitionContext *ctx) override;
+
   virtual void enterTypeParameter(
       TypedefParser::TypeParameterContext *ctx) override;
 
-  // virtual void exitValuedTemplateStringType(
-  //     TypedefParser::ValuedTemplateStringTypeContext *ctx) override {
-  //   if (!ctx->stringLiteral()->maybe_val) {
-  //     errors_list_.emplace_back(
-  //         ErrorFromContext(ctx, ParserErrorInfo::INVALID_STRING_LITERAL,
-  //                          "Unexpected: missing string literal."));
-  //     return;
-  //   }
-  //   auto parsedTmplStr = ParseTmplStr(*ctx->stringLiteral()->maybe_val);
-  //   if (!parsedTmplStr->errors.empty()) {
-  //     antlr4::Token *token = nullptr;
-  //     int line_offset = 0;
-  //     if (ctx->stringLiteral()->STRING_LITERAL()) {
-  //       token = ctx->stringLiteral()->STRING_LITERAL()->getSymbol();
-  //       line_offset = ctx->stringLiteral()->start_offset;
-  //     } else if (ctx->stringLiteral()->RAW_STRING_LITERAL()) {
-  //       token = ctx->stringLiteral()->RAW_STRING_LITERAL()->getSymbol();
-  //       line_offset = ctx->stringLiteral()->start_offset;
-  //     } else {
-  //       token = ctx->getStart();
-  //     }
-  //     for (auto &err : parsedTmplStr->errors) {
-  //       errors_list_.emplace_back(
-  //           PEIBuilder()
-  //               .SetType(ParserErrorInfo::TEMPLATE_STRING_PARSE_ERROR)
-  //               .SetMessage(err.message)
-  //               .SetTokenType(antlr4::Token::INVALID_TYPE)
-  //               .SetCharOffset(token->getStartIndex() + err.char_offset)
-  //               .SetLine(token->getLine() + err.line - 1)
-  //               .SetLineOffset(token->getCharPositionInLine() +
-  //                              err.line_offset + line_offset)
-  //               .SetLength(err.length)
-  //               .build());
-  //     }
-  //     return;
-  //   }
-
-  //   // stick the table onto the TmplStr value!
-  //   if (holds_alternative<shared_ptr<TmplStr>>(*ctx->maybe_val)) {
-  //     auto tmpl_str = get<shared_ptr<TmplStr>>(*ctx->maybe_val);
-  //     tmpl_str->table = parsedTmplStr->table;
-  //   } else {
-  //     ErrorFromContext(ctx, ParserErrorInfo::OTHER,
-  //                      "Internal error: Valued template string object does "
-  //                      "not contain a value object.");
-  //   }
-  // }
-
  private:
   std::vector<ParserErrorInfo> &errors_list_;
+
+  std::shared_ptr<td::table::TypeDeclaration> FindSymbol(
+      const std::string &identifier, antlr4::tree::ParseTree *ctx);
 };
 
 }  // namespace td

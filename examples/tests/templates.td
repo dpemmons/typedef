@@ -5,5 +5,6 @@ struct SomeVals {
   val_a: i32;
 };
 
-template DoIt(foo: i32, bar: SomeVals) t"Hello World!";
-template DoIt2(foo: i32, bar: SomeVals) t#"Hello World2!"#;
+template DoIt(name: str, bar: SomeVals) t#"
+Hello <name>!
+"#;

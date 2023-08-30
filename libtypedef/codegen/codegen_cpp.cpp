@@ -7,6 +7,7 @@
 #include <string>
 
 #include "libtypedef/codegen/codegen_cpp_helpers.h"
+#include "libtypedef/parser/tmpl_str_table.h"
 
 #define throw_logic_error(str) \
   throw std::logic_error(      \
@@ -316,6 +317,114 @@ json GetMap(const Map& map, std::optional<string> identifier = nullopt) {
   return j;
 }
 
+json GetTemplateInsertion(const td::TmplStrTable::InsertionPtr insertion) {
+  json j;
+  return j;
+}
+json GetTemplateFunctionCall(const td::TmplStrTable::FunctionCallPtr fc) {
+  json j;
+  return j;
+}
+json GetTemplateIfBlock(const td::TmplStrTable::IfBlockPtr ib) {
+  json j;
+  return j;
+}
+json GetTemplateForBlock(const td::TmplStrTable::ForBlockPtr fb) {
+  json j;
+  return j;
+}
+
+json GetTemplateItem(const td::TmplStrTable::ItemPtr item) {
+  json j;
+  if (item->text) {
+    j["text"] = *item->text;
+  } else if (item->insertion) {
+    j["insertion"] = GetTemplateInsertion(item->insertion);
+  } else if (item->function_call) {
+    j["function_call"] = GetTemplateFunctionCall(item->function_call);
+  } else if (item->if_block) {
+    j["if_block"] = GetTemplateIfBlock(item->if_block);
+  } else if (item->for_block) {
+    j["for_block"] = GetTemplateForBlock(item->for_block);
+  } else {
+    throw_logic_error("invalid state");
+  }
+  return j;
+}
+
+json GetTemplate(const TemplateFunctionDefinition* template_function) {
+  json j;
+
+  j["identifier"] =
+      escape_utf8_to_cpp_identifier(*template_function->identifier);
+  for (const td::table::FunctionParameter* param : template_function->params) {
+    json p;
+
+    p["identifier"] = escape_utf8_to_cpp_identifier(*param->param_name);
+    if (param->parameter_type->IsPrimitive()) {
+      if (param->parameter_type->IsBool()) {
+        p["cpp_type"] = "bool";
+        p["access_by"] = "value";
+      } else if (param->parameter_type->IsChar()) {
+        p["cpp_type"] = "char32_t";
+        p["access_by"] = "value";
+      } else if (param->parameter_type->IsStr()) {
+        p["cpp_type"] = "std::string";
+        p["access_by"] = "reference";
+      } else if (param->parameter_type->IsF32()) {
+        p["cpp_type"] = "float";
+        p["access_by"] = "value";
+      } else if (param->parameter_type->IsF64()) {
+        p["cpp_type"] = "double";
+        p["access_by"] = "value";
+      } else if (param->parameter_type->IsU8()) {
+        p["cpp_type"] = "std::uint8_t";
+        p["access_by"] = "value";
+      } else if (param->parameter_type->IsU16()) {
+        p["cpp_type"] = "std::uint16_t";
+        p["access_by"] = "value";
+      } else if (param->parameter_type->IsU32()) {
+        p["cpp_type"] = "std::uint32_t";
+        p["access_by"] = "value";
+      } else if (param->parameter_type->IsU64()) {
+        p["cpp_type"] = "std::uint64_t";
+        p["access_by"] = "value";
+      } else if (param->parameter_type->IsI8()) {
+        p["cpp_type"] = "std::int8_t";
+        p["access_by"] = "value";
+      } else if (param->parameter_type->IsI16()) {
+        p["cpp_type"] = "std::int16_t";
+        p["access_by"] = "value";
+      } else if (param->parameter_type->IsI32()) {
+        p["cpp_type"] = "std::int32_t";
+        p["access_by"] = "value";
+      } else if (param->parameter_type->IsI64()) {
+        p["cpp_type"] = "std::int64_t";
+        p["access_by"] = "value";
+      } else {
+        throw_logic_error("invalid state");
+      }
+    } else if (param->parameter_type->IsSymref()) {
+      CppTypeInfo cpp_type_info =
+          GetAccessInfoForType(param->parameter_type->symref_target.get());
+      p["cpp_type"] = cpp_type_info.cpp_type;
+      p["access_by"] = cpp_type_info.access_by;
+    } else {
+      throw_logic_error("invalid state");
+    }
+
+    j["params"].push_back(p);
+  }
+
+  j["items"] = json::array();
+  for (td::TmplStrTable::ItemPtr item :
+       template_function->tmpl_string_table->items) {
+    j["items"].push_back(GetTemplateItem(item));
+  }
+
+  return j;
+}
+
 json GetInlineType(const FieldDeclaration* field) {
   json j;
   string identifier = *field->identifier + "T";
@@ -343,6 +452,8 @@ json GetType(const TypeDeclaration* type) {
     j["vector"] = GetVector(*type->vec);
   } else if (type->IsMap()) {
     j["map"] = GetMap(*type->map);
+  } else if (type->IsTemplate()) {
+    j["template"] = GetTemplate(type->template_function);
   } else {
     throw_logic_error("invalid state");
   }
@@ -357,8 +468,7 @@ json GetTypeDecls(const vector<shared_ptr<TypeDeclaration>>& types) {
   return arr;
 }
 
-void CodegenCpp(OutPathBase* out_path,
-                const ParsedFile* parsed_file) {
+void CodegenCpp(OutPathBase* out_path, const ParsedFile* parsed_file) {
   filesystem::path hdr_filename =
       parsed_file->mod->module_name->ToString("_", false) + ".h";
   filesystem::path source_filename =
@@ -411,6 +521,28 @@ void CodegenCpp(OutPathBase* out_path,
     json arg = args.at(0)->get<json>();
     // std::cout << arg.dump(1) << std::endl;
     return env.render(map_tmpl, arg);
+  });
+
+  Template params_list;
+  env.add_callback("params_list", 1, [&](Arguments& args) mutable {
+    json arg;
+    arg["params"] = args.at(0)->get<json>();
+    // std::cout << arg.dump(1) << std::endl;
+    return env.render(params_list, arg);
+  });
+
+  Template tmpl_hdr_tmpl;
+  env.add_callback("tmpl_hdr", 1, [&](Arguments& args) mutable {
+    json arg = args.at(0)->get<json>();
+    // std::cout << arg.dump(1) << std::endl;
+    return env.render(tmpl_hdr_tmpl, arg);
+  });
+
+  Template tmpl_src_tmpl;
+  env.add_callback("tmpl_src", 1, [&](Arguments& args) mutable {
+    json arg = args.at(0)->get<json>();
+    // std::cout << arg.dump(1) << std::endl;
+    return env.render(tmpl_src_tmpl, arg);
   });
 
   struct_tmpl = env.parse(R"(
@@ -674,6 +806,22 @@ class {{identifier}} : public std::map<{{key_cpp_type}}, {{value_cpp_type}}> {
 };  // class {{identifier}}
   )");
 
+  params_list = env.parse(R"({%- for param in params -%}
+, const {{ param.cpp_type -}}
+{% if param.access_by == "reference" %}&{% else if param.access_by == "pointer" %}*{% endif %}
+ {{ param.identifier -}}
+{%- endfor %})");
+
+  tmpl_hdr_tmpl = env.parse(R"(
+void {{identifier}}(std::ostream& os{{params_list(params)}});
+  )");
+
+  tmpl_src_tmpl = env.parse(R"(
+void {{identifier}}(std::ostream& os{{params_list(params)}}) {
+  
+}
+  )");
+
   auto header_tmpl = env.parse(R"(
 #ifndef CODEGEN_CODEGEN_CPP_H__
 #define CODEGEN_CODEGEN_CPP_H__
@@ -705,6 +853,8 @@ namespace {{namespace}} {
   {{ vector(type_decl.vector) }}
 ## else if existsIn(type_decl, "map")
   {{ map(type_decl.map) }}
+## else if existsIn(type_decl, "template")
+  {{ tmpl_hdr(type_decl.template) }}
 ## endif
 ## endfor
 
@@ -724,6 +874,12 @@ namespace {{namespace}} {
 
 ## for namespace in namespaces
 namespace {{namespace}} {
+## endfor
+
+## for type_decl in type_decls
+## if existsIn(type_decl, "template")
+{{ tmpl_src(type_decl.template) }}
+## endif
 ## endfor
 
 ## for namespace in namespaces

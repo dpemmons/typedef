@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "libtypedef/parser/symbol_path.h"
+#include "libtypedef/parser/tmpl_str_table.h"
 
 namespace antlr4 {
 class ParserRuleContext;
@@ -238,21 +239,13 @@ struct Map : public NonPrimitive {
 
 struct FunctionParameter {
   // May be either constructed as a primitive type, or as a symref.
-  FunctionParameter(string* param_name, PrimitiveType member_type)
-      : param_name(param_name),
-        member_type((Type)member_type),
-        parameter_type_name(nullptr) {}
-  FunctionParameter(string* param_name, string* parameter_type_name)
-      : param_name(param_name),
-        member_type(TYPE_SYMREF),
-        parameter_type_name(parameter_type_name) {}
+  FunctionParameter(string* param_name,
+                    shared_ptr<TypeParameter> parameter_type)
+      : param_name(param_name), parameter_type(parameter_type) {}
   FunctionParameter() = delete;
 
   const string* const param_name;
-  const Type member_type;
-  const string* const parameter_type_name;
-  // Filled in during second pass.
-  const TypeDeclaration* parameter_type;
+  shared_ptr<TypeParameter> parameter_type;
 };
 
 struct TemplateFunctionDefinition {
@@ -266,6 +259,7 @@ struct TemplateFunctionDefinition {
   const vector<const FunctionParameter*> params;
   // unparsed source.
   const string* const tmpl_string;
+  shared_ptr<TmplStrTable> tmpl_string_table;
 };
 
 struct TypeDeclaration {
