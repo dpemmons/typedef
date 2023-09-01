@@ -19,29 +19,26 @@ options {
 
 compilationUnit
 	returns[
-		std::shared_ptr<std::string> version,
-		std::shared_ptr<td::table::Module> mod
-	]:
+		td::CompilationUnit compilation_unit
+	]
+	@after {$compilation_unit.Init($ctx);}:
 	typedefVersionDeclaration (moduleDeclaration)? (
 		useDeclaration
-	)* (typeDefinition SEMI?)* EOF;
+	)* (typeDefinition SEMI)* EOF;
 
-typedefVersionDeclaration
-	returns[std::shared_ptr<std::string> version]:
-	KW_TYPEDEF EQ identifier SEMI;
-
-moduleDeclaration
-	returns[std::shared_ptr<td::SymbolPath> path]:
-	KW_MODULE simplePath SEMI;
+typedefVersionDeclaration: KW_TYPEDEF EQ identifier SEMI;
+moduleDeclaration: KW_MODULE simplePath SEMI;
 
 // struct|variant SomeVariant { optionA: i32; optionB: str; }
 typeDefinition
-	returns[std::shared_ptr<td::table::Variant> var]:
-	(KW_STRUCT | KW_VARIANT) identifier? LBRACE fieldBlock RBRACE;
+	returns[std::unique_ptr<td::TypeDefinition> type_definition]
+	@after {$type_definition = TypeDefinition::Build($ctx);}: (KW_STRUCT | KW_VARIANT) identifier? LBRACE fieldBlock RBRACE;
 
 fieldBlock: ( typeDefinition | (fieldDefinition SEMI))*;
 
-fieldDefinition:
+fieldDefinition
+	returns[std::unique_ptr<td::FieldDefinition> field_definition]
+	@after {$field_definition = FieldDefinition::Build($ctx);}:
 	field_identifier = identifier (
 		':' (typeAnnotation | typeDefinition)
 	)? ('=' primitiveLiteral)?;
@@ -63,7 +60,7 @@ templateDefinition
 	) ')' ('=>' KW_STRING)? templateBlock;
 
 templateBlock
-	returns[std::shared_ptr<std::string> val]:
+	returns[std::string val]:
 	TEMPLATE_LITERAL
 	| RAW_TEMPLATE_LITERAL;
 
@@ -92,16 +89,8 @@ primitiveLiteral:
 	boolLiteral
 	| charLiteral
 	| stringLiteral
-	| f32Literal
-	| f64Literal
-	| u8Literal
-	| u16Literal
-	| u32Literal
-	| u64Literal
-	| i8Literal
-	| i16Literal
-	| i32Literal
-	| i64Literal;
+	| floatLiteral
+	| integerLiteral;
 
 boolLiteral
 	returns[bool val]: KW_TRUE | KW_FALSE;
@@ -111,30 +100,20 @@ stringLiteral
 	returns[std::string val]:
 	STRING_LITERAL
 	| RAW_STRING_LITERAL;
-f32Literal
-	returns[float val]: floatLiteral 'f32';
-f64Literal
-	returns[double val]: floatLiteral 'f64';
-u8Literal
-	returns[uint8_t val]: intLiteral 'u8';
-u16Literal
-	returns[uint16_t val]: intLiteral 'u16';
-u32Literal
-	returns[uint32_t val]: intLiteral 'u32';
-u64Literal
-	returns[uint64_t val]: intLiteral 'u64';
-i8Literal
-	returns[int8_t val]: intLiteral 'i8';
-i16Literal
-	returns[int16_t val]: intLiteral 'i16';
-i32Literal
-	returns[int32_t val]: intLiteral 'i32';
-i64Literal
-	returns[int64_t val]: intLiteral 'i64';
 
-floatLiteral: FLOAT_LITERAL;
-intLiteral:
-	(MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
+floatLiteral: FLOAT_LITERAL (KW_F32 | KW_F64)?;
+
+integerLiteral: (intDigits) (
+		KW_U8
+		| KW_U16
+		| KW_U32
+		| KW_U64
+		| KW_I8
+		| KW_I16
+		| KW_I32
+		| KW_I64
+	)?;
+intDigits: (MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
 	| (HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE))
 	| (OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE))
 	| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE));

@@ -1,97 +1,111 @@
 #ifndef PARSER_GRAMMAR_CLASSES_H__
 #define PARSER_GRAMMAR_CLASSES_H__
 
+#include <memory>
 #include <string>
 
 namespace TypedefParser {
-class FieldBlockContext;
+class CompilationUnitContext;
+class TypeDefinitionContext;
 class IdentifierContext;
-class StructDeclarationContext;
-class VariantDeclarationContext;
-class VectorDeclarationContext;
-class MapDeclarationContext;
+class FieldDefinitionContext;
 }  // namespace TypedefParser
 
 namespace td {
 
-class TypeDeclaration {
+class CompilationUnit {
  public:
-  bool IsNamed() { return id_ctx_ != nullptr; }
-  const std::string* GetIdentifier() const;
-
-  virtual bool IsStruct() { return false; }
-  virtual bool IsVariant() { return false; }
-  virtual bool IsVector() { return false; }
-  virtual bool IsMap() { return false; }
+  void Init(TypedefParser::CompilationUnitContext* ctx);
 
  protected:
-  TypeDeclaration() = default;
-  virtual ~TypeDeclaration() = default;
-
-  const TypedefParser::IdentifierContext* id_ctx_ = nullptr;
+  TypedefParser::CompilationUnitContext* cu_ctx_;
 };
 
-class FieldBlockTypeDeclaration : protected TypeDeclaration {
+class TypeDefinition {
+ public:
+  static std::unique_ptr<TypeDefinition> Build(
+      TypedefParser::TypeDefinitionContext* ctx);
+
+  bool IsNamed() const;
+  const std::string* GetIdentifier() const;
+
+ protected:
+  TypeDefinition() = default;
+  virtual ~TypeDefinition() = default;
+
+  const TypedefParser::TypeDefinitionContext* td_ctx_ = nullptr;
+};
+
+class FieldDefinition {
+ public:
+  static std::unique_ptr<FieldDefinition> Build(
+      TypedefParser::FieldDefinitionContext* ctx);
+
+ protected:
+  const TypedefParser::FieldDefinitionContext* fd_ctx_ = nullptr;
+};
+
+class FieldBlockTypeDefinition : protected TypeDefinition {
  public:
  protected:
-  FieldBlockTypeDeclaration() = default;
-  virtual ~FieldBlockTypeDeclaration() = default;
+  FieldBlockTypeDefinition() = default;
+  virtual ~FieldBlockTypeDefinition() = default;
 
   TypedefParser::FieldBlockContext* fb_ctx_ = nullptr;
 };
 
-class StructTypeDeclaration : protected TypeDeclaration,
-                              protected FieldBlockTypeDeclaration {
+class StructTypeDefinition : protected TypeDefinition,
+                             protected FieldBlockTypeDefinition {
  public:
   virtual bool IsStruct() override { return true; }
 
-  void Set(TypedefParser::StructDeclarationContext* st_ctx);
+  void Set(TypedefParser::StructDefinitionContext* st_ctx);
 
  protected:
-  StructTypeDeclaration() = default;
-  virtual ~StructTypeDeclaration() = default;
+  StructTypeDefinition() = default;
+  virtual ~StructTypeDefinition() = default;
 
-  TypedefParser::StructDeclarationContext* st_ctx_;
+  TypedefParser::StructDefinitionContext* st_ctx_;
 };
 
-class VariantTypeDeclaration : protected TypeDeclaration,
-                               protected FieldBlockTypeDeclaration {
+class VariantTypeDefinition : protected TypeDefinition,
+                              protected FieldBlockTypeDefinition {
  public:
-  VariantTypeDeclaration() = default;
-  virtual ~VariantTypeDeclaration() = default;
+  VariantTypeDefinition() = default;
+  virtual ~VariantTypeDefinition() = default;
 
   virtual bool IsVariant() override { return true; }
 
-  void Set(TypedefParser::VariantDeclarationContext* var_ctx);
+  void Set(TypedefParser::VariantDefinitionContext* var_ctx);
 
  protected:
-  TypedefParser::VariantDeclarationContext* var_ctx_;
+  TypedefParser::VariantDefinitionContext* var_ctx_;
 };
 
-class VectorTypeDeclaration : protected TypeDeclaration {
+class VectorTypeDefinition : protected TypeDefinition {
  public:
-  VectorTypeDeclaration() = default;
-  virtual ~VectorTypeDeclaration() = default;
+  VectorTypeDefinition() = default;
+  virtual ~VectorTypeDefinition() = default;
 
   virtual bool IsVector() override { return true; }
 
-  void Set(TypedefParser::VectorDeclarationContext* vec_ctx);
+  void Set(TypedefParser::VectorDefinitionContext* vec_ctx);
 
  protected:
-  TypedefParser::VectorDeclarationContext* vec_ctx_;
+  TypedefParser::VectorDefinitionContext* vec_ctx_;
 };
 
-class MapTypeDeclaration : protected TypeDeclaration {
+class MapTypeDefinition : protected TypeDefinition {
  public:
-  MapTypeDeclaration() = default;
-  virtual ~MapTypeDeclaration() = default;
+  MapTypeDefinition() = default;
+  virtual ~MapTypeDefinition() = default;
 
   virtual bool IsMap() override { return true; }
 
-  void Set(TypedefParser::MapDeclarationContext* vec_ctx);
+  void Set(TypedefParser::MapDefinitionContext* vec_ctx);
 
  protected:
-  TypedefParser::MapDeclarationContext* vec_ctx_;
+  TypedefParser::MapDefinitionContext* vec_ctx_;
 };
 
 }  // namespace td

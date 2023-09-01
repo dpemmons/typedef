@@ -64,29 +64,11 @@ public:
 
     virtual antlrcpp::Any visitStringLiteral(TypedefParser::StringLiteralContext *context) = 0;
 
-    virtual antlrcpp::Any visitF32Literal(TypedefParser::F32LiteralContext *context) = 0;
-
-    virtual antlrcpp::Any visitF64Literal(TypedefParser::F64LiteralContext *context) = 0;
-
-    virtual antlrcpp::Any visitU8Literal(TypedefParser::U8LiteralContext *context) = 0;
-
-    virtual antlrcpp::Any visitU16Literal(TypedefParser::U16LiteralContext *context) = 0;
-
-    virtual antlrcpp::Any visitU32Literal(TypedefParser::U32LiteralContext *context) = 0;
-
-    virtual antlrcpp::Any visitU64Literal(TypedefParser::U64LiteralContext *context) = 0;
-
-    virtual antlrcpp::Any visitI8Literal(TypedefParser::I8LiteralContext *context) = 0;
-
-    virtual antlrcpp::Any visitI16Literal(TypedefParser::I16LiteralContext *context) = 0;
-
-    virtual antlrcpp::Any visitI32Literal(TypedefParser::I32LiteralContext *context) = 0;
-
-    virtual antlrcpp::Any visitI64Literal(TypedefParser::I64LiteralContext *context) = 0;
-
     virtual antlrcpp::Any visitFloatLiteral(TypedefParser::FloatLiteralContext *context) = 0;
 
-    virtual antlrcpp::Any visitIntLiteral(TypedefParser::IntLiteralContext *context) = 0;
+    virtual antlrcpp::Any visitIntegerLiteral(TypedefParser::IntegerLiteralContext *context) = 0;
+
+    virtual antlrcpp::Any visitIntDigits(TypedefParser::IntDigitsContext *context) = 0;
 
     virtual antlrcpp::Any visitIdentifier(TypedefParser::IdentifierContext *context) = 0;
 

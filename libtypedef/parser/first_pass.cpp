@@ -35,8 +35,8 @@ td::ParserErrorInfo MakeError(td::ParserErrorInfo::Type type, const string& msg,
 
 namespace {
 
-shared_ptr<string> GetStringValue(antlr4::Token* token, char prefix_char,
-                                  td::ParserErrorInfo::Type err_to_throw) {
+string GetStringValue(antlr4::Token* token, char prefix_char,
+                      td::ParserErrorInfo::Type err_to_throw) {
   string text = token->getText();
   string_view literal(text);
   if ((literal.size() < 2) || (prefix_char && literal.size() < 3)) {
@@ -114,12 +114,12 @@ shared_ptr<string> GetStringValue(antlr4::Token* token, char prefix_char,
       result << literal[i];
     }
   }
-  return make_shared<string>(result.str());
+  return result.str();
 }
 
 // From example, from RAW_STRING_LITERAL tokens.
-shared_ptr<string> GetRawString(antlr4::Token* token, char leading_char,
-                                td::ParserErrorInfo::Type err_to_throw) {
+string GetRawString(antlr4::Token* token, char leading_char,
+                    td::ParserErrorInfo::Type err_to_throw) {
   string text = token->getText();
   string_view literal(text);
   if (literal.empty() || literal.front() != leading_char) {
@@ -145,7 +145,7 @@ shared_ptr<string> GetRawString(antlr4::Token* token, char leading_char,
   literal.remove_suffix(1);
 
   // Create a new string instance with the remaining raw string content
-  return make_shared<string>(literal);
+  return string(literal);
 }
 
 char32_t GetCharValue(TypedefParser::CharLiteralContext* ctx) {
@@ -834,40 +834,6 @@ void FirstPassListener::exitStringLiteral(
 void FirstPassListener::exitIdentifier(TypedefParser::IdentifierContext* ctx) {
   bail_if_errors();
   if (ctx->nki) {
-    ctx->id = make_shared<string>(std::move(ctx->nki->getText()));
-  }
-}
-
-void FirstPassListener::exitPrimitiveTypeIdentifier(
-    TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  bail_if_errors();
-  if (ctx->KW_BOOL()) {
-    ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_BOOL;
-  } else if (ctx->KW_CHAR()) {
-    ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_CHAR;
-  } else if (ctx->KW_STRING()) {
-    ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_STRING;
-  } else if (ctx->KW_F32()) {
-    ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_F32;
-  } else if (ctx->KW_F64()) {
-    ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_F64;
-  } else if (ctx->KW_U8()) {
-    ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_U8;
-  } else if (ctx->KW_U16()) {
-    ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_U16;
-  } else if (ctx->KW_U32()) {
-    ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_U32;
-  } else if (ctx->KW_U64()) {
-    ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_U64;
-  } else if (ctx->KW_I8()) {
-    ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_I8;
-  } else if (ctx->KW_I16()) {
-    ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_I16;
-  } else if (ctx->KW_I32()) {
-    ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_I32;
-  } else if (ctx->KW_I64()) {
-    ctx->primitive_type = td::table::PrimitiveType::PRIMITIVE_TYPE_I64;
-  } else {
-    throw "invalid state";
+    ctx->id = std::move(ctx->nki->getText());
   }
 }

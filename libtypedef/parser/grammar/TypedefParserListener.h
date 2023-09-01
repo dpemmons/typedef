@@ -79,41 +79,14 @@ public:
   virtual void enterStringLiteral(TypedefParser::StringLiteralContext *ctx) = 0;
   virtual void exitStringLiteral(TypedefParser::StringLiteralContext *ctx) = 0;
 
-  virtual void enterF32Literal(TypedefParser::F32LiteralContext *ctx) = 0;
-  virtual void exitF32Literal(TypedefParser::F32LiteralContext *ctx) = 0;
-
-  virtual void enterF64Literal(TypedefParser::F64LiteralContext *ctx) = 0;
-  virtual void exitF64Literal(TypedefParser::F64LiteralContext *ctx) = 0;
-
-  virtual void enterU8Literal(TypedefParser::U8LiteralContext *ctx) = 0;
-  virtual void exitU8Literal(TypedefParser::U8LiteralContext *ctx) = 0;
-
-  virtual void enterU16Literal(TypedefParser::U16LiteralContext *ctx) = 0;
-  virtual void exitU16Literal(TypedefParser::U16LiteralContext *ctx) = 0;
-
-  virtual void enterU32Literal(TypedefParser::U32LiteralContext *ctx) = 0;
-  virtual void exitU32Literal(TypedefParser::U32LiteralContext *ctx) = 0;
-
-  virtual void enterU64Literal(TypedefParser::U64LiteralContext *ctx) = 0;
-  virtual void exitU64Literal(TypedefParser::U64LiteralContext *ctx) = 0;
-
-  virtual void enterI8Literal(TypedefParser::I8LiteralContext *ctx) = 0;
-  virtual void exitI8Literal(TypedefParser::I8LiteralContext *ctx) = 0;
-
-  virtual void enterI16Literal(TypedefParser::I16LiteralContext *ctx) = 0;
-  virtual void exitI16Literal(TypedefParser::I16LiteralContext *ctx) = 0;
-
-  virtual void enterI32Literal(TypedefParser::I32LiteralContext *ctx) = 0;
-  virtual void exitI32Literal(TypedefParser::I32LiteralContext *ctx) = 0;
-
-  virtual void enterI64Literal(TypedefParser::I64LiteralContext *ctx) = 0;
-  virtual void exitI64Literal(TypedefParser::I64LiteralContext *ctx) = 0;
-
   virtual void enterFloatLiteral(TypedefParser::FloatLiteralContext *ctx) = 0;
   virtual void exitFloatLiteral(TypedefParser::FloatLiteralContext *ctx) = 0;
 
-  virtual void enterIntLiteral(TypedefParser::IntLiteralContext *ctx) = 0;
-  virtual void exitIntLiteral(TypedefParser::IntLiteralContext *ctx) = 0;
+  virtual void enterIntegerLiteral(TypedefParser::IntegerLiteralContext *ctx) = 0;
+  virtual void exitIntegerLiteral(TypedefParser::IntegerLiteralContext *ctx) = 0;
+
+  virtual void enterIntDigits(TypedefParser::IntDigitsContext *ctx) = 0;
+  virtual void exitIntDigits(TypedefParser::IntDigitsContext *ctx) = 0;
 
   virtual void enterIdentifier(TypedefParser::IdentifierContext *ctx) = 0;
   virtual void exitIdentifier(TypedefParser::IdentifierContext *ctx) = 0;

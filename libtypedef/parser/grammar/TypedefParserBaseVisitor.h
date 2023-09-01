@@ -100,51 +100,15 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitF32Literal(TypedefParser::F32LiteralContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitF64Literal(TypedefParser::F64LiteralContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitU8Literal(TypedefParser::U8LiteralContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitU16Literal(TypedefParser::U16LiteralContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitU32Literal(TypedefParser::U32LiteralContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitU64Literal(TypedefParser::U64LiteralContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitI8Literal(TypedefParser::I8LiteralContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitI16Literal(TypedefParser::I16LiteralContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitI32Literal(TypedefParser::I32LiteralContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitI64Literal(TypedefParser::I64LiteralContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual antlrcpp::Any visitFloatLiteral(TypedefParser::FloatLiteralContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitIntLiteral(TypedefParser::IntLiteralContext *ctx) override {
+  virtual antlrcpp::Any visitIntegerLiteral(TypedefParser::IntegerLiteralContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitIntDigits(TypedefParser::IntDigitsContext *ctx) override {
     return visitChildren(ctx);
   }
 

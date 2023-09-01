@@ -81,41 +81,14 @@ public:
   virtual void enterStringLiteral(TypedefParser::StringLiteralContext * /*ctx*/) override { }
   virtual void exitStringLiteral(TypedefParser::StringLiteralContext * /*ctx*/) override { }
 
-  virtual void enterF32Literal(TypedefParser::F32LiteralContext * /*ctx*/) override { }
-  virtual void exitF32Literal(TypedefParser::F32LiteralContext * /*ctx*/) override { }
-
-  virtual void enterF64Literal(TypedefParser::F64LiteralContext * /*ctx*/) override { }
-  virtual void exitF64Literal(TypedefParser::F64LiteralContext * /*ctx*/) override { }
-
-  virtual void enterU8Literal(TypedefParser::U8LiteralContext * /*ctx*/) override { }
-  virtual void exitU8Literal(TypedefParser::U8LiteralContext * /*ctx*/) override { }
-
-  virtual void enterU16Literal(TypedefParser::U16LiteralContext * /*ctx*/) override { }
-  virtual void exitU16Literal(TypedefParser::U16LiteralContext * /*ctx*/) override { }
-
-  virtual void enterU32Literal(TypedefParser::U32LiteralContext * /*ctx*/) override { }
-  virtual void exitU32Literal(TypedefParser::U32LiteralContext * /*ctx*/) override { }
-
-  virtual void enterU64Literal(TypedefParser::U64LiteralContext * /*ctx*/) override { }
-  virtual void exitU64Literal(TypedefParser::U64LiteralContext * /*ctx*/) override { }
-
-  virtual void enterI8Literal(TypedefParser::I8LiteralContext * /*ctx*/) override { }
-  virtual void exitI8Literal(TypedefParser::I8LiteralContext * /*ctx*/) override { }
-
-  virtual void enterI16Literal(TypedefParser::I16LiteralContext * /*ctx*/) override { }
-  virtual void exitI16Literal(TypedefParser::I16LiteralContext * /*ctx*/) override { }
-
-  virtual void enterI32Literal(TypedefParser::I32LiteralContext * /*ctx*/) override { }
-  virtual void exitI32Literal(TypedefParser::I32LiteralContext * /*ctx*/) override { }
-
-  virtual void enterI64Literal(TypedefParser::I64LiteralContext * /*ctx*/) override { }
-  virtual void exitI64Literal(TypedefParser::I64LiteralContext * /*ctx*/) override { }
-
   virtual void enterFloatLiteral(TypedefParser::FloatLiteralContext * /*ctx*/) override { }
   virtual void exitFloatLiteral(TypedefParser::FloatLiteralContext * /*ctx*/) override { }
 
-  virtual void enterIntLiteral(TypedefParser::IntLiteralContext * /*ctx*/) override { }
-  virtual void exitIntLiteral(TypedefParser::IntLiteralContext * /*ctx*/) override { }
+  virtual void enterIntegerLiteral(TypedefParser::IntegerLiteralContext * /*ctx*/) override { }
+  virtual void exitIntegerLiteral(TypedefParser::IntegerLiteralContext * /*ctx*/) override { }
+
+  virtual void enterIntDigits(TypedefParser::IntDigitsContext * /*ctx*/) override { }
+  virtual void exitIntDigits(TypedefParser::IntDigitsContext * /*ctx*/) override { }
 
   virtual void enterIdentifier(TypedefParser::IdentifierContext * /*ctx*/) override { }
   virtual void exitIdentifier(TypedefParser::IdentifierContext * /*ctx*/) override { }
