@@ -24,27 +24,36 @@ compilationUnit
 	]:
 	typedefVersionDeclaration (moduleDeclaration)? (
 		useDeclaration
-	)* (typeDeclaration SEMI?)* EOF;
+	)* (typeDefinition SEMI?)* EOF;
 
-// struct SomeVariant { optionA: i32; optionB: str; }
-structDeclaration
-	returns[std::shared_ptr<td::table::Struct> st]:
-	KW_STRUCT identifier LBRACE fieldBlock RBRACE;
+typedefVersionDeclaration
+	returns[std::shared_ptr<std::string> version]:
+	KW_TYPEDEF EQ identifier SEMI;
 
-// variant SomeVariant { optionA: i32; optionB: str; }
-variantDeclaration
+moduleDeclaration
+	returns[std::shared_ptr<td::SymbolPath> path]:
+	KW_MODULE simplePath SEMI;
+
+// struct|variant SomeVariant { optionA: i32; optionB: str; }
+typeDefinition
 	returns[std::shared_ptr<td::table::Variant> var]:
-	KW_VARIANT identifier LBRACE fieldBlock RBRACE;
+	(KW_STRUCT | KW_VARIANT) identifier? LBRACE fieldBlock RBRACE;
 
-// vector SomeVector<i32>
-vectorDeclaration
-	returns[std::shared_ptr<td::table::Vector> vec]:
-	KW_VECTOR symbolName = identifier LT typeParameter GT;
+fieldBlock: ( typeDefinition | (fieldDefinition SEMI))*;
 
-// map SomeMap<str, StructA>
-mapDeclaration
-	returns[std::shared_ptr<td::table::Map> map]:
-	KW_MAP symbolName = identifier LT key = typeParameter COMMA val = typeParameter GT;
+fieldDefinition:
+	field_identifier = identifier (
+		':' (typeAnnotation | typeDefinition)
+	)? ('=' primitiveLiteral)?;
+
+typeAnnotation:
+	identifier ('<' typeArgument (',' typeArgument)* '>')?;
+typeArgument: typeIdentifier;
+typeIdentifier:
+	primitiveTypeIdentifier
+	| KW_VECTOR
+	| KW_MAP
+	| symrefIdentifier = identifier;
 
 // template DoIt(a: i32, b: str) "{a} {b}";
 templateDefinition
@@ -67,86 +76,6 @@ typeParameter
 	primitiveTypeIdentifier
 	| identifier;
 
-typeDeclaration
-	returns[std::shared_ptr<td::table::TypeDeclaration> type_decl]:
-	(
-		structDeclaration
-		| variantDeclaration
-		| vectorDeclaration
-		| mapDeclaration
-		| templateDefinition
-	);
-
-fieldDeclaration
-	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	primitiveMemberDeclaration
-	| symrefMemberDeclaration
-	| inlineStructDeclaration
-	| inlineVariantDeclaration
-	| inlineVectorDeclaration
-	| inlineMapDeclaration;
-
-primitiveMemberDeclaration
-	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	impliedTypePrimitiveMemberDeclaration
-	| (
-		identifier COLON (
-			primitiveTypeIdentifier EQ (
-				floatLiteral
-				| intLiteral
-			)
-			| (
-				primitiveTypeIdentifier (
-					EQ explicitPrimitiveLiteral
-				)?
-			)
-		)
-	);
-
-// TODO: move symref identifier into its own rule so symvol resolution only has to happen in one
-// place during second pass? Or should vector/map value types have a symref type they share?
-
-symrefMemberDeclaration
-	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	fieldIdentifier = identifier COLON symrefIdentifier = identifier;
-
-impliedTypePrimitiveMemberDeclaration
-	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier EQ (
-		floatLiteral
-		| intLiteral
-		| explicitPrimitiveLiteral
-	);
-
-inlineStructDeclaration
-	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier COLON KW_STRUCT LBRACE fieldBlock RBRACE;
-
-inlineVariantDeclaration
-	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier COLON KW_VARIANT LBRACE fieldBlock RBRACE;
-
-fieldBlock: ( typeDeclaration | (fieldDeclaration SEMI))*;
-
-inlineVectorDeclaration
-	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier COLON KW_VECTOR LT typeParameter GT;
-
-inlineMapDeclaration
-	returns[std::shared_ptr<td::table::FieldDeclaration> field_decl]:
-	identifier COLON KW_MAP LT key = typeParameter COMMA val = typeParameter GT;
-
-// TODO probably get rid of valuedPrimitiveType, etc. and just do primitive type resolution in a
-// separate pass?
-
-typedefVersionDeclaration
-	returns[std::shared_ptr<std::string> version]:
-	KW_TYPEDEF EQ identifier SEMI;
-
-moduleDeclaration
-	returns[std::shared_ptr<td::SymbolPath> path]:
-	KW_MODULE simplePath SEMI;
-
 // TODO use declarations.
 useDeclaration: 'use' useTree ';';
 useTree: (simplePath? '::')? (
@@ -156,11 +85,10 @@ useTree: (simplePath? '::')? (
 	| simplePath ('as' identifier)?;
 
 simplePath
-	returns[std::shared_ptr<td::SymbolPath> path]:
+	returns[td::SymbolPath path]:
 	(leading_pathsep = PATHSEP)? identifier (PATHSEP identifier)*;
 
-explicitPrimitiveLiteral
-	returns[td::table::PrimitiveType type, td::table::PrimitiveValue val]:
+primitiveLiteral:
 	boolLiteral
 	| charLiteral
 	| stringLiteral
@@ -180,7 +108,7 @@ boolLiteral
 charLiteral
 	returns[char32_t val]: CHAR_LITERAL;
 stringLiteral
-	returns[std::shared_ptr<std::string> val]:
+	returns[std::string val]:
 	STRING_LITERAL
 	| RAW_STRING_LITERAL;
 f32Literal
@@ -212,12 +140,11 @@ intLiteral:
 	| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE));
 
 identifier
-	returns[std::shared_ptr<std::string> id]:
+	returns[std::string id]:
 	nki = NON_KEYWORD_IDENTIFIER
 	| RAW_ESCAPE nki = NON_KEYWORD_IDENTIFIER;
 
-primitiveTypeIdentifier
-	returns[td::table::PrimitiveType primitive_type]:
+primitiveTypeIdentifier:
 	KW_BOOL
 	| KW_CHAR
 	| KW_STRING

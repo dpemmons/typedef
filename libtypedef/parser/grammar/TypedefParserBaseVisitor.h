@@ -24,19 +24,35 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) override {
+  virtual antlrcpp::Any visitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitVariantDeclaration(TypedefParser::VariantDeclarationContext *ctx) override {
+  virtual antlrcpp::Any visitModuleDeclaration(TypedefParser::ModuleDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitVectorDeclaration(TypedefParser::VectorDeclarationContext *ctx) override {
+  virtual antlrcpp::Any visitTypeDefinition(TypedefParser::TypeDefinitionContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitMapDeclaration(TypedefParser::MapDeclarationContext *ctx) override {
+  virtual antlrcpp::Any visitFieldBlock(TypedefParser::FieldBlockContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitFieldDefinition(TypedefParser::FieldDefinitionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitTypeAnnotation(TypedefParser::TypeAnnotationContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitTypeArgument(TypedefParser::TypeArgumentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitTypeIdentifier(TypedefParser::TypeIdentifierContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -56,54 +72,6 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTypeDeclaration(TypedefParser::TypeDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitFieldDeclaration(TypedefParser::FieldDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitPrimitiveMemberDeclaration(TypedefParser::PrimitiveMemberDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitSymrefMemberDeclaration(TypedefParser::SymrefMemberDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitImpliedTypePrimitiveMemberDeclaration(TypedefParser::ImpliedTypePrimitiveMemberDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitInlineStructDeclaration(TypedefParser::InlineStructDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitInlineVariantDeclaration(TypedefParser::InlineVariantDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitFieldBlock(TypedefParser::FieldBlockContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitInlineVectorDeclaration(TypedefParser::InlineVectorDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitInlineMapDeclaration(TypedefParser::InlineMapDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitModuleDeclaration(TypedefParser::ModuleDeclarationContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual antlrcpp::Any visitUseDeclaration(TypedefParser::UseDeclarationContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -116,7 +84,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitExplicitPrimitiveLiteral(TypedefParser::ExplicitPrimitiveLiteralContext *ctx) override {
+  virtual antlrcpp::Any visitPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext *ctx) override {
     return visitChildren(ctx);
   }
 

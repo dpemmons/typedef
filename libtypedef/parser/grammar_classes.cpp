@@ -15,33 +15,32 @@
 namespace td {
 
 const std::string* TypeDeclaration::GetIdentifier() const {
-  return idctx_->id.get();
+  return id_ctx_->id.get();
 }
 
-void NamedStructTypeDeclaration::Set(
-    TypedefParser::StructDeclarationContext* stctx) {
-  stctx_ = stctx;
-  idctx_ = stctx->identifier();
-  fbctx_ = stctx->fieldBlock();
+void StructTypeDeclaration::Set(
+    TypedefParser::StructDeclarationContext* st_ctx) {
+  st_ctx_ = st_ctx;
+  id_ctx_ = st_ctx->identifier();
+  fb_ctx_ = st_ctx->fieldBlock();
 }
 
-void InlineStructTypeDeclaration::Set(
-    TypedefParser::InlineStructDeclarationContext* istctx) {
-  istctx_ = istctx;
-  fbctx_ = istctx->fieldBlock();
+void VariantTypeDeclaration::Set(
+    TypedefParser::VariantDeclarationContext* var_ctx) {
+  var_ctx_ = var_ctx;
+  id_ctx_ = var_ctx->identifier();
+  fb_ctx_ = var_ctx->fieldBlock();
 }
 
-void NamedVariantTypeDeclaration::Set(
-    TypedefParser::VariantDeclarationContext* varctx) {
-  varctx_ = varctx;
-  idctx_ = varctx->identifier();
-  fbctx_ = varctx->fieldBlock();
+void VectorTypeDeclaration::Set(
+    TypedefParser::VectorDeclarationContext* var_ctx) {
+  var_ctx_ = var_ctx;
+  id_ctx_ = var_ctx->identifier();
 }
 
-void InlineVariantTypeDeclaration::Set(
-    TypedefParser::InlineVariantDeclarationContext* ivarctx) {
-  ivarctx_ = ivarctx;
-  fbctx_ = ivarctx->fieldBlock();
+void MapTypeDeclaration::Set(TypedefParser::VectorDeclarationContext* var_ctx) {
+  var_ctx_ = var_ctx;
+  id_ctx_ = var_ctx->identifier();
 }
 
 }  // namespace td

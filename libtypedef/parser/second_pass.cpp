@@ -203,7 +203,19 @@ void SecondPassListener::enterTemplateDefinition(
     }
     return;
   }
-  // TODO: test (and resolve) symbols.
+  for (td::TmplStrTable::ItemPtr item : parsedTmplStr->table->items) {
+    if (item->insertion) {
+
+    } else if (item->function_call) {
+
+    } else if (item->if_block) {
+
+    } else if (item->for_block) {
+      
+    }
+  }
+
+
   ctx->tmpl->tmpl_string_table = parsedTmplStr->table;
 }
 

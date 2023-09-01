@@ -22,17 +22,29 @@ public:
   virtual void enterCompilationUnit(TypedefParser::CompilationUnitContext *ctx) = 0;
   virtual void exitCompilationUnit(TypedefParser::CompilationUnitContext *ctx) = 0;
 
-  virtual void enterStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
-  virtual void exitStructDeclaration(TypedefParser::StructDeclarationContext *ctx) = 0;
+  virtual void enterTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;
+  virtual void exitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;
 
-  virtual void enterVariantDeclaration(TypedefParser::VariantDeclarationContext *ctx) = 0;
-  virtual void exitVariantDeclaration(TypedefParser::VariantDeclarationContext *ctx) = 0;
+  virtual void enterModuleDeclaration(TypedefParser::ModuleDeclarationContext *ctx) = 0;
+  virtual void exitModuleDeclaration(TypedefParser::ModuleDeclarationContext *ctx) = 0;
 
-  virtual void enterVectorDeclaration(TypedefParser::VectorDeclarationContext *ctx) = 0;
-  virtual void exitVectorDeclaration(TypedefParser::VectorDeclarationContext *ctx) = 0;
+  virtual void enterTypeDefinition(TypedefParser::TypeDefinitionContext *ctx) = 0;
+  virtual void exitTypeDefinition(TypedefParser::TypeDefinitionContext *ctx) = 0;
 
-  virtual void enterMapDeclaration(TypedefParser::MapDeclarationContext *ctx) = 0;
-  virtual void exitMapDeclaration(TypedefParser::MapDeclarationContext *ctx) = 0;
+  virtual void enterFieldBlock(TypedefParser::FieldBlockContext *ctx) = 0;
+  virtual void exitFieldBlock(TypedefParser::FieldBlockContext *ctx) = 0;
+
+  virtual void enterFieldDefinition(TypedefParser::FieldDefinitionContext *ctx) = 0;
+  virtual void exitFieldDefinition(TypedefParser::FieldDefinitionContext *ctx) = 0;
+
+  virtual void enterTypeAnnotation(TypedefParser::TypeAnnotationContext *ctx) = 0;
+  virtual void exitTypeAnnotation(TypedefParser::TypeAnnotationContext *ctx) = 0;
+
+  virtual void enterTypeArgument(TypedefParser::TypeArgumentContext *ctx) = 0;
+  virtual void exitTypeArgument(TypedefParser::TypeArgumentContext *ctx) = 0;
+
+  virtual void enterTypeIdentifier(TypedefParser::TypeIdentifierContext *ctx) = 0;
+  virtual void exitTypeIdentifier(TypedefParser::TypeIdentifierContext *ctx) = 0;
 
   virtual void enterTemplateDefinition(TypedefParser::TemplateDefinitionContext *ctx) = 0;
   virtual void exitTemplateDefinition(TypedefParser::TemplateDefinitionContext *ctx) = 0;
@@ -46,42 +58,6 @@ public:
   virtual void enterTypeParameter(TypedefParser::TypeParameterContext *ctx) = 0;
   virtual void exitTypeParameter(TypedefParser::TypeParameterContext *ctx) = 0;
 
-  virtual void enterTypeDeclaration(TypedefParser::TypeDeclarationContext *ctx) = 0;
-  virtual void exitTypeDeclaration(TypedefParser::TypeDeclarationContext *ctx) = 0;
-
-  virtual void enterFieldDeclaration(TypedefParser::FieldDeclarationContext *ctx) = 0;
-  virtual void exitFieldDeclaration(TypedefParser::FieldDeclarationContext *ctx) = 0;
-
-  virtual void enterPrimitiveMemberDeclaration(TypedefParser::PrimitiveMemberDeclarationContext *ctx) = 0;
-  virtual void exitPrimitiveMemberDeclaration(TypedefParser::PrimitiveMemberDeclarationContext *ctx) = 0;
-
-  virtual void enterSymrefMemberDeclaration(TypedefParser::SymrefMemberDeclarationContext *ctx) = 0;
-  virtual void exitSymrefMemberDeclaration(TypedefParser::SymrefMemberDeclarationContext *ctx) = 0;
-
-  virtual void enterImpliedTypePrimitiveMemberDeclaration(TypedefParser::ImpliedTypePrimitiveMemberDeclarationContext *ctx) = 0;
-  virtual void exitImpliedTypePrimitiveMemberDeclaration(TypedefParser::ImpliedTypePrimitiveMemberDeclarationContext *ctx) = 0;
-
-  virtual void enterInlineStructDeclaration(TypedefParser::InlineStructDeclarationContext *ctx) = 0;
-  virtual void exitInlineStructDeclaration(TypedefParser::InlineStructDeclarationContext *ctx) = 0;
-
-  virtual void enterInlineVariantDeclaration(TypedefParser::InlineVariantDeclarationContext *ctx) = 0;
-  virtual void exitInlineVariantDeclaration(TypedefParser::InlineVariantDeclarationContext *ctx) = 0;
-
-  virtual void enterFieldBlock(TypedefParser::FieldBlockContext *ctx) = 0;
-  virtual void exitFieldBlock(TypedefParser::FieldBlockContext *ctx) = 0;
-
-  virtual void enterInlineVectorDeclaration(TypedefParser::InlineVectorDeclarationContext *ctx) = 0;
-  virtual void exitInlineVectorDeclaration(TypedefParser::InlineVectorDeclarationContext *ctx) = 0;
-
-  virtual void enterInlineMapDeclaration(TypedefParser::InlineMapDeclarationContext *ctx) = 0;
-  virtual void exitInlineMapDeclaration(TypedefParser::InlineMapDeclarationContext *ctx) = 0;
-
-  virtual void enterTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;
-  virtual void exitTypedefVersionDeclaration(TypedefParser::TypedefVersionDeclarationContext *ctx) = 0;
-
-  virtual void enterModuleDeclaration(TypedefParser::ModuleDeclarationContext *ctx) = 0;
-  virtual void exitModuleDeclaration(TypedefParser::ModuleDeclarationContext *ctx) = 0;
-
   virtual void enterUseDeclaration(TypedefParser::UseDeclarationContext *ctx) = 0;
   virtual void exitUseDeclaration(TypedefParser::UseDeclarationContext *ctx) = 0;
 
@@ -91,8 +67,8 @@ public:
   virtual void enterSimplePath(TypedefParser::SimplePathContext *ctx) = 0;
   virtual void exitSimplePath(TypedefParser::SimplePathContext *ctx) = 0;
 
-  virtual void enterExplicitPrimitiveLiteral(TypedefParser::ExplicitPrimitiveLiteralContext *ctx) = 0;
-  virtual void exitExplicitPrimitiveLiteral(TypedefParser::ExplicitPrimitiveLiteralContext *ctx) = 0;
+  virtual void enterPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext *ctx) = 0;
+  virtual void exitPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext *ctx) = 0;
 
   virtual void enterBoolLiteral(TypedefParser::BoolLiteralContext *ctx) = 0;
   virtual void exitBoolLiteral(TypedefParser::BoolLiteralContext *ctx) = 0;

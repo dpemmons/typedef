@@ -7,87 +7,91 @@ namespace TypedefParser {
 class FieldBlockContext;
 class IdentifierContext;
 class StructDeclarationContext;
-class InlineStructDeclarationContext;
 class VariantDeclarationContext;
-class InlineVariantDeclarationContext;
+class VectorDeclarationContext;
+class MapDeclarationContext;
 }  // namespace TypedefParser
 
 namespace td {
 
 class TypeDeclaration {
  public:
-  bool IsNamed() { return idctx_ != nullptr; }
+  bool IsNamed() { return id_ctx_ != nullptr; }
   const std::string* GetIdentifier() const;
 
   virtual bool IsStruct() { return false; }
   virtual bool IsVariant() { return false; }
+  virtual bool IsVector() { return false; }
+  virtual bool IsMap() { return false; }
 
  protected:
-  TypeDeclaration() {}
-  virtual ~TypeDeclaration() {}
+  TypeDeclaration() = default;
+  virtual ~TypeDeclaration() = default;
 
-  const TypedefParser::IdentifierContext* idctx_;
+  const TypedefParser::IdentifierContext* id_ctx_ = nullptr;
 };
 
-class FieldBlockTypeDeclaration : public TypeDeclaration {
+class FieldBlockTypeDeclaration : protected TypeDeclaration {
  public:
  protected:
-  FieldBlockTypeDeclaration() {}
-  virtual ~FieldBlockTypeDeclaration() {}
+  FieldBlockTypeDeclaration() = default;
+  virtual ~FieldBlockTypeDeclaration() = default;
 
-  TypedefParser::FieldBlockContext* fbctx_;
+  TypedefParser::FieldBlockContext* fb_ctx_ = nullptr;
 };
 
-class NamedStructTypeDeclaration : public FieldBlockTypeDeclaration {
+class StructTypeDeclaration : protected TypeDeclaration,
+                              protected FieldBlockTypeDeclaration {
  public:
-  NamedStructTypeDeclaration();
-  virtual ~NamedStructTypeDeclaration() {}
-
   virtual bool IsStruct() override { return true; }
 
-  void Set(TypedefParser::StructDeclarationContext* stctx);
+  void Set(TypedefParser::StructDeclarationContext* st_ctx);
 
  protected:
-  TypedefParser::StructDeclarationContext* stctx_;
+  StructTypeDeclaration() = default;
+  virtual ~StructTypeDeclaration() = default;
+
+  TypedefParser::StructDeclarationContext* st_ctx_;
 };
 
-class InlineStructTypeDeclaration : public FieldBlockTypeDeclaration {
+class VariantTypeDeclaration : protected TypeDeclaration,
+                               protected FieldBlockTypeDeclaration {
  public:
-  InlineStructTypeDeclaration();
-  virtual ~InlineStructTypeDeclaration() {}
-
-  virtual bool IsStruct() override { return true; }
-
-  void Set(TypedefParser::InlineStructDeclarationContext* istctx);
-
- protected:
-  TypedefParser::InlineStructDeclarationContext* istctx_;
-};
-
-class NamedVariantTypeDeclaration : public FieldBlockTypeDeclaration {
- public:
-  NamedVariantTypeDeclaration();
-  virtual ~NamedVariantTypeDeclaration() {}
+  VariantTypeDeclaration() = default;
+  virtual ~VariantTypeDeclaration() = default;
 
   virtual bool IsVariant() override { return true; }
 
-  void Set(TypedefParser::VariantDeclarationContext* varctx);
+  void Set(TypedefParser::VariantDeclarationContext* var_ctx);
 
  protected:
-  TypedefParser::VariantDeclarationContext* varctx_;
+  TypedefParser::VariantDeclarationContext* var_ctx_;
 };
 
-class InlineVariantTypeDeclaration : public FieldBlockTypeDeclaration {
+class VectorTypeDeclaration : protected TypeDeclaration {
  public:
-  InlineVariantTypeDeclaration();
-  virtual ~InlineVariantTypeDeclaration() {}
+  VectorTypeDeclaration() = default;
+  virtual ~VectorTypeDeclaration() = default;
 
-  virtual bool IsVariant() override { return true; }
+  virtual bool IsVector() override { return true; }
 
-  void Set(TypedefParser::InlineVariantDeclarationContext* ivarctx);
+  void Set(TypedefParser::VectorDeclarationContext* vec_ctx);
 
  protected:
-  TypedefParser::InlineVariantDeclarationContext* ivarctx_;
+  TypedefParser::VectorDeclarationContext* vec_ctx_;
+};
+
+class MapTypeDeclaration : protected TypeDeclaration {
+ public:
+  MapTypeDeclaration() = default;
+  virtual ~MapTypeDeclaration() = default;
+
+  virtual bool IsMap() override { return true; }
+
+  void Set(TypedefParser::MapDeclarationContext* vec_ctx);
+
+ protected:
+  TypedefParser::MapDeclarationContext* vec_ctx_;
 };
 
 }  // namespace td
