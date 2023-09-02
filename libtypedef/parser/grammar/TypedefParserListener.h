@@ -1,7 +1,5 @@
 
-#include "libtypedef/parser/symbol_path.h"
 #include "libtypedef/parser/grammar_classes.h"
-#include "libtypedef/parser/table.h"
 
 
 // Generated from ./libtypedef/parser/grammar/TypedefParser.g4 by ANTLR 4.7.2
@@ -61,11 +59,8 @@ public:
   virtual void enterUseDeclaration(TypedefParser::UseDeclarationContext *ctx) = 0;
   virtual void exitUseDeclaration(TypedefParser::UseDeclarationContext *ctx) = 0;
 
-  virtual void enterUseTree(TypedefParser::UseTreeContext *ctx) = 0;
-  virtual void exitUseTree(TypedefParser::UseTreeContext *ctx) = 0;
-
-  virtual void enterSimplePath(TypedefParser::SimplePathContext *ctx) = 0;
-  virtual void exitSimplePath(TypedefParser::SimplePathContext *ctx) = 0;
+  virtual void enterSymbolPath(TypedefParser::SymbolPathContext *ctx) = 0;
+  virtual void exitSymbolPath(TypedefParser::SymbolPathContext *ctx) = 0;
 
   virtual void enterPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext *ctx) = 0;
   virtual void exitPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext *ctx) = 0;

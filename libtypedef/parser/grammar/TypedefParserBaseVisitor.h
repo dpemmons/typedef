@@ -1,7 +1,5 @@
 
-#include "libtypedef/parser/symbol_path.h"
 #include "libtypedef/parser/grammar_classes.h"
-#include "libtypedef/parser/table.h"
 
 
 // Generated from ./libtypedef/parser/grammar/TypedefParser.g4 by ANTLR 4.7.2
@@ -76,11 +74,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitUseTree(TypedefParser::UseTreeContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitSimplePath(TypedefParser::SimplePathContext *ctx) override {
+  virtual antlrcpp::Any visitSymbolPath(TypedefParser::SymbolPathContext *ctx) override {
     return visitChildren(ctx);
   }
 

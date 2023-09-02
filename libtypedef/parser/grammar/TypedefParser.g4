@@ -5,9 +5,7 @@ options {
 }
 
 @header {
-#include "libtypedef/parser/symbol_path.h"
 #include "libtypedef/parser/grammar_classes.h"
-#include "libtypedef/parser/table.h"
 }
 
 @parser::definitions {
@@ -22,19 +20,19 @@ compilationUnit
 		td::CompilationUnit compilation_unit
 	]
 	@after {$compilation_unit.Init($ctx);}:
-	typedefVersionDeclaration (moduleDeclaration)? (
-		useDeclaration
-	)* (typeDefinition SEMI)* EOF;
+	typedefVersionDeclaration moduleDeclaration (useDeclaration)* (
+		typeDefinition ';'
+	)* EOF;
 
-typedefVersionDeclaration: KW_TYPEDEF EQ identifier SEMI;
-moduleDeclaration: KW_MODULE simplePath SEMI;
+typedefVersionDeclaration: 'typedef' EQ identifier ';';
+moduleDeclaration: 'module' symbolPath ';';
 
 // struct|variant SomeVariant { optionA: i32; optionB: str; }
 typeDefinition
 	returns[std::unique_ptr<td::TypeDefinition> type_definition]
-	@after {$type_definition = TypeDefinition::Build($ctx);}: (KW_STRUCT | KW_VARIANT) identifier? LBRACE fieldBlock RBRACE;
+	@after {$type_definition = TypeDefinition::Build($ctx);}: (KW_STRUCT | KW_VARIANT) identifier? '{' fieldBlock '}';
 
-fieldBlock: ( typeDefinition | (fieldDefinition SEMI))*;
+fieldBlock: ( typeDefinition | (fieldDefinition ';'))*;
 
 fieldDefinition
 	returns[std::unique_ptr<td::FieldDefinition> field_definition]
@@ -54,7 +52,8 @@ typeIdentifier:
 
 // template DoIt(a: i32, b: str) "{a} {b}";
 templateDefinition
-	returns[std::unique_ptr<td::table::TemplateFunctionDefinition> tmpl]:
+	returns[td::TemplateDefinition template_definition]
+	@after {$template_definition.Init($ctx);}:
 	KW_TEMPLATE identifier '(' (
 		functionParameter (COMMA functionParameter)*
 	) ')' ('=>' KW_STRING)? templateBlock;
@@ -73,17 +72,11 @@ typeParameter
 	primitiveTypeIdentifier
 	| identifier;
 
-// TODO use declarations.
-useDeclaration: 'use' useTree ';';
-useTree: (simplePath? '::')? (
-		'*'
-		| '{' ( useTree (',' useTree)* ','?)? '}'
-	)
-	| simplePath ('as' identifier)?;
+useDeclaration: 'use' symbolPath ';';
 
-simplePath
-	returns[td::SymbolPath path]:
-	(leading_pathsep = PATHSEP)? identifier (PATHSEP identifier)*;
+symbolPath
+	returns[td::SymbolPath symbol_path]
+	@after {$symbol_path.Init($ctx)}: (leading_pathsep = '::')? identifier ('::' identifier)*;
 
 primitiveLiteral:
 	boolLiteral
@@ -93,17 +86,22 @@ primitiveLiteral:
 	| integerLiteral;
 
 boolLiteral
-	returns[bool val]: KW_TRUE | KW_FALSE;
+	returns[td::BoolLiteralContext bool_literal]
+	@after {$bool_literal.Init($ctx);}: KW_TRUE | KW_FALSE;
 charLiteral
-	returns[char32_t val]: CHAR_LITERAL;
+	returns[td::CharLiteral char_literal]
+	@after {$char_literal.Init($ctx);}: CHAR_LITERAL;
 stringLiteral
-	returns[std::string val]:
-	STRING_LITERAL
-	| RAW_STRING_LITERAL;
+	returns[td::StringLiteral string_literal]
+	@after {$string_literal.Init($ctx);}: STRING_LITERAL | RAW_STRING_LITERAL;
 
-floatLiteral: FLOAT_LITERAL (KW_F32 | KW_F64)?;
+floatLiteral
+	returns[td::FloatLiteral float_literal]
+	@after {$float_literal.Init($ctx);}: FLOAT_LITERAL (KW_F32 | KW_F64)?;
 
-integerLiteral: (intDigits) (
+integerLiteral
+	returns[td::IntegerLiteral integer_literal]
+	@after {$integer_literal.Init($ctx);}: (intDigits) (
 		KW_U8
 		| KW_U16
 		| KW_U32
@@ -119,7 +117,8 @@ intDigits: (MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE))
 	| (BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE));
 
 identifier
-	returns[std::string id]:
+	returns[std::string id]
+	@after {$id = $ctx->nki->getText();}:
 	nki = NON_KEYWORD_IDENTIFIER
 	| RAW_ESCAPE nki = NON_KEYWORD_IDENTIFIER;
 

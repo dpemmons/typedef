@@ -1,7 +1,5 @@
 
-#include "libtypedef/parser/symbol_path.h"
 #include "libtypedef/parser/grammar_classes.h"
-#include "libtypedef/parser/table.h"
 
 
 // Generated from ./libtypedef/parser/grammar/TypedefParser.g4 by ANTLR 4.7.2
@@ -58,11 +56,11 @@ public:
     RuleTypeDefinition = 3, RuleFieldBlock = 4, RuleFieldDefinition = 5, 
     RuleTypeAnnotation = 6, RuleTypeArgument = 7, RuleTypeIdentifier = 8, 
     RuleTemplateDefinition = 9, RuleTemplateBlock = 10, RuleFunctionParameter = 11, 
-    RuleTypeParameter = 12, RuleUseDeclaration = 13, RuleUseTree = 14, RuleSimplePath = 15, 
-    RulePrimitiveLiteral = 16, RuleBoolLiteral = 17, RuleCharLiteral = 18, 
-    RuleStringLiteral = 19, RuleFloatLiteral = 20, RuleIntegerLiteral = 21, 
-    RuleIntDigits = 22, RuleIdentifier = 23, RulePrimitiveTypeIdentifier = 24, 
-    RuleKeyword = 25
+    RuleTypeParameter = 12, RuleUseDeclaration = 13, RuleSymbolPath = 14, 
+    RulePrimitiveLiteral = 15, RuleBoolLiteral = 16, RuleCharLiteral = 17, 
+    RuleStringLiteral = 18, RuleFloatLiteral = 19, RuleIntegerLiteral = 20, 
+    RuleIntDigits = 21, RuleIdentifier = 22, RulePrimitiveTypeIdentifier = 23, 
+    RuleKeyword = 24
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -89,8 +87,7 @@ public:
   class FunctionParameterContext;
   class TypeParameterContext;
   class UseDeclarationContext;
-  class UseTreeContext;
-  class SimplePathContext;
+  class SymbolPathContext;
   class PrimitiveLiteralContext;
   class BoolLiteralContext;
   class CharLiteralContext;
@@ -108,8 +105,8 @@ public:
     CompilationUnitContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     TypedefVersionDeclarationContext *typedefVersionDeclaration();
-    antlr4::tree::TerminalNode *EOF();
     ModuleDeclarationContext *moduleDeclaration();
+    antlr4::tree::TerminalNode *EOF();
     std::vector<UseDeclarationContext *> useDeclaration();
     UseDeclarationContext* useDeclaration(size_t i);
     std::vector<TypeDefinitionContext *> typeDefinition();
@@ -149,7 +146,7 @@ public:
     ModuleDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_MODULE();
-    SimplePathContext *simplePath();
+    SymbolPathContext *symbolPath();
     antlr4::tree::TerminalNode *SEMI();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -281,7 +278,7 @@ public:
 
   class  TemplateDefinitionContext : public antlr4::ParserRuleContext {
   public:
-    std::unique_ptr<td::table::TemplateFunctionDefinition> tmpl;
+    td::TemplateDefinition template_definition;
     TemplateDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_TEMPLATE();
@@ -362,7 +359,7 @@ public:
     UseDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_USE();
-    UseTreeContext *useTree();
+    SymbolPathContext *symbolPath();
     antlr4::tree::TerminalNode *SEMI();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -374,36 +371,11 @@ public:
 
   UseDeclarationContext* useDeclaration();
 
-  class  UseTreeContext : public antlr4::ParserRuleContext {
+  class  SymbolPathContext : public antlr4::ParserRuleContext {
   public:
-    UseTreeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *STAR();
-    antlr4::tree::TerminalNode *LBRACE();
-    antlr4::tree::TerminalNode *RBRACE();
-    antlr4::tree::TerminalNode *PATHSEP();
-    std::vector<UseTreeContext *> useTree();
-    UseTreeContext* useTree(size_t i);
-    SimplePathContext *simplePath();
-    std::vector<antlr4::tree::TerminalNode *> COMMA();
-    antlr4::tree::TerminalNode* COMMA(size_t i);
-    antlr4::tree::TerminalNode *KW_AS();
-    IdentifierContext *identifier();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  UseTreeContext* useTree();
-
-  class  SimplePathContext : public antlr4::ParserRuleContext {
-  public:
-    td::SymbolPath path;
+    td::SymbolPath symbol_path;
     antlr4::Token *leading_pathsep = nullptr;;
-    SimplePathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    SymbolPathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<IdentifierContext *> identifier();
     IdentifierContext* identifier(size_t i);
@@ -417,7 +389,7 @@ public:
    
   };
 
-  SimplePathContext* simplePath();
+  SymbolPathContext* symbolPath();
 
   class  PrimitiveLiteralContext : public antlr4::ParserRuleContext {
   public:
@@ -440,7 +412,7 @@ public:
 
   class  BoolLiteralContext : public antlr4::ParserRuleContext {
   public:
-    bool val;
+    td::BoolLiteralContext bool_literal;
     BoolLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_TRUE();
@@ -457,7 +429,7 @@ public:
 
   class  CharLiteralContext : public antlr4::ParserRuleContext {
   public:
-    char32_t val;
+    td::CharLiteral char_literal;
     CharLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *CHAR_LITERAL();
@@ -473,7 +445,7 @@ public:
 
   class  StringLiteralContext : public antlr4::ParserRuleContext {
   public:
-    std::string val;
+    td::StringLiteral string_literal;
     StringLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *STRING_LITERAL();
@@ -490,6 +462,7 @@ public:
 
   class  FloatLiteralContext : public antlr4::ParserRuleContext {
   public:
+    td::FloatLiteral float_literal;
     FloatLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *FLOAT_LITERAL();
@@ -507,6 +480,7 @@ public:
 
   class  IntegerLiteralContext : public antlr4::ParserRuleContext {
   public:
+    td::IntegerLiteral integer_literal;
     IntegerLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     IntDigitsContext *intDigits();

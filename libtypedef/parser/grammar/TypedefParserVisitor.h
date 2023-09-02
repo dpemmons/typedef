@@ -1,7 +1,5 @@
 
-#include "libtypedef/parser/symbol_path.h"
 #include "libtypedef/parser/grammar_classes.h"
-#include "libtypedef/parser/table.h"
 
 
 // Generated from ./libtypedef/parser/grammar/TypedefParser.g4 by ANTLR 4.7.2
@@ -52,9 +50,7 @@ public:
 
     virtual antlrcpp::Any visitUseDeclaration(TypedefParser::UseDeclarationContext *context) = 0;
 
-    virtual antlrcpp::Any visitUseTree(TypedefParser::UseTreeContext *context) = 0;
-
-    virtual antlrcpp::Any visitSimplePath(TypedefParser::SimplePathContext *context) = 0;
+    virtual antlrcpp::Any visitSymbolPath(TypedefParser::SymbolPathContext *context) = 0;
 
     virtual antlrcpp::Any visitPrimitiveLiteral(TypedefParser::PrimitiveLiteralContext *context) = 0;
 
