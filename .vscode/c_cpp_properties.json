@@ -11,6 +11,9 @@
                 "${workspaceFolder}/external/nlohmann-json-3.11.2/json/include",
                 "${workspaceFolder}/external/inja-3.4.0/inja/include",
                 "${workspaceFolder}/libtypedef",
+                "${workspaceFolder}/libtypedef/parser",
+                "${workspaceFolder}/libtypedef/codegen",
+                "${workspaceFolder}/libtypedef/parser/grammar",
                 "${workspaceFolder}/typedef",
                 "${workspaceFolder}/tests"
             ],

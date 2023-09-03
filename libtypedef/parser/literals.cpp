@@ -1,21 +1,11 @@
-#include "libtypedef/parser/grammar_classes.h"
-
-#include <antlr4/antlr4-runtime.h>
+#include "libtypedef/parser/literals.h"
 
 #include <charconv>
-#include <memory>
 #include <sstream>
-#include <stdexcept>
-#include <string>
-#include <vector>
 
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
 
-#include "grammar_classes.h"
-#include "libtypedef/parser/grammar/TypedefLexer.h"
-#include "libtypedef/parser/grammar/TypedefParser.h"
-#include "libtypedef/parser/grammar/TypedefParserBaseListener.h"
 #include "libtypedef/parser/parser_error_info.h"
 
 #define throw_logic_error(str) \
@@ -316,137 +306,65 @@ string GetRawString(antlr4::Token* token, char leading_char,
 
 namespace td {
 
-void BoolLiteral::Init(TypedefParser::BoolLiteralContext* bl_ctx) {
-  bl_ctx_ = bl_ctx;
-}
-
-bool BoolLiteral::GetVal() { return bl_ctx_->KW_TRUE() != nullptr; }
-
-void CharLiteral::Init(TypedefParser::CharLiteralContext* cl_ctx) {
-  string literal = cl_ctx->CHAR_LITERAL()->getText();
-  if (literal.size() < 2 || literal.front() != '\'' || literal.back() != '\'') {
-    throw MakeError(td::ParserErrorInfo::INVALID_CHAR_LITERAL,
-                    "Invalid char literal",
-                    cl_ctx->CHAR_LITERAL()->getSymbol());
-  }
-}
-
-void StringLiteral::Init(TypedefParser::StringLiteralContext* ctx) {
-  sl_ctx_ = ctx;
-  if (ctx->STRING_LITERAL()) {
-    val_ = GetStringValue(ctx->STRING_LITERAL()->getSymbol(), 0,
-                          td::ParserErrorInfo::INVALID_STRING_LITERAL);
-  } else if (ctx->RAW_STRING_LITERAL()) {
-    val_ = GetRawString(ctx->RAW_STRING_LITERAL()->getSymbol(), 'r',
-                        td::ParserErrorInfo::INVALID_RAW_STRING_LITERAL);
+void SetBoolLiteral(bool& literal, TypedefParser::BoolLiteralContext* ctx) {
+  if (ctx->KW_TRUE() != nullptr) {
+    literal = true;
+  } else if (ctx->KW_FALSE() != nullptr) {
+    literal = true;
   } else {
     throw_logic_error("Invalid state.");
   }
 }
 
-void FloatLiteral::Init(TypedefParser::FloatLiteralContext* ctx) {
-  fl_ctx_ = ctx;
+void SetCharLiteral(char32_t& literal, TypedefParser::CharLiteralContext* ctx) {
+  literal = GetCharValue(ctx);
+}
+
+void SetStringLiteral(std::string& literal,
+                      TypedefParser::StringLiteralContext* ctx) {
+  if (ctx->STRING_LITERAL()) {
+    literal = GetStringValue(ctx->STRING_LITERAL()->getSymbol(), 0,
+                             td::ParserErrorInfo::INVALID_STRING_LITERAL);
+  } else if (ctx->RAW_STRING_LITERAL()) {
+    literal = GetRawString(ctx->RAW_STRING_LITERAL()->getSymbol(), 'r',
+                           td::ParserErrorInfo::INVALID_RAW_STRING_LITERAL);
+  } else {
+    throw_logic_error("Invalid state.");
+  }
+}
+
+void SetFloatLiteral(FloatLiteral& literal,
+                     TypedefParser::FloatLiteralContext* ctx) {
   if (ctx->KW_F32() != nullptr) {
-    val_ = GetFloatValue<float>(ctx);
+    literal = GetFloatValue<float>(ctx);
   } else if (ctx->KW_F64() != nullptr) {
-    val_ = GetFloatValue<double>(ctx);
+    literal = GetFloatValue<double>(ctx);
   } else {
-    val_ = GetFloatValue<float>(ctx);
+    literal = GetFloatValue<float>(ctx);
   }
 }
 
-void IntegerLiteral::Init(TypedefParser::IntegerLiteralContext* ctx) {
-  il_ctx_ = ctx;
+void SetIntegerLiteral(IntegerLiteral& literal,
+                       TypedefParser::IntegerLiteralContext* ctx) {
   if (ctx->KW_U8() != nullptr) {
-    val_ = GetIntValue<std::uint8_t>(ctx->intDigits());
+    literal = GetIntValue<std::uint8_t>(ctx->intDigits());
   } else if (ctx->KW_U16() != nullptr) {
-    val_ = GetIntValue<std::uint16_t>(ctx->intDigits());
+    literal = GetIntValue<std::uint16_t>(ctx->intDigits());
   } else if (ctx->KW_U32() != nullptr) {
-    val_ = GetIntValue<std::uint32_t>(ctx->intDigits());
+    literal = GetIntValue<std::uint32_t>(ctx->intDigits());
   } else if (ctx->KW_U64() != nullptr) {
-    val_ = GetIntValue<std::uint64_t>(ctx->intDigits());
+    literal = GetIntValue<std::uint64_t>(ctx->intDigits());
   } else if (ctx->KW_I8() != nullptr) {
-    val_ = GetIntValue<std::int8_t>(ctx->intDigits());
+    literal = GetIntValue<std::int8_t>(ctx->intDigits());
   } else if (ctx->KW_I16() != nullptr) {
-    val_ = GetIntValue<std::int16_t>(ctx->intDigits());
+    literal = GetIntValue<std::int16_t>(ctx->intDigits());
   } else if (ctx->KW_I32() != nullptr) {
-    val_ = GetIntValue<std::int32_t>(ctx->intDigits());
+    literal = GetIntValue<std::int32_t>(ctx->intDigits());
   } else if (ctx->KW_I64() != nullptr) {
-    val_ = GetIntValue<std::int64_t>(ctx->intDigits());
+    literal = GetIntValue<std::int64_t>(ctx->intDigits());
   } else {
-    val_ = GetIntValue<std::int32_t>(ctx->intDigits());
+    literal = GetIntValue<std::int32_t>(ctx->intDigits());
   }
-}
-
-const string* TypeDefinition::GetIdentifier() {
-  return &td_ctx_->identifier()->id;
-}
-
-// void StructTypeDeclaration::Set(
-//     TypedefParser::StructDeclarationContext* st_ctx) {
-//   st_ctx_ = st_ctx;
-//   id_ctx_ = st_ctx->identifier();
-//   fb_ctx_ = st_ctx->fieldBlock();
-// }
-
-// void VariantTypeDeclaration::Set(
-//     TypedefParser::VariantDeclarationContext* var_ctx) {
-//   var_ctx_ = var_ctx;
-//   id_ctx_ = var_ctx->identifier();
-//   fb_ctx_ = var_ctx->fieldBlock();
-// }
-
-// void VectorTypeDeclaration::Set(
-//     TypedefParser::VectorDeclarationContext* var_ctx) {
-//   var_ctx_ = var_ctx;
-//   id_ctx_ = var_ctx->identifier();
-// }
-
-// void MapTypeDeclaration::Set(TypedefParser::VectorDeclarationContext*
-// var_ctx) {
-//   var_ctx_ = var_ctx;
-//   id_ctx_ = var_ctx->identifier();
-// }
-
-void CompilationUnit::Init(TypedefParser::CompilationUnitContext* ctx) {
-  cu_ctx_ = ctx;
-  module_sympath_.Init(ctx->moduleDeclaration()->symbolPath());
-}
-
-const string* CompilationUnit::GetVersion() {
-  return &cu_ctx_->typedefVersionDeclaration()->identifier()->id;
-}
-
-void SymbolPath::Init(TypedefParser::SymbolPathContext* sp_ctx) {
-  sp_ctx = sp_ctx_;
-}
-
-bool SymbolPath::IsRoot() { return sp_ctx_->leading_pathsep == nullptr; }
-
-string SymbolPath::ToString(const string& delineator, bool leading_delineator) {
-  auto path = sp_ctx_->identifier();
-  if (path.size() == 0) {
-    return string();
-  }
-
-  stringstream ss;
-  int i = 0;
-  if (!leading_delineator) {
-    ss << path[i]->id;
-    i = 1;
-  }
-  for (; i < path.size(); i++) {
-    ss << delineator << path[i]->id;
-  }
-  return ss.str();
-}
-
-void TemplateDefinition::Init(TypedefParser::TemplateDefinitionContext* ctx) {
-  tmpl_ctx_ = ctx;
-}
-
-string* TemplateDefinition::GetBlock() {
-  return &tmpl_ctx_->templateBlock()->val;
 }
 
 }  // namespace td

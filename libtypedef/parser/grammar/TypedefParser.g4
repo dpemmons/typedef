@@ -5,7 +5,7 @@ options {
 }
 
 @header {
-#include "libtypedef/parser/grammar_classes.h"
+#include "libtypedef/parser/gramamr_types.h"
 }
 
 @parser::definitions {
@@ -13,13 +13,10 @@ options {
 #include <memory>
 #include <optional>
 #include <string>
+#include "libtypedef/parser/literals.h"
 }
 
-compilationUnit
-	returns[
-		td::CompilationUnit compilation_unit
-	]
-	@after {$compilation_unit.Init($ctx);}:
+compilationUnit:
 	typedefVersionDeclaration moduleDeclaration (useDeclaration)* (
 		typeDefinition ';'
 	)* EOF;
@@ -51,9 +48,7 @@ typeIdentifier:
 	| symrefIdentifier = identifier;
 
 // template DoIt(a: i32, b: str) "{a} {b}";
-templateDefinition
-	returns[td::TemplateDefinition template_definition]
-	@after {$template_definition.Init($ctx);}:
+templateDefinition:
 	KW_TEMPLATE identifier '(' (
 		functionParameter (COMMA functionParameter)*
 	) ')' ('=>' KW_STRING)? templateBlock;
@@ -64,19 +59,19 @@ templateBlock
 	| RAW_TEMPLATE_LITERAL;
 
 functionParameter
-	returns[std::unique_ptr<td::table::FunctionParameter> func_param]:
+	returns[std::unique_ptr<td::FunctionParameter> func_param]:
 	identifier ':' typeParameter;
 
 typeParameter
-	returns[std::shared_ptr<td::table::TypeParameter> type_param]:
+	returns[std::unique_ptr<td::TypeParameter> type_param]:
 	primitiveTypeIdentifier
 	| identifier;
 
 useDeclaration: 'use' symbolPath ';';
 
-symbolPath
-	returns[td::SymbolPath symbol_path]
-	@after {$symbol_path.Init($ctx)}: (leading_pathsep = '::')? identifier ('::' identifier)*;
+symbolPath: (leading_pathsep = '::')? identifier (
+		'::' identifier
+	)*;
 
 primitiveLiteral:
 	boolLiteral
@@ -86,22 +81,22 @@ primitiveLiteral:
 	| integerLiteral;
 
 boolLiteral
-	returns[td::BoolLiteralContext bool_literal]
-	@after {$bool_literal.Init($ctx);}: KW_TRUE | KW_FALSE;
+	returns[bool bool_literal]
+	@after {SetBoolLiteral($bool_literal, $ctx);}: KW_TRUE | KW_FALSE;
 charLiteral
-	returns[td::CharLiteral char_literal]
-	@after {$char_literal.Init($ctx);}: CHAR_LITERAL;
+	returns[char32_t char_literal]
+	@after {SetCharLiteral($char_literal, $ctx);}: CHAR_LITERAL;
 stringLiteral
-	returns[td::StringLiteral string_literal]
-	@after {$string_literal.Init($ctx);}: STRING_LITERAL | RAW_STRING_LITERAL;
+	returns[std::string string_literal]
+	@after {SetStringLiteral($string_literal, $ctx);}: STRING_LITERAL | RAW_STRING_LITERAL;
 
 floatLiteral
 	returns[td::FloatLiteral float_literal]
-	@after {$float_literal.Init($ctx);}: FLOAT_LITERAL (KW_F32 | KW_F64)?;
+	@after {SetFloatLiteral($float_literal, $ctx);}: FLOAT_LITERAL (KW_F32 | KW_F64)?;
 
 integerLiteral
 	returns[td::IntegerLiteral integer_literal]
-	@after {$integer_literal.Init($ctx);}: (intDigits) (
+	@after {SetIntegerLiteral($integer_literal, $ctx);}: (intDigits) (
 		KW_U8
 		| KW_U16
 		| KW_U32

@@ -1,5 +1,5 @@
 
-#include "libtypedef/parser/grammar_classes.h"
+#include "libtypedef/parser/gramamr_types.h"
 
 
 // Generated from ./libtypedef/parser/grammar/TypedefParser.g4 by ANTLR 4.7.2
@@ -412,7 +412,7 @@ public:
 
   class  BoolLiteralContext : public antlr4::ParserRuleContext {
   public:
-    td::BoolLiteralContext bool_literal;
+    bool bool_literal;
     BoolLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_TRUE();
@@ -429,7 +429,7 @@ public:
 
   class  CharLiteralContext : public antlr4::ParserRuleContext {
   public:
-    td::CharLiteral char_literal;
+    char32_t char_literal;
     CharLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *CHAR_LITERAL();
@@ -445,7 +445,7 @@ public:
 
   class  StringLiteralContext : public antlr4::ParserRuleContext {
   public:
-    td::StringLiteral string_literal;
+    std::string string_literal;
     StringLiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *STRING_LITERAL();

@@ -1,6 +1,6 @@
 // Generated from /home/dpemmons/src/typedef/libtypedef/parser/grammar/TypedefParser.g4 by ANTLR 4.9.2
 
-#include "libtypedef/parser/grammar_classes.h"
+#include "libtypedef/parser/gramamr_types.h"
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -179,7 +179,6 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class CompilationUnitContext extends ParserRuleContext {
-		public td::CompilationUnit compilation_unit;
 		public TypedefVersionDeclarationContext typedefVersionDeclaration() {
 			return getRuleContext(TypedefVersionDeclarationContext.class,0);
 		}
@@ -253,8 +252,6 @@ public class TypedefParser extends Parser {
 			setState(66);
 			match(EOF);
 			}
-			_ctx.stop = _input.LT(-1);
-			_localctx.compilation_unit.Init(_localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -761,7 +758,6 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class TemplateDefinitionContext extends ParserRuleContext {
-		public td::TemplateDefinition template_definition;
 		public TerminalNode KW_TEMPLATE() { return getToken(TypedefParser.KW_TEMPLATE, 0); }
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
@@ -839,8 +835,6 @@ public class TypedefParser extends Parser {
 			setState(144);
 			templateBlock();
 			}
-			_ctx.stop = _input.LT(-1);
-			_localctx.template_definition.Init(_localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -894,7 +888,7 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class FunctionParameterContext extends ParserRuleContext {
-		public std::unique_ptr<td::table::FunctionParameter> func_param;
+		public std::unique_ptr<td::FunctionParameter> func_param;
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
 		}
@@ -934,7 +928,7 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class TypeParameterContext extends ParserRuleContext {
-		public std::shared_ptr<td::table::TypeParameter> type_param;
+		public std::unique_ptr<td::TypeParameter> type_param;
 		public PrimitiveTypeIdentifierContext primitiveTypeIdentifier() {
 			return getRuleContext(PrimitiveTypeIdentifierContext.class,0);
 		}
@@ -1034,7 +1028,6 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class SymbolPathContext extends ParserRuleContext {
-		public td::SymbolPath symbol_path;
 		public Token leading_pathsep;
 		public List<IdentifierContext> identifier() {
 			return getRuleContexts(IdentifierContext.class);
@@ -1088,8 +1081,6 @@ public class TypedefParser extends Parser {
 				_la = _input.LA(1);
 			}
 			}
-			_ctx.stop = _input.LT(-1);
-			_localctx.symbol_path.Init(_localctx)
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -1189,7 +1180,7 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class BoolLiteralContext extends ParserRuleContext {
-		public td::BoolLiteralContext bool_literal;
+		public bool bool_literal;
 		public TerminalNode KW_TRUE() { return getToken(TypedefParser.KW_TRUE, 0); }
 		public TerminalNode KW_FALSE() { return getToken(TypedefParser.KW_FALSE, 0); }
 		public BoolLiteralContext(ParserRuleContext parent, int invokingState) {
@@ -1217,7 +1208,7 @@ public class TypedefParser extends Parser {
 			}
 			}
 			_ctx.stop = _input.LT(-1);
-			_localctx.bool_literal.Init(_localctx);
+			SetBoolLiteral(_localctx.bool_literal, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -1231,7 +1222,7 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class CharLiteralContext extends ParserRuleContext {
-		public td::CharLiteral char_literal;
+		public char32_t char_literal;
 		public TerminalNode CHAR_LITERAL() { return getToken(TypedefParser.CHAR_LITERAL, 0); }
 		public CharLiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1249,7 +1240,7 @@ public class TypedefParser extends Parser {
 			match(CHAR_LITERAL);
 			}
 			_ctx.stop = _input.LT(-1);
-			_localctx.char_literal.Init(_localctx);
+			SetCharLiteral(_localctx.char_literal, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -1263,7 +1254,7 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class StringLiteralContext extends ParserRuleContext {
-		public td::StringLiteral string_literal;
+		public std::string string_literal;
 		public TerminalNode STRING_LITERAL() { return getToken(TypedefParser.STRING_LITERAL, 0); }
 		public TerminalNode RAW_STRING_LITERAL() { return getToken(TypedefParser.RAW_STRING_LITERAL, 0); }
 		public StringLiteralContext(ParserRuleContext parent, int invokingState) {
@@ -1291,7 +1282,7 @@ public class TypedefParser extends Parser {
 			}
 			}
 			_ctx.stop = _input.LT(-1);
-			_localctx.string_literal.Init(_localctx);
+			SetStringLiteral(_localctx.string_literal, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -1344,7 +1335,7 @@ public class TypedefParser extends Parser {
 
 			}
 			_ctx.stop = _input.LT(-1);
-			_localctx.float_literal.Init(_localctx);
+			SetFloatLiteral(_localctx.float_literal, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -1407,7 +1398,7 @@ public class TypedefParser extends Parser {
 
 			}
 			_ctx.stop = _input.LT(-1);
-			_localctx.integer_literal.Init(_localctx);
+			SetIntegerLiteral(_localctx.integer_literal, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;

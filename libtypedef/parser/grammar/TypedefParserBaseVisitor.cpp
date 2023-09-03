@@ -1,5 +1,5 @@
 
-#include "libtypedef/parser/grammar_classes.h"
+#include "libtypedef/parser/gramamr_types.h"
 
 
 // Generated from ./libtypedef/parser/grammar/TypedefParser.g4 by ANTLR 4.7.2

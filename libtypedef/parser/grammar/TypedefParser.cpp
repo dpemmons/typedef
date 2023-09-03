@@ -1,5 +1,5 @@
 
-#include "libtypedef/parser/grammar_classes.h"
+#include "libtypedef/parser/gramamr_types.h"
 
 
 // Generated from ./libtypedef/parser/grammar/TypedefParser.g4 by ANTLR 4.7.2
@@ -39,6 +39,7 @@ dfa::Vocabulary& TypedefParser::getVocabulary() const {
 #include <memory>
 #include <optional>
 #include <string>
+#include "libtypedef/parser/literals.h"
 
 
 //----------------- CompilationUnitContext ------------------------------------------------------------------
@@ -1613,7 +1614,7 @@ TypedefParser::BoolLiteralContext* TypedefParser::boolLiteral() {
       consume();
     }
    _ctx->stop = _input->LT(-1);
-    _localctx->bool_literal.Init(_localctx);
+    SetBoolLiteral(_localctx->bool_literal, _localctx);
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1671,7 +1672,7 @@ TypedefParser::CharLiteralContext* TypedefParser::charLiteral() {
     setState(180);
     match(TypedefParser::CHAR_LITERAL);
    _ctx->stop = _input->LT(-1);
-    _localctx->char_literal.Init(_localctx);
+    SetCharLiteral(_localctx->char_literal, _localctx);
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1743,7 +1744,7 @@ TypedefParser::StringLiteralContext* TypedefParser::stringLiteral() {
       consume();
     }
    _ctx->stop = _input->LT(-1);
-    _localctx->string_literal.Init(_localctx);
+    SetStringLiteral(_localctx->string_literal, _localctx);
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1829,7 +1830,7 @@ TypedefParser::FloatLiteralContext* TypedefParser::floatLiteral() {
       }
     }
    _ctx->stop = _input->LT(-1);
-    _localctx->float_literal.Init(_localctx);
+    SetFloatLiteral(_localctx->float_literal, _localctx);
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1951,7 +1952,7 @@ TypedefParser::IntegerLiteralContext* TypedefParser::integerLiteral() {
       }
     }
    _ctx->stop = _input->LT(-1);
-    _localctx->integer_literal.Init(_localctx);
+    SetIntegerLiteral(_localctx->integer_literal, _localctx);
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
