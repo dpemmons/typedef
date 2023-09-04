@@ -11,7 +11,7 @@
       fmt::format("\"{}\" in {}:{}", str, __FILE__, __LINE__));
 
 namespace td {
-
+#if 0
 void SecondPassListener::enterCompilationUnit(
     TypedefParser::CompilationUnitContext* ctx) {
   std::set<std::string> identifiers;
@@ -233,5 +233,5 @@ void SecondPassListener::enterTypeParameter(
     }
   }
 }
-
+#endif
 }  // namespace td

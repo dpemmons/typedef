@@ -1,32 +1,36 @@
 #ifndef PARSER_TYPEDEF_PARSER_H__
 #define PARSER_TYPEDEF_PARSER_H__
 
-#include <filesystem>
-#include <iosfwd>
 #include <memory>
-#include <optional>
 #include <string>
 #include <vector>
 
+#include "libtypedef/parser/grammar/TypedefLexer.h"
+#include "libtypedef/parser/grammar/TypedefParser.h"
+#include "parser_common.h"
 #include "parser_error_info.h"
-#include "table.h"
 
 namespace td {
 
-struct ParserResources;
+class Parser {
+ public:
+  explicit Parser(std::istream& input);
 
-struct ParsedFile {
-  ParsedFile();
-  ~ParsedFile();
-  std::string langauge_version;
-  std::vector<ParserErrorInfo> errors;
-  bool HasErrors() const { return errors.size() > 0; }
-  std::shared_ptr<td::table::Module> mod;
-  std::unique_ptr<ParserResources> res;
+  // returns error count
+  size_t Parse();
+  const std::vector<ParserErrorInfo>& Errors() { return errors_; }
+
+ private:
+  antlr4::ANTLRInputStream input_stream_;
+  TypedefLexer lexer_;
+  antlr4::CommonTokenStream tokens_;
+  TypedefParser parser_;
+
+  std::vector<ParserErrorInfo> errors_;
+
+  LexerErrorListener lexer_error_listener_;
+  ParserErrorListener parser_error_listener_;
 };
-
-std::unique_ptr<ParsedFile> ParseTypedef(std::istream& input);
-std::unique_ptr<ParsedFile> ParseTypedef(const std::string& s);
 
 }  // namespace td
 

@@ -4,8 +4,6 @@
 #include <memory>
 #include <string>
 
-#include "libtypedef/parser/table.h"
-
 namespace td {
 
 std::string_view StructAlignmentMacro();

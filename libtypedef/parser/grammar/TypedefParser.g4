@@ -27,7 +27,9 @@ moduleDeclaration: 'module' symbolPath ';';
 // struct|variant SomeVariant { optionA: i32; optionB: str; }
 typeDefinition
 	returns[std::unique_ptr<td::TypeDefinition> type_definition]
-	@after {$type_definition = TypeDefinition::Build($ctx);}: (KW_STRUCT | KW_VARIANT) identifier? '{' fieldBlock '}';
+	@after {type_definition = Make($ctx);}: (KW_STRUCT | KW_VARIANT) type_identifier = identifier? (
+		'<' (type_parameter = identifier ',')+ '>'
+	)? '{' fieldBlock '}';
 
 fieldBlock: ( typeDefinition | (fieldDefinition ';'))*;
 
@@ -54,18 +56,14 @@ templateDefinition:
 	) ')' ('=>' KW_STRING)? templateBlock;
 
 templateBlock
-	returns[std::string val]:
-	TEMPLATE_LITERAL
-	| RAW_TEMPLATE_LITERAL;
+	returns[std::string template_block]
+	@after {SetTemplateBlock($template_block, $ctx);}: TEMPLATE_LITERAL | RAW_TEMPLATE_LITERAL;
 
 functionParameter
 	returns[std::unique_ptr<td::FunctionParameter> func_param]:
-	identifier ':' typeParameter;
+	identifier ':' parameterType;
 
-typeParameter
-	returns[std::unique_ptr<td::TypeParameter> type_param]:
-	primitiveTypeIdentifier
-	| identifier;
+parameterType: primitiveTypeIdentifier | identifier;
 
 useDeclaration: 'use' symbolPath ';';
 

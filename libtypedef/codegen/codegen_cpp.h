@@ -10,7 +10,7 @@
 namespace td {
 
 void CodegenCpp(OutPathBase* out_path,
-                const ParsedFile* parsed_file);
+                Parser* parsed_file);
 
 }  // namespace td
 

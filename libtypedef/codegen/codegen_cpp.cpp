@@ -468,7 +468,7 @@ json GetTypeDecls(const vector<shared_ptr<TypeDeclaration>>& types) {
   return arr;
 }
 
-void CodegenCpp(OutPathBase* out_path, const ParsedFile* parsed_file) {
+void CodegenCpp(OutPathBase* out_path, Parser* parsed_file) {
   filesystem::path hdr_filename =
       parsed_file->mod->module_name->ToString("_", false) + ".h";
   filesystem::path source_filename =

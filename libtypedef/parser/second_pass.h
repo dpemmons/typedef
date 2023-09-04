@@ -18,7 +18,7 @@ class SecondPassListener : public TypedefParserBaseListener {
  public:
   SecondPassListener(std::vector<ParserErrorInfo> &errors_list)
       : errors_list_(errors_list) {}
-
+#if 0
   virtual void enterCompilationUnit(
       TypedefParser::CompilationUnitContext *ctx) override;
 
@@ -45,12 +45,13 @@ class SecondPassListener : public TypedefParserBaseListener {
 
   virtual void enterTypeParameter(
       TypedefParser::TypeParameterContext *ctx) override;
+#endif
 
  private:
   std::vector<ParserErrorInfo> &errors_list_;
 
-  std::shared_ptr<td::table::TypeDeclaration> FindSymbol(
-      const std::string &identifier, antlr4::tree::ParseTree *ctx);
+//   std::shared_ptr<td::table::TypeDeclaration> FindSymbol(
+//       const std::string &identifier, antlr4::tree::ParseTree *ctx);
 };
 
 }  // namespace td

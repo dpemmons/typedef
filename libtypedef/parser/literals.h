@@ -22,6 +22,10 @@ void SetFloatLiteral(FloatLiteral& literal,
 void SetIntegerLiteral(IntegerLiteral& literal,
                        TypedefParser::IntegerLiteralContext* ctx);
 
+// Not really a literal, but for now we consider it one.
+void SetTemplateBlock(std::string& template_block,
+                      TypedefParser::TemplateBlockContext* ctx);
+
 }  // namespace td
 
 #endif  // TYPEDEF_LIBTYPEDEF_PARSER_GRAMMAR_FUNCTIONS_H_

@@ -56,7 +56,7 @@ public:
     RuleTypeDefinition = 3, RuleFieldBlock = 4, RuleFieldDefinition = 5, 
     RuleTypeAnnotation = 6, RuleTypeArgument = 7, RuleTypeIdentifier = 8, 
     RuleTemplateDefinition = 9, RuleTemplateBlock = 10, RuleFunctionParameter = 11, 
-    RuleTypeParameter = 12, RuleUseDeclaration = 13, RuleSymbolPath = 14, 
+    RuleParameterType = 12, RuleUseDeclaration = 13, RuleSymbolPath = 14, 
     RulePrimitiveLiteral = 15, RuleBoolLiteral = 16, RuleCharLiteral = 17, 
     RuleStringLiteral = 18, RuleFloatLiteral = 19, RuleIntegerLiteral = 20, 
     RuleIntDigits = 21, RuleIdentifier = 22, RulePrimitiveTypeIdentifier = 23, 
@@ -85,7 +85,7 @@ public:
   class TemplateDefinitionContext;
   class TemplateBlockContext;
   class FunctionParameterContext;
-  class TypeParameterContext;
+  class ParameterTypeContext;
   class UseDeclarationContext;
   class SymbolPathContext;
   class PrimitiveLiteralContext;
@@ -101,7 +101,6 @@ public:
 
   class  CompilationUnitContext : public antlr4::ParserRuleContext {
   public:
-    td::CompilationUnit compilation_unit;
     CompilationUnitContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     TypedefVersionDeclarationContext *typedefVersionDeclaration();
@@ -160,7 +159,8 @@ public:
 
   class  TypeDefinitionContext : public antlr4::ParserRuleContext {
   public:
-    std::unique_ptr<td::TypeDefinition> type_definition;
+    TypedefParser::IdentifierContext *type_identifier = nullptr;;
+    TypedefParser::IdentifierContext *type_parameter = nullptr;;
     TypeDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *LBRACE();
@@ -168,7 +168,12 @@ public:
     antlr4::tree::TerminalNode *RBRACE();
     antlr4::tree::TerminalNode *KW_STRUCT();
     antlr4::tree::TerminalNode *KW_VARIANT();
-    IdentifierContext *identifier();
+    antlr4::tree::TerminalNode *LT();
+    antlr4::tree::TerminalNode *GT();
+    std::vector<IdentifierContext *> identifier();
+    IdentifierContext* identifier(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> COMMA();
+    antlr4::tree::TerminalNode* COMMA(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -278,7 +283,6 @@ public:
 
   class  TemplateDefinitionContext : public antlr4::ParserRuleContext {
   public:
-    td::TemplateDefinition template_definition;
     TemplateDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_TEMPLATE();
@@ -304,7 +308,7 @@ public:
 
   class  TemplateBlockContext : public antlr4::ParserRuleContext {
   public:
-    std::string val;
+    std::string template_block;
     TemplateBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *TEMPLATE_LITERAL();
@@ -321,12 +325,12 @@ public:
 
   class  FunctionParameterContext : public antlr4::ParserRuleContext {
   public:
-    std::unique_ptr<td::table::FunctionParameter> func_param;
+    std::unique_ptr<td::FunctionParameter> func_param;
     FunctionParameterContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     IdentifierContext *identifier();
     antlr4::tree::TerminalNode *COLON();
-    TypeParameterContext *typeParameter();
+    ParameterTypeContext *parameterType();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -337,10 +341,9 @@ public:
 
   FunctionParameterContext* functionParameter();
 
-  class  TypeParameterContext : public antlr4::ParserRuleContext {
+  class  ParameterTypeContext : public antlr4::ParserRuleContext {
   public:
-    std::shared_ptr<td::table::TypeParameter> type_param;
-    TypeParameterContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ParameterTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     PrimitiveTypeIdentifierContext *primitiveTypeIdentifier();
     IdentifierContext *identifier();
@@ -352,7 +355,7 @@ public:
    
   };
 
-  TypeParameterContext* typeParameter();
+  ParameterTypeContext* parameterType();
 
   class  UseDeclarationContext : public antlr4::ParserRuleContext {
   public:
@@ -373,7 +376,6 @@ public:
 
   class  SymbolPathContext : public antlr4::ParserRuleContext {
   public:
-    td::SymbolPath symbol_path;
     antlr4::Token *leading_pathsep = nullptr;;
     SymbolPathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;

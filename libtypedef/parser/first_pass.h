@@ -17,16 +17,6 @@ class FirstPassListener : public TypedefParserBaseListener {
   FirstPassListener(std::vector<td::ParserErrorInfo> &errors_list)
       : errors_list_(errors_list) {}
 
-  virtual void exitCompilationUnit(
-      TypedefParser::CompilationUnitContext *ctx) override;
-
-  virtual void exitCharLiteral(TypedefParser::CharLiteralContext *ctx) override;
-
-  virtual void exitStringLiteral(
-      TypedefParser::StringLiteralContext *ctx) override;
-
-  virtual void exitIdentifier(TypedefParser::IdentifierContext *ctx) override;
-
  private:
   std::vector<td::ParserErrorInfo> &errors_list_;
 };

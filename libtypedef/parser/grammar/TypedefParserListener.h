@@ -53,8 +53,8 @@ public:
   virtual void enterFunctionParameter(TypedefParser::FunctionParameterContext *ctx) = 0;
   virtual void exitFunctionParameter(TypedefParser::FunctionParameterContext *ctx) = 0;
 
-  virtual void enterTypeParameter(TypedefParser::TypeParameterContext *ctx) = 0;
-  virtual void exitTypeParameter(TypedefParser::TypeParameterContext *ctx) = 0;
+  virtual void enterParameterType(TypedefParser::ParameterTypeContext *ctx) = 0;
+  virtual void exitParameterType(TypedefParser::ParameterTypeContext *ctx) = 0;
 
   virtual void enterUseDeclaration(TypedefParser::UseDeclarationContext *ctx) = 0;
   virtual void exitUseDeclaration(TypedefParser::UseDeclarationContext *ctx) = 0;

@@ -19,13 +19,17 @@ class TypeParameter {};
 using FloatLiteral = std::variant<float, double>;
 
 bool IsF32(FloatLiteral float_literal) {
-  std::holds_alternative<float>(float_literal);
+  return std::holds_alternative<float>(float_literal);
 }
-float GetF32(FloatLiteral float_literal) { std::get<float>(float_literal); }
+float GetF32(FloatLiteral float_literal) {
+  return std::get<float>(float_literal);
+}
 bool IsF64(FloatLiteral float_literal) {
-  std::holds_alternative<double>(float_literal);
+  return std::holds_alternative<double>(float_literal);
 }
-double GetF64(FloatLiteral float_literal) { std::get<double>(float_literal); }
+double GetF64(FloatLiteral float_literal) {
+  return std::get<double>(float_literal);
+}
 
 // ---- Integer Literal functions ----------------------------------------------
 

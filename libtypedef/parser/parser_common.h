@@ -26,7 +26,7 @@ inline ParserErrorInfo ErrorFromContext(antlr4::ParserRuleContext *ctx,
 
 class LexerErrorListener : public antlr4::BaseErrorListener {
  public:
-  LexerErrorListener(std::vector<ParserErrorInfo> *errors_list)
+  LexerErrorListener(std::vector<ParserErrorInfo> &errors_list)
       : errors_list_(errors_list) {}
 
   virtual void syntaxError(antlr4::Recognizer *recognizer,
@@ -39,7 +39,7 @@ class LexerErrorListener : public antlr4::BaseErrorListener {
     } catch (antlr4::LexerNoViableAltException &) {
       antlr4::Lexer *lexer = dynamic_cast<antlr4::Lexer *>(recognizer);
 
-      errors_list_->emplace_back(
+      errors_list_.emplace_back(
           PEIBuilder()
               .SetType(ParserErrorInfo::LEXER_ERROR)
               .SetMessage("Lexer error")
@@ -54,20 +54,20 @@ class LexerErrorListener : public antlr4::BaseErrorListener {
   }
 
  private:
-  std::vector<ParserErrorInfo> *const errors_list_;
+  std::vector<ParserErrorInfo> &errors_list_;
 };
 
 // Can also derive from DiagnosticErrorListener
 class ParserErrorListener : public antlr4::BaseErrorListener {
  public:
-  ParserErrorListener(std::vector<ParserErrorInfo> *errors_list)
+  ParserErrorListener(std::vector<ParserErrorInfo> &errors_list)
       : errors_list_(errors_list) {}
 
   virtual void syntaxError(antlr4::Recognizer *recognizer,
                            antlr4::Token *offendingSymbol, size_t line,
                            size_t charPositionInLine, const std::string &msg,
                            std::exception_ptr ep) override {
-    errors_list_->emplace_back(
+    errors_list_.emplace_back(
         PEIBuilder()
             .SetType(ParserErrorInfo::PARSE_ERROR)
             .SetMessage(msg)
@@ -81,7 +81,7 @@ class ParserErrorListener : public antlr4::BaseErrorListener {
   };
 
  private:
-  std::vector<ParserErrorInfo> *const errors_list_;
+  std::vector<ParserErrorInfo> &errors_list_;
 };
 
 }  // namespace td

@@ -46,7 +46,7 @@ public:
 
     virtual antlrcpp::Any visitFunctionParameter(TypedefParser::FunctionParameterContext *context) = 0;
 
-    virtual antlrcpp::Any visitTypeParameter(TypedefParser::TypeParameterContext *context) = 0;
+    virtual antlrcpp::Any visitParameterType(TypedefParser::ParameterTypeContext *context) = 0;
 
     virtual antlrcpp::Any visitUseDeclaration(TypedefParser::UseDeclarationContext *context) = 0;
 

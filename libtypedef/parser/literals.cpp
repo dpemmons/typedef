@@ -7,6 +7,7 @@
 #include <fmt/core.h>
 
 #include "libtypedef/parser/parser_error_info.h"
+#include "literals.h"
 
 #define throw_logic_error(str) \
   throw std::logic_error(      \
@@ -367,4 +368,18 @@ void SetIntegerLiteral(IntegerLiteral& literal,
   }
 }
 
+void SetTemplateBlock(std::string& template_block,
+                      TypedefParser::TemplateBlockContext* ctx) {
+  if (ctx->TEMPLATE_LITERAL()) {
+    template_block =
+        GetStringValue(ctx->TEMPLATE_LITERAL()->getSymbol(), 't',
+                       td::ParserErrorInfo::INVALID_STRING_LITERAL);
+  } else if (ctx->RAW_TEMPLATE_LITERAL()) {
+    template_block =
+        GetRawString(ctx->RAW_TEMPLATE_LITERAL()->getSymbol(), 't',
+                     td::ParserErrorInfo::INVALID_RAW_STRING_LITERAL);
+  } else {
+    throw_logic_error("Invalid state.");
+  }
+}
 }  // namespace td
