@@ -440,7 +440,8 @@ TypedefParser::TypeDefinitionContext* TypedefParser::typeDefinition() {
     fieldBlock();
     setState(95);
     match(TypedefParser::RBRACE);
-   
+   _ctx->stop = _input->LT(-1);
+    type_definition = Make(_localctx);
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);

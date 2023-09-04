@@ -159,6 +159,7 @@ public:
 
   class  TypeDefinitionContext : public antlr4::ParserRuleContext {
   public:
+    std::unique_ptr<td::TypeDefinition> type_definition;
     TypedefParser::IdentifierContext *type_identifier = nullptr;;
     TypedefParser::IdentifierContext *type_parameter = nullptr;;
     TypeDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
