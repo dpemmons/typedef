@@ -7,6 +7,7 @@
 #include <string>
 
 #include "libtypedef/codegen/codegen_cpp_helpers.h"
+#include "libtypedef/parser/grammar_functions.h"
 #include "libtypedef/parser/tmpl_str_table.h"
 
 #define throw_logic_error(str) \
@@ -18,7 +19,6 @@ namespace td {
 using json = nlohmann::json;
 using namespace inja;
 using namespace std;
-using namespace td::table;
 
 string HeaderGuard(const filesystem::path& source_filename) {
   string hdr_guard = source_filename.string() + "_H__";
@@ -469,10 +469,12 @@ json GetTypeDecls(const vector<shared_ptr<TypeDeclaration>>& types) {
 }
 
 void CodegenCpp(OutPathBase* out_path, Parser* parsed_file) {
+  TypedefParser::CompilationUnitContext* compilation_unit =
+      parsed_file->GetParser()->compilationUnit();
   filesystem::path hdr_filename =
-      parsed_file->mod->module_name->ToString("_", false) + ".h";
+      ToString(compilation_unit->moduleDeclaration(), "_") + ".h";
   filesystem::path source_filename =
-      parsed_file->mod->module_name->ToString("_", false) + ".cpp";
+      ToString(compilation_unit->moduleDeclaration(), "_") + ".cpp";
 
   auto hdr_file = out_path->OpenOutputFile(hdr_filename);
   hdr_file->Open();

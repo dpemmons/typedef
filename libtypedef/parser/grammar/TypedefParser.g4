@@ -25,17 +25,13 @@ typedefVersionDeclaration: 'typedef' EQ identifier ';';
 moduleDeclaration: 'module' symbolPath ';';
 
 // struct|variant SomeVariant { optionA: i32; optionB: str; }
-typeDefinition
-	returns[std::unique_ptr<td::TypeDefinition> type_definition]
-	@after {type_definition = Make($ctx);}: (KW_STRUCT | KW_VARIANT) type_identifier = identifier? (
+typeDefinition: (KW_STRUCT | KW_VARIANT) type_identifier = identifier? (
 		'<' (type_parameter = identifier ',')+ '>'
 	)? '{' fieldBlock '}';
 
 fieldBlock: ( typeDefinition | (fieldDefinition ';'))*;
 
-fieldDefinition
-	returns[std::unique_ptr<td::FieldDefinition> field_definition]
-	@after {$field_definition = FieldDefinition::Build($ctx);}:
+fieldDefinition:
 	field_identifier = identifier (
 		':' (typeAnnotation | typeDefinition)
 	)? ('=' primitiveLiteral)?;
@@ -57,7 +53,7 @@ templateDefinition:
 
 templateBlock
 	returns[std::string template_block]
-	@after {SetTemplateBlock($template_block, $ctx);}: TEMPLATE_LITERAL | RAW_TEMPLATE_LITERAL;
+	@after {td::SetTemplateBlock($template_block, $ctx);}: TEMPLATE_LITERAL | RAW_TEMPLATE_LITERAL;
 
 functionParameter
 	returns[std::unique_ptr<td::FunctionParameter> func_param]:
@@ -80,21 +76,21 @@ primitiveLiteral:
 
 boolLiteral
 	returns[bool bool_literal]
-	@after {SetBoolLiteral($bool_literal, $ctx);}: KW_TRUE | KW_FALSE;
+	@after {td::SetBoolLiteral($bool_literal, $ctx);}: KW_TRUE | KW_FALSE;
 charLiteral
 	returns[char32_t char_literal]
-	@after {SetCharLiteral($char_literal, $ctx);}: CHAR_LITERAL;
+	@after {td::SetCharLiteral($char_literal, $ctx);}: CHAR_LITERAL;
 stringLiteral
 	returns[std::string string_literal]
-	@after {SetStringLiteral($string_literal, $ctx);}: STRING_LITERAL | RAW_STRING_LITERAL;
+	@after {td::SetStringLiteral($string_literal, $ctx);}: STRING_LITERAL | RAW_STRING_LITERAL;
 
 floatLiteral
 	returns[td::FloatLiteral float_literal]
-	@after {SetFloatLiteral($float_literal, $ctx);}: FLOAT_LITERAL (KW_F32 | KW_F64)?;
+	@after {td::SetFloatLiteral($float_literal, $ctx);}: FLOAT_LITERAL (KW_F32 | KW_F64)?;
 
 integerLiteral
 	returns[td::IntegerLiteral integer_literal]
-	@after {SetIntegerLiteral($integer_literal, $ctx);}: (intDigits) (
+	@after {td::SetIntegerLiteral($integer_literal, $ctx);}: (intDigits) (
 		KW_U8
 		| KW_U16
 		| KW_U32

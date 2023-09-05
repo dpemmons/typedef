@@ -159,7 +159,6 @@ public:
 
   class  TypeDefinitionContext : public antlr4::ParserRuleContext {
   public:
-    std::unique_ptr<td::TypeDefinition> type_definition;
     TypedefParser::IdentifierContext *type_identifier = nullptr;;
     TypedefParser::IdentifierContext *type_parameter = nullptr;;
     TypeDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -207,7 +206,6 @@ public:
 
   class  FieldDefinitionContext : public antlr4::ParserRuleContext {
   public:
-    std::unique_ptr<td::FieldDefinition> field_definition;
     TypedefParser::IdentifierContext *field_identifier = nullptr;;
     FieldDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;

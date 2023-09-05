@@ -440,8 +440,7 @@ TypedefParser::TypeDefinitionContext* TypedefParser::typeDefinition() {
     fieldBlock();
     setState(95);
     match(TypedefParser::RBRACE);
-   _ctx->stop = _input->LT(-1);
-    type_definition = Make(_localctx);
+   
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -667,8 +666,7 @@ TypedefParser::FieldDefinitionContext* TypedefParser::fieldDefinition() {
       setState(115);
       primitiveLiteral();
     }
-   _ctx->stop = _input->LT(-1);
-    dynamic_cast<FieldDefinitionContext *>(_localctx)->field_definition =  FieldDefinition::Build(_localctx);
+   
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1147,7 +1145,7 @@ TypedefParser::TemplateBlockContext* TypedefParser::templateBlock() {
       consume();
     }
    _ctx->stop = _input->LT(-1);
-    SetTemplateBlock(_localctx->template_block, _localctx);
+    td::SetTemplateBlock(_localctx->template_block, _localctx);
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1656,7 +1654,7 @@ TypedefParser::BoolLiteralContext* TypedefParser::boolLiteral() {
       consume();
     }
    _ctx->stop = _input->LT(-1);
-    SetBoolLiteral(_localctx->bool_literal, _localctx);
+    td::SetBoolLiteral(_localctx->bool_literal, _localctx);
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1714,7 +1712,7 @@ TypedefParser::CharLiteralContext* TypedefParser::charLiteral() {
     setState(192);
     match(TypedefParser::CHAR_LITERAL);
    _ctx->stop = _input->LT(-1);
-    SetCharLiteral(_localctx->char_literal, _localctx);
+    td::SetCharLiteral(_localctx->char_literal, _localctx);
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1786,7 +1784,7 @@ TypedefParser::StringLiteralContext* TypedefParser::stringLiteral() {
       consume();
     }
    _ctx->stop = _input->LT(-1);
-    SetStringLiteral(_localctx->string_literal, _localctx);
+    td::SetStringLiteral(_localctx->string_literal, _localctx);
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1872,7 +1870,7 @@ TypedefParser::FloatLiteralContext* TypedefParser::floatLiteral() {
       }
     }
    _ctx->stop = _input->LT(-1);
-    SetFloatLiteral(_localctx->float_literal, _localctx);
+    td::SetFloatLiteral(_localctx->float_literal, _localctx);
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -1994,7 +1992,7 @@ TypedefParser::IntegerLiteralContext* TypedefParser::integerLiteral() {
       }
     }
    _ctx->stop = _input->LT(-1);
-    SetIntegerLiteral(_localctx->integer_literal, _localctx);
+    td::SetIntegerLiteral(_localctx->integer_literal, _localctx);
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);

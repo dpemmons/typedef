@@ -23,8 +23,8 @@ std::unique_ptr<TmplStrTemplate> ParseTmplStr(std::istream& input) {
 
   auto parsedTmpl = std::make_unique<TmplStrTemplate>();
 
-  LexerErrorListener lexerErrorListener(&parsedTmpl->errors);
-  ParserErrorListener parserErrorListener(&parsedTmpl->errors);
+  LexerErrorListener lexerErrorListener(parsedTmpl->errors);
+  ParserErrorListener parserErrorListener(parsedTmpl->errors);
 
   lexer.removeErrorListeners();
   lexer.addErrorListener(&lexerErrorListener);

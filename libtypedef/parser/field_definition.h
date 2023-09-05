@@ -3,10 +3,7 @@
 
 namespace td {
 
-class FieldDefinition {
- public:
- protected:
-};
+
 
 }  // namespace td
 

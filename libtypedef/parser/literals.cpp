@@ -89,7 +89,6 @@ char32_t GetCharValue(TypedefParser::CharLiteralContext* ctx) {
 
 template <typename T>
 T GetIntValue(TypedefParser::IntDigitsContext* ctx) {
-  TypedefParser::IntLiteralContext* ctx = ctx->intLiteral();
   std::string digits;
   std::string underscored_digits;
   int base;
@@ -159,9 +158,9 @@ T GetIntValue(TypedefParser::IntDigitsContext* ctx) {
   }
 }
 
-template <typename T, class CTX>
-T GetFloatValue(CTX* ctx) {
-  std::string digits = ctx->floatLiteral()->FLOAT_LITERAL()->getText();
+template <typename T>
+T GetFloatValue(TypedefParser::FloatLiteralContext* ctx) {
+  std::string digits = ctx->FLOAT_LITERAL()->getText();
   std::string underscored_digits;
   T value;
 

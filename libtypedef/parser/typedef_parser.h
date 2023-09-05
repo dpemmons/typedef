@@ -19,6 +19,7 @@ class Parser {
   // returns error count
   size_t Parse();
   const std::vector<ParserErrorInfo>& Errors() { return errors_; }
+  TypedefParser* GetParser() { return &parser_; }
 
  private:
   antlr4::ANTLRInputStream input_stream_;

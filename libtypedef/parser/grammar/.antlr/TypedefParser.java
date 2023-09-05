@@ -342,7 +342,6 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class TypeDefinitionContext extends ParserRuleContext {
-		public std::unique_ptr<td::TypeDefinition> type_definition;
 		public IdentifierContext type_identifier;
 		public IdentifierContext type_parameter;
 		public TerminalNode LBRACE() { return getToken(TypedefParser.LBRACE, 0); }
@@ -432,8 +431,6 @@ public class TypedefParser extends Parser {
 			setState(95);
 			match(RBRACE);
 			}
-			_ctx.stop = _input.LT(-1);
-			type_definition = Make(_localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -524,7 +521,6 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class FieldDefinitionContext extends ParserRuleContext {
-		public std::unique_ptr<td::FieldDefinition> field_definition;
 		public IdentifierContext field_identifier;
 		public IdentifierContext identifier() {
 			return getRuleContext(IdentifierContext.class,0);
@@ -598,8 +594,6 @@ public class TypedefParser extends Parser {
 			}
 
 			}
-			_ctx.stop = _input.LT(-1);
-			((FieldDefinitionContext)_localctx).field_definition =  FieldDefinition::Build(_localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -915,7 +909,7 @@ public class TypedefParser extends Parser {
 			}
 			}
 			_ctx.stop = _input.LT(-1);
-			SetTemplateBlock(_localctx.template_block, _localctx);
+			td::SetTemplateBlock(_localctx.template_block, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -1248,7 +1242,7 @@ public class TypedefParser extends Parser {
 			}
 			}
 			_ctx.stop = _input.LT(-1);
-			SetBoolLiteral(_localctx.bool_literal, _localctx);
+			td::SetBoolLiteral(_localctx.bool_literal, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -1280,7 +1274,7 @@ public class TypedefParser extends Parser {
 			match(CHAR_LITERAL);
 			}
 			_ctx.stop = _input.LT(-1);
-			SetCharLiteral(_localctx.char_literal, _localctx);
+			td::SetCharLiteral(_localctx.char_literal, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -1322,7 +1316,7 @@ public class TypedefParser extends Parser {
 			}
 			}
 			_ctx.stop = _input.LT(-1);
-			SetStringLiteral(_localctx.string_literal, _localctx);
+			td::SetStringLiteral(_localctx.string_literal, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -1375,7 +1369,7 @@ public class TypedefParser extends Parser {
 
 			}
 			_ctx.stop = _input.LT(-1);
-			SetFloatLiteral(_localctx.float_literal, _localctx);
+			td::SetFloatLiteral(_localctx.float_literal, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -1438,7 +1432,7 @@ public class TypedefParser extends Parser {
 
 			}
 			_ctx.stop = _input.LT(-1);
-			SetIntegerLiteral(_localctx.integer_literal, _localctx);
+			td::SetIntegerLiteral(_localctx.integer_literal, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
