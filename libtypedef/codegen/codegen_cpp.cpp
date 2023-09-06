@@ -3,12 +3,16 @@
 #include <filesystem>
 #include <inja/inja.hpp>
 #include <nlohmann/json.hpp>
+#include <optional>
 #include <stdexcept>
 #include <string>
 
 #include "libtypedef/codegen/codegen_cpp_helpers.h"
 #include "libtypedef/parser/grammar_functions.h"
 #include "libtypedef/parser/tmpl_str_table.h"
+
+#define FMT_HEADER_ONLY
+#include <fmt/core.h>
 
 #define throw_logic_error(str) \
   throw std::logic_error(      \
@@ -19,6 +23,15 @@ namespace td {
 using json = nlohmann::json;
 using namespace inja;
 using namespace std;
+using TypeDefinitionContext = TypedefParser::TypeDefinitionContext;
+using FieldDefinitionContext = TypedefParser::FieldDefinitionContext;
+using PrimitiveTypeIdentifierContext =
+    TypedefParser::PrimitiveTypeIdentifierContext;
+using UserTypeContext = TypedefParser::UserTypeContext;
+
+std::string GetNestedTypeIdentifier(FieldDefinitionContext* field) {
+  return escape_utf8_to_cpp_identifier(field->field_identifier->id + "T");
+}
 
 string HeaderGuard(const filesystem::path& source_filename) {
   string hdr_guard = source_filename.string() + "_H__";
@@ -30,86 +43,104 @@ string HeaderGuard(const filesystem::path& source_filename) {
 }
 
 // forward declarations.
-json GetType(const TypeDeclaration* type);
-json GetInlineType(const FieldDeclaration* field);
+json GetType(TypeDefinitionContext* type,
+             optional<string> identifier = nullptr);
 
 struct CppTypeInfo {
   std::string cpp_type;
   std::string access_by;
 };
-CppTypeInfo GetAccessInfoForType(const TypeDeclaration* type) {
+CppTypeInfo GetAccessInfoForType(TypeDefinitionContext* type) {
   CppTypeInfo info;
-  if (type->IsStruct()) {
-    info.cpp_type =
-        escape_utf8_to_cpp_identifier(*type->GetStruct()->identifier);
+  if (DefinesStruct(type) || DefinesVariant(type)) {
+    info.cpp_type = escape_utf8_to_cpp_identifier(type->type_identifier->id);
     info.access_by = "pointer";
-  } else if (type->IsVariant()) {
-    info.cpp_type =
-        escape_utf8_to_cpp_identifier(*type->GetVariant()->identifier);
-    info.access_by = "pointer";
-  } else if (type->IsVector()) {
-    info.cpp_type =
-        escape_utf8_to_cpp_identifier(*type->GetVector()->identifier);
-    info.access_by = "reference";
-  } else if (type->IsMap()) {
-    info.cpp_type = escape_utf8_to_cpp_identifier(*type->GetMap()->identifier);
-    info.access_by = "reference";
+  } else {
+    throw_logic_error("invalid state");
   }
+  // else if (type->IsVector()) {
+  //   info.cpp_type =
+  //       escape_utf8_to_cpp_identifier(*type->GetVector()->identifier);
+  //   info.access_by = "reference";
+  // }
+  // else if (type->IsMap()) {
+  //   info.cpp_type =
+  //   escape_utf8_to_cpp_identifier(*type->GetMap()->identifier);
+  //   info.access_by = "reference";
+  // }
   return info;
 }
 
-json GetField(const FieldDeclaration* field) {
+json GetField(FieldDefinitionContext* field) {
   json j;
-  j["identifier"] = escape_utf8_to_cpp_identifier(*field->identifier);
-  if (field->IsPrimitive()) {
-    if (field->IsBool()) {
+  j["identifier"] = escape_utf8_to_cpp_identifier(field->field_identifier->id);
+  if (ReferencesPrimitiveType(field)) {
+    PrimitiveTypeIdentifierContext* p = GetReferencedPrimitive(field);
+    if (IsBool(p)) {
       j["cpp_type"] = "bool";
       j["access_by"] = "value";
-    } else if (field->IsChar()) {
+    } else if (IsChar(p)) {
       j["cpp_type"] = "char32_t";
       j["access_by"] = "value";
-    } else if (field->IsStr()) {
+    } else if (IsStr(p)) {
       j["cpp_type"] = "std::string";
       j["access_by"] = "reference";
-    } else if (field->IsF32()) {
+    } else if (IsF32(p)) {
       j["cpp_type"] = "float";
       j["access_by"] = "value";
-    } else if (field->IsF64()) {
+    } else if (IsF64(p)) {
       j["cpp_type"] = "double";
       j["access_by"] = "value";
-    } else if (field->IsU8()) {
+    } else if (IsU8(p)) {
       j["cpp_type"] = "std::uint8_t";
       j["access_by"] = "value";
-    } else if (field->IsU16()) {
+    } else if (IsU16(p)) {
       j["cpp_type"] = "std::uint16_t";
       j["access_by"] = "value";
-    } else if (field->IsU32()) {
+    } else if (IsU32(p)) {
       j["cpp_type"] = "std::uint32_t";
       j["access_by"] = "value";
-    } else if (field->IsU64()) {
+    } else if (IsU64(p)) {
       j["cpp_type"] = "std::uint64_t";
       j["access_by"] = "value";
-    } else if (field->IsI8()) {
+    } else if (IsI8(p)) {
       j["cpp_type"] = "std::int8_t";
       j["access_by"] = "value";
-    } else if (field->IsI16()) {
+    } else if (IsI16(p)) {
       j["cpp_type"] = "std::int16_t";
       j["access_by"] = "value";
-    } else if (field->IsI32()) {
+    } else if (IsI32(p)) {
       j["cpp_type"] = "std::int32_t";
       j["access_by"] = "value";
-    } else if (field->IsI64()) {
+    } else if (IsI64(p)) {
       j["cpp_type"] = "std::int64_t";
       j["access_by"] = "value";
     } else {
       throw_logic_error("invalid state");
     }
-  } else if (field->IsSymref()) {
+  } else if (ReferencesUserType(field)) {
+    UserTypeContext* user_type = GetReferencedUserType(field);
+    if (!user_type->type_definition) {
+      throw_logic_error("Unresolved user type reference.");
+    }
     CppTypeInfo cpp_type_info =
-        GetAccessInfoForType(field->symref_target.get());
+        GetAccessInfoForType(user_type->type_definition);
     j["cpp_type"] = cpp_type_info.cpp_type;
     j["access_by"] = cpp_type_info.access_by;
-  } else {
+  } else if (ReferencesBuiltinType(field)) {
+    if (ReferencesBuiltinVector(field)) {
+    } else if (ReferencesBuiltinMap(field)) {
+    } else {
+      throw_logic_error("invalid state");
+    }
+  } else if (DefinesInlineUserType(field)) {
+    TypeDefinitionContext* inline_type = field->typeDefinition();
+    if (DefinesStruct(inline_type) || DefinesVariant(inline_type)) {
+      j["cpp_type"] = GetNestedTypeIdentifier(field);
+    } else {
+      throw_logic_error("invalid state");
+    }
+
     if (field->IsStruct()) {
       if (field->GetStruct()->identifier) {
         j["cpp_type"] =
@@ -154,316 +185,286 @@ json GetField(const FieldDeclaration* field) {
   return j;
 }
 
-json GetStruct(const Struct& st, std::optional<string> identifier = nullopt) {
+json GetStruct(TypeDefinitionContext* type, optional<string> identifier) {
   json j;
   // If it's an inline type, the identifier is the field name which has
   // to be passed in separately.
-  j["identifier"] = identifier ? *identifier : *st.identifier;
-  for (const auto& m : st.members) {
-    if (m->IsField()) {
-      j["fields"].push_back(GetField(m->field_decl.get()));
-      if (!m->field_decl->IsPrimitive() && !m->field_decl->IsSymref()) {
-        // Non-primitive field types are inlines.
-        // TODO really there should be an IsInline() ?
-        j["type_decls"].push_back(GetInlineType(m->field_decl.get()));
-      }
-    } else if (m->IsType()) {
-      j["type_decls"].push_back(GetType(m->type_decl.get()));
-    } else {
-      throw_logic_error("invalid state");
+  j["identifier"] = identifier ? *identifier : type->type_identifier->id;
+
+  for (TypeDefinitionContext* nested_type :
+       type->fieldBlock()->typeDefinition()) {
+    j["type_decls"].push_back(GetType(nested_type));
+  }
+
+  for (FieldDefinitionContext* field : type->fieldBlock()->fieldDefinition()) {
+    if (DefinesInlineType(field)) {
+      j["inline_type_decls"].push_back(
+          GetType(field->typeDefinition(), GetNestedTypeIdentifier(field)));
     }
   }
-  return j;
-}
 
-json GetVariant(const Variant& var,
-                std::optional<string> identifier = nullopt) {
-  json j;
-  // If it's an inline type, the identifier is the field name which has
-  // to be passed in separately.
-  j["identifier"] = identifier ? *identifier : *var.identifier;
-  for (const auto& m : var.members) {
-    if (m->IsField()) {
-      j["fields"].push_back(GetField(m->field_decl.get()));
-    } else if (m->IsType()) {
-      j["type_decls"].push_back(GetType(m->type_decl.get()));
-    } else {
-      throw_logic_error("invalid state");
-    }
-  }
-  return j;
-}
-
-json GetVector(const Vector& vec, std::optional<string> identifier = nullopt) {
-  json j;
-  // If it's an inline type, the identifier is the field name which has
-  // to be passed in separately.
-  j["identifier"] = identifier ? *identifier : *vec.identifier;
-  if (vec.element_type->IsPrimitive()) {
-    if (vec.element_type->IsBool()) {
-      j["element_cpp_type"] = "bool";
-    } else if (vec.element_type->IsChar()) {
-      j["element_cpp_type"] = "char32_t";
-    } else if (vec.element_type->IsStr()) {
-      j["element_cpp_type"] = "std::string";
-    } else if (vec.element_type->IsF32()) {
-      j["element_cpp_type"] = "float";
-    } else if (vec.element_type->IsF64()) {
-      j["element_cpp_type"] = "double";
-    } else if (vec.element_type->IsU8()) {
-      j["element_cpp_type"] = "std::uint8_t";
-    } else if (vec.element_type->IsU16()) {
-      j["element_cpp_type"] = "std::uint16_t";
-    } else if (vec.element_type->IsU32()) {
-      j["element_cpp_type"] = "std::uint32_t";
-    } else if (vec.element_type->IsU64()) {
-      j["element_cpp_type"] = "std::uint64_t";
-    } else if (vec.element_type->IsI8()) {
-      j["element_cpp_type"] = "std::int8_t";
-    } else if (vec.element_type->IsI16()) {
-      j["element_cpp_type"] = "std::int16_t";
-    } else if (vec.element_type->IsI32()) {
-      j["element_cpp_type"] = "std::int32_t";
-    } else if (vec.element_type->IsI64()) {
-      j["element_cpp_type"] = "std::int64_t";
-    } else {
-      throw_logic_error("invalid state");
-    }
-  } else if (vec.element_type->IsSymref()) {
-    CppTypeInfo cpp_type_info =
-        GetAccessInfoForType(vec.element_type->symref_target.get());
-    j["element_cpp_type"] = cpp_type_info.cpp_type;
-  } else {
-    throw_logic_error("invalid state");
+  for (FieldDefinitionContext* field : type->fieldBlock()->fieldDefinition()) {
+    j["fields"].push_back(GetField(field));
   }
 
   return j;
 }
 
-json GetMap(const Map& map, std::optional<string> identifier = nullopt) {
+// json GetVector(Vector& vec, std::optional<string> identifier = nullopt) {
+//   json j;
+//   // If it's an inline type, the identifier is the field name which has
+//   // to be passed in separately.
+//   j["identifier"] = identifier ? *identifier : *vec.identifier;
+//   if (vec.element_type->IsPrimitive()) {
+//     if (vec.element_type->IsBool()) {
+//       j["element_cpp_type"] = "bool";
+//     } else if (vec.element_type->IsChar()) {
+//       j["element_cpp_type"] = "char32_t";
+//     } else if (vec.element_type->IsStr()) {
+//       j["element_cpp_type"] = "std::string";
+//     } else if (vec.element_type->IsF32()) {
+//       j["element_cpp_type"] = "float";
+//     } else if (vec.element_type->IsF64()) {
+//       j["element_cpp_type"] = "double";
+//     } else if (vec.element_type->IsU8()) {
+//       j["element_cpp_type"] = "std::uint8_t";
+//     } else if (vec.element_type->IsU16()) {
+//       j["element_cpp_type"] = "std::uint16_t";
+//     } else if (vec.element_type->IsU32()) {
+//       j["element_cpp_type"] = "std::uint32_t";
+//     } else if (vec.element_type->IsU64()) {
+//       j["element_cpp_type"] = "std::uint64_t";
+//     } else if (vec.element_type->IsI8()) {
+//       j["element_cpp_type"] = "std::int8_t";
+//     } else if (vec.element_type->IsI16()) {
+//       j["element_cpp_type"] = "std::int16_t";
+//     } else if (vec.element_type->IsI32()) {
+//       j["element_cpp_type"] = "std::int32_t";
+//     } else if (vec.element_type->IsI64()) {
+//       j["element_cpp_type"] = "std::int64_t";
+//     } else {
+//       throw_logic_error("invalid state");
+//     }
+//   } else if (vec.element_type->IsSymref()) {
+//     CppTypeInfo cpp_type_info =
+//         GetAccessInfoForType(vec.element_type->symref_target.get());
+//     j["element_cpp_type"] = cpp_type_info.cpp_type;
+//   } else {
+//     throw_logic_error("invalid state");
+//   }
+
+//   return j;
+// }
+
+// json GetMap(Map& map, std::optional<string> identifier = nullopt) {
+//   json j;
+//   // If it's an inline type, the identifier is the field name which has
+//   // to be passed in separately.
+//   j["identifier"] = identifier ? *identifier : *map.identifier;
+
+//   if (map.key_type->IsBool()) {
+//     j["key_cpp_type"] = "bool";
+//   } else if (map.key_type->IsChar()) {
+//     j["key_cpp_type"] = "char32_t";
+//   } else if (map.key_type->IsStr()) {
+//     j["key_cpp_type"] = "std::string";
+//   } else if (map.key_type->IsF32()) {
+//     j["key_cpp_type"] = "float";
+//   } else if (map.key_type->IsF64()) {
+//     j["key_cpp_type"] = "double";
+//   } else if (map.key_type->IsU8()) {
+//     j["key_cpp_type"] = "std::uint8_t";
+//   } else if (map.key_type->IsU16()) {
+//     j["key_cpp_type"] = "std::uint16_t";
+//   } else if (map.key_type->IsU32()) {
+//     j["key_cpp_type"] = "std::uint32_t";
+//   } else if (map.key_type->IsU64()) {
+//     j["key_cpp_type"] = "std::uint64_t";
+//   } else if (map.key_type->IsI8()) {
+//     j["key_cpp_type"] = "std::int8_t";
+//   } else if (map.key_type->IsI16()) {
+//     j["key_cpp_type"] = "std::int16_t";
+//   } else if (map.key_type->IsI32()) {
+//     j["key_cpp_type"] = "std::int32_t";
+//   } else if (map.key_type->IsI64()) {
+//     j["key_cpp_type"] = "std::int64_t";
+//   } else {
+//     throw_logic_error("invalid state");
+//   }
+
+//   if (map.value_type->IsPrimitive()) {
+//     if (map.value_type->IsBool()) {
+//       j["value_cpp_type"] = "bool";
+//     } else if (map.value_type->IsChar()) {
+//       j["value_cpp_type"] = "char32_t";
+//     } else if (map.value_type->IsStr()) {
+//       j["value_cpp_type"] = "std::string";
+//     } else if (map.value_type->IsF32()) {
+//       j["value_cpp_type"] = "float";
+//     } else if (map.value_type->IsF64()) {
+//       j["value_cpp_type"] = "double";
+//     } else if (map.value_type->IsU8()) {
+//       j["value_cpp_type"] = "std::uint8_t";
+//     } else if (map.value_type->IsU16()) {
+//       j["value_cpp_type"] = "std::uint16_t";
+//     } else if (map.value_type->IsU32()) {
+//       j["value_cpp_type"] = "std::uint32_t";
+//     } else if (map.value_type->IsU64()) {
+//       j["value_cpp_type"] = "std::uint64_t";
+//     } else if (map.value_type->IsI8()) {
+//       j["value_cpp_type"] = "std::int8_t";
+//     } else if (map.value_type->IsI16()) {
+//       j["value_cpp_type"] = "std::int16_t";
+//     } else if (map.value_type->IsI32()) {
+//       j["value_cpp_type"] = "std::int32_t";
+//     } else if (map.value_type->IsI64()) {
+//       j["value_cpp_type"] = "std::int64_t";
+//     } else {
+//       throw_logic_error("invalid state");
+//     }
+//   } else if (map.value_type->IsSymref()) {
+//     CppTypeInfo cpp_type_info =
+//         GetAccessInfoForType(map.value_type->symref_target.get());
+//     j["value_cpp_type"] = cpp_type_info.cpp_type;
+//   } else {
+//     throw_logic_error("invalid state");
+//   }
+
+//   return j;
+// }
+
+// json GetTemplateInsertion(td::TmplStrTable::InsertionPtr insertion) {
+//   json j;
+//   return j;
+// }
+// json GetTemplateFunctionCall(td::TmplStrTable::FunctionCallPtr fc) {
+//   json j;
+//   return j;
+// }
+// json GetTemplateIfBlock(td::TmplStrTable::IfBlockPtr ib) {
+//   json j;
+//   return j;
+// }
+// json GetTemplateForBlock(td::TmplStrTable::ForBlockPtr fb) {
+//   json j;
+//   return j;
+// }
+
+// json GetTemplateItem(td::TmplStrTable::ItemPtr item) {
+//   json j;
+//   if (item->text) {
+//     j["text"] = *item->text;
+//   } else if (item->insertion) {
+//     j["insertion"] = GetTemplateInsertion(item->insertion);
+//   } else if (item->function_call) {
+//     j["function_call"] = GetTemplateFunctionCall(item->function_call);
+//   } else if (item->if_block) {
+//     j["if_block"] = GetTemplateIfBlock(item->if_block);
+//   } else if (item->for_block) {
+//     j["for_block"] = GetTemplateForBlock(item->for_block);
+//   } else {
+//     throw_logic_error("invalid state");
+//   }
+//   return j;
+// }
+
+// json GetTemplate(TemplateFunctionDefinition* template_function) {
+//   json j;
+
+//   j["identifier"] =
+//       escape_utf8_to_cpp_identifier(*template_function->identifier);
+//   for (td::table::FunctionParameter* param : template_function->params) {
+//     json p;
+
+//     p["identifier"] = escape_utf8_to_cpp_identifier(*param->param_name);
+//     if (param->parameter_type->IsPrimitive()) {
+//       if (param->parameter_type->IsBool()) {
+//         p["cpp_type"] = "bool";
+//         p["access_by"] = "value";
+//       } else if (param->parameter_type->IsChar()) {
+//         p["cpp_type"] = "char32_t";
+//         p["access_by"] = "value";
+//       } else if (param->parameter_type->IsStr()) {
+//         p["cpp_type"] = "std::string";
+//         p["access_by"] = "reference";
+//       } else if (param->parameter_type->IsF32()) {
+//         p["cpp_type"] = "float";
+//         p["access_by"] = "value";
+//       } else if (param->parameter_type->IsF64()) {
+//         p["cpp_type"] = "double";
+//         p["access_by"] = "value";
+//       } else if (param->parameter_type->IsU8()) {
+//         p["cpp_type"] = "std::uint8_t";
+//         p["access_by"] = "value";
+//       } else if (param->parameter_type->IsU16()) {
+//         p["cpp_type"] = "std::uint16_t";
+//         p["access_by"] = "value";
+//       } else if (param->parameter_type->IsU32()) {
+//         p["cpp_type"] = "std::uint32_t";
+//         p["access_by"] = "value";
+//       } else if (param->parameter_type->IsU64()) {
+//         p["cpp_type"] = "std::uint64_t";
+//         p["access_by"] = "value";
+//       } else if (param->parameter_type->IsI8()) {
+//         p["cpp_type"] = "std::int8_t";
+//         p["access_by"] = "value";
+//       } else if (param->parameter_type->IsI16()) {
+//         p["cpp_type"] = "std::int16_t";
+//         p["access_by"] = "value";
+//       } else if (param->parameter_type->IsI32()) {
+//         p["cpp_type"] = "std::int32_t";
+//         p["access_by"] = "value";
+//       } else if (param->parameter_type->IsI64()) {
+//         p["cpp_type"] = "std::int64_t";
+//         p["access_by"] = "value";
+//       } else {
+//         throw_logic_error("invalid state");
+//       }
+//     } else if (param->parameter_type->IsSymref()) {
+//       CppTypeInfo cpp_type_info =
+//           GetAccessInfoForType(param->parameter_type->symref_target.get());
+//       p["cpp_type"] = cpp_type_info.cpp_type;
+//       p["access_by"] = cpp_type_info.access_by;
+//     } else {
+//       throw_logic_error("invalid state");
+//     }
+
+//     j["params"].push_back(p);
+//   }
+
+//   j["items"] = json::array();
+//   for (td::TmplStrTable::ItemPtr item :
+//        template_function->tmpl_string_table->items) {
+//     j["items"].push_back(GetTemplateItem(item));
+//   }
+
+//   return j;
+// }
+
+json GetType(TypeDefinitionContext* type,
+             optional<string> identifier = nullptr) {
   json j;
-  // If it's an inline type, the identifier is the field name which has
-  // to be passed in separately.
-  j["identifier"] = identifier ? *identifier : *map.identifier;
-
-  if (map.key_type->IsBool()) {
-    j["key_cpp_type"] = "bool";
-  } else if (map.key_type->IsChar()) {
-    j["key_cpp_type"] = "char32_t";
-  } else if (map.key_type->IsStr()) {
-    j["key_cpp_type"] = "std::string";
-  } else if (map.key_type->IsF32()) {
-    j["key_cpp_type"] = "float";
-  } else if (map.key_type->IsF64()) {
-    j["key_cpp_type"] = "double";
-  } else if (map.key_type->IsU8()) {
-    j["key_cpp_type"] = "std::uint8_t";
-  } else if (map.key_type->IsU16()) {
-    j["key_cpp_type"] = "std::uint16_t";
-  } else if (map.key_type->IsU32()) {
-    j["key_cpp_type"] = "std::uint32_t";
-  } else if (map.key_type->IsU64()) {
-    j["key_cpp_type"] = "std::uint64_t";
-  } else if (map.key_type->IsI8()) {
-    j["key_cpp_type"] = "std::int8_t";
-  } else if (map.key_type->IsI16()) {
-    j["key_cpp_type"] = "std::int16_t";
-  } else if (map.key_type->IsI32()) {
-    j["key_cpp_type"] = "std::int32_t";
-  } else if (map.key_type->IsI64()) {
-    j["key_cpp_type"] = "std::int64_t";
-  } else {
-    throw_logic_error("invalid state");
-  }
-
-  if (map.value_type->IsPrimitive()) {
-    if (map.value_type->IsBool()) {
-      j["value_cpp_type"] = "bool";
-    } else if (map.value_type->IsChar()) {
-      j["value_cpp_type"] = "char32_t";
-    } else if (map.value_type->IsStr()) {
-      j["value_cpp_type"] = "std::string";
-    } else if (map.value_type->IsF32()) {
-      j["value_cpp_type"] = "float";
-    } else if (map.value_type->IsF64()) {
-      j["value_cpp_type"] = "double";
-    } else if (map.value_type->IsU8()) {
-      j["value_cpp_type"] = "std::uint8_t";
-    } else if (map.value_type->IsU16()) {
-      j["value_cpp_type"] = "std::uint16_t";
-    } else if (map.value_type->IsU32()) {
-      j["value_cpp_type"] = "std::uint32_t";
-    } else if (map.value_type->IsU64()) {
-      j["value_cpp_type"] = "std::uint64_t";
-    } else if (map.value_type->IsI8()) {
-      j["value_cpp_type"] = "std::int8_t";
-    } else if (map.value_type->IsI16()) {
-      j["value_cpp_type"] = "std::int16_t";
-    } else if (map.value_type->IsI32()) {
-      j["value_cpp_type"] = "std::int32_t";
-    } else if (map.value_type->IsI64()) {
-      j["value_cpp_type"] = "std::int64_t";
-    } else {
-      throw_logic_error("invalid state");
-    }
-  } else if (map.value_type->IsSymref()) {
-    CppTypeInfo cpp_type_info =
-        GetAccessInfoForType(map.value_type->symref_target.get());
-    j["value_cpp_type"] = cpp_type_info.cpp_type;
-  } else {
-    throw_logic_error("invalid state");
-  }
-
-  return j;
-}
-
-json GetTemplateInsertion(const td::TmplStrTable::InsertionPtr insertion) {
-  json j;
-  return j;
-}
-json GetTemplateFunctionCall(const td::TmplStrTable::FunctionCallPtr fc) {
-  json j;
-  return j;
-}
-json GetTemplateIfBlock(const td::TmplStrTable::IfBlockPtr ib) {
-  json j;
-  return j;
-}
-json GetTemplateForBlock(const td::TmplStrTable::ForBlockPtr fb) {
-  json j;
-  return j;
-}
-
-json GetTemplateItem(const td::TmplStrTable::ItemPtr item) {
-  json j;
-  if (item->text) {
-    j["text"] = *item->text;
-  } else if (item->insertion) {
-    j["insertion"] = GetTemplateInsertion(item->insertion);
-  } else if (item->function_call) {
-    j["function_call"] = GetTemplateFunctionCall(item->function_call);
-  } else if (item->if_block) {
-    j["if_block"] = GetTemplateIfBlock(item->if_block);
-  } else if (item->for_block) {
-    j["for_block"] = GetTemplateForBlock(item->for_block);
-  } else {
-    throw_logic_error("invalid state");
-  }
-  return j;
-}
-
-json GetTemplate(const TemplateFunctionDefinition* template_function) {
-  json j;
-
-  j["identifier"] =
-      escape_utf8_to_cpp_identifier(*template_function->identifier);
-  for (const td::table::FunctionParameter* param : template_function->params) {
-    json p;
-
-    p["identifier"] = escape_utf8_to_cpp_identifier(*param->param_name);
-    if (param->parameter_type->IsPrimitive()) {
-      if (param->parameter_type->IsBool()) {
-        p["cpp_type"] = "bool";
-        p["access_by"] = "value";
-      } else if (param->parameter_type->IsChar()) {
-        p["cpp_type"] = "char32_t";
-        p["access_by"] = "value";
-      } else if (param->parameter_type->IsStr()) {
-        p["cpp_type"] = "std::string";
-        p["access_by"] = "reference";
-      } else if (param->parameter_type->IsF32()) {
-        p["cpp_type"] = "float";
-        p["access_by"] = "value";
-      } else if (param->parameter_type->IsF64()) {
-        p["cpp_type"] = "double";
-        p["access_by"] = "value";
-      } else if (param->parameter_type->IsU8()) {
-        p["cpp_type"] = "std::uint8_t";
-        p["access_by"] = "value";
-      } else if (param->parameter_type->IsU16()) {
-        p["cpp_type"] = "std::uint16_t";
-        p["access_by"] = "value";
-      } else if (param->parameter_type->IsU32()) {
-        p["cpp_type"] = "std::uint32_t";
-        p["access_by"] = "value";
-      } else if (param->parameter_type->IsU64()) {
-        p["cpp_type"] = "std::uint64_t";
-        p["access_by"] = "value";
-      } else if (param->parameter_type->IsI8()) {
-        p["cpp_type"] = "std::int8_t";
-        p["access_by"] = "value";
-      } else if (param->parameter_type->IsI16()) {
-        p["cpp_type"] = "std::int16_t";
-        p["access_by"] = "value";
-      } else if (param->parameter_type->IsI32()) {
-        p["cpp_type"] = "std::int32_t";
-        p["access_by"] = "value";
-      } else if (param->parameter_type->IsI64()) {
-        p["cpp_type"] = "std::int64_t";
-        p["access_by"] = "value";
-      } else {
-        throw_logic_error("invalid state");
-      }
-    } else if (param->parameter_type->IsSymref()) {
-      CppTypeInfo cpp_type_info =
-          GetAccessInfoForType(param->parameter_type->symref_target.get());
-      p["cpp_type"] = cpp_type_info.cpp_type;
-      p["access_by"] = cpp_type_info.access_by;
-    } else {
-      throw_logic_error("invalid state");
-    }
-
-    j["params"].push_back(p);
-  }
-
-  j["items"] = json::array();
-  for (td::TmplStrTable::ItemPtr item :
-       template_function->tmpl_string_table->items) {
-    j["items"].push_back(GetTemplateItem(item));
-  }
-
-  return j;
-}
-
-json GetInlineType(const FieldDeclaration* field) {
-  json j;
-  string identifier = *field->identifier + "T";
-  if (field->IsStruct()) {
-    j["struct"] = GetStruct(*field->st, identifier);
-  } else if (field->IsVariant()) {
-    j["variant"] = GetVariant(*field->var, identifier);
-  } else if (field->IsVector()) {
-    j["vector"] = GetVector(*field->vec, identifier);
-  } else if (field->IsMap()) {
-    j["map"] = GetMap(*field->map, identifier);
+  if (DefinesStruct(type)) {
+    j["struct"] = GetStruct(typ, identifier);
+  } else if (DefinesVariant(type)) {
+    // The data fed to the template is the same as for struct.
+    j["variant"] = GetStruct(type, identifier);
+    // } else if (type->IsVector()) {
+    //   j["vector"] = GetVector(*type->vec);
+    // } else if (type->IsMap()) {
+    //   j["map"] = GetMap(*type->map);
+    // } else if (type->IsTemplate()) {
+    //   j["template"] = GetTemplate(type->template_function);
   } else {
     throw_logic_error("invalid state");
   }
   return j;
 }
 
-json GetType(const TypeDeclaration* type) {
-  json j;
-  if (type->IsStruct()) {
-    j["struct"] = GetStruct(*type->st);
-  } else if (type->IsVariant()) {
-    j["variant"] = GetVariant(*type->var);
-  } else if (type->IsVector()) {
-    j["vector"] = GetVector(*type->vec);
-  } else if (type->IsMap()) {
-    j["map"] = GetMap(*type->map);
-  } else if (type->IsTemplate()) {
-    j["template"] = GetTemplate(type->template_function);
-  } else {
-    throw_logic_error("invalid state");
-  }
-  return j;
-}
-
-json GetTypeDecls(const vector<shared_ptr<TypeDeclaration>>& types) {
+json GetTypeDecls(vector<TypeDefinitionContext*> types) {
   json arr = json::array();
-  for (const auto& tp : types) {
-    arr.push_back(GetType(tp.get()));
+  for (TypeDefinitionContext* tp : types) {
+    arr.push_back(GetType(tp));
   }
   return arr;
 }
@@ -485,11 +486,12 @@ void CodegenCpp(OutPathBase* out_path, Parser* parsed_file) {
   data["header_guard"] = HeaderGuard(source_filename);
   data["header_filename"] = hdr_filename;
   data["namespaces"] = json::array();
-  for (const auto& path_part : *parsed_file->mod->module_name) {
-    data["namespaces"].push_back(*path_part);
+  for (auto& path_part :
+       compilation_unit->moduleDeclaration()->symbolPath()->identifier()) {
+    data["namespaces"].push_back(path_part->id);
   }
 
-  data["type_decls"] = GetTypeDecls(parsed_file->mod->types);
+  data["type_decls"] = GetTypeDecls(compilation_unit->typeDefinition());
 
   std::cout << data.dump(1) << std::endl;
 
@@ -551,7 +553,23 @@ void CodegenCpp(OutPathBase* out_path, Parser* parsed_file) {
 class {{identifier}} {
  public:
 ## if exists("type_decls")
+  // Nested type declarations.
 ## for type_decl in type_decls
+## if existsIn(type_decl, "struct")
+  {{ struct(type_decl.struct) }}
+## else if existsIn(type_decl, "variant")
+  {{ variant(type_decl.variant) }}
+## else if existsIn(type_decl, "vector")
+  {{ vector(type_decl.vector) }}
+## else if existsIn(type_decl, "map")
+  {{ map(type_decl.map) }}
+## endif
+## endfor
+## endif
+
+## if exists("inline_type_decls")
+  // Inline type declarations.
+## for type_decl in inline_type_decls
 ## if existsIn(type_decl, "struct")
   {{ struct(type_decl.struct) }}
 ## else if existsIn(type_decl, "variant")
@@ -641,7 +659,23 @@ class {{identifier}} {
 class {{identifier}} {
  public:
 ## if exists("type_decls")
+  // Nested type declarations.
 ## for type_decl in type_decls
+## if existsIn(type_decl, "struct")
+  {{ struct(type_decl.struct) }}
+## else if existsIn(type_decl, "variant")
+  {{ variant(type_decl.variant) }}
+## else if existsIn(type_decl, "vector")
+  {{ vector(type_decl.vector) }}
+## else if existsIn(type_decl, "map")
+  {{ map(type_decl.map) }}
+## endif
+## endfor
+## endif
+
+## if exists("inline_type_decls")
+  // Inline type declarations.
+## for type_decl in inline_type_decls
 ## if existsIn(type_decl, "struct")
   {{ struct(type_decl.struct) }}
 ## else if existsIn(type_decl, "variant")

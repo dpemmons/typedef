@@ -37,13 +37,15 @@ fieldDefinition:
 	)? ('=' primitiveLiteral)?;
 
 typeAnnotation:
-	identifier ('<' typeArgument (',' typeArgument)* '>')?;
+	typeIdentifier ('<' typeArgument (',' typeArgument)* '>')?;
 typeArgument: typeIdentifier;
 typeIdentifier:
 	primitiveTypeIdentifier
 	| KW_VECTOR
 	| KW_MAP
-	| symrefIdentifier = identifier;
+	| userType;
+userType
+	returns[TypeDefinitionContext* type_definition]: identifier;
 
 // template DoIt(a: i32, b: str) "{a} {b}";
 templateDefinition:

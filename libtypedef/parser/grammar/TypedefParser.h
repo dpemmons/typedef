@@ -55,12 +55,12 @@ public:
     RuleCompilationUnit = 0, RuleTypedefVersionDeclaration = 1, RuleModuleDeclaration = 2, 
     RuleTypeDefinition = 3, RuleFieldBlock = 4, RuleFieldDefinition = 5, 
     RuleTypeAnnotation = 6, RuleTypeArgument = 7, RuleTypeIdentifier = 8, 
-    RuleTemplateDefinition = 9, RuleTemplateBlock = 10, RuleFunctionParameter = 11, 
-    RuleParameterType = 12, RuleUseDeclaration = 13, RuleSymbolPath = 14, 
-    RulePrimitiveLiteral = 15, RuleBoolLiteral = 16, RuleCharLiteral = 17, 
-    RuleStringLiteral = 18, RuleFloatLiteral = 19, RuleIntegerLiteral = 20, 
-    RuleIntDigits = 21, RuleIdentifier = 22, RulePrimitiveTypeIdentifier = 23, 
-    RuleKeyword = 24
+    RuleUserType = 9, RuleTemplateDefinition = 10, RuleTemplateBlock = 11, 
+    RuleFunctionParameter = 12, RuleParameterType = 13, RuleUseDeclaration = 14, 
+    RuleSymbolPath = 15, RulePrimitiveLiteral = 16, RuleBoolLiteral = 17, 
+    RuleCharLiteral = 18, RuleStringLiteral = 19, RuleFloatLiteral = 20, 
+    RuleIntegerLiteral = 21, RuleIntDigits = 22, RuleIdentifier = 23, RulePrimitiveTypeIdentifier = 24, 
+    RuleKeyword = 25
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -82,6 +82,7 @@ public:
   class TypeAnnotationContext;
   class TypeArgumentContext;
   class TypeIdentifierContext;
+  class UserTypeContext;
   class TemplateDefinitionContext;
   class TemplateBlockContext;
   class FunctionParameterContext;
@@ -229,7 +230,7 @@ public:
   public:
     TypeAnnotationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    IdentifierContext *identifier();
+    TypeIdentifierContext *typeIdentifier();
     antlr4::tree::TerminalNode *LT();
     std::vector<TypeArgumentContext *> typeArgument();
     TypeArgumentContext* typeArgument(size_t i);
@@ -263,13 +264,12 @@ public:
 
   class  TypeIdentifierContext : public antlr4::ParserRuleContext {
   public:
-    TypedefParser::IdentifierContext *symrefIdentifier = nullptr;;
     TypeIdentifierContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     PrimitiveTypeIdentifierContext *primitiveTypeIdentifier();
     antlr4::tree::TerminalNode *KW_VECTOR();
     antlr4::tree::TerminalNode *KW_MAP();
-    IdentifierContext *identifier();
+    UserTypeContext *userType();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -279,6 +279,22 @@ public:
   };
 
   TypeIdentifierContext* typeIdentifier();
+
+  class  UserTypeContext : public antlr4::ParserRuleContext {
+  public:
+    TypeDefinitionContext* type_definition;
+    UserTypeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IdentifierContext *identifier();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  UserTypeContext* userType();
 
   class  TemplateDefinitionContext : public antlr4::ParserRuleContext {
   public:

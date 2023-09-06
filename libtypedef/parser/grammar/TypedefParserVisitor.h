@@ -40,6 +40,8 @@ public:
 
     virtual antlrcpp::Any visitTypeIdentifier(TypedefParser::TypeIdentifierContext *context) = 0;
 
+    virtual antlrcpp::Any visitUserType(TypedefParser::UserTypeContext *context) = 0;
+
     virtual antlrcpp::Any visitTemplateDefinition(TypedefParser::TemplateDefinitionContext *context) = 0;
 
     virtual antlrcpp::Any visitTemplateBlock(TypedefParser::TemplateBlockContext *context) = 0;

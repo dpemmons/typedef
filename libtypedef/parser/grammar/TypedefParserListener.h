@@ -44,6 +44,9 @@ public:
   virtual void enterTypeIdentifier(TypedefParser::TypeIdentifierContext *ctx) = 0;
   virtual void exitTypeIdentifier(TypedefParser::TypeIdentifierContext *ctx) = 0;
 
+  virtual void enterUserType(TypedefParser::UserTypeContext *ctx) = 0;
+  virtual void exitUserType(TypedefParser::UserTypeContext *ctx) = 0;
+
   virtual void enterTemplateDefinition(TypedefParser::TemplateDefinitionContext *ctx) = 0;
   virtual void exitTemplateDefinition(TypedefParser::TemplateDefinitionContext *ctx) = 0;
 

@@ -46,6 +46,9 @@ public:
   virtual void enterTypeIdentifier(TypedefParser::TypeIdentifierContext * /*ctx*/) override { }
   virtual void exitTypeIdentifier(TypedefParser::TypeIdentifierContext * /*ctx*/) override { }
 
+  virtual void enterUserType(TypedefParser::UserTypeContext * /*ctx*/) override { }
+  virtual void exitUserType(TypedefParser::UserTypeContext * /*ctx*/) override { }
+
   virtual void enterTemplateDefinition(TypedefParser::TemplateDefinitionContext * /*ctx*/) override { }
   virtual void exitTemplateDefinition(TypedefParser::TemplateDefinitionContext * /*ctx*/) override { }
 
