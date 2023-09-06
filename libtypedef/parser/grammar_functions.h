@@ -12,8 +12,8 @@ namespace td {
 std::string ToString(TypedefParser::SymbolPathContext* ctx,
                      const std::string& delimiter = "");
 
-std::string ToString(TypedefParser::ModuleDeclarationContext* ctx,
-                     const std::string& delimiter = "") {
+inline std::string ToString(TypedefParser::ModuleDeclarationContext* ctx,
+                            const std::string& delimiter = "") {
   return ToString(ctx->symbolPath(), delimiter);
 }
 
@@ -21,20 +21,19 @@ bool DefinesUserType(TypedefParser::TypeDefinitionContext* type);
 bool DefinesStruct(TypedefParser::TypeDefinitionContext* type);
 bool DefinesVariant(TypedefParser::TypeDefinitionContext* type);
 
-bool DefinesInlineUserType(TypedefParser::FieldDefinitionContext* field);
+bool DefinesAndUsesInlineUserType(TypedefParser::FieldDefinitionContext* field);
 
-bool ReferencesUserType(TypedefParser::FieldDefinitionContext* field);
+bool ReferencesUserType(TypedefParser::TypeAnnotationContext* ctx);
 TypedefParser::UserTypeContext* GetReferencedUserType(
-    TypedefParser::FieldDefinitionContext* field);
+    TypedefParser::TypeAnnotationContext* ctx);
 
-bool ReferencesBuiltinType(TypedefParser::FieldDefinitionContext* field);
-bool ReferencesBuiltinVector(TypedefParser::FieldDefinitionContext* field);
-bool ReferencesBuiltinMap(TypedefParser::FieldDefinitionContext* field);
+bool ReferencesBuiltinType(TypedefParser::TypeAnnotationContext* ctx);
+bool ReferencesBuiltinVectorType(TypedefParser::TypeAnnotationContext* ctx);
+bool ReferencesBuiltinMapType(TypedefParser::TypeAnnotationContext* ctx);
 
-bool ReferencesPrimitiveType(TypedefParser::FieldDefinitionContext* field);
+bool ReferencesPrimitiveType(TypedefParser::TypeAnnotationContext* ctx);
 TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitive(
-    TypedefParser::FieldDefinitionContext* field);
-
+    TypedefParser::TypeAnnotationContext* ctx);
 bool IsBool(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
 bool IsChar(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
 bool IsStr(TypedefParser::PrimitiveTypeIdentifierContext* ctx);

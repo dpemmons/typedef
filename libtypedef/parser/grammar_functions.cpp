@@ -34,55 +34,50 @@ bool DefinesVariant(TypedefParser::TypeDefinitionContext* type) {
   return type->KW_VARIANT() != nullptr;
 }
 
-bool DefinesInlineUserType(TypedefParser::FieldDefinitionContext* field) {
+bool DefinesAndUsesInlineUserType(
+    TypedefParser::FieldDefinitionContext* field) {
   return field->typeDefinition() != nullptr;
 }
 
-bool ReferencesUserType(TypedefParser::FieldDefinitionContext* field) {
-  return field->typeAnnotation() != nullptr &&
-         field->typeAnnotation()->typeIdentifier() != nullptr &&
-         field->typeAnnotation()->typeIdentifier()->userType() != nullptr &&
-         field->typeAnnotation()->typeIdentifier()->userType()->identifier() !=
-             nullptr;
+bool ReferencesUserType(TypedefParser::TypeAnnotationContext* ctx) {
+  return ctx->typeIdentifier() != nullptr &&
+         ctx->typeIdentifier()->userType() != nullptr &&
+         ctx->typeIdentifier()->userType()->identifier() != nullptr;
 }
 
 TypedefParser::UserTypeContext* GetReferencedUserType(
-    TypedefParser::FieldDefinitionContext* field) {
-  return ReferencesUserType(field)
-             ? field->typeAnnotation()->typeIdentifier()->userType()
-             : nullptr;
+    TypedefParser::TypeAnnotationContext* ctx) {
+  return ReferencesUserType(ctx) ? ctx->typeIdentifier()->userType() : nullptr;
 }
 
 // ---- Builtin types ----------------------------------------------------------
 
-bool ReferencesBuiltinType(TypedefParser::FieldDefinitionContext* field) {
-  return ReferencesBuiltinVector(field) || ReferencesBuiltinMap(field);
+bool ReferencesBuiltinType(TypedefParser::TypeAnnotationContext* ctx) {
+  return ReferencesBuiltinVectorType(ctx) || ReferencesBuiltinMapType(ctx);
 }
 
-bool ReferencesBuiltinVector(TypedefParser::FieldDefinitionContext* field) {
-  return field->typeAnnotation()->typeIdentifier()->KW_VECTOR() != nullptr;
+bool ReferencesBuiltinVectorType(TypedefParser::TypeAnnotationContext* ctx) {
+  return ctx->typeIdentifier() && ctx->typeIdentifier()->KW_VECTOR() != nullptr;
 }
 
-bool ReferencesBuiltinMap(TypedefParser::FieldDefinitionContext* field) {
-  return field->typeAnnotation()->typeIdentifier()->KW_MAP() != nullptr;
+bool ReferencesBuiltinMapType(TypedefParser::TypeAnnotationContext* ctx) {
+  return ctx->typeIdentifier() && ctx->typeIdentifier()->KW_MAP() != nullptr;
 }
 
 // ---- Primitive field types --------------------------------------------------
 
-bool ReferencesPrimitiveType(TypedefParser::FieldDefinitionContext* field) {
-  return field->typeAnnotation() != nullptr &&
-         field->typeAnnotation()->typeIdentifier() != nullptr &&
-         field->typeAnnotation()->typeIdentifier()->primitiveTypeIdentifier() !=
-             nullptr;
+bool ReferencesPrimitiveType(TypedefParser::TypeAnnotationContext* ctx) {
+  return ctx->typeIdentifier() != nullptr &&
+         ctx->typeIdentifier()->primitiveTypeIdentifier() != nullptr;
 }
 
 TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitive(
-    TypedefParser::FieldDefinitionContext* field) {
-  return ReferencesPrimitiveType(field) ? field->typeAnnotation()
-                                              ->typeIdentifier()
-                                              ->primitiveTypeIdentifier()
-                                        : nullptr;
+    TypedefParser::TypeAnnotationContext* ctx) {
+  return ReferencesPrimitiveType(ctx)
+             ? ctx->typeIdentifier()->primitiveTypeIdentifier()
+             : nullptr;
 }
+
 bool IsBool(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
   return ctx->KW_BOOL() != nullptr;
 }

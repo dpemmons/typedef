@@ -14,7 +14,6 @@
 #include "libtypedef/codegen/codegen_cpp.h"
 #include "libtypedef/codegen/file_printer.h"
 #include "libtypedef/parser/parser_error_info.h"
-#include "libtypedef/parser/table.h"
 #include "libtypedef/parser/typedef_parser.h"
 #include "typedef/args.h"
 
@@ -32,14 +31,11 @@ int main(int argc, const char** argv) {
     return 1;
   }
 
-  auto parsed_file = td::ParseTypedef(inputStream);
-  if (!parsed_file) {
-    fmt::print("Unknown error.\n");
-    return 1;
-  }
+  td::Parser parser(inputStream);
+  parser.Parse();
 
-  if (parsed_file->errors.size()) {
-    for (auto err : parsed_file->errors) {
+  if (parser.Errors().size()) {
+    for (const auto& err : parser.Errors()) {
       inputStream.clear();
       inputStream.seekg(std::ios::beg);
       std::string line;
@@ -66,7 +62,7 @@ int main(int argc, const char** argv) {
   }
   if (!args.GetCppOut().empty()) {
     auto outpath = std::make_unique<td::OutPath>(args.GetCppOut());
-    td::CodegenCpp(outpath.get(), parsed_file.get());
+    td::CodegenCpp(outpath.get(), &parser);
   }
 
   // fmt::print("File contains {} symbols:\n", parser->GetSymbols());

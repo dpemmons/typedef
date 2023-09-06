@@ -28,6 +28,11 @@ using FieldDefinitionContext = TypedefParser::FieldDefinitionContext;
 using PrimitiveTypeIdentifierContext =
     TypedefParser::PrimitiveTypeIdentifierContext;
 using UserTypeContext = TypedefParser::UserTypeContext;
+using TypeAnnotationContext = TypedefParser::TypeAnnotationContext;
+
+json GetMap(TypeAnnotationContext* ctx, string identifier);
+json GetVector(TypeAnnotationContext* ctx, string identifier);
+json GetUserTypeDecls(vector<TypeDefinitionContext*> types);
 
 std::string GetNestedTypeIdentifier(FieldDefinitionContext* field) {
   return escape_utf8_to_cpp_identifier(field->field_identifier->id + "T");
@@ -42,40 +47,21 @@ string HeaderGuard(const filesystem::path& source_filename) {
   return hdr_guard;
 }
 
-// forward declarations.
-json GetType(TypeDefinitionContext* type,
-             optional<string> identifier = nullptr);
-
-struct CppTypeInfo {
-  std::string cpp_type;
-  std::string access_by;
-};
-CppTypeInfo GetAccessInfoForType(TypeDefinitionContext* type) {
-  CppTypeInfo info;
+json GetAccessInfoForType(TypeDefinitionContext* type) {
+  json j;
   if (DefinesStruct(type) || DefinesVariant(type)) {
-    info.cpp_type = escape_utf8_to_cpp_identifier(type->type_identifier->id);
-    info.access_by = "pointer";
+    j["cpp_type"] = escape_utf8_to_cpp_identifier(type->type_identifier->id);
+    j["access_by"] = "pointer";
   } else {
     throw_logic_error("invalid state");
   }
-  // else if (type->IsVector()) {
-  //   info.cpp_type =
-  //       escape_utf8_to_cpp_identifier(*type->GetVector()->identifier);
-  //   info.access_by = "reference";
-  // }
-  // else if (type->IsMap()) {
-  //   info.cpp_type =
-  //   escape_utf8_to_cpp_identifier(*type->GetMap()->identifier);
-  //   info.access_by = "reference";
-  // }
-  return info;
+  return j;
 }
 
-json GetField(FieldDefinitionContext* field) {
+json GetAccessInfoForType(TypeAnnotationContext* ctx) {
   json j;
-  j["identifier"] = escape_utf8_to_cpp_identifier(field->field_identifier->id);
-  if (ReferencesPrimitiveType(field)) {
-    PrimitiveTypeIdentifierContext* p = GetReferencedPrimitive(field);
+  if (ReferencesPrimitiveType(ctx)) {
+    PrimitiveTypeIdentifierContext* p = GetReferencedPrimitive(ctx);
     if (IsBool(p)) {
       j["cpp_type"] = "bool";
       j["access_by"] = "value";
@@ -118,70 +104,50 @@ json GetField(FieldDefinitionContext* field) {
     } else {
       throw_logic_error("invalid state");
     }
-  } else if (ReferencesUserType(field)) {
-    UserTypeContext* user_type = GetReferencedUserType(field);
+  } else if (ReferencesUserType(ctx)) {
+    UserTypeContext* user_type = GetReferencedUserType(ctx);
     if (!user_type->type_definition) {
       throw_logic_error("Unresolved user type reference.");
     }
-    CppTypeInfo cpp_type_info =
-        GetAccessInfoForType(user_type->type_definition);
-    j["cpp_type"] = cpp_type_info.cpp_type;
-    j["access_by"] = cpp_type_info.access_by;
-  } else if (ReferencesBuiltinType(field)) {
-    if (ReferencesBuiltinVector(field)) {
-    } else if (ReferencesBuiltinMap(field)) {
-    } else {
-      throw_logic_error("invalid state");
-    }
-  } else if (DefinesInlineUserType(field)) {
-    TypeDefinitionContext* inline_type = field->typeDefinition();
-    if (DefinesStruct(inline_type) || DefinesVariant(inline_type)) {
-      j["cpp_type"] = GetNestedTypeIdentifier(field);
-    } else {
-      throw_logic_error("invalid state");
-    }
+    j = GetAccessInfoForType(user_type->type_definition);
+  }
+  return j;
+}
 
-    if (field->IsStruct()) {
-      if (field->GetStruct()->identifier) {
-        j["cpp_type"] =
-            escape_utf8_to_cpp_identifier(*field->GetStruct()->identifier);
-      } else {
-        // inline type.
-        j["cpp_type"] = escape_utf8_to_cpp_identifier(*field->identifier) + "T";
-      }
-      j["access_by"] = "pointer";
-    } else if (field->IsVariant()) {
-      if (field->GetVariant()->identifier) {
-        j["cpp_type"] =
-            escape_utf8_to_cpp_identifier(*field->GetVariant()->identifier);
-      } else {
-        // inline type.
-        j["cpp_type"] = escape_utf8_to_cpp_identifier(*field->identifier) + "T";
-      }
-      j["access_by"] = "pointer";
-    } else if (field->IsVector()) {
-      if (field->GetVector()->identifier) {
-        j["cpp_type"] =
-            escape_utf8_to_cpp_identifier(*field->GetVector()->identifier);
-      } else {
-        // inline type.
-        j["cpp_type"] = escape_utf8_to_cpp_identifier(*field->identifier) + "T";
-      }
-      j["access_by"] = "reference";
-    } else if (field->IsMap()) {
-      if (field->GetMap()->identifier) {
-        j["cpp_type"] =
-            escape_utf8_to_cpp_identifier(*field->GetMap()->identifier);
-      } else {
-        // inline type.
-        j["cpp_type"] = escape_utf8_to_cpp_identifier(*field->identifier) + "T";
-      }
-      j["access_by"] = "reference";
-    } else {
-      throw_logic_error("invalid state");
-    }
+json GetField(FieldDefinitionContext* field) {
+  json j;
+  j["identifier"] = escape_utf8_to_cpp_identifier(field->field_identifier->id);
+  TypeAnnotationContext* tac = field->typeAnnotation();
+  if (ReferencesPrimitiveType(tac) || ReferencesUserType(tac)) {
+    j = GetAccessInfoForType(tac);
+  } else if (ReferencesBuiltinType(tac)) {
+    j["cpp_type"] = GetNestedTypeIdentifier(field);
+    j["access_by"] = "reference";
+  } else if (DefinesAndUsesInlineUserType(field)) {
+    j["cpp_type"] = GetNestedTypeIdentifier(field);
+    j["access_by"] = "pointer";
+  } else {
+    throw_logic_error("invalid state");
   }
 
+  return j;
+}
+
+json GetUserInlineTypeDeclaration(TypedefParser::TypeDefinitionContext* type,
+                                  const string& identifier) {
+  json j;
+  return j;
+}
+
+json GetReferencedBuiltinTypeDeclaration(
+    TypedefParser::TypeAnnotationContext* type, const string& identifier) {
+  json j;
+  j["access_by"] = "reference";
+  if (ReferencesBuiltinMapType(type) || ReferencesBuiltinMapType(type)) {
+    j["cpp_type"] = escape_utf8_to_cpp_identifier(identifier) + "T";
+  } else {
+    throw_logic_error("invalid state");
+  }
   return j;
 }
 
@@ -191,15 +157,33 @@ json GetStruct(TypeDefinitionContext* type, optional<string> identifier) {
   // to be passed in separately.
   j["identifier"] = identifier ? *identifier : type->type_identifier->id;
 
-  for (TypeDefinitionContext* nested_type :
-       type->fieldBlock()->typeDefinition()) {
-    j["type_decls"].push_back(GetType(nested_type));
+  if (type->fieldBlock()->typeDefinition().size()) {
+    j["nested_type_decls"].push_back(
+        GetUserTypeDecls(type->fieldBlock()->typeDefinition()));
   }
 
+  // Some field types require inline type declarations.
   for (FieldDefinitionContext* field : type->fieldBlock()->fieldDefinition()) {
-    if (DefinesInlineType(field)) {
-      j["inline_type_decls"].push_back(
-          GetType(field->typeDefinition(), GetNestedTypeIdentifier(field)));
+    if (DefinesAndUsesInlineUserType(field)) {
+      j["inline_type_decls"].push_back(GetUserInlineTypeDeclaration(
+          field->typeDefinition(), GetNestedTypeIdentifier(field)));
+    } else if (field->typeAnnotation()) {
+      TypeAnnotationContext* tac = field->typeAnnotation();
+      if (ReferencesBuiltinType(tac)) {
+        if (ReferencesBuiltinVectorType(tac)) {
+          j["inline_type_decls"].push_back(
+              GetVector(tac, GetNestedTypeIdentifier(field)));
+        } else if (ReferencesBuiltinMapType(tac)) {
+          j["inline_type_decls"].push_back(
+              GetMap(tac, GetNestedTypeIdentifier(field)));
+        } else {
+          throw_logic_error("invalid state");
+        }
+      } else {
+        throw_logic_error("invalid state");
+      }
+    } else {
+      throw_logic_error("invalid state");
     }
   }
 
@@ -210,128 +194,133 @@ json GetStruct(TypeDefinitionContext* type, optional<string> identifier) {
   return j;
 }
 
-// json GetVector(Vector& vec, std::optional<string> identifier = nullopt) {
-//   json j;
-//   // If it's an inline type, the identifier is the field name which has
-//   // to be passed in separately.
-//   j["identifier"] = identifier ? *identifier : *vec.identifier;
-//   if (vec.element_type->IsPrimitive()) {
-//     if (vec.element_type->IsBool()) {
-//       j["element_cpp_type"] = "bool";
-//     } else if (vec.element_type->IsChar()) {
-//       j["element_cpp_type"] = "char32_t";
-//     } else if (vec.element_type->IsStr()) {
-//       j["element_cpp_type"] = "std::string";
-//     } else if (vec.element_type->IsF32()) {
-//       j["element_cpp_type"] = "float";
-//     } else if (vec.element_type->IsF64()) {
-//       j["element_cpp_type"] = "double";
-//     } else if (vec.element_type->IsU8()) {
-//       j["element_cpp_type"] = "std::uint8_t";
-//     } else if (vec.element_type->IsU16()) {
-//       j["element_cpp_type"] = "std::uint16_t";
-//     } else if (vec.element_type->IsU32()) {
-//       j["element_cpp_type"] = "std::uint32_t";
-//     } else if (vec.element_type->IsU64()) {
-//       j["element_cpp_type"] = "std::uint64_t";
-//     } else if (vec.element_type->IsI8()) {
-//       j["element_cpp_type"] = "std::int8_t";
-//     } else if (vec.element_type->IsI16()) {
-//       j["element_cpp_type"] = "std::int16_t";
-//     } else if (vec.element_type->IsI32()) {
-//       j["element_cpp_type"] = "std::int32_t";
-//     } else if (vec.element_type->IsI64()) {
-//       j["element_cpp_type"] = "std::int64_t";
-//     } else {
-//       throw_logic_error("invalid state");
-//     }
-//   } else if (vec.element_type->IsSymref()) {
-//     CppTypeInfo cpp_type_info =
-//         GetAccessInfoForType(vec.element_type->symref_target.get());
-//     j["element_cpp_type"] = cpp_type_info.cpp_type;
-//   } else {
-//     throw_logic_error("invalid state");
-//   }
+json GetVector(TypeAnnotationContext* ctx, string identifier) {
+  json j;
+  j["identifier"] = identifier;
 
-//   return j;
-// }
+  // THIS IS WHERE I CURRENTLY AM WORKING !!!!!!!!!!!!!!!!!!!!!!
+  // TODO use GetAccessInfoForType here.
+  // TODO make sure to use element.cpp_type here and map.
+  // TODO now that I'm dropping the `vector SomeVec<>; sytax
+  //      figure out inline types for vectors so you can have
+  //      vectors of vectors, and of maps.
+  // THIS IS WHERE I CURRENTLY AM WORKING !!!!!!!!!!!!!!!!!!!!!!
 
-// json GetMap(Map& map, std::optional<string> identifier = nullopt) {
-//   json j;
-//   // If it's an inline type, the identifier is the field name which has
-//   // to be passed in separately.
-//   j["identifier"] = identifier ? *identifier : *map.identifier;
+  //   if (vec.element_type->IsPrimitive()) {
+  //     if (vec.element_type->IsBool()) {
+  //       j["element_cpp_type"] = "bool";
+  //     } else if (vec.element_type->IsChar()) {
+  //       j["element_cpp_type"] = "char32_t";
+  //     } else if (vec.element_type->IsStr()) {
+  //       j["element_cpp_type"] = "std::string";
+  //     } else if (vec.element_type->IsF32()) {
+  //       j["element_cpp_type"] = "float";
+  //     } else if (vec.element_type->IsF64()) {
+  //       j["element_cpp_type"] = "double";
+  //     } else if (vec.element_type->IsU8()) {
+  //       j["element_cpp_type"] = "std::uint8_t";
+  //     } else if (vec.element_type->IsU16()) {
+  //       j["element_cpp_type"] = "std::uint16_t";
+  //     } else if (vec.element_type->IsU32()) {
+  //       j["element_cpp_type"] = "std::uint32_t";
+  //     } else if (vec.element_type->IsU64()) {
+  //       j["element_cpp_type"] = "std::uint64_t";
+  //     } else if (vec.element_type->IsI8()) {
+  //       j["element_cpp_type"] = "std::int8_t";
+  //     } else if (vec.element_type->IsI16()) {
+  //       j["element_cpp_type"] = "std::int16_t";
+  //     } else if (vec.element_type->IsI32()) {
+  //       j["element_cpp_type"] = "std::int32_t";
+  //     } else if (vec.element_type->IsI64()) {
+  //       j["element_cpp_type"] = "std::int64_t";
+  //     } else {
+  //       throw_logic_error("invalid state");
+  //     }
+  //   } else if (vec.element_type->IsSymref()) {
+  //     CppTypeInfo cpp_type_info =
+  //         GetAccessInfoForType(vec.element_type->symref_target.get());
+  //     j["element_cpp_type"] = cpp_type_info.cpp_type;
+  //   } else {
+  //     throw_logic_error("invalid state");
+  //   }
 
-//   if (map.key_type->IsBool()) {
-//     j["key_cpp_type"] = "bool";
-//   } else if (map.key_type->IsChar()) {
-//     j["key_cpp_type"] = "char32_t";
-//   } else if (map.key_type->IsStr()) {
-//     j["key_cpp_type"] = "std::string";
-//   } else if (map.key_type->IsF32()) {
-//     j["key_cpp_type"] = "float";
-//   } else if (map.key_type->IsF64()) {
-//     j["key_cpp_type"] = "double";
-//   } else if (map.key_type->IsU8()) {
-//     j["key_cpp_type"] = "std::uint8_t";
-//   } else if (map.key_type->IsU16()) {
-//     j["key_cpp_type"] = "std::uint16_t";
-//   } else if (map.key_type->IsU32()) {
-//     j["key_cpp_type"] = "std::uint32_t";
-//   } else if (map.key_type->IsU64()) {
-//     j["key_cpp_type"] = "std::uint64_t";
-//   } else if (map.key_type->IsI8()) {
-//     j["key_cpp_type"] = "std::int8_t";
-//   } else if (map.key_type->IsI16()) {
-//     j["key_cpp_type"] = "std::int16_t";
-//   } else if (map.key_type->IsI32()) {
-//     j["key_cpp_type"] = "std::int32_t";
-//   } else if (map.key_type->IsI64()) {
-//     j["key_cpp_type"] = "std::int64_t";
-//   } else {
-//     throw_logic_error("invalid state");
-//   }
+  return j;
+}
 
-//   if (map.value_type->IsPrimitive()) {
-//     if (map.value_type->IsBool()) {
-//       j["value_cpp_type"] = "bool";
-//     } else if (map.value_type->IsChar()) {
-//       j["value_cpp_type"] = "char32_t";
-//     } else if (map.value_type->IsStr()) {
-//       j["value_cpp_type"] = "std::string";
-//     } else if (map.value_type->IsF32()) {
-//       j["value_cpp_type"] = "float";
-//     } else if (map.value_type->IsF64()) {
-//       j["value_cpp_type"] = "double";
-//     } else if (map.value_type->IsU8()) {
-//       j["value_cpp_type"] = "std::uint8_t";
-//     } else if (map.value_type->IsU16()) {
-//       j["value_cpp_type"] = "std::uint16_t";
-//     } else if (map.value_type->IsU32()) {
-//       j["value_cpp_type"] = "std::uint32_t";
-//     } else if (map.value_type->IsU64()) {
-//       j["value_cpp_type"] = "std::uint64_t";
-//     } else if (map.value_type->IsI8()) {
-//       j["value_cpp_type"] = "std::int8_t";
-//     } else if (map.value_type->IsI16()) {
-//       j["value_cpp_type"] = "std::int16_t";
-//     } else if (map.value_type->IsI32()) {
-//       j["value_cpp_type"] = "std::int32_t";
-//     } else if (map.value_type->IsI64()) {
-//       j["value_cpp_type"] = "std::int64_t";
-//     } else {
-//       throw_logic_error("invalid state");
-//     }
-//   } else if (map.value_type->IsSymref()) {
-//     CppTypeInfo cpp_type_info =
-//         GetAccessInfoForType(map.value_type->symref_target.get());
-//     j["value_cpp_type"] = cpp_type_info.cpp_type;
-//   } else {
-//     throw_logic_error("invalid state");
-//   }
+json GetMap(TypeAnnotationContext* ctx, string identifier) {
+  json j;
+  j["identifier"] = identifier;
 
-//   return j;
-// }
+  //   if (map.key_type->IsBool()) {
+  //     j["key_cpp_type"] = "bool";
+  //   } else if (map.key_type->IsChar()) {
+  //     j["key_cpp_type"] = "char32_t";
+  //   } else if (map.key_type->IsStr()) {
+  //     j["key_cpp_type"] = "std::string";
+  //   } else if (map.key_type->IsF32()) {
+  //     j["key_cpp_type"] = "float";
+  //   } else if (map.key_type->IsF64()) {
+  //     j["key_cpp_type"] = "double";
+  //   } else if (map.key_type->IsU8()) {
+  //     j["key_cpp_type"] = "std::uint8_t";
+  //   } else if (map.key_type->IsU16()) {
+  //     j["key_cpp_type"] = "std::uint16_t";
+  //   } else if (map.key_type->IsU32()) {
+  //     j["key_cpp_type"] = "std::uint32_t";
+  //   } else if (map.key_type->IsU64()) {
+  //     j["key_cpp_type"] = "std::uint64_t";
+  //   } else if (map.key_type->IsI8()) {
+  //     j["key_cpp_type"] = "std::int8_t";
+  //   } else if (map.key_type->IsI16()) {
+  //     j["key_cpp_type"] = "std::int16_t";
+  //   } else if (map.key_type->IsI32()) {
+  //     j["key_cpp_type"] = "std::int32_t";
+  //   } else if (map.key_type->IsI64()) {
+  //     j["key_cpp_type"] = "std::int64_t";
+  //   } else {
+  //     throw_logic_error("invalid state");
+  //   }
+
+  //   if (map.value_type->IsPrimitive()) {
+  //     if (map.value_type->IsBool()) {
+  //       j["value_cpp_type"] = "bool";
+  //     } else if (map.value_type->IsChar()) {
+  //       j["value_cpp_type"] = "char32_t";
+  //     } else if (map.value_type->IsStr()) {
+  //       j["value_cpp_type"] = "std::string";
+  //     } else if (map.value_type->IsF32()) {
+  //       j["value_cpp_type"] = "float";
+  //     } else if (map.value_type->IsF64()) {
+  //       j["value_cpp_type"] = "double";
+  //     } else if (map.value_type->IsU8()) {
+  //       j["value_cpp_type"] = "std::uint8_t";
+  //     } else if (map.value_type->IsU16()) {
+  //       j["value_cpp_type"] = "std::uint16_t";
+  //     } else if (map.value_type->IsU32()) {
+  //       j["value_cpp_type"] = "std::uint32_t";
+  //     } else if (map.value_type->IsU64()) {
+  //       j["value_cpp_type"] = "std::uint64_t";
+  //     } else if (map.value_type->IsI8()) {
+  //       j["value_cpp_type"] = "std::int8_t";
+  //     } else if (map.value_type->IsI16()) {
+  //       j["value_cpp_type"] = "std::int16_t";
+  //     } else if (map.value_type->IsI32()) {
+  //       j["value_cpp_type"] = "std::int32_t";
+  //     } else if (map.value_type->IsI64()) {
+  //       j["value_cpp_type"] = "std::int64_t";
+  //     } else {
+  //       throw_logic_error("invalid state");
+  //     }
+  //   } else if (map.value_type->IsSymref()) {
+  //     CppTypeInfo cpp_type_info =
+  //         GetAccessInfoForType(map.value_type->symref_target.get());
+  //     j["value_cpp_type"] = cpp_type_info.cpp_type;
+  //   } else {
+  //     throw_logic_error("invalid state");
+  //   }
+
+  return j;
+}
 
 // json GetTemplateInsertion(td::TmplStrTable::InsertionPtr insertion) {
 //   json j;
@@ -441,30 +430,19 @@ json GetStruct(TypeDefinitionContext* type, optional<string> identifier) {
 //   return j;
 // }
 
-json GetType(TypeDefinitionContext* type,
-             optional<string> identifier = nullptr) {
-  json j;
-  if (DefinesStruct(type)) {
-    j["struct"] = GetStruct(typ, identifier);
-  } else if (DefinesVariant(type)) {
-    // The data fed to the template is the same as for struct.
-    j["variant"] = GetStruct(type, identifier);
-    // } else if (type->IsVector()) {
-    //   j["vector"] = GetVector(*type->vec);
-    // } else if (type->IsMap()) {
-    //   j["map"] = GetMap(*type->map);
-    // } else if (type->IsTemplate()) {
-    //   j["template"] = GetTemplate(type->template_function);
-  } else {
-    throw_logic_error("invalid state");
-  }
-  return j;
-}
-
-json GetTypeDecls(vector<TypeDefinitionContext*> types) {
+json GetUserTypeDecls(vector<TypeDefinitionContext*> types) {
   json arr = json::array();
-  for (TypeDefinitionContext* tp : types) {
-    arr.push_back(GetType(tp));
+  for (TypeDefinitionContext* type : types) {
+    json j;
+    if (DefinesStruct(type)) {
+      j["struct"] = GetStruct(type, nullopt);
+    } else if (DefinesVariant(type)) {
+      // The data fed to the template is the same as for struct.
+      j["variant"] = GetStruct(type, nullopt);
+    } else {
+      throw_logic_error("invalid state");
+    }
+    arr.push_back(j);
   }
   return arr;
 }
@@ -491,7 +469,8 @@ void CodegenCpp(OutPathBase* out_path, Parser* parsed_file) {
     data["namespaces"].push_back(path_part->id);
   }
 
-  data["type_decls"] = GetTypeDecls(compilation_unit->typeDefinition());
+  data["user_type_decls"] =
+      GetUserTypeDecls(compilation_unit->typeDefinition());
 
   std::cout << data.dump(1) << std::endl;
 
@@ -552,9 +531,9 @@ void CodegenCpp(OutPathBase* out_path, Parser* parsed_file) {
   struct_tmpl = env.parse(R"(
 class {{identifier}} {
  public:
-## if exists("type_decls")
+## if exists("nested_type_decls")
   // Nested type declarations.
-## for type_decl in type_decls
+## for type_decl in nested_type_decls
 ## if existsIn(type_decl, "struct")
   {{ struct(type_decl.struct) }}
 ## else if existsIn(type_decl, "variant")
@@ -658,9 +637,9 @@ class {{identifier}} {
   variant_tmpl = env.parse(R"(
 class {{identifier}} {
  public:
-## if exists("type_decls")
+## if exists("nested_type_decls")
   // Nested type declarations.
-## for type_decl in type_decls
+## for type_decl in nested_type_decls
 ## if existsIn(type_decl, "struct")
   {{ struct(type_decl.struct) }}
 ## else if existsIn(type_decl, "variant")
@@ -818,7 +797,7 @@ class {{identifier}} {
   )");
 
   vector_tmpl = env.parse(R"(
-class {{identifier}} : public std::vector<{{element_cpp_type}}> {
+class {{identifier}} : public std::vector<{{element.cpp_type}}> {
  public:
   {{identifier}}() = default;
   ~{{identifier}}() = default;
@@ -830,7 +809,7 @@ class {{identifier}} : public std::vector<{{element_cpp_type}}> {
 };  // class {{identifier}}
   )");
   map_tmpl = env.parse(R"(
-class {{identifier}} : public std::map<{{key_cpp_type}}, {{value_cpp_type}}> {
+class {{identifier}} : public std::map<{{key.cpp_type}}, {{value.cpp_type}}> {
  public:
   {{identifier}}() = default;
   ~{{identifier}}() = default;
