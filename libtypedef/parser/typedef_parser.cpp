@@ -35,8 +35,6 @@ Parser::Parser(istream &input)
       parser_error_listener_(errors_) {}
 
 size_t Parser::Parse() {
-  TypedefParser::CompilationUnitContext *compilation_unit = nullptr;
-
   // TODO revisit this and how it's used below to make a null compilation
   // unit?
   bool fast = false;
@@ -49,12 +47,12 @@ size_t Parser::Parse() {
       antlr4::atn::PredictionMode::SLL);
 
   try {
-    compilation_unit = parser_.compilationUnit();
+    compilation_unit_ = parser_.compilationUnit();
   } catch (antlr4::ParseCancellationException &) {
     // Even in fast mode we have to do a second run if we got no error yet
     // (BailErrorStrategy does not do full processing).
     if (fast && !errors_.empty()) {
-      compilation_unit = nullptr;
+      compilation_unit_ = nullptr;
     } else {
       // If parsing was canceled we either really have a syntax error or we
       // need to do a second step, now with the default strategy and LL
@@ -65,24 +63,24 @@ size_t Parser::Parse() {
       parser_.setErrorHandler(make_shared<antlr4::DefaultErrorStrategy>());
       parser_.getInterpreter<antlr4::atn::ParserATNSimulator>()
           ->setPredictionMode(antlr4::atn::PredictionMode::LL);
-      compilation_unit = parser_.compilationUnit();
+      compilation_unit_ = parser_.compilationUnit();
     }
   }
 
-  if (!compilation_unit) {
+  if (!compilation_unit_) {
     // can we fail to have a compilation unit without errors?
     return errors_.size();
   }
 
   FirstPassListener first_pass(errors_);
-  antlr4::tree::ParseTreeWalker::DEFAULT.walk(&first_pass, compilation_unit);
+  antlr4::tree::ParseTreeWalker::DEFAULT.walk(&first_pass, compilation_unit_);
 
   if (errors_.size()) {
     return errors_.size();
   }
 
   SecondPassListener second_pass(errors_);
-  antlr4::tree::ParseTreeWalker::DEFAULT.walk(&second_pass, compilation_unit);
+  antlr4::tree::ParseTreeWalker::DEFAULT.walk(&second_pass, compilation_unit_);
   return errors_.size();
 }
 

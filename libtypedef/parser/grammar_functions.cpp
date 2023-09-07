@@ -16,7 +16,7 @@ std::string ToString(TypedefParser::SymbolPathContext* ctx,
   std::stringstream ss;
   ss << id_vec[0]->id;
   for (size_t ii = 1; ii < id_vec.size(); ii++) {
-    ss << id_vec[ii]->id << delimiter;
+    ss << delimiter << id_vec[ii]->id;
   }
 
   return ss.str();
@@ -39,20 +39,22 @@ bool DefinesAndUsesInlineUserType(
   return field->typeDefinition() != nullptr;
 }
 
-bool ReferencesUserType(TypedefParser::TypeAnnotationContext* ctx) {
-  return ctx->typeIdentifier() != nullptr &&
-         ctx->typeIdentifier()->userType() != nullptr &&
-         ctx->typeIdentifier()->userType()->identifier() != nullptr;
+bool ReferencesUserType(TypedefParser::TypeIdentifierContext* ctx) {
+  return ctx->userType() != nullptr && ctx->userType()->identifier() != nullptr;
 }
 
 TypedefParser::UserTypeContext* GetReferencedUserType(
-    TypedefParser::TypeAnnotationContext* ctx) {
-  return ReferencesUserType(ctx) ? ctx->typeIdentifier()->userType() : nullptr;
+    TypedefParser::TypeIdentifierContext* ctx) {
+  return ReferencesUserType(ctx) ? ctx->userType() : nullptr;
 }
 
 // ---- Builtin types ----------------------------------------------------------
 
 bool ReferencesBuiltinType(TypedefParser::TypeAnnotationContext* ctx) {
+  return ctx->typeIdentifier() && ReferencesBuiltinType(ctx->typeIdentifier());
+}
+
+bool ReferencesBuiltinType(TypedefParser::TypeIdentifierContext* ctx) {
   return ReferencesBuiltinVectorType(ctx) || ReferencesBuiltinMapType(ctx);
 }
 
@@ -60,15 +62,27 @@ bool ReferencesBuiltinVectorType(TypedefParser::TypeAnnotationContext* ctx) {
   return ctx->typeIdentifier() && ctx->typeIdentifier()->KW_VECTOR() != nullptr;
 }
 
+bool ReferencesBuiltinVectorType(TypedefParser::TypeIdentifierContext* ctx) {
+  return ctx->KW_VECTOR() != nullptr;
+}
+
 bool ReferencesBuiltinMapType(TypedefParser::TypeAnnotationContext* ctx) {
   return ctx->typeIdentifier() && ctx->typeIdentifier()->KW_MAP() != nullptr;
+}
+
+bool ReferencesBuiltinMapType(TypedefParser::TypeIdentifierContext* ctx) {
+  return ctx->KW_MAP() != nullptr;
 }
 
 // ---- Primitive field types --------------------------------------------------
 
 bool ReferencesPrimitiveType(TypedefParser::TypeAnnotationContext* ctx) {
-  return ctx->typeIdentifier() != nullptr &&
-         ctx->typeIdentifier()->primitiveTypeIdentifier() != nullptr;
+  return ctx->typeIdentifier() &&
+         ReferencesPrimitiveType(ctx->typeIdentifier());
+}
+
+bool ReferencesPrimitiveType(TypedefParser::TypeIdentifierContext* ctx) {
+  return ctx->primitiveTypeIdentifier() != nullptr;
 }
 
 TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitive(

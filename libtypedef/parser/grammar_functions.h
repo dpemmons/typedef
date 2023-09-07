@@ -10,10 +10,10 @@
 namespace td {
 
 std::string ToString(TypedefParser::SymbolPathContext* ctx,
-                     const std::string& delimiter = "");
+                     const std::string& delimiter);
 
 inline std::string ToString(TypedefParser::ModuleDeclarationContext* ctx,
-                            const std::string& delimiter = "") {
+                            const std::string& delimiter) {
   return ToString(ctx->symbolPath(), delimiter);
 }
 
@@ -23,15 +23,19 @@ bool DefinesVariant(TypedefParser::TypeDefinitionContext* type);
 
 bool DefinesAndUsesInlineUserType(TypedefParser::FieldDefinitionContext* field);
 
-bool ReferencesUserType(TypedefParser::TypeAnnotationContext* ctx);
+bool ReferencesUserType(TypedefParser::TypeIdentifierContext* ctx);
 TypedefParser::UserTypeContext* GetReferencedUserType(
-    TypedefParser::TypeAnnotationContext* ctx);
+    TypedefParser::TypeIdentifierContext* ctx);
 
 bool ReferencesBuiltinType(TypedefParser::TypeAnnotationContext* ctx);
+bool ReferencesBuiltinType(TypedefParser::TypeIdentifierContext* ctx);
 bool ReferencesBuiltinVectorType(TypedefParser::TypeAnnotationContext* ctx);
+bool ReferencesBuiltinVectorType(TypedefParser::TypeIdentifierContext* ctx);
 bool ReferencesBuiltinMapType(TypedefParser::TypeAnnotationContext* ctx);
+bool ReferencesBuiltinMapType(TypedefParser::TypeIdentifierContext* ctx);
 
 bool ReferencesPrimitiveType(TypedefParser::TypeAnnotationContext* ctx);
+bool ReferencesPrimitiveType(TypedefParser::TypeIdentifierContext* ctx);
 TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitive(
     TypedefParser::TypeAnnotationContext* ctx);
 bool IsBool(TypedefParser::PrimitiveTypeIdentifierContext* ctx);

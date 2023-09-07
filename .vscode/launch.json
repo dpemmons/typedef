@@ -19,7 +19,7 @@
       "program": "${workspaceRoot}/build/debug/typedef",
       "args": [
         "--cpp_out=/tmp",
-        "${workspaceRoot}/examples/tests/templates.td"
+        "${workspaceRoot}/examples/tests/structs.td"
       ],
       "cwd": "${workspaceFolder}",
     },

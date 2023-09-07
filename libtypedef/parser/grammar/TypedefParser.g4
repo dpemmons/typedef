@@ -18,7 +18,7 @@ options {
 
 compilationUnit:
 	typedefVersionDeclaration moduleDeclaration (useDeclaration)* (
-		typeDefinition ';'
+		typeDefinition
 	)* EOF;
 
 typedefVersionDeclaration: 'typedef' EQ identifier ';';
@@ -27,7 +27,7 @@ moduleDeclaration: 'module' symbolPath ';';
 // struct|variant SomeVariant { optionA: i32; optionB: str; }
 typeDefinition: (KW_STRUCT | KW_VARIANT) type_identifier = identifier? (
 		'<' (type_parameter = identifier ',')+ '>'
-	)? '{' fieldBlock '}';
+	)? '{' fieldBlock '}' ';'?;
 
 fieldBlock: ( typeDefinition | (fieldDefinition ';'))*;
 
@@ -38,6 +38,10 @@ fieldDefinition:
 
 typeAnnotation:
 	typeIdentifier ('<' typeArgument (',' typeArgument)* '>')?;
+
+// TODO since we're dropping the `vector SomeVec<>; sytax figure out inline types for vectors so you
+// can have vectors of vectors, and of maps.
+
 typeArgument: typeIdentifier;
 typeIdentifier:
 	primitiveTypeIdentifier

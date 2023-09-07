@@ -29,6 +29,7 @@ using PrimitiveTypeIdentifierContext =
     TypedefParser::PrimitiveTypeIdentifierContext;
 using UserTypeContext = TypedefParser::UserTypeContext;
 using TypeAnnotationContext = TypedefParser::TypeAnnotationContext;
+using TypeIdentifierContext = TypedefParser::TypeIdentifierContext;
 
 json GetMap(TypeAnnotationContext* ctx, string identifier);
 json GetVector(TypeAnnotationContext* ctx, string identifier);
@@ -58,10 +59,10 @@ json GetAccessInfoForType(TypeDefinitionContext* type) {
   return j;
 }
 
-json GetAccessInfoForType(TypeAnnotationContext* ctx) {
+json GetAccessInfoForType(TypeIdentifierContext* ctx) {
   json j;
-  if (ReferencesPrimitiveType(ctx)) {
-    PrimitiveTypeIdentifierContext* p = GetReferencedPrimitive(ctx);
+  if (ctx->primitiveTypeIdentifier()) {
+    PrimitiveTypeIdentifierContext* p = ctx->primitiveTypeIdentifier();
     if (IsBool(p)) {
       j["cpp_type"] = "bool";
       j["access_by"] = "value";
@@ -117,10 +118,10 @@ json GetAccessInfoForType(TypeAnnotationContext* ctx) {
 json GetField(FieldDefinitionContext* field) {
   json j;
   j["identifier"] = escape_utf8_to_cpp_identifier(field->field_identifier->id);
-  TypeAnnotationContext* tac = field->typeAnnotation();
-  if (ReferencesPrimitiveType(tac) || ReferencesUserType(tac)) {
-    j = GetAccessInfoForType(tac);
-  } else if (ReferencesBuiltinType(tac)) {
+  TypeIdentifierContext* tic = field->typeAnnotation()->typeIdentifier();
+  if (ReferencesPrimitiveType(tic) || ReferencesUserType(tic)) {
+    j = GetAccessInfoForType(tic);
+  } else if (ReferencesBuiltinType(tic)) {
     j["cpp_type"] = GetNestedTypeIdentifier(field);
     j["access_by"] = "reference";
   } else if (DefinesAndUsesInlineUserType(field)) {
@@ -143,7 +144,8 @@ json GetReferencedBuiltinTypeDeclaration(
     TypedefParser::TypeAnnotationContext* type, const string& identifier) {
   json j;
   j["access_by"] = "reference";
-  if (ReferencesBuiltinMapType(type) || ReferencesBuiltinMapType(type)) {
+  if (ReferencesBuiltinMapType(type->typeIdentifier()) ||
+      ReferencesBuiltinMapType(type->typeIdentifier())) {
     j["cpp_type"] = escape_utf8_to_cpp_identifier(identifier) + "T";
   } else {
     throw_logic_error("invalid state");
@@ -179,11 +181,7 @@ json GetStruct(TypeDefinitionContext* type, optional<string> identifier) {
         } else {
           throw_logic_error("invalid state");
         }
-      } else {
-        throw_logic_error("invalid state");
       }
-    } else {
-      throw_logic_error("invalid state");
     }
   }
 
@@ -197,128 +195,18 @@ json GetStruct(TypeDefinitionContext* type, optional<string> identifier) {
 json GetVector(TypeAnnotationContext* ctx, string identifier) {
   json j;
   j["identifier"] = identifier;
-
-  // THIS IS WHERE I CURRENTLY AM WORKING !!!!!!!!!!!!!!!!!!!!!!
-  // TODO use GetAccessInfoForType here.
-  // TODO make sure to use element.cpp_type here and map.
-  // TODO now that I'm dropping the `vector SomeVec<>; sytax
-  //      figure out inline types for vectors so you can have
-  //      vectors of vectors, and of maps.
-  // THIS IS WHERE I CURRENTLY AM WORKING !!!!!!!!!!!!!!!!!!!!!!
-
-  //   if (vec.element_type->IsPrimitive()) {
-  //     if (vec.element_type->IsBool()) {
-  //       j["element_cpp_type"] = "bool";
-  //     } else if (vec.element_type->IsChar()) {
-  //       j["element_cpp_type"] = "char32_t";
-  //     } else if (vec.element_type->IsStr()) {
-  //       j["element_cpp_type"] = "std::string";
-  //     } else if (vec.element_type->IsF32()) {
-  //       j["element_cpp_type"] = "float";
-  //     } else if (vec.element_type->IsF64()) {
-  //       j["element_cpp_type"] = "double";
-  //     } else if (vec.element_type->IsU8()) {
-  //       j["element_cpp_type"] = "std::uint8_t";
-  //     } else if (vec.element_type->IsU16()) {
-  //       j["element_cpp_type"] = "std::uint16_t";
-  //     } else if (vec.element_type->IsU32()) {
-  //       j["element_cpp_type"] = "std::uint32_t";
-  //     } else if (vec.element_type->IsU64()) {
-  //       j["element_cpp_type"] = "std::uint64_t";
-  //     } else if (vec.element_type->IsI8()) {
-  //       j["element_cpp_type"] = "std::int8_t";
-  //     } else if (vec.element_type->IsI16()) {
-  //       j["element_cpp_type"] = "std::int16_t";
-  //     } else if (vec.element_type->IsI32()) {
-  //       j["element_cpp_type"] = "std::int32_t";
-  //     } else if (vec.element_type->IsI64()) {
-  //       j["element_cpp_type"] = "std::int64_t";
-  //     } else {
-  //       throw_logic_error("invalid state");
-  //     }
-  //   } else if (vec.element_type->IsSymref()) {
-  //     CppTypeInfo cpp_type_info =
-  //         GetAccessInfoForType(vec.element_type->symref_target.get());
-  //     j["element_cpp_type"] = cpp_type_info.cpp_type;
-  //   } else {
-  //     throw_logic_error("invalid state");
-  //   }
-
+  TypeIdentifierContext* element_ctx = ctx->typeArgument(0)->typeIdentifier();
+  j["element"] = GetAccessInfoForType(element_ctx);
   return j;
 }
 
 json GetMap(TypeAnnotationContext* ctx, string identifier) {
   json j;
   j["identifier"] = identifier;
-
-  //   if (map.key_type->IsBool()) {
-  //     j["key_cpp_type"] = "bool";
-  //   } else if (map.key_type->IsChar()) {
-  //     j["key_cpp_type"] = "char32_t";
-  //   } else if (map.key_type->IsStr()) {
-  //     j["key_cpp_type"] = "std::string";
-  //   } else if (map.key_type->IsF32()) {
-  //     j["key_cpp_type"] = "float";
-  //   } else if (map.key_type->IsF64()) {
-  //     j["key_cpp_type"] = "double";
-  //   } else if (map.key_type->IsU8()) {
-  //     j["key_cpp_type"] = "std::uint8_t";
-  //   } else if (map.key_type->IsU16()) {
-  //     j["key_cpp_type"] = "std::uint16_t";
-  //   } else if (map.key_type->IsU32()) {
-  //     j["key_cpp_type"] = "std::uint32_t";
-  //   } else if (map.key_type->IsU64()) {
-  //     j["key_cpp_type"] = "std::uint64_t";
-  //   } else if (map.key_type->IsI8()) {
-  //     j["key_cpp_type"] = "std::int8_t";
-  //   } else if (map.key_type->IsI16()) {
-  //     j["key_cpp_type"] = "std::int16_t";
-  //   } else if (map.key_type->IsI32()) {
-  //     j["key_cpp_type"] = "std::int32_t";
-  //   } else if (map.key_type->IsI64()) {
-  //     j["key_cpp_type"] = "std::int64_t";
-  //   } else {
-  //     throw_logic_error("invalid state");
-  //   }
-
-  //   if (map.value_type->IsPrimitive()) {
-  //     if (map.value_type->IsBool()) {
-  //       j["value_cpp_type"] = "bool";
-  //     } else if (map.value_type->IsChar()) {
-  //       j["value_cpp_type"] = "char32_t";
-  //     } else if (map.value_type->IsStr()) {
-  //       j["value_cpp_type"] = "std::string";
-  //     } else if (map.value_type->IsF32()) {
-  //       j["value_cpp_type"] = "float";
-  //     } else if (map.value_type->IsF64()) {
-  //       j["value_cpp_type"] = "double";
-  //     } else if (map.value_type->IsU8()) {
-  //       j["value_cpp_type"] = "std::uint8_t";
-  //     } else if (map.value_type->IsU16()) {
-  //       j["value_cpp_type"] = "std::uint16_t";
-  //     } else if (map.value_type->IsU32()) {
-  //       j["value_cpp_type"] = "std::uint32_t";
-  //     } else if (map.value_type->IsU64()) {
-  //       j["value_cpp_type"] = "std::uint64_t";
-  //     } else if (map.value_type->IsI8()) {
-  //       j["value_cpp_type"] = "std::int8_t";
-  //     } else if (map.value_type->IsI16()) {
-  //       j["value_cpp_type"] = "std::int16_t";
-  //     } else if (map.value_type->IsI32()) {
-  //       j["value_cpp_type"] = "std::int32_t";
-  //     } else if (map.value_type->IsI64()) {
-  //       j["value_cpp_type"] = "std::int64_t";
-  //     } else {
-  //       throw_logic_error("invalid state");
-  //     }
-  //   } else if (map.value_type->IsSymref()) {
-  //     CppTypeInfo cpp_type_info =
-  //         GetAccessInfoForType(map.value_type->symref_target.get());
-  //     j["value_cpp_type"] = cpp_type_info.cpp_type;
-  //   } else {
-  //     throw_logic_error("invalid state");
-  //   }
-
+  TypeIdentifierContext* key_ctx = ctx->typeArgument(0)->typeIdentifier();
+  j["key"] = GetAccessInfoForType(key_ctx);
+  TypeIdentifierContext* value_ctx = ctx->typeArgument(1)->typeIdentifier();
+  j["value"] = GetAccessInfoForType(value_ctx);
   return j;
 }
 
@@ -447,13 +335,12 @@ json GetUserTypeDecls(vector<TypeDefinitionContext*> types) {
   return arr;
 }
 
-void CodegenCpp(OutPathBase* out_path, Parser* parsed_file) {
-  TypedefParser::CompilationUnitContext* compilation_unit =
-      parsed_file->GetParser()->compilationUnit();
+void CodegenCpp(OutPathBase* out_path,
+                TypedefParser::CompilationUnitContext* compilation_unit_ctx) {
   filesystem::path hdr_filename =
-      ToString(compilation_unit->moduleDeclaration(), "_") + ".h";
+      ToString(compilation_unit_ctx->moduleDeclaration(), "/") + ".h";
   filesystem::path source_filename =
-      ToString(compilation_unit->moduleDeclaration(), "_") + ".cpp";
+      ToString(compilation_unit_ctx->moduleDeclaration(), "/") + ".cpp";
 
   auto hdr_file = out_path->OpenOutputFile(hdr_filename);
   hdr_file->Open();
@@ -465,12 +352,12 @@ void CodegenCpp(OutPathBase* out_path, Parser* parsed_file) {
   data["header_filename"] = hdr_filename;
   data["namespaces"] = json::array();
   for (auto& path_part :
-       compilation_unit->moduleDeclaration()->symbolPath()->identifier()) {
+       compilation_unit_ctx->moduleDeclaration()->symbolPath()->identifier()) {
     data["namespaces"].push_back(path_part->id);
   }
 
   data["user_type_decls"] =
-      GetUserTypeDecls(compilation_unit->typeDefinition());
+      GetUserTypeDecls(compilation_unit_ctx->typeDefinition());
 
   std::cout << data.dump(1) << std::endl;
 
@@ -859,7 +746,7 @@ void {{identifier}}(std::ostream& os{{params_list(params)}}) {
 namespace {{namespace}} {
 ## endfor
 
-## for type_decl in type_decls
+## for type_decl in user_type_decls
 ## if existsIn(type_decl, "struct")
   {{ struct(type_decl.struct) }}
 ## else if existsIn(type_decl, "variant")
@@ -891,7 +778,7 @@ namespace {{namespace}} {
 namespace {{namespace}} {
 ## endfor
 
-## for type_decl in type_decls
+## for type_decl in user_type_decls
 ## if existsIn(type_decl, "template")
 {{ tmpl_src(type_decl.template) }}
 ## endif

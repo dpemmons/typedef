@@ -62,7 +62,7 @@ int main(int argc, const char** argv) {
   }
   if (!args.GetCppOut().empty()) {
     auto outpath = std::make_unique<td::OutPath>(args.GetCppOut());
-    td::CodegenCpp(outpath.get(), &parser);
+    td::CodegenCpp(outpath.get(), parser.GetCompilationUnitContext());
   }
 
   // fmt::print("File contains {} symbols:\n", parser->GetSymbols());

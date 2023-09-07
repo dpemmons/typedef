@@ -10,7 +10,7 @@
 namespace td {
 
 void CodegenCpp(OutPathBase* out_path,
-                Parser* parsed_file);
+                TypedefParser::CompilationUnitContext* compilation_unit_ctx);
 
 }  // namespace td
 

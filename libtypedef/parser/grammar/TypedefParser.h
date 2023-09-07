@@ -111,8 +111,6 @@ public:
     UseDeclarationContext* useDeclaration(size_t i);
     std::vector<TypeDefinitionContext *> typeDefinition();
     TypeDefinitionContext* typeDefinition(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> SEMI();
-    antlr4::tree::TerminalNode* SEMI(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -171,6 +169,7 @@ public:
     antlr4::tree::TerminalNode *KW_VARIANT();
     antlr4::tree::TerminalNode *LT();
     antlr4::tree::TerminalNode *GT();
+    antlr4::tree::TerminalNode *SEMI();
     std::vector<IdentifierContext *> identifier();
     IdentifierContext* identifier(size_t i);
     std::vector<antlr4::tree::TerminalNode *> COMMA();

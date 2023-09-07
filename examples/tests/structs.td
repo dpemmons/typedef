@@ -17,7 +17,7 @@ struct SomeStruct0 {
   example_i32: i32;
   example_i64: i64;
 };
-
+/*
 // Struct with explictly typed primitive fields and bool, char and string literals.
 struct SomeStruct1 {
   example_bool: bool = true;
@@ -118,10 +118,11 @@ struct SomeStruct21 {
 
 // Struct with an nested vector
 struct SomeStruct22 {
-  vector NestedVector<i32>;
+  //vector NestedVector<i32>;
 };
 
 // Struct with an nested map
 struct SomeStruct23 {
-  map NestedMap<i32, f64>;
+  //map NestedMap<i32, f64>;
 };
+*/
