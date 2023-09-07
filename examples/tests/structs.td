@@ -17,7 +17,7 @@ struct SomeStruct0 {
   example_i32: i32;
   example_i64: i64;
 };
-/*
+
 // Struct with explictly typed primitive fields and bool, char and string literals.
 struct SomeStruct1 {
   example_bool: bool = true;
@@ -53,6 +53,7 @@ struct SomeStruct3 {
   example_i64: i64 = -64;
 };
 
+/*
 // Struct with implicitly typed primitive fields with explicitly typed literals.
 struct SomeStruct4 {
   example_f32 = 3.14f32;
@@ -75,6 +76,7 @@ struct SomeStruct5 {
   example_f32 = 3.14;
   example_i32 = -32;
 };
+*/
 
 // Struct with an inline struct
 struct SomeStruct10 {
@@ -82,6 +84,7 @@ struct SomeStruct10 {
     a: i32;
   };
 };
+
 
 // Struct with an inline variant
 struct SomeStruct11 {
@@ -125,4 +128,4 @@ struct SomeStruct22 {
 struct SomeStruct23 {
   //map NestedMap<i32, f64>;
 };
-*/
+

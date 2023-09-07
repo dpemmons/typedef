@@ -34,6 +34,8 @@ using TypeIdentifierContext = TypedefParser::TypeIdentifierContext;
 json GetMap(TypeAnnotationContext* ctx, string identifier);
 json GetVector(TypeAnnotationContext* ctx, string identifier);
 json GetUserTypeDecls(vector<TypeDefinitionContext*> types);
+json GetTypeDeclaration(TypedefParser::TypeDefinitionContext* type,
+                        optional<string> maybe_identifier);
 
 std::string GetNestedTypeIdentifier(FieldDefinitionContext* field) {
   return escape_utf8_to_cpp_identifier(field->field_identifier->id + "T");
@@ -118,25 +120,24 @@ json GetAccessInfoForType(TypeIdentifierContext* ctx) {
 json GetField(FieldDefinitionContext* field) {
   json j;
   j["identifier"] = escape_utf8_to_cpp_identifier(field->field_identifier->id);
-  TypeIdentifierContext* tic = field->typeAnnotation()->typeIdentifier();
-  if (ReferencesPrimitiveType(tic) || ReferencesUserType(tic)) {
-    j = GetAccessInfoForType(tic);
-  } else if (ReferencesBuiltinType(tic)) {
-    j["cpp_type"] = GetNestedTypeIdentifier(field);
-    j["access_by"] = "reference";
-  } else if (DefinesAndUsesInlineUserType(field)) {
+  if (DefinesAndUsesInlineUserType(field)) {
     j["cpp_type"] = GetNestedTypeIdentifier(field);
     j["access_by"] = "pointer";
+  } else if (field->typeAnnotation()) {
+    TypeAnnotationContext* tac = field->typeAnnotation();
+    TypeIdentifierContext* tic = tac->typeIdentifier();
+    if (ReferencesPrimitiveType(tic) || ReferencesUserType(tic)) {
+      j.merge_patch(GetAccessInfoForType(tic));
+    } else if (ReferencesBuiltinType(tic)) {
+      j["cpp_type"] = GetNestedTypeIdentifier(field);
+      j["access_by"] = "reference";
+    } else {
+      throw_logic_error("invalid state");
+    }
   } else {
     throw_logic_error("invalid state");
   }
 
-  return j;
-}
-
-json GetUserInlineTypeDeclaration(TypedefParser::TypeDefinitionContext* type,
-                                  const string& identifier) {
-  json j;
   return j;
 }
 
@@ -153,11 +154,12 @@ json GetReferencedBuiltinTypeDeclaration(
   return j;
 }
 
-json GetStruct(TypeDefinitionContext* type, optional<string> identifier) {
+json GetStruct(TypeDefinitionContext* type, optional<string> maybe_identifier) {
   json j;
   // If it's an inline type, the identifier is the field name which has
   // to be passed in separately.
-  j["identifier"] = identifier ? *identifier : type->type_identifier->id;
+  j["identifier"] =
+      maybe_identifier ? *maybe_identifier : type->type_identifier->id;
 
   if (type->fieldBlock()->typeDefinition().size()) {
     j["nested_type_decls"].push_back(
@@ -167,20 +169,20 @@ json GetStruct(TypeDefinitionContext* type, optional<string> identifier) {
   // Some field types require inline type declarations.
   for (FieldDefinitionContext* field : type->fieldBlock()->fieldDefinition()) {
     if (DefinesAndUsesInlineUserType(field)) {
-      j["inline_type_decls"].push_back(GetUserInlineTypeDeclaration(
+      j["inline_type_decls"].push_back(GetTypeDeclaration(
           field->typeDefinition(), GetNestedTypeIdentifier(field)));
     } else if (field->typeAnnotation()) {
       TypeAnnotationContext* tac = field->typeAnnotation();
       if (ReferencesBuiltinType(tac)) {
+        json ilt;
         if (ReferencesBuiltinVectorType(tac)) {
-          j["inline_type_decls"].push_back(
-              GetVector(tac, GetNestedTypeIdentifier(field)));
+          ilt["vector"] = GetVector(tac, GetNestedTypeIdentifier(field));
         } else if (ReferencesBuiltinMapType(tac)) {
-          j["inline_type_decls"].push_back(
-              GetMap(tac, GetNestedTypeIdentifier(field)));
+          ilt["map"] = GetMap(tac, GetNestedTypeIdentifier(field));
         } else {
           throw_logic_error("invalid state");
         }
+        j["inline_type_decls"].push_back(ilt);
       }
     }
   }
@@ -318,19 +320,24 @@ json GetMap(TypeAnnotationContext* ctx, string identifier) {
 //   return j;
 // }
 
+json GetTypeDeclaration(TypedefParser::TypeDefinitionContext* type,
+                        optional<string> maybe_identifier) {
+  json j;
+  if (DefinesStruct(type)) {
+    j["struct"] = GetStruct(type, maybe_identifier);
+  } else if (DefinesVariant(type)) {
+    // The data fed to the template is the same as for struct.
+    j["variant"] = GetStruct(type, maybe_identifier);
+  } else {
+    throw_logic_error("invalid state");
+  }
+  return j;
+}
+
 json GetUserTypeDecls(vector<TypeDefinitionContext*> types) {
   json arr = json::array();
   for (TypeDefinitionContext* type : types) {
-    json j;
-    if (DefinesStruct(type)) {
-      j["struct"] = GetStruct(type, nullopt);
-    } else if (DefinesVariant(type)) {
-      // The data fed to the template is the same as for struct.
-      j["variant"] = GetStruct(type, nullopt);
-    } else {
-      throw_logic_error("invalid state");
-    }
-    arr.push_back(j);
+    arr.push_back(GetTypeDeclaration(type, nullopt));
   }
   return arr;
 }
@@ -725,8 +732,8 @@ void {{identifier}}(std::ostream& os{{params_list(params)}}) {
   )");
 
   auto header_tmpl = env.parse(R"(
-#ifndef CODEGEN_CODEGEN_CPP_H__
-#define CODEGEN_CODEGEN_CPP_H__
+#ifndef {{header_guard}}
+#define {{header_guard}}
 
 #include <cstdint>
 #include <memory>
@@ -764,7 +771,7 @@ namespace {{namespace}} {
 }  // namespace {{namespace}}
 ## endfor
 
-#endif  // CODEGEN_CODEGEN_CPP_H__
+#endif  // {{header_guard}}
   )");
 
   auto source_tmpl = env.parse(R"(
