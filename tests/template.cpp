@@ -5,9 +5,10 @@
 
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/typedef_parser.h"
+#include "tests/test_helpers.h"
 
 TEST_CASE("Template function params.", "[template]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -19,7 +20,7 @@ template DoIt(foo: i32, bar: SomeVals) t"Hello World!";
 
   )");
 
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto tmpl = parsed_file->mod->GetTemplate("DoIt");
   REQUIRE(tmpl);

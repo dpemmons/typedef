@@ -4,20 +4,17 @@
 #include <string>
 
 #include "libtypedef/parser/typedef_parser.h"
+#include "tests/test_helpers.h"
 
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 
-namespace {
-const std::vector<td::ParserErrorInfo> empty_errors;
-}  // namespace
-
 TEST_CASE("Use declarations", "[use_declarations]") {
   // TODO use declarations don't actually have any effect at the moment.
-  auto parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 use someModule;
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 }

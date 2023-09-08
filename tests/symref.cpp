@@ -6,17 +6,14 @@
 #include <variant>
 
 #include "libtypedef/parser/typedef_parser.h"
+#include "tests/test_helpers.h"
 
 using namespace std;
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 
-namespace {
-const std::vector<td::ParserErrorInfo> empty_errors;
-}  // namespace
-
 TEST_CASE("Struct with a symbol reference to another struct", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -36,7 +33,7 @@ struct SomeOtherStruct {
   ref_to_some_struct: SomeStruct;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto st = parsed_file->mod->GetStruct("SomeOtherStruct");
   REQUIRE(st->GetField("ref_to_some_struct")->SymrefIsResolved());
 
@@ -50,7 +47,7 @@ struct SomeOtherStruct {
 
 TEST_CASE("Struct with a symbol reference to an non-existant type should fail",
           "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -58,7 +55,7 @@ struct SomeOtherStruct {
   asdf: DoesNotExist;
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parser.Parse());
   REQUIRE(parsed_file->errors.size() == 1);
   REQUIRE(parsed_file->errors[0].error_type ==
           td::ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
@@ -66,7 +63,7 @@ struct SomeOtherStruct {
 
 TEST_CASE("Struct with a symbol reference to an inline value field should fail",
           "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -77,14 +74,14 @@ struct SomeStruct {
   };
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parser.Parse());
   REQUIRE(parsed_file->errors.size() == 1);
   REQUIRE(parsed_file->errors[0].error_type ==
           td::ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
 }
 
 TEST_CASE("Struct with a symbol reference to an nested struct", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -95,7 +92,7 @@ struct SomeStruct {
   };
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st->GetField("ref_to_nested"));
@@ -110,7 +107,7 @@ struct SomeStruct {
 
 TEST_CASE("Inline struct with a symbol reference to an nested struct",
           "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -123,7 +120,7 @@ struct SomeStruct {
   };
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto st = parsed_file->mod->GetStruct("SomeStruct");
 
   auto target = st->GetField("inline_struct")
@@ -137,7 +134,7 @@ struct SomeStruct {
 }
 
 TEST_CASE("Struct with a symbol reference to a vector type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -147,7 +144,7 @@ struct SomeStruct {
   vec_a: VecA;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st->GetField("vec_a"));
@@ -160,7 +157,7 @@ struct SomeStruct {
 }
 
 TEST_CASE("Struct with a symbol reference to a variant type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -173,7 +170,7 @@ struct SomeStruct {
   var_a: VariantA;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st->GetField("var_a"));
@@ -186,7 +183,7 @@ struct SomeStruct {
 }
 
 TEST_CASE("Struct with a symbol reference to a map type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -196,7 +193,7 @@ struct SomeStruct {
   map_a: MapA;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto st = parsed_file->mod->GetStruct("SomeStruct");
   REQUIRE(st->GetField("map_a"));
@@ -209,7 +206,7 @@ struct SomeStruct {
 }
 
 TEST_CASE("Variant with a symbol reference to a struct type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -223,7 +220,7 @@ variant SomeVariant {
 };
 
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto var = parsed_file->mod->GetVariant("SomeVariant");
   REQUIRE(var->GetField("some_struct"));
@@ -237,7 +234,7 @@ variant SomeVariant {
 
 TEST_CASE("Variant with a symbol reference to another variant type",
           "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -251,7 +248,7 @@ variant SomeVariant {
   some_other_variant: SomeOtherVariant;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto var = parsed_file->mod->GetVariant("SomeVariant");
   REQUIRE(var->GetField("some_other_variant"));
@@ -264,7 +261,7 @@ variant SomeVariant {
 }
 
 TEST_CASE("Variant with a symbol reference to a vector type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -275,7 +272,7 @@ variant SomeVariant {
   vec_a: VecA;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto var = parsed_file->mod->GetVariant("SomeVariant");
   REQUIRE(var->GetField("vec_a"));
@@ -288,7 +285,7 @@ variant SomeVariant {
 }
 
 TEST_CASE("Variant with a symbol reference to a map type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -299,7 +296,7 @@ variant SomeVariant {
   map_a: MapA;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto var = parsed_file->mod->GetVariant("SomeVariant");
   REQUIRE(var->GetField("map_a"));
@@ -312,7 +309,7 @@ variant SomeVariant {
 }
 
 TEST_CASE("Vector with a symbol reference to a struct type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -323,7 +320,7 @@ struct SomeStruct {
 vector SomeVector<SomeStruct>;
 
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto vec = parsed_file->mod->GetVector("SomeVector");
   REQUIRE(vec->element_type->IsSymref());
@@ -333,7 +330,7 @@ vector SomeVector<SomeStruct>;
 }
 
 TEST_CASE("Vector with a symbol reference to a variant type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -344,7 +341,7 @@ variant SomeOtherVariant {
 
 vector SomeVector<SomeOtherVariant>;
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto vec = parsed_file->mod->GetVector("SomeVector");
   REQUIRE(vec->element_type->IsSymref());
@@ -354,7 +351,7 @@ vector SomeVector<SomeOtherVariant>;
 }
 
 TEST_CASE("Vector with a symbol reference to another vector type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -362,7 +359,7 @@ vector VecA<u8>;
 
 vector SomeVector<VecA>;
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto vec = parsed_file->mod->GetVector("SomeVector");
   REQUIRE(vec->element_type->IsSymref());
@@ -372,7 +369,7 @@ vector SomeVector<VecA>;
 }
 
 TEST_CASE("Vector with a symbol reference to a map type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -380,7 +377,7 @@ map MapA<i32, str>;
 
 vector SomeVector<MapA>;
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto vec = parsed_file->mod->GetVector("SomeVector");
   REQUIRE(vec->element_type->IsSymref());
@@ -390,7 +387,7 @@ vector SomeVector<MapA>;
 }
 
 TEST_CASE("Map with a symbol reference to a struct type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -401,7 +398,7 @@ struct SomeStruct {
 map SomeMap<i32, SomeStruct>;
 
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto map = parsed_file->mod->GetMap("SomeMap");
   REQUIRE(map->value_type->IsSymref());
@@ -411,7 +408,7 @@ map SomeMap<i32, SomeStruct>;
 }
 
 TEST_CASE("Map with a symbol reference to a variant type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -422,7 +419,7 @@ variant SomeVariant {
 
 map SomeMap<i32, SomeVariant>;
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto map = parsed_file->mod->GetMap("SomeMap");
   REQUIRE(map->value_type->IsSymref());
@@ -432,7 +429,7 @@ map SomeMap<i32, SomeVariant>;
 }
 
 TEST_CASE("Map with a symbol reference to a vector type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -440,7 +437,7 @@ vector VecA<u8>;
 
 map SomeMap<i32, VecA>;
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto map = parsed_file->mod->GetMap("SomeMap");
   REQUIRE(map->value_type->IsSymref());
@@ -450,7 +447,7 @@ map SomeMap<i32, VecA>;
 }
 
 TEST_CASE("Map with a symbol reference to another map type", "[symref]") {
-  std::shared_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -458,7 +455,7 @@ map MapA<i32, str>;
 
 map SomeMap<i32, MapA>;
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
 
   auto map = parsed_file->mod->GetMap("SomeMap");
   REQUIRE(map->value_type->IsSymref());

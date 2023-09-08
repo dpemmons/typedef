@@ -5,15 +5,13 @@
 #include <string>
 #include <variant>
 
+#include "libtypedef/parser/grammar_functions.h"
 #include "libtypedef/parser/typedef_parser.h"
+#include "tests/test_helpers.h"
 
 using namespace std;
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
-
-namespace {
-const std::vector<td::ParserErrorInfo> empty_errors;
-}  // namespace
 
 /**
  * This file contains tests of structs. Valid typedef structs (those that should
@@ -21,7 +19,7 @@ const std::vector<td::ParserErrorInfo> empty_errors;
  */
 
 TEST_CASE("Struct with explictly typed primitive fields", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -41,43 +39,43 @@ struct SomeStruct0 {
   example_i64: i64;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct0");
-  REQUIRE(st);
+  REQUIRE(!parser.Parse());
+  auto* ctx = td::FindType(parser.GetCompilationUnitContext(), "SomeStruct0");
+  REQUIRE(ctx);
 
-  REQUIRE(st->GetField("example_bool"));
-  REQUIRE(st->GetField("example_bool")->IsBool());
-  REQUIRE(st->GetField("example_char"));
-  REQUIRE(st->GetField("example_char")->IsChar());
-  REQUIRE(st->GetField("example_str"));
-  REQUIRE(st->GetField("example_str")->IsStr());
-  REQUIRE(st->GetField("example_f32"));
-  REQUIRE(st->GetField("example_f32")->IsF32());
-  REQUIRE(st->GetField("example_f64"));
-  REQUIRE(st->GetField("example_f64")->IsF64());
-  REQUIRE(st->GetField("example_u8"));
-  REQUIRE(st->GetField("example_u8")->IsU8());
-  REQUIRE(st->GetField("example_u16"));
-  REQUIRE(st->GetField("example_u16")->IsU16());
-  REQUIRE(st->GetField("example_u32"));
-  REQUIRE(st->GetField("example_u32")->IsU32());
-  REQUIRE(st->GetField("example_u64"));
-  REQUIRE(st->GetField("example_u64")->IsU64());
-  REQUIRE(st->GetField("example_i8"));
-  REQUIRE(st->GetField("example_i8")->IsI8());
-  REQUIRE(st->GetField("example_i16"));
-  REQUIRE(st->GetField("example_i16")->IsI16());
-  REQUIRE(st->GetField("example_i32"));
-  REQUIRE(st->GetField("example_i32")->IsI32());
-  REQUIRE(st->GetField("example_i64"));
-  REQUIRE(st->GetField("example_i64")->IsI64());
+  REQUIRE(td::FindField(ctx, "example_bool"));
+  REQUIRE(td::IsBool(td::FindField(ctx, "example_bool")));
+  REQUIRE(td::FindField(ctx, "example_char"));
+  REQUIRE(td::IsChar(td::FindField(ctx, "example_char")));
+  REQUIRE(td::FindField(ctx, "example_str"));
+  REQUIRE(td::IsStr(td::FindField(ctx, "example_str")));
+  REQUIRE(td::FindField(ctx, "example_f32"));
+  REQUIRE(td::IsF32(td::FindField(ctx, "example_f32")));
+  REQUIRE(td::FindField(ctx, "example_f64"));
+  REQUIRE(td::IsF64(td::FindField(ctx, "example_f64")));
+  REQUIRE(td::FindField(ctx, "example_u8"));
+  REQUIRE(td::IsU8(td::FindField(ctx, "example_u8")));
+  REQUIRE(td::FindField(ctx, "example_u16"));
+  REQUIRE(td::IsU16(td::FindField(ctx, "example_u16")));
+  REQUIRE(td::FindField(ctx, "example_u32"));
+  REQUIRE(td::IsU32(td::FindField(ctx, "example_u32")));
+  REQUIRE(td::FindField(ctx, "example_u64"));
+  REQUIRE(td::IsU64(td::FindField(ctx, "example_u64")));
+  REQUIRE(td::FindField(ctx, "example_i8"));
+  REQUIRE(td::IsI8(td::FindField(ctx, "example_i8")));
+  REQUIRE(td::FindField(ctx, "example_i16"));
+  REQUIRE(td::IsI16(td::FindField(ctx, "example_i16")));
+  REQUIRE(td::FindField(ctx, "example_i32"));
+  REQUIRE(td::IsI32(td::FindField(ctx, "example_i32")));
+  REQUIRE(td::FindField(ctx, "example_i64"));
+  REQUIRE(td::IsI64(td::FindField(ctx, "example_i64")));
 }
 
 TEST_CASE(
     "Struct with explictly typed primitive fields and bool, char and string "
     "literals",
     "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -87,8 +85,11 @@ struct SomeStruct1 {
   example_str: str = "hello world";
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct1");
+  REQUIRE(!parser.Parse());
+
+///  THIS IS WHERE I'M LEAVING OFF....
+
+  auto st = parser.mod->GetStruct("SomeStruct1");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_bool"));
@@ -105,7 +106,7 @@ struct SomeStruct1 {
 TEST_CASE(
     "Struct with explictly typed primitive fields and typed numerical literals",
     "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -122,8 +123,8 @@ struct SomeStruct2 {
   example_i64: i64 = -64i64;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct2");
+  REQUIRE(!parser.Parse());
+  auto st = parser.mod->GetStruct("SomeStruct2");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_f32"));
@@ -162,7 +163,7 @@ TEST_CASE(
     "Struct with explictly typed primitive fields and type-implied numerical "
     "literals",
     "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -179,8 +180,8 @@ struct SomeStruct3 {
   example_i64: i64 = -64;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct3");
+  REQUIRE(!parser.Parse());
+  auto st = parser.mod->GetStruct("SomeStruct3");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_f32"));
@@ -219,7 +220,7 @@ TEST_CASE(
     "Struct with implicitly typed primitive fields with explicitly typed "
     "literals.",
     "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -236,8 +237,8 @@ struct SomeStruct4 {
   example_i64 = -64i64;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct4");
+  REQUIRE(!parser.Parse());
+  auto st = parser.mod->GetStruct("SomeStruct4");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_f32"));
@@ -276,7 +277,7 @@ TEST_CASE(
     "Struct with implicitly typed primitive fields with implicitly typed "
     "literals.",
     "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -288,8 +289,8 @@ struct SomeStruct5 {
   example_i32 = -32;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct5");
+  REQUIRE(!parser.Parse());
+  auto st = parser.mod->GetStruct("SomeStruct5");
   REQUIRE(st);
 
   REQUIRE(st->GetField("example_bool"));
@@ -310,7 +311,7 @@ struct SomeStruct5 {
 }
 
 TEST_CASE("Struct with an inline struct", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -320,8 +321,8 @@ struct SomeStruct10 {
   };
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct10");
+  REQUIRE(!parser.Parse());
+  auto st = parser.mod->GetStruct("SomeStruct10");
   REQUIRE(st);
 
   auto inline_struct_field = st->GetField("an_inline_struct");
@@ -333,7 +334,7 @@ struct SomeStruct10 {
 }
 
 TEST_CASE("Struct with an inline variant", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -344,8 +345,8 @@ struct SomeStruct11 {
   };
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct11");
+  REQUIRE(!parser.Parse());
+  auto st = parser.mod->GetStruct("SomeStruct11");
   REQUIRE(st);
 
   auto inline_varaint_field = st->GetField("an_inline_variant");
@@ -359,7 +360,7 @@ struct SomeStruct11 {
 }
 
 TEST_CASE("Struct with an inline vector", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -367,8 +368,8 @@ struct SomeStruct12 {
   inline_vector: vector<i32>;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct12");
+  REQUIRE(!parser.Parse());
+  auto st = parser.mod->GetStruct("SomeStruct12");
   REQUIRE(st);
 
   auto inline_vector_field = st->GetField("inline_vector");
@@ -379,7 +380,7 @@ struct SomeStruct12 {
 }
 
 TEST_CASE("Struct with an inline map", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -387,8 +388,8 @@ struct SomeStruct13 {
   inline_map: map<i32, f64>;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct13");
+  REQUIRE(!parser.Parse());
+  auto st = parser.mod->GetStruct("SomeStruct13");
   REQUIRE(st);
 
   auto inline_map_field = st->GetField("inline_map");
@@ -400,7 +401,7 @@ struct SomeStruct13 {
 }
 
 TEST_CASE("Struct with an nested struct", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -410,8 +411,8 @@ struct SomeStruct20 {
   };
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct20");
+  REQUIRE(!parser.Parse());
+  auto st = parser.mod->GetStruct("SomeStruct20");
   REQUIRE(st);
 
   auto struct_field = st->GetType("NestedStruct");
@@ -422,7 +423,7 @@ struct SomeStruct20 {
 }
 
 TEST_CASE("Struct with an nested variant", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -433,8 +434,8 @@ struct SomeStruct21 {
   };
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct21");
+  REQUIRE(!parser.Parse());
+  auto st = parser.mod->GetStruct("SomeStruct21");
   REQUIRE(st);
 
   auto variant_field = st->GetType("NestedVariant");
@@ -447,7 +448,7 @@ struct SomeStruct21 {
 }
 
 TEST_CASE("Struct with an nested vector", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -455,8 +456,8 @@ struct SomeStruct22 {
   vector NestedVector<i32>;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct22");
+  REQUIRE(!parser.Parse());
+  auto st = parser.mod->GetStruct("SomeStruct22");
   REQUIRE(st);
 
   auto vector_field = st->GetType("NestedVector");
@@ -467,7 +468,7 @@ struct SomeStruct22 {
 }
 
 TEST_CASE("Struct with an nested map", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -475,8 +476,8 @@ struct SomeStruct23 {
   map NestedMap<i32, f64>;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
-  auto st = parsed_file->mod->GetStruct("SomeStruct23");
+  REQUIRE(!parser.Parse());
+  auto st = parser.mod->GetStruct("SomeStruct23");
   REQUIRE(st);
 
   auto map_field = st->GetType("NestedMap");
@@ -488,7 +489,7 @@ struct SomeStruct23 {
 }
 
 TEST_CASE("Struct with an duplicate fields should error", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -497,14 +498,13 @@ struct SomeStruct {
   an_int: i32;
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
-  REQUIRE(parsed_file->errors.size() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse());
+  REQUIRE(parser.errors.size() == 1);
+  REQUIRE(parser.errors[0].error_type == td::ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
 TEST_CASE("Struct with an duplicate types should error", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -513,15 +513,14 @@ struct SomeStruct {
   struct StructA {};
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
-  REQUIRE(parsed_file->errors.size() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse());
+  REQUIRE(parser.errors.size() == 1);
+  REQUIRE(parser.errors[0].error_type == td::ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
 TEST_CASE("Struct with an duplicate types of different types should error",
           "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -532,18 +531,15 @@ struct SomeStruct {
   map TypeA<i32, i32>;
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
-  REQUIRE(parsed_file->errors.size() == 3);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
-  REQUIRE(parsed_file->errors[1].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
-  REQUIRE(parsed_file->errors[2].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse());
+  REQUIRE(parser.errors.size() == 3);
+  REQUIRE(parser.errors[0].error_type == td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.errors[1].error_type == td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.errors[2].error_type == td::ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
 TEST_CASE("Struct with an duplicate and field names should error", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -552,14 +548,13 @@ struct SomeStruct {
   struct a_field {};
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
-  REQUIRE(parsed_file->errors.size() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse());
+  REQUIRE(parser.errors.size() == 1);
+  REQUIRE(parser.errors[0].error_type == td::ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
 TEST_CASE("Inline struct with an duplicate fields should error", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -570,14 +565,13 @@ struct SomeStruct {
   };
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
-  REQUIRE(parsed_file->errors.size() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse());
+  REQUIRE(parser.errors.size() == 1);
+  REQUIRE(parser.errors[0].error_type == td::ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
 TEST_CASE("Inline struct with an duplicate types should error", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -588,15 +582,15 @@ struct SomeStruct {
   };
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
-  REQUIRE(parsed_file->errors.size() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse());
+  REQUIRE(parser.errors.size() == 1);
+  REQUIRE(parser.errors[0].error_type == td::ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
-TEST_CASE("Inline struct with an duplicate types of different types should error",
-          "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+TEST_CASE(
+    "Inline struct with an duplicate types of different types should error",
+    "[struct]") {
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -609,18 +603,16 @@ struct SomeStruct {
   };
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
-  REQUIRE(parsed_file->errors.size() == 3);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
-  REQUIRE(parsed_file->errors[1].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
-  REQUIRE(parsed_file->errors[2].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse());
+  REQUIRE(parser.errors.size() == 3);
+  REQUIRE(parser.errors[0].error_type == td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.errors[1].error_type == td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.errors[2].error_type == td::ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
-TEST_CASE("Inline struct with an duplicate and field names should error", "[struct]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+TEST_CASE("Inline struct with an duplicate and field names should error",
+          "[struct]") {
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -631,8 +623,7 @@ struct SomeStruct {
   };
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
-  REQUIRE(parsed_file->errors.size() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse());
+  REQUIRE(parser.errors.size() == 1);
+  REQUIRE(parser.errors[0].error_type == td::ParserErrorInfo::DUPLICATE_SYMBOL);
 };

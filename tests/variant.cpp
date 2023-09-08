@@ -6,17 +6,14 @@
 #include <variant>
 
 #include "libtypedef/parser/typedef_parser.h"
+#include "tests/test_helpers.h"
 
 using namespace std;
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 
-namespace {
-const std::vector<td::ParserErrorInfo> empty_errors;
-}  // namespace
-
 TEST_CASE("Variant with explictly typed primitive fields", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -36,7 +33,7 @@ variant SomeVariant0 {
   example_i64: i64;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant0");
   REQUIRE(var);
 
@@ -72,7 +69,7 @@ TEST_CASE(
     "Variant with explictly typed primitive fields and bool, char and string "
     "literals",
     "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -82,7 +79,7 @@ variant SomeVariant1 {
   example_str: str = "hello world";
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant1");
   REQUIRE(var);
 
@@ -100,7 +97,7 @@ variant SomeVariant1 {
 TEST_CASE(
     "Variant with explictly typed primitive fields and typed numerical literals",
     "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -117,7 +114,7 @@ variant SomeVariant2 {
   example_i64: i64 = -64i64;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant2");
   REQUIRE(var);
 
@@ -157,7 +154,7 @@ TEST_CASE(
     "Variant with explictly typed primitive fields and type-implied numerical "
     "literals",
     "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -174,7 +171,7 @@ variant SomeVariant3 {
   example_i64: i64 = -64;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant3");
   REQUIRE(var);
 
@@ -214,7 +211,7 @@ TEST_CASE(
     "Variant with implicitly typed primitive fields with explicitly typed "
     "literals.",
     "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -231,7 +228,7 @@ variant SomeVariant4 {
   example_i64 = -64i64;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant4");
   REQUIRE(var);
 
@@ -271,7 +268,7 @@ TEST_CASE(
     "Variant with implicitly typed primitive fields with implicitly typed "
     "literals.",
     "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -283,7 +280,7 @@ variant SomeVariant5 {
   example_i32 = -32;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant5");
   REQUIRE(var);
 
@@ -305,7 +302,7 @@ variant SomeVariant5 {
 }
 
 TEST_CASE("Variant with an inline struct", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -315,7 +312,7 @@ variant SomeVariant10 {
   };
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant10");
   REQUIRE(var);
 
@@ -328,7 +325,7 @@ variant SomeVariant10 {
 }
 
 TEST_CASE("Variant with an inline variant", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -339,7 +336,7 @@ variant SomeVariant11 {
   };
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant11");
   REQUIRE(var);
 
@@ -354,7 +351,7 @@ variant SomeVariant11 {
 }
 
 TEST_CASE("Variant with an inline vector", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -362,7 +359,7 @@ variant SomeVariant12 {
   inline_vector: vector<i32>;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant12");
   REQUIRE(var);
 
@@ -374,7 +371,7 @@ variant SomeVariant12 {
 }
 
 TEST_CASE("Variant with an inline map", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -382,7 +379,7 @@ variant SomeVariant13 {
   inline_map: map<i32, f64>;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant13");
   REQUIRE(var);
 
@@ -395,7 +392,7 @@ variant SomeVariant13 {
 }
 
 TEST_CASE("Variant with an nested struct", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -405,7 +402,7 @@ variant SomeVariant20 {
   };
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant20");
   REQUIRE(var);
 
@@ -417,7 +414,7 @@ variant SomeVariant20 {
 }
 
 TEST_CASE("Variant with an nested variant", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -428,7 +425,7 @@ variant SomeVariant21 {
   };
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant21");
   REQUIRE(var);
 
@@ -442,7 +439,7 @@ variant SomeVariant21 {
 }
 
 TEST_CASE("Variant with an nested vector", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -450,7 +447,7 @@ variant SomeVariant22 {
   vector NestedVector<i32>;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant22");
   REQUIRE(var);
 
@@ -462,7 +459,7 @@ variant SomeVariant22 {
 }
 
 TEST_CASE("Variant with an nested map", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -470,7 +467,7 @@ variant SomeVariant23 {
   map NestedMap<i32, f64>;
 };
     )");
-  REQUIRE(!parsed_file->HasErrors());
+  REQUIRE(!parser.Parse());
   auto var = parsed_file->mod->GetVariant("SomeVariant23");
   REQUIRE(var);
 
@@ -483,7 +480,7 @@ variant SomeVariant23 {
 }
 
 TEST_CASE("Variant with an duplicate fields should error", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -492,14 +489,14 @@ variant SomeVariant {
   an_int: i32;
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parser.Parse());
   REQUIRE(parsed_file->errors.size() == 1);
   REQUIRE(parsed_file->errors[0].error_type ==
           td::ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
 TEST_CASE("Variant with an duplicate types should error", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -508,7 +505,7 @@ variant SomeVariant {
   variant VariantA {};
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parser.Parse());
   REQUIRE(parsed_file->errors.size() == 1);
   REQUIRE(parsed_file->errors[0].error_type ==
           td::ParserErrorInfo::DUPLICATE_SYMBOL);
@@ -516,7 +513,7 @@ variant SomeVariant {
 
 TEST_CASE("Variant with an duplicate types of different types should error",
           "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -527,7 +524,7 @@ variant SomeVariant {
   map TypeA<i32, i32>;
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parser.Parse());
   REQUIRE(parsed_file->errors.size() == 3);
   REQUIRE(parsed_file->errors[0].error_type ==
           td::ParserErrorInfo::DUPLICATE_SYMBOL);
@@ -538,7 +535,7 @@ variant SomeVariant {
 };
 
 TEST_CASE("Variant with an duplicate and field names should error", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -547,14 +544,14 @@ variant SomeVariant {
   variant a_field {};
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parser.Parse());
   REQUIRE(parsed_file->errors.size() == 1);
   REQUIRE(parsed_file->errors[0].error_type ==
           td::ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
 TEST_CASE("Inline variant with an duplicate fields should error", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -565,14 +562,14 @@ variant SomeVariant {
   };
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parser.Parse());
   REQUIRE(parsed_file->errors.size() == 1);
   REQUIRE(parsed_file->errors[0].error_type ==
           td::ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
 TEST_CASE("Inline variant with an duplicate types should error", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -583,7 +580,7 @@ variant SomeVariant {
   };
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parser.Parse());
   REQUIRE(parsed_file->errors.size() == 1);
   REQUIRE(parsed_file->errors[0].error_type ==
           td::ParserErrorInfo::DUPLICATE_SYMBOL);
@@ -591,7 +588,7 @@ variant SomeVariant {
 
 TEST_CASE("Inline variant with an duplicate types of different types should error",
           "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -604,7 +601,7 @@ variant SomeVariant {
   };
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parser.Parse());
   REQUIRE(parsed_file->errors.size() == 3);
   REQUIRE(parsed_file->errors[0].error_type ==
           td::ParserErrorInfo::DUPLICATE_SYMBOL);
@@ -615,7 +612,7 @@ variant SomeVariant {
 };
 
 TEST_CASE("Inline variant with an duplicate and field names should error", "[variant]") {
-  std::unique_ptr<td::ParsedFile> parsed_file = td::ParseTypedef(R"(
+  TestParser parser(R"(
 typedef=alpha;
 module test;
 
@@ -626,7 +623,7 @@ variant SomeVariant {
   };
 };
     )");
-  REQUIRE(parsed_file->HasErrors());
+  REQUIRE(parser.Parse());
   REQUIRE(parsed_file->errors.size() == 1);
   REQUIRE(parsed_file->errors[0].error_type ==
           td::ParserErrorInfo::DUPLICATE_SYMBOL);
