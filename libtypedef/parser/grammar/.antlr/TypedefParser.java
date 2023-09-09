@@ -1419,8 +1419,6 @@ public class TypedefParser extends Parser {
 			}
 
 			}
-			_ctx.stop = _input.LT(-1);
-			td::SetFloatLiteral(_localctx.float_literal, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -1482,8 +1480,6 @@ public class TypedefParser extends Parser {
 			}
 
 			}
-			_ctx.stop = _input.LT(-1);
-			td::SetIntegerLiteral(_localctx.integer_literal, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;

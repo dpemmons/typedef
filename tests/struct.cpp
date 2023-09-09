@@ -169,7 +169,7 @@ module test;
 
 struct SomeStruct3 {
   example_f32: f32 = 3.14;
-  example_f64: f64 = 5.16;
+  example_f64: f64 = 5.16; // float literal
   example_u8: u8 = 8;
   example_u16: u16 = 16;
   example_u32: u32 = 32;
@@ -190,7 +190,7 @@ struct SomeStruct3 {
   REQUIRE(GetF32(FindField(ctx, "example_f32")) == 3.14f);
   REQUIRE(FindField(ctx, "example_f64"));
   REQUIRE(IsF64(FindField(ctx, "example_f64")));
-  REQUIRE(GetF64(FindField(ctx, "example_f64")) == 5.16);
+  REQUIRE(GetF64(FindField(ctx, "example_f64")) == 5.16f);
   REQUIRE(FindField(ctx, "example_u8"));
   REQUIRE(IsU8(FindField(ctx, "example_u8")));
   REQUIRE(GetU8(FindField(ctx, "example_u8")) == 8);

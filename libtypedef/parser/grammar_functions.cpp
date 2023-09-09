@@ -260,7 +260,7 @@ bool IsF32Literal(TypedefParser::PrimitiveLiteralContext* ctx) {
 
 bool IsF64Literal(TypedefParser::PrimitiveLiteralContext* ctx) {
   return ctx->floatLiteral() != nullptr &&
-         IsF32(ctx->floatLiteral()->float_literal);
+         IsF64(ctx->floatLiteral()->float_literal);
 }
 
 bool IsU8Literal(TypedefParser::PrimitiveLiteralContext* ctx) {
@@ -372,7 +372,7 @@ double GetF64(TypedefParser::PrimitiveLiteralContext* pctx) {
 
 double GetF64(TypedefParser::FieldDefinitionContext* ctx) {
   TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
-  if (!pctx || (!IsF64(ctx) || !IsF64Literal(pctx))) {
+  if (!pctx || !(IsF64(ctx) || IsF64Literal(pctx))) {
     throw_logic_error("not a f64")
   }
   return GetF64(pctx->floatLiteral()->float_literal);

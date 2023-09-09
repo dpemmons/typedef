@@ -91,12 +91,11 @@ stringLiteral
 	@after {td::SetStringLiteral($string_literal, $ctx);}: STRING_LITERAL | RAW_STRING_LITERAL;
 
 floatLiteral
-	returns[td::FloatLiteral float_literal]
-	@after {td::SetFloatLiteral($float_literal, $ctx);}: FLOAT_LITERAL (KW_F32 | KW_F64)?;
+	returns[td::FloatLiteral float_literal]:
+	FLOAT_LITERAL (KW_F32 | KW_F64)?;
 
 integerLiteral
-	returns[td::IntegerLiteral integer_literal]
-	@after {td::SetIntegerLiteral($integer_literal, $ctx);}: (intDigits) (
+	returns[td::IntegerLiteral integer_literal]: (intDigits) (
 		KW_U8
 		| KW_U16
 		| KW_U32

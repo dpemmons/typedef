@@ -1946,8 +1946,7 @@ TypedefParser::FloatLiteralContext* TypedefParser::floatLiteral() {
         consume();
       }
     }
-   _ctx->stop = _input->LT(-1);
-    td::SetFloatLiteral(_localctx->float_literal, _localctx);
+   
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -2068,8 +2067,7 @@ TypedefParser::IntegerLiteralContext* TypedefParser::integerLiteral() {
         consume();
       }
     }
-   _ctx->stop = _input->LT(-1);
-    td::SetIntegerLiteral(_localctx->integer_literal, _localctx);
+   
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
