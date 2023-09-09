@@ -7,14 +7,14 @@
 
 #include "libtypedef/parser/grammar_functions.h"
 #include "libtypedef/parser/typedef_parser.h"
-#include "tests/test_helpers.h"
 
 using namespace std;
+using namespace td;
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 
 TEST_CASE("Map with various scalar key types", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -77,7 +77,7 @@ map SomeStrMap<str, str>;
 }
 
 TEST_CASE("Map with a struct key type should error", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -90,11 +90,11 @@ map SomeBoolMap<StructA, str>;
   REQUIRE(parser.Parse());
   // REQUIRE(parsed_file->errors.size() == 1);
   // REQUIRE(parsed_file->errors[0].error_type ==
-  //         td::ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
+  //         ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
 }
 
 TEST_CASE("Map with a float key type should error", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -103,11 +103,11 @@ map SomeBoolMap<f32, str>;
   REQUIRE(parser.Parse());
   // REQUIRE(parsed_file->errors.size() == 1);
   // REQUIRE(parsed_file->errors[0].error_type ==
-  //         td::ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
+  //         ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
 }
 
 TEST_CASE("Map with a variant key type should error", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -120,11 +120,11 @@ map SomeBoolMap<VariantA, str>;
   REQUIRE(parser.Parse());
   // REQUIRE(parsed_file->errors.size() == 1);
   // REQUIRE(parsed_file->errors[0].error_type ==
-  //         td::ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
+  //         ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
 }
 
 TEST_CASE("Map with a vector key type should error", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -135,11 +135,11 @@ map SomeBoolMap<VecA, str>;
   REQUIRE(parser.Parse());
   // REQUIRE(parsed_file->errors.size() == 1);
   // REQUIRE(parsed_file->errors[0].error_type ==
-  //         td::ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
+  //         ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
 }
 
 TEST_CASE("Map with a map key type should error", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -150,5 +150,5 @@ map SomeBoolMap<MapA, str>;
   REQUIRE(parser.Parse());
   // REQUIRE(parsed_file->errors.size() == 1);
   // REQUIRE(parsed_file->errors[0].error_type ==
-  //         td::ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
+  //         ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
 }

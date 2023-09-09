@@ -25,6 +25,15 @@ namespace td {
 
 using namespace std;
 
+Parser::Parser(std::string input)
+    : input_stream_(input),
+      lexer_(&input_stream_),
+      tokens_(&lexer_),
+      parser_(&tokens_),
+      errors_(),
+      lexer_error_listener_(errors_),
+      parser_error_listener_(errors_) {}
+
 Parser::Parser(istream &input)
     : input_stream_(input),
       lexer_(&input_stream_),
@@ -82,6 +91,14 @@ size_t Parser::Parse() {
   SecondPassListener second_pass(errors_);
   antlr4::tree::ParseTreeWalker::DEFAULT.walk(&second_pass, compilation_unit_);
   return errors_.size();
+}
+
+ParserErrorInfo Parser::GetError(size_t ii) {
+  if (errors_.size() > ii) {
+    return errors_[ii];
+  } else {
+    throw std::runtime_error("Invalid error index.");
+  }
 }
 
 }  // namespace td

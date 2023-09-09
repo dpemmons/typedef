@@ -4,14 +4,14 @@
 #include <string>
 
 #include "libtypedef/parser/typedef_parser.h"
-#include "tests/test_helpers.h"
 
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
+using namespace td;
 
 TEST_CASE("Use declarations", "[use_declarations]") {
   // TODO use declarations don't actually have any effect at the moment.
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 use someModule;

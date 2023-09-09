@@ -17,6 +17,8 @@
 
 using Catch::Matchers::Equals;
 using namespace std;
+using namespace td;
+
 #if 0
 namespace {
 const std::vector<td::ParserErrorInfo> empty_errors;

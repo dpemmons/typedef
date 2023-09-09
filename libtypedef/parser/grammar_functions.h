@@ -25,6 +25,13 @@ bool ReferencesUserType(TypedefParser::TypeIdentifierContext* ctx);
 TypedefParser::UserTypeContext* GetReferencedUserType(
     TypedefParser::TypeIdentifierContext* ctx);
 
+bool HasTypeAnnotation(TypedefParser::FieldDefinitionContext* ctx);
+TypedefParser::TypeAnnotationContext* GetTypeAnnotation(
+    TypedefParser::FieldDefinitionContext* ctx);
+bool HasTypeDefinition(TypedefParser::FieldDefinitionContext* ctx);
+TypedefParser::TypeDefinitionContext* GetTypeDefinition(
+    TypedefParser::FieldDefinitionContext* ctx);
+
 bool ReferencesBuiltinType(TypedefParser::TypeAnnotationContext* ctx);
 bool ReferencesBuiltinType(TypedefParser::TypeIdentifierContext* ctx);
 bool ReferencesBuiltinVectorType(TypedefParser::TypeAnnotationContext* ctx);
@@ -34,8 +41,15 @@ bool ReferencesBuiltinMapType(TypedefParser::TypeIdentifierContext* ctx);
 
 bool ReferencesPrimitiveType(TypedefParser::TypeAnnotationContext* ctx);
 bool ReferencesPrimitiveType(TypedefParser::TypeIdentifierContext* ctx);
-TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitive(
+TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitiveIdentifier(
     TypedefParser::TypeAnnotationContext* ctx);
+
+bool ReferencesPrimitiveType(TypedefParser::FieldDefinitionContext* ctx);
+TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitiveIdentifier(
+    TypedefParser::FieldDefinitionContext* ctx);
+TypedefParser::PrimitiveLiteralContext* GetPrimitiveLiteral(
+    TypedefParser::FieldDefinitionContext* ctx);
+
 bool IsBool(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
 bool IsBool(TypedefParser::FieldDefinitionContext* ctx);
 bool IsChar(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
@@ -62,6 +76,47 @@ bool IsI32(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
 bool IsI32(TypedefParser::FieldDefinitionContext* ctx);
 bool IsI64(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
 bool IsI64(TypedefParser::FieldDefinitionContext* ctx);
+
+bool IsBoolLiteral(TypedefParser::PrimitiveLiteralContext* ctx);
+bool IsCharLiteral(TypedefParser::PrimitiveLiteralContext* ctx);
+bool IsStrLiteral(TypedefParser::PrimitiveLiteralContext* ctx);
+bool IsF32Literal(TypedefParser::PrimitiveLiteralContext* ctx);
+bool IsF64Literal(TypedefParser::PrimitiveLiteralContext* ctx);
+bool IsU8Literal(TypedefParser::PrimitiveLiteralContext* ctx);
+bool IsU16Literal(TypedefParser::PrimitiveLiteralContext* ctx);
+bool IsU32Literal(TypedefParser::PrimitiveLiteralContext* ctx);
+bool IsU64Literal(TypedefParser::PrimitiveLiteralContext* ctx);
+bool IsI8Literal(TypedefParser::PrimitiveLiteralContext* ctx);
+bool IsI16Literal(TypedefParser::PrimitiveLiteralContext* ctx);
+bool IsI32Literal(TypedefParser::PrimitiveLiteralContext* ctx);
+bool IsI64Literal(TypedefParser::PrimitiveLiteralContext* ctx);
+
+bool GetBool(TypedefParser::PrimitiveLiteralContext* ctx);
+bool GetBool(TypedefParser::FieldDefinitionContext* ctx);
+char32_t GetChar(TypedefParser::PrimitiveLiteralContext* ctx);
+char32_t GetChar(TypedefParser::FieldDefinitionContext* ctx);
+std::string* GetStr(TypedefParser::PrimitiveLiteralContext* ctx);
+std::string* GetStr(TypedefParser::FieldDefinitionContext* ctx);
+float GetF32(TypedefParser::PrimitiveLiteralContext* ctx);
+float GetF32(TypedefParser::FieldDefinitionContext* ctx);
+double GetF64(TypedefParser::PrimitiveLiteralContext* ctx);
+double GetF64(TypedefParser::FieldDefinitionContext* ctx);
+uint8_t GetU8(TypedefParser::PrimitiveLiteralContext* ctx);
+uint8_t GetU8(TypedefParser::FieldDefinitionContext* ctx);
+uint16_t GetU16(TypedefParser::PrimitiveLiteralContext* ctx);
+uint16_t GetU16(TypedefParser::FieldDefinitionContext* ctx);
+uint32_t GetU32(TypedefParser::PrimitiveLiteralContext* ctx);
+uint32_t GetU32(TypedefParser::FieldDefinitionContext* ctx);
+uint64_t GetU64(TypedefParser::PrimitiveLiteralContext* ctx);
+uint64_t GetU64(TypedefParser::FieldDefinitionContext* ctx);
+int8_t GetI8(TypedefParser::PrimitiveLiteralContext* ctx);
+int8_t GetI8(TypedefParser::FieldDefinitionContext* ctx);
+int16_t GetI16(TypedefParser::PrimitiveLiteralContext* ctx);
+int16_t GetI16(TypedefParser::FieldDefinitionContext* ctx);
+int32_t GetI32(TypedefParser::PrimitiveLiteralContext* ctx);
+int32_t GetI32(TypedefParser::FieldDefinitionContext* ctx);
+int64_t GetI64(TypedefParser::PrimitiveLiteralContext* ctx);
+int64_t GetI64(TypedefParser::FieldDefinitionContext* ctx);
 
 // Returns nullptr if there isn't one.
 TypedefParser::TypeDefinitionContext* FindType(

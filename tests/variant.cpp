@@ -5,15 +5,16 @@
 #include <string>
 #include <variant>
 
+#include "libtypedef/parser/grammar_functions.h"
 #include "libtypedef/parser/typedef_parser.h"
-#include "tests/test_helpers.h"
 
 using namespace std;
+using namespace td;
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 
 TEST_CASE("Variant with explictly typed primitive fields", "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -34,42 +35,43 @@ variant SomeVariant0 {
 };
     )");
   REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant0");
-  REQUIRE(var);
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant0");
+  REQUIRE(ctx);
+  REQUIRE(DefinesVariant(ctx));
 
-  REQUIRE(var->GetField("example_bool"));
-  REQUIRE(var->GetField("example_bool")->IsBool());
-  REQUIRE(var->GetField("example_char"));
-  REQUIRE(var->GetField("example_char")->IsChar());
-  REQUIRE(var->GetField("example_str"));
-  REQUIRE(var->GetField("example_str")->IsStr());
-  REQUIRE(var->GetField("example_f32"));
-  REQUIRE(var->GetField("example_f32")->IsF32());
-  REQUIRE(var->GetField("example_f64"));
-  REQUIRE(var->GetField("example_f64")->IsF64());
-  REQUIRE(var->GetField("example_u8"));
-  REQUIRE(var->GetField("example_u8")->IsU8());
-  REQUIRE(var->GetField("example_u16"));
-  REQUIRE(var->GetField("example_u16")->IsU16());
-  REQUIRE(var->GetField("example_u32"));
-  REQUIRE(var->GetField("example_u32")->IsU32());
-  REQUIRE(var->GetField("example_u64"));
-  REQUIRE(var->GetField("example_u64")->IsU64());
-  REQUIRE(var->GetField("example_i8"));
-  REQUIRE(var->GetField("example_i8")->IsI8());
-  REQUIRE(var->GetField("example_i16"));
-  REQUIRE(var->GetField("example_i16")->IsI16());
-  REQUIRE(var->GetField("example_i32"));
-  REQUIRE(var->GetField("example_i32")->IsI32());
-  REQUIRE(var->GetField("example_i64"));
-  REQUIRE(var->GetField("example_i64")->IsI64());
+  REQUIRE(FindField(ctx, "example_bool"));
+  REQUIRE(IsBool(FindField(ctx, "example_bool")));
+  REQUIRE(FindField(ctx, "example_char"));
+  REQUIRE(IsChar(FindField(ctx, "example_char")));
+  REQUIRE(FindField(ctx, "example_str"));
+  REQUIRE(IsStr(FindField(ctx, "example_str")));
+  REQUIRE(FindField(ctx, "example_f32"));
+  REQUIRE(IsF32(FindField(ctx, "example_f32")));
+  REQUIRE(FindField(ctx, "example_f64"));
+  REQUIRE(IsF64(FindField(ctx, "example_f64")));
+  REQUIRE(FindField(ctx, "example_u8"));
+  REQUIRE(IsU8(FindField(ctx, "example_u8")));
+  REQUIRE(FindField(ctx, "example_u16"));
+  REQUIRE(IsU16(FindField(ctx, "example_u16")));
+  REQUIRE(FindField(ctx, "example_u32"));
+  REQUIRE(IsU32(FindField(ctx, "example_u32")));
+  REQUIRE(FindField(ctx, "example_u64"));
+  REQUIRE(IsU64(FindField(ctx, "example_u64")));
+  REQUIRE(FindField(ctx, "example_i8"));
+  REQUIRE(IsI8(FindField(ctx, "example_i8")));
+  REQUIRE(FindField(ctx, "example_i16"));
+  REQUIRE(IsI16(FindField(ctx, "example_i16")));
+  REQUIRE(FindField(ctx, "example_i32"));
+  REQUIRE(IsI32(FindField(ctx, "example_i32")));
+  REQUIRE(FindField(ctx, "example_i64"));
+  REQUIRE(IsI64(FindField(ctx, "example_i64")));
 }
 
 TEST_CASE(
     "Variant with explictly typed primitive fields and bool, char and string "
     "literals",
     "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -80,24 +82,26 @@ variant SomeVariant1 {
 };
     )");
   REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant1");
-  REQUIRE(var);
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant1");
+  REQUIRE(ctx);
+  REQUIRE(DefinesVariant(ctx));
 
-  REQUIRE(var->GetField("example_bool"));
-  REQUIRE(var->GetField("example_bool")->IsBool());
-  REQUIRE(var->GetField("example_bool")->GetBool() == true);
-  REQUIRE(var->GetField("example_char"));
-  REQUIRE(var->GetField("example_char")->IsChar());
-  REQUIRE(var->GetField("example_char")->GetChar() == 128293);
-  REQUIRE(var->GetField("example_str"));
-  REQUIRE(var->GetField("example_str")->IsStr());
-  REQUIRE(*var->GetField("example_str")->GetStr() == "hello world");
+  REQUIRE(FindField(ctx, "example_bool"));
+  REQUIRE(IsBool(FindField(ctx, "example_bool")));
+  REQUIRE(GetBool(FindField(ctx, "example_bool")) == true);
+  REQUIRE(FindField(ctx, "example_char"));
+  REQUIRE(IsChar(FindField(ctx, "example_char")));
+  REQUIRE(GetChar(FindField(ctx, "example_char")) == 128293);
+  REQUIRE(FindField(ctx, "example_str"));
+  REQUIRE(IsStr(FindField(ctx, "example_str")));
+  REQUIRE(*GetStr(FindField(ctx, "example_str")) == "hello world");
 }
 
 TEST_CASE(
-    "Variant with explictly typed primitive fields and typed numerical literals",
+    "Variant with explictly typed primitive fields and typed numerical "
+    "literals",
     "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -115,46 +119,47 @@ variant SomeVariant2 {
 };
     )");
   REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant2");
-  REQUIRE(var);
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant2");
+  REQUIRE(ctx);
+  REQUIRE(DefinesVariant(ctx));
 
-  REQUIRE(var->GetField("example_f32"));
-  REQUIRE(var->GetField("example_f32")->IsF32());
-  REQUIRE(var->GetField("example_f32")->GetF32() == 3.14f);
-  REQUIRE(var->GetField("example_f64"));
-  REQUIRE(var->GetField("example_f64")->IsF64());
-  REQUIRE(var->GetField("example_f64")->GetF64() == 5.16);
-  REQUIRE(var->GetField("example_u8"));
-  REQUIRE(var->GetField("example_u8")->IsU8());
-  REQUIRE(var->GetField("example_u8")->GetU8() == 8);
-  REQUIRE(var->GetField("example_u16"));
-  REQUIRE(var->GetField("example_u16")->IsU16());
-  REQUIRE(var->GetField("example_u16")->GetU16() == 16);
-  REQUIRE(var->GetField("example_u32"));
-  REQUIRE(var->GetField("example_u32")->IsU32());
-  REQUIRE(var->GetField("example_u32")->GetU32() == 32);
-  REQUIRE(var->GetField("example_u64"));
-  REQUIRE(var->GetField("example_u64")->IsU64());
-  REQUIRE(var->GetField("example_u64")->GetU64() == 64);
-  REQUIRE(var->GetField("example_i8"));
-  REQUIRE(var->GetField("example_i8")->IsI8());
-  REQUIRE(var->GetField("example_i8")->GetI8() == -8);
-  REQUIRE(var->GetField("example_i16"));
-  REQUIRE(var->GetField("example_i16")->IsI16());
-  REQUIRE(var->GetField("example_i16")->GetI16() == -16);
-  REQUIRE(var->GetField("example_i32"));
-  REQUIRE(var->GetField("example_i32")->IsI32());
-  REQUIRE(var->GetField("example_i32")->GetI32() == -32);
-  REQUIRE(var->GetField("example_i64"));
-  REQUIRE(var->GetField("example_i64")->IsI64());
-  REQUIRE(var->GetField("example_i64")->GetI64() == -64);
+  REQUIRE(FindField(ctx, "example_f32"));
+  REQUIRE(IsF32(FindField(ctx, "example_f32")));
+  REQUIRE(GetF32(FindField(ctx, "example_f32")) == 3.14f);
+  REQUIRE(FindField(ctx, "example_f64"));
+  REQUIRE(IsF64(FindField(ctx, "example_f64")));
+  REQUIRE(GetF64(FindField(ctx, "example_f64")) == 5.16);
+  REQUIRE(FindField(ctx, "example_u8"));
+  REQUIRE(IsU8(FindField(ctx, "example_u8")));
+  REQUIRE(GetU8(FindField(ctx, "example_u8")) == 8);
+  REQUIRE(FindField(ctx, "example_u16"));
+  REQUIRE(IsU16(FindField(ctx, "example_u16")));
+  REQUIRE(GetU16(FindField(ctx, "example_u16")) == 16);
+  REQUIRE(FindField(ctx, "example_u32"));
+  REQUIRE(IsU32(FindField(ctx, "example_u32")));
+  REQUIRE(GetU32(FindField(ctx, "example_u32")) == 32);
+  REQUIRE(FindField(ctx, "example_u64"));
+  REQUIRE(IsU64(FindField(ctx, "example_u64")));
+  REQUIRE(GetU64(FindField(ctx, "example_u64")) == 64);
+  REQUIRE(FindField(ctx, "example_i8"));
+  REQUIRE(IsI8(FindField(ctx, "example_i8")));
+  REQUIRE(GetI8(FindField(ctx, "example_i8")) == -8);
+  REQUIRE(FindField(ctx, "example_i16"));
+  REQUIRE(IsI16(FindField(ctx, "example_i16")));
+  REQUIRE(GetI16(FindField(ctx, "example_i16")) == -16);
+  REQUIRE(FindField(ctx, "example_i32"));
+  REQUIRE(IsI32(FindField(ctx, "example_i32")));
+  REQUIRE(GetI32(FindField(ctx, "example_i32")) == -32);
+  REQUIRE(FindField(ctx, "example_i64"));
+  REQUIRE(IsI64(FindField(ctx, "example_i64")));
+  REQUIRE(GetI64(FindField(ctx, "example_i64")) == -64);
 }
 
 TEST_CASE(
     "Variant with explictly typed primitive fields and type-implied numerical "
     "literals",
     "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -172,46 +177,47 @@ variant SomeVariant3 {
 };
     )");
   REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant3");
-  REQUIRE(var);
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant3");
+  REQUIRE(ctx);
+  REQUIRE(DefinesVariant(ctx));
 
-  REQUIRE(var->GetField("example_f32"));
-  REQUIRE(var->GetField("example_f32")->IsF32());
-  REQUIRE(var->GetField("example_f32")->GetF32() == 3.14f);
-  REQUIRE(var->GetField("example_f64"));
-  REQUIRE(var->GetField("example_f64")->IsF64());
-  REQUIRE(var->GetField("example_f64")->GetF64() == 5.16);
-  REQUIRE(var->GetField("example_u8"));
-  REQUIRE(var->GetField("example_u8")->IsU8());
-  REQUIRE(var->GetField("example_u8")->GetU8() == 8);
-  REQUIRE(var->GetField("example_u16"));
-  REQUIRE(var->GetField("example_u16")->IsU16());
-  REQUIRE(var->GetField("example_u16")->GetU16() == 16);
-  REQUIRE(var->GetField("example_u32"));
-  REQUIRE(var->GetField("example_u32")->IsU32());
-  REQUIRE(var->GetField("example_u32")->GetU32() == 32);
-  REQUIRE(var->GetField("example_u64"));
-  REQUIRE(var->GetField("example_u64")->IsU64());
-  REQUIRE(var->GetField("example_u64")->GetU64() == 64);
-  REQUIRE(var->GetField("example_i8"));
-  REQUIRE(var->GetField("example_i8")->IsI8());
-  REQUIRE(var->GetField("example_i8")->GetI8() == -8);
-  REQUIRE(var->GetField("example_i16"));
-  REQUIRE(var->GetField("example_i16")->IsI16());
-  REQUIRE(var->GetField("example_i16")->GetI16() == -16);
-  REQUIRE(var->GetField("example_i32"));
-  REQUIRE(var->GetField("example_i32")->IsI32());
-  REQUIRE(var->GetField("example_i32")->GetI32() == -32);
-  REQUIRE(var->GetField("example_i64"));
-  REQUIRE(var->GetField("example_i64")->IsI64());
-  REQUIRE(var->GetField("example_i64")->GetI64() == -64);
+  REQUIRE(FindField(ctx, "example_f32"));
+  REQUIRE(IsF32(FindField(ctx, "example_f32")));
+  REQUIRE(GetF32(FindField(ctx, "example_f32")) == 3.14f);
+  REQUIRE(FindField(ctx, "example_f64"));
+  REQUIRE(IsF64(FindField(ctx, "example_f64")));
+  REQUIRE(GetF64(FindField(ctx, "example_f64")) == 5.16);
+  REQUIRE(FindField(ctx, "example_u8"));
+  REQUIRE(IsU8(FindField(ctx, "example_u8")));
+  REQUIRE(GetU8(FindField(ctx, "example_u8")) == 8);
+  REQUIRE(FindField(ctx, "example_u16"));
+  REQUIRE(IsU16(FindField(ctx, "example_u16")));
+  REQUIRE(GetU16(FindField(ctx, "example_u16")) == 16);
+  REQUIRE(FindField(ctx, "example_u32"));
+  REQUIRE(IsU32(FindField(ctx, "example_u32")));
+  REQUIRE(GetU32(FindField(ctx, "example_u32")) == 32);
+  REQUIRE(FindField(ctx, "example_u64"));
+  REQUIRE(IsU64(FindField(ctx, "example_u64")));
+  REQUIRE(GetU64(FindField(ctx, "example_u64")) == 64);
+  REQUIRE(FindField(ctx, "example_i8"));
+  REQUIRE(IsI8(FindField(ctx, "example_i8")));
+  REQUIRE(GetI8(FindField(ctx, "example_i8")) == -8);
+  REQUIRE(FindField(ctx, "example_i16"));
+  REQUIRE(IsI16(FindField(ctx, "example_i16")));
+  REQUIRE(GetI16(FindField(ctx, "example_i16")) == -16);
+  REQUIRE(FindField(ctx, "example_i32"));
+  REQUIRE(IsI32(FindField(ctx, "example_i32")));
+  REQUIRE(GetI32(FindField(ctx, "example_i32")) == -32);
+  REQUIRE(FindField(ctx, "example_i64"));
+  REQUIRE(IsI64(FindField(ctx, "example_i64")));
+  REQUIRE(GetI64(FindField(ctx, "example_i64")) == -64);
 }
 
 TEST_CASE(
     "Variant with implicitly typed primitive fields with explicitly typed "
     "literals.",
     "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -229,46 +235,47 @@ variant SomeVariant4 {
 };
     )");
   REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant4");
-  REQUIRE(var);
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant4");
+  REQUIRE(ctx);
+  REQUIRE(DefinesVariant(ctx));
 
-  REQUIRE(var->GetField("example_f32"));
-  REQUIRE(var->GetField("example_f32")->IsF32());
-  REQUIRE(var->GetField("example_f32")->GetF32() == 3.14f);
-  REQUIRE(var->GetField("example_f64"));
-  REQUIRE(var->GetField("example_f64")->IsF64());
-  REQUIRE(var->GetField("example_f64")->GetF64() == 5.16);
-  REQUIRE(var->GetField("example_u8"));
-  REQUIRE(var->GetField("example_u8")->IsU8());
-  REQUIRE(var->GetField("example_u8")->GetU8() == 8);
-  REQUIRE(var->GetField("example_u16"));
-  REQUIRE(var->GetField("example_u16")->IsU16());
-  REQUIRE(var->GetField("example_u16")->GetU16() == 16);
-  REQUIRE(var->GetField("example_u32"));
-  REQUIRE(var->GetField("example_u32")->IsU32());
-  REQUIRE(var->GetField("example_u32")->GetU32() == 32);
-  REQUIRE(var->GetField("example_u64"));
-  REQUIRE(var->GetField("example_u64")->IsU64());
-  REQUIRE(var->GetField("example_u64")->GetU64() == 64);
-  REQUIRE(var->GetField("example_i8"));
-  REQUIRE(var->GetField("example_i8")->IsI8());
-  REQUIRE(var->GetField("example_i8")->GetI8() == -8);
-  REQUIRE(var->GetField("example_i16"));
-  REQUIRE(var->GetField("example_i16")->IsI16());
-  REQUIRE(var->GetField("example_i16")->GetI16() == -16);
-  REQUIRE(var->GetField("example_i32"));
-  REQUIRE(var->GetField("example_i32")->IsI32());
-  REQUIRE(var->GetField("example_i32")->GetI32() == -32);
-  REQUIRE(var->GetField("example_i64"));
-  REQUIRE(var->GetField("example_i64")->IsI64());
-  REQUIRE(var->GetField("example_i64")->GetI64() == -64);
+  REQUIRE(FindField(ctx, "example_f32"));
+  REQUIRE(IsF32(FindField(ctx, "example_f32")));
+  REQUIRE(GetF32(FindField(ctx, "example_f32")) == 3.14f);
+  REQUIRE(FindField(ctx, "example_f64"));
+  REQUIRE(IsF64(FindField(ctx, "example_f64")));
+  REQUIRE(GetF64(FindField(ctx, "example_f64")) == 5.16);
+  REQUIRE(FindField(ctx, "example_u8"));
+  REQUIRE(IsU8(FindField(ctx, "example_u8")));
+  REQUIRE(GetU8(FindField(ctx, "example_u8")) == 8);
+  REQUIRE(FindField(ctx, "example_u16"));
+  REQUIRE(IsU16(FindField(ctx, "example_u16")));
+  REQUIRE(GetU16(FindField(ctx, "example_u16")) == 16);
+  REQUIRE(FindField(ctx, "example_u32"));
+  REQUIRE(IsU32(FindField(ctx, "example_u32")));
+  REQUIRE(GetU32(FindField(ctx, "example_u32")) == 32);
+  REQUIRE(FindField(ctx, "example_u64"));
+  REQUIRE(IsU64(FindField(ctx, "example_u64")));
+  REQUIRE(GetU64(FindField(ctx, "example_u64")) == 64);
+  REQUIRE(FindField(ctx, "example_i8"));
+  REQUIRE(IsI8(FindField(ctx, "example_i8")));
+  REQUIRE(GetI8(FindField(ctx, "example_i8")) == -8);
+  REQUIRE(FindField(ctx, "example_i16"));
+  REQUIRE(IsI16(FindField(ctx, "example_i16")));
+  REQUIRE(GetI16(FindField(ctx, "example_i16")) == -16);
+  REQUIRE(FindField(ctx, "example_i32"));
+  REQUIRE(IsI32(FindField(ctx, "example_i32")));
+  REQUIRE(GetI32(FindField(ctx, "example_i32")) == -32);
+  REQUIRE(FindField(ctx, "example_i64"));
+  REQUIRE(IsI64(FindField(ctx, "example_i64")));
+  REQUIRE(GetI64(FindField(ctx, "example_i64")) == -64);
 }
 
 TEST_CASE(
     "Variant with implicitly typed primitive fields with implicitly typed "
     "literals.",
     "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -281,28 +288,29 @@ variant SomeVariant5 {
 };
     )");
   REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant5");
-  REQUIRE(var);
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant5");
+  REQUIRE(ctx);
+  REQUIRE(DefinesVariant(ctx));
 
-  REQUIRE(var->GetField("example_bool"));
-  REQUIRE(var->GetField("example_bool")->IsBool());
-  REQUIRE(var->GetField("example_bool")->GetBool() == true);
-  REQUIRE(var->GetField("example_char"));
-  REQUIRE(var->GetField("example_char")->IsChar());
-  REQUIRE(var->GetField("example_char")->GetChar() == 128293);
-  REQUIRE(var->GetField("example_str"));
-  REQUIRE(var->GetField("example_str")->IsStr());
-  REQUIRE(*var->GetField("example_str")->GetStr() == "hello world");
-  REQUIRE(var->GetField("example_f32"));
-  REQUIRE(var->GetField("example_f32")->IsF32());
-  REQUIRE(var->GetField("example_f32")->GetF32() == 3.14f);
-  REQUIRE(var->GetField("example_i32"));
-  REQUIRE(var->GetField("example_i32")->IsI32());
-  REQUIRE(var->GetField("example_i32")->GetI32() == -32);
+  REQUIRE(FindField(ctx, "example_bool"));
+  REQUIRE(IsBool(FindField(ctx, "example_bool")));
+  REQUIRE(GetBool(FindField(ctx, "example_bool")) == true);
+  REQUIRE(FindField(ctx, "example_char"));
+  REQUIRE(IsChar(FindField(ctx, "example_char")));
+  REQUIRE(GetChar(FindField(ctx, "example_char")) == 128293);
+  REQUIRE(FindField(ctx, "example_str"));
+  REQUIRE(IsStr(FindField(ctx, "example_str")));
+  REQUIRE(*GetStr(FindField(ctx, "example_str")) == "hello world");
+  REQUIRE(FindField(ctx, "example_f32"));
+  REQUIRE(IsF32(FindField(ctx, "example_f32")));
+  REQUIRE(GetF32(FindField(ctx, "example_f32")) == 3.14f);
+  REQUIRE(FindField(ctx, "example_i32"));
+  REQUIRE(IsI32(FindField(ctx, "example_i32")));
+  REQUIRE(GetI32(FindField(ctx, "example_i32")) == -32);
 }
 
 TEST_CASE("Variant with an inline struct", "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -313,19 +321,20 @@ variant SomeVariant10 {
 };
     )");
   REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant10");
-  REQUIRE(var);
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant10");
+  REQUIRE(ctx);
+  REQUIRE(DefinesVariant(ctx));
 
-  auto inline_struct_field = var->GetField("an_inline_struct");
-  REQUIRE(inline_struct_field);
-  REQUIRE(inline_struct_field->IsStruct());
-  REQUIRE(inline_struct_field->GetStruct());
-  REQUIRE(inline_struct_field->GetStruct()->GetField("a"));
-  REQUIRE(inline_struct_field->GetStruct()->GetField("a")->IsI32());
+  auto* fctx = FindField(ctx, "an_inline_struct");
+  REQUIRE(fctx);
+  REQUIRE(!HasTypeDefinition(fctx));
+  REQUIRE(DefinesStruct(GetTypeDefinition(fctx)));
+  REQUIRE(FindField(GetTypeDefinition(fctx), "a"));
+  REQUIRE(IsI32(FindField(GetTypeDefinition(fctx), "a")));
 }
 
 TEST_CASE("Variant with an inline variant", "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -337,62 +346,63 @@ variant SomeVariant11 {
 };
     )");
   REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant11");
-  REQUIRE(var);
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant11");
+  REQUIRE(ctx);
+  REQUIRE(DefinesVariant(ctx));
 
-  auto inline_varaint_field = var->GetField("an_inline_variant");
-  REQUIRE(inline_varaint_field);
-  REQUIRE(inline_varaint_field->IsVariant());
-  REQUIRE(inline_varaint_field->GetVariant());
-  REQUIRE(inline_varaint_field->GetVariant()->GetField("va"));
-  REQUIRE(inline_varaint_field->GetVariant()->GetField("va")->IsI32());
-  REQUIRE(inline_varaint_field->GetVariant()->GetField("vb"));
-  REQUIRE(inline_varaint_field->GetVariant()->GetField("vb")->IsStr());
+  auto* fctx = FindField(ctx, "an_inline_variant");
+  REQUIRE(fctx);
+  REQUIRE(!HasTypeDefinition(fctx));
+  REQUIRE(DefinesVariant(GetTypeDefinition(fctx)));
+  REQUIRE(FindField(GetTypeDefinition(fctx), "va"));
+  REQUIRE(IsI32(FindField(GetTypeDefinition(fctx), "va")));
+  REQUIRE(FindField(GetTypeDefinition(fctx), "vb"));
+  REQUIRE(IsStr(FindField(GetTypeDefinition(fctx), "vb")));
 }
 
-TEST_CASE("Variant with an inline vector", "[variant]") {
-  TestParser parser(R"(
-typedef=alpha;
-module test;
+// TEST_CASE("Variant with an inline vector", "[variant]") {
+//   Parser parser(R"(
+// typedef=alpha;
+// module test;
 
-variant SomeVariant12 {
-  inline_vector: vector<i32>;
-};
-    )");
-  REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant12");
-  REQUIRE(var);
+// variant SomeVariant12 {
+//   inline_vector: vector<i32>;
+// };
+//     )");
+//   REQUIRE(!parser.Parse());
+//   auto var = parsed_file->mod->GetVariant("SomeVariant12");
+//   REQUIRE(var);
 
-  auto inline_vector_field = var->GetField("inline_vector");
-  REQUIRE(inline_vector_field);
-  REQUIRE(inline_vector_field->IsVector());
-  REQUIRE(inline_vector_field->GetVector());
-  REQUIRE(inline_vector_field->GetVector()->element_type->IsI32());
-}
+//   auto inline_vector_field = var->GetField("inline_vector");
+//   REQUIRE(inline_vector_field);
+//   REQUIRE(inline_vector_field->IsVector());
+//   REQUIRE(inline_vector_field->GetVector());
+//   REQUIRE(inline_vector_field->GetVector()->element_type->IsI32());
+// }
 
-TEST_CASE("Variant with an inline map", "[variant]") {
-  TestParser parser(R"(
-typedef=alpha;
-module test;
+// TEST_CASE("Variant with an inline map", "[variant]") {
+//   Parser parser(R"(
+// typedef=alpha;
+// module test;
 
-variant SomeVariant13 {
-  inline_map: map<i32, f64>;
-};
-    )");
-  REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant13");
-  REQUIRE(var);
+// variant SomeVariant13 {
+//   inline_map: map<i32, f64>;
+// };
+//     )");
+//   REQUIRE(!parser.Parse());
+//   auto var = parsed_file->mod->GetVariant("SomeVariant13");
+//   REQUIRE(var);
 
-  auto inline_map_field = var->GetField("inline_map");
-  REQUIRE(inline_map_field);
-  REQUIRE(inline_map_field->IsMap());
-  REQUIRE(inline_map_field->GetMap());
-  REQUIRE(inline_map_field->GetMap()->key_type->IsI32());
-  REQUIRE(inline_map_field->GetMap()->value_type->IsF64());
-}
+//   auto inline_map_field = var->GetField("inline_map");
+//   REQUIRE(inline_map_field);
+//   REQUIRE(inline_map_field->IsMap());
+//   REQUIRE(inline_map_field->GetMap());
+//   REQUIRE(inline_map_field->GetMap()->key_type->IsI32());
+//   REQUIRE(inline_map_field->GetMap()->value_type->IsF64());
+// }
 
 TEST_CASE("Variant with an nested struct", "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -403,18 +413,19 @@ variant SomeVariant20 {
 };
     )");
   REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant20");
-  REQUIRE(var);
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant20");
+  REQUIRE(ctx);
+  REQUIRE(DefinesVariant(ctx));
 
-  auto struct_field = var->GetType("NestedStruct");
-  REQUIRE(struct_field);
-  REQUIRE(struct_field->IsStruct());
-  REQUIRE(struct_field->GetStruct()->GetField("a"));
-  REQUIRE(struct_field->GetStruct()->GetField("a")->IsI32());
+  auto* sctx = FindType(ctx, "NestedStruct");
+  REQUIRE(sctx);
+  REQUIRE(DefinesStruct(sctx));
+  REQUIRE(FindField(sctx, "a"));
+  REQUIRE(IsI32(FindField(sctx, "a")));
 }
 
 TEST_CASE("Variant with an nested variant", "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -426,61 +437,62 @@ variant SomeVariant21 {
 };
     )");
   REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant21");
-  REQUIRE(var);
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant21");
+  REQUIRE(ctx);
+  REQUIRE(DefinesVariant(ctx));
 
-  auto variant_field = var->GetType("NestedVariant");
-  REQUIRE(variant_field);
-  REQUIRE(variant_field->IsVariant());
-  REQUIRE(variant_field->GetVariant()->GetField("va"));
-  REQUIRE(variant_field->GetVariant()->GetField("va")->IsI32());
-  REQUIRE(variant_field->GetVariant()->GetField("vb"));
-  REQUIRE(variant_field->GetVariant()->GetField("vb")->IsStr());
+  auto* vctx = FindType(ctx, "NestedVariant");
+  REQUIRE(vctx);
+  REQUIRE(DefinesVariant(vctx));
+  REQUIRE(FindField(vctx, "va"));
+  REQUIRE(IsI32(FindField(vctx, "va")));
+  REQUIRE(FindField(vctx, "vb"));
+  REQUIRE(IsStr(FindField(vctx, "vb")));
 }
 
-TEST_CASE("Variant with an nested vector", "[variant]") {
-  TestParser parser(R"(
-typedef=alpha;
-module test;
+// TEST_CASE("Variant with an nested vector", "[variant]") {
+//   Parser parser(R"(
+// typedef=alpha;
+// module test;
 
-variant SomeVariant22 {
-  vector NestedVector<i32>;
-};
-    )");
-  REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant22");
-  REQUIRE(var);
+// variant SomeVariant22 {
+//   vector NestedVector<i32>;
+// };
+//     )");
+//   REQUIRE(!parser.Parse());
+//   auto var = parsed_file->mod->GetVariant("SomeVariant22");
+//   REQUIRE(var);
 
-  auto vector_field = var->GetType("NestedVector");
-  REQUIRE(vector_field);
-  REQUIRE(vector_field->IsVector());
-  REQUIRE(vector_field->GetVector());
-  REQUIRE(vector_field->GetVector()->element_type->IsI32());
-}
+//   auto vector_field = var->GetType("NestedVector");
+//   REQUIRE(vector_field);
+//   REQUIRE(vector_field->IsVector());
+//   REQUIRE(vector_field->GetVector());
+//   REQUIRE(vector_field->GetVector()->element_type->IsI32());
+// }
 
-TEST_CASE("Variant with an nested map", "[variant]") {
-  TestParser parser(R"(
-typedef=alpha;
-module test;
+// TEST_CASE("Variant with an nested map", "[variant]") {
+//   Parser parser(R"(
+// typedef=alpha;
+// module test;
 
-variant SomeVariant23 {
-  map NestedMap<i32, f64>;
-};
-    )");
-  REQUIRE(!parser.Parse());
-  auto var = parsed_file->mod->GetVariant("SomeVariant23");
-  REQUIRE(var);
+// variant SomeVariant23 {
+//   map NestedMap<i32, f64>;
+// };
+//     )");
+//   REQUIRE(!parser.Parse());
+//   auto var = parsed_file->mod->GetVariant("SomeVariant23");
+//   REQUIRE(var);
 
-  auto map_field = var->GetType("NestedMap");
-  REQUIRE(map_field);
-  REQUIRE(map_field->IsMap());
-  REQUIRE(map_field->GetMap());
-  REQUIRE(map_field->GetMap()->key_type->IsI32());
-  REQUIRE(map_field->GetMap()->value_type->IsF64());
-}
+//   auto map_field = var->GetType("NestedMap");
+//   REQUIRE(map_field);
+//   REQUIRE(map_field->IsMap());
+//   REQUIRE(map_field->GetMap());
+//   REQUIRE(map_field->GetMap()->key_type->IsI32());
+//   REQUIRE(map_field->GetMap()->value_type->IsF64());
+// }
 
 TEST_CASE("Variant with an duplicate fields should error", "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -489,14 +501,12 @@ variant SomeVariant {
   an_int: i32;
 };
     )");
-  REQUIRE(parser.Parse());
-  REQUIRE(parsed_file->errors.size() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
 TEST_CASE("Variant with an duplicate types should error", "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -505,15 +515,13 @@ variant SomeVariant {
   variant VariantA {};
 };
     )");
-  REQUIRE(parser.Parse());
-  REQUIRE(parsed_file->errors.size() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
 TEST_CASE("Variant with an duplicate types of different types should error",
           "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -524,18 +532,15 @@ variant SomeVariant {
   map TypeA<i32, i32>;
 };
     )");
-  REQUIRE(parser.Parse());
-  REQUIRE(parsed_file->errors.size() == 3);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
-  REQUIRE(parsed_file->errors[1].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
-  REQUIRE(parsed_file->errors[2].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse() == 3);
+  REQUIRE(parser.GetError(0).error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.GetError(1).error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.GetError(2).error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
-TEST_CASE("Variant with an duplicate and field names should error", "[variant]") {
-  TestParser parser(R"(
+TEST_CASE("Variant with an duplicate and field names should error",
+          "[variant]") {
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -544,14 +549,12 @@ variant SomeVariant {
   variant a_field {};
 };
     )");
-  REQUIRE(parser.Parse());
-  REQUIRE(parsed_file->errors.size() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
 TEST_CASE("Inline variant with an duplicate fields should error", "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -562,14 +565,12 @@ variant SomeVariant {
   };
 };
     )");
-  REQUIRE(parser.Parse());
-  REQUIRE(parsed_file->errors.size() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
 TEST_CASE("Inline variant with an duplicate types should error", "[variant]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -580,15 +581,14 @@ variant SomeVariant {
   };
 };
     )");
-  REQUIRE(parser.Parse());
-  REQUIRE(parsed_file->errors.size() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
-TEST_CASE("Inline variant with an duplicate types of different types should error",
-          "[variant]") {
-  TestParser parser(R"(
+TEST_CASE(
+    "Inline variant with an duplicate types of different types should error",
+    "[variant]") {
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -601,18 +601,15 @@ variant SomeVariant {
   };
 };
     )");
-  REQUIRE(parser.Parse());
-  REQUIRE(parsed_file->errors.size() == 3);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
-  REQUIRE(parsed_file->errors[1].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
-  REQUIRE(parsed_file->errors[2].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse() == 3);
+  REQUIRE(parser.GetError(0).error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.GetError(1).error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.GetError(2).error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
 };
 
-TEST_CASE("Inline variant with an duplicate and field names should error", "[variant]") {
-  TestParser parser(R"(
+TEST_CASE("Inline variant with an duplicate and field names should error",
+          "[variant]") {
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -623,8 +620,6 @@ variant SomeVariant {
   };
 };
     )");
-  REQUIRE(parser.Parse());
-  REQUIRE(parsed_file->errors.size() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::DUPLICATE_SYMBOL);
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
 };

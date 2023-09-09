@@ -14,11 +14,13 @@ namespace td {
 
 class Parser {
  public:
+  explicit Parser(std::string input);
   explicit Parser(std::istream& input);
 
   // returns error count
   size_t Parse();
   const std::vector<ParserErrorInfo>& Errors() { return errors_; }
+  ParserErrorInfo GetError(size_t ii = 0);
   TypedefParser::CompilationUnitContext* GetCompilationUnitContext() {
     return compilation_unit_;
   }

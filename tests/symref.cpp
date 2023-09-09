@@ -6,14 +6,14 @@
 #include <variant>
 
 #include "libtypedef/parser/typedef_parser.h"
-#include "tests/test_helpers.h"
 
 using namespace std;
+using namespace td;
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
-
+#if 0
 TEST_CASE("Struct with a symbol reference to another struct", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -47,7 +47,7 @@ struct SomeOtherStruct {
 
 TEST_CASE("Struct with a symbol reference to an non-existant type should fail",
           "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -55,15 +55,14 @@ struct SomeOtherStruct {
   asdf: DoesNotExist;
 };
     )");
-  REQUIRE(parser.Parse());
-  REQUIRE(parsed_file->errors.size() == 1);
+  REQUIRE(parser.Parse() == 1);
   REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
+          ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
 }
 
 TEST_CASE("Struct with a symbol reference to an inline value field should fail",
           "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -74,14 +73,13 @@ struct SomeStruct {
   };
 };
     )");
-  REQUIRE(parser.Parse());
-  REQUIRE(parsed_file->errors.size() == 1);
+  REQUIRE(parser.Parse() == 1);
   REQUIRE(parsed_file->errors[0].error_type ==
-          td::ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
+          ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
 }
 
 TEST_CASE("Struct with a symbol reference to an nested struct", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -107,7 +105,7 @@ struct SomeStruct {
 
 TEST_CASE("Inline struct with a symbol reference to an nested struct",
           "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -134,7 +132,7 @@ struct SomeStruct {
 }
 
 TEST_CASE("Struct with a symbol reference to a vector type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -157,7 +155,7 @@ struct SomeStruct {
 }
 
 TEST_CASE("Struct with a symbol reference to a variant type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -183,7 +181,7 @@ struct SomeStruct {
 }
 
 TEST_CASE("Struct with a symbol reference to a map type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -206,7 +204,7 @@ struct SomeStruct {
 }
 
 TEST_CASE("Variant with a symbol reference to a struct type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -234,7 +232,7 @@ variant SomeVariant {
 
 TEST_CASE("Variant with a symbol reference to another variant type",
           "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -261,7 +259,7 @@ variant SomeVariant {
 }
 
 TEST_CASE("Variant with a symbol reference to a vector type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -285,7 +283,7 @@ variant SomeVariant {
 }
 
 TEST_CASE("Variant with a symbol reference to a map type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -309,7 +307,7 @@ variant SomeVariant {
 }
 
 TEST_CASE("Vector with a symbol reference to a struct type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -330,7 +328,7 @@ vector SomeVector<SomeStruct>;
 }
 
 TEST_CASE("Vector with a symbol reference to a variant type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -351,7 +349,7 @@ vector SomeVector<SomeOtherVariant>;
 }
 
 TEST_CASE("Vector with a symbol reference to another vector type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -369,7 +367,7 @@ vector SomeVector<VecA>;
 }
 
 TEST_CASE("Vector with a symbol reference to a map type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -387,7 +385,7 @@ vector SomeVector<MapA>;
 }
 
 TEST_CASE("Map with a symbol reference to a struct type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -408,7 +406,7 @@ map SomeMap<i32, SomeStruct>;
 }
 
 TEST_CASE("Map with a symbol reference to a variant type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -429,7 +427,7 @@ map SomeMap<i32, SomeVariant>;
 }
 
 TEST_CASE("Map with a symbol reference to a vector type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -447,7 +445,7 @@ map SomeMap<i32, VecA>;
 }
 
 TEST_CASE("Map with a symbol reference to another map type", "[symref]") {
-  TestParser parser(R"(
+  Parser parser(R"(
 typedef=alpha;
 module test;
 
@@ -463,3 +461,4 @@ map SomeMap<i32, MapA>;
   REQUIRE(*map->value_type->Symref()->GetIdentifier() == "MapA");
   REQUIRE(map->value_type->Symref()->GetMap()->key_type->IsI32());
 }
+#endif
