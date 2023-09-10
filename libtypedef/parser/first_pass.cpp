@@ -75,10 +75,16 @@ void FirstPassListener::enterTypeAnnotation(
       AddError(ctx, td::ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
                "2 type argument expected.");
     }
-    if (!type_arguments[0]->typeIdentifier()->primitiveTypeIdentifier()) {
+    auto* key_prim =
+        type_arguments[0]->typeIdentifier()->primitiveTypeIdentifier();
+    if (!key_prim || key_prim->KW_F32() || key_prim->KW_F64()) {
       AddError(type_arguments[0],
                td::ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
                "Primitive key type expected.");
+    } else if (key_prim && (key_prim->KW_F32() || key_prim->KW_F64())) {
+      AddError(type_arguments[0],
+               td::ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+               "Map key cannot be floating point.");
     }
     // TODO check second type argument.
   }
