@@ -13,22 +13,24 @@ using namespace td;
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 
-TEST_CASE("Map with various scalar key types", "[symref]") {
+TEST_CASE("Map with various scalar key types", "[map]") {
   Parser parser(R"(
 typedef=alpha;
 module test;
 
-map SomeBoolMap<bool, str>;
-map SomeCharMap<char, str>;
-map SomeU8Map<u8, str>;
-map SomeU16Map<u16, str>;
-map SomeU32Map<u32, str>;
-map SomeU64Map<u64, str>;
-map SomeI8Map<i8, str>;
-map SomeI16Map<i16, str>;
-map SomeI32Map<i32, str>;
-map SomeI64Map<i64, str>;
-map SomeStrMap<str, str>;
+struct SomeStruct {
+  some_bool_map: map<bool, str>;
+  some_char_map: map<char, str>;
+  some_u8_map: map<u8, str>;
+  some_u16_map: map<u16, str>;
+  some_u32_map: map<u32, str>;
+  some_u64_map: map<u64, str>;
+  some_i8_map: map<i8, str>;
+  some_i16_map: map<i16, str>;
+  some_i32_map: map<i32, str>;
+  some_i64_map: map<i64, str>;
+  some_str_map: map<str, str>;
+}
     )");
   REQUIRE(!parser.Parse());
   // REQUIRE(parsed_file->mod->GetMap("SomeBoolMap"));
@@ -76,79 +78,94 @@ map SomeStrMap<str, str>;
   // REQUIRE(parsed_file->mod->GetMap("SomeStrMap")->value_type->IsStr());
 }
 
-TEST_CASE("Map with a struct key type should error", "[symref]") {
+TEST_CASE("Map with invalid type argument count should error", "[map]") {
   Parser parser(R"(
 typedef=alpha;
 module test;
 
-struct StructA {
-  an_int: i32;
-};
-
-map SomeBoolMap<StructA, str>;
+struct SomeStruct {
+  some_map: map <i32, i32, str>;
+}
     )");
-  REQUIRE(parser.Parse());
-  // REQUIRE(parsed_file->errors.size() == 1);
-  // REQUIRE(parsed_file->errors[0].error_type ==
-  //         ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type ==
+          ParserErrorInfo::INVALID_TYPE_ARGUMENTS);
 }
 
-TEST_CASE("Map with a float key type should error", "[symref]") {
+TEST_CASE("Map with a struct key type should error", "[map]") {
   Parser parser(R"(
 typedef=alpha;
 module test;
 
-map SomeBoolMap<f32, str>;
+struct SomeStruct {
+  struct StructA {
+    an_int: i32;
+  }
+  some_bool_map: map <StructA, str>;
+}
     )");
-  REQUIRE(parser.Parse());
-  // REQUIRE(parsed_file->errors.size() == 1);
-  // REQUIRE(parsed_file->errors[0].error_type ==
-  //         ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type ==
+          ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
 }
 
-TEST_CASE("Map with a variant key type should error", "[symref]") {
+TEST_CASE("Map with a float key type should error", "[map]") {
   Parser parser(R"(
 typedef=alpha;
 module test;
 
-variant VariantA {
-  an_int: i32;
-};
-
-map SomeBoolMap<VariantA, str>;
+struct SomeStruct {
+  some_bool_map: map<f32, str>;
+}
     )");
-  REQUIRE(parser.Parse());
-  // REQUIRE(parsed_file->errors.size() == 1);
-  // REQUIRE(parsed_file->errors[0].error_type ==
-  //         ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type ==
+          ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
 }
 
-TEST_CASE("Map with a vector key type should error", "[symref]") {
+TEST_CASE("Map with a variant key type should error", "[map]") {
   Parser parser(R"(
 typedef=alpha;
 module test;
 
-vector VecA<i32>;
-
-map SomeBoolMap<VecA, str>;
+struct SomeStruct {
+  variant VariantA {
+    an_int: i32;
+  };
+  some_bool_map: map<VariantA, str>;
+}
     )");
-  REQUIRE(parser.Parse());
-  // REQUIRE(parsed_file->errors.size() == 1);
-  // REQUIRE(parsed_file->errors[0].error_type ==
-  //         ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type ==
+          ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
 }
 
-TEST_CASE("Map with a map key type should error", "[symref]") {
+TEST_CASE("Map with a vector key type should error", "[map]") {
   Parser parser(R"(
 typedef=alpha;
 module test;
 
-map MapA<i32, str>;
-
-map SomeBoolMap<MapA, str>;
+struct SomeStruct {
+  vec_a: vector<i32>;
+  some_bool_map: map<VecA, str>;
+}
     )");
-  REQUIRE(parser.Parse());
-  // REQUIRE(parsed_file->errors.size() == 1);
-  // REQUIRE(parsed_file->errors[0].error_type ==
-  //         ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type ==
+          ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
+}
+
+TEST_CASE("Map with a map key type should error", "[map]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  map_a: map<i32, str>;
+  some_bool_map: map<MapA, str>;
+}
+    )");
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type ==
+          ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION);
 }

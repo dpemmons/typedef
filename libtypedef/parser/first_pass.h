@@ -17,13 +17,22 @@ class FirstPassListener : public TypedefParserBaseListener {
   FirstPassListener(std::vector<td::ParserErrorInfo> &errors_list)
       : errors_list_(errors_list) {}
 
+  virtual void enterCompilationUnit(
+      TypedefParser::CompilationUnitContext *ctx) override;
 
-  virtual void enterCompilationUnit(TypedefParser::CompilationUnitContext *ctx) override;
+  virtual void enterTypeDefinition(
+      TypedefParser::TypeDefinitionContext *ctx) override;
+
   virtual void enterFieldBlock(TypedefParser::FieldBlockContext *ctx) override;
   virtual void enterFieldDefinition(
       TypedefParser::FieldDefinitionContext *ctx) override;
 
+  virtual void enterTypeAnnotation(
+      TypedefParser::TypeAnnotationContext *ctx) override;
+
  private:
+  void AddError(antlr4::ParserRuleContext *ctx, td::ParserErrorInfo::Type type,
+                std::string msg = "");
   void AddError(TypedefParser::IdentifierContext *identifier,
                 td::ParserErrorInfo::Type type);
   void AddError(antlr4::Token *token, td::ParserErrorInfo::Type type,

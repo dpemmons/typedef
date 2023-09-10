@@ -159,7 +159,7 @@ all-clean:
 
 .PHONY: tests
 tests: $(TESTS_EXEC)
-	$(TESTS_EXEC)
+	$(TESTS_EXEC) $(TESTS_FILTER)
 
 # or run an individual test suite like:
 # test: $(TESTS_EXEC)

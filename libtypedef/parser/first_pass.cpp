@@ -27,11 +27,14 @@ void FirstPassListener::enterCompilationUnit(
     if (identifiers.find(type_def_ctx->type_identifier->id) !=
         identifiers.end()) {
       AddError(type_def_ctx->type_identifier,
-               td::ParserErrorInfo::Type::DUPLICATE_SYMBOL);
+               td::ParserErrorInfo::DUPLICATE_SYMBOL);
     }
     identifiers.insert(type_def_ctx->type_identifier->id);
   }
 }
+
+void FirstPassListener::enterTypeDefinition(
+    TypedefParser::TypeDefinitionContext* ctx) {}
 
 void FirstPassListener::enterFieldBlock(TypedefParser::FieldBlockContext* ctx) {
   // Duplicate symbol detection.
@@ -40,7 +43,7 @@ void FirstPassListener::enterFieldBlock(TypedefParser::FieldBlockContext* ctx) {
     if (identifiers.find(type_def_ctx->type_identifier->id) !=
         identifiers.end()) {
       AddError(type_def_ctx->type_identifier,
-               td::ParserErrorInfo::Type::DUPLICATE_SYMBOL);
+               td::ParserErrorInfo::DUPLICATE_SYMBOL);
     }
     identifiers.insert(type_def_ctx->type_identifier->id);
   }
@@ -48,7 +51,7 @@ void FirstPassListener::enterFieldBlock(TypedefParser::FieldBlockContext* ctx) {
     if (identifiers.find(field_def_ctx->field_identifier->id) !=
         identifiers.end()) {
       AddError(field_def_ctx->field_identifier,
-               td::ParserErrorInfo::Type::DUPLICATE_SYMBOL);
+               td::ParserErrorInfo::DUPLICATE_SYMBOL);
     }
     identifiers.insert(field_def_ctx->field_identifier->id);
   }
@@ -56,6 +59,44 @@ void FirstPassListener::enterFieldBlock(TypedefParser::FieldBlockContext* ctx) {
 
 void FirstPassListener::enterFieldDefinition(
     TypedefParser::FieldDefinitionContext* ctx) {}
+
+void FirstPassListener::enterTypeAnnotation(
+    TypedefParser::TypeAnnotationContext* ctx) {
+  if (ctx->typeIdentifier()->KW_VECTOR()) {
+    auto type_arguments = ctx->typeArgument();
+    if (type_arguments.size() != 1) {
+      AddError(ctx, td::ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
+               "1 type arguments expected.");
+    }
+    // TODO check type argument.
+  } else if (ctx->typeIdentifier()->KW_MAP()) {
+    auto type_arguments = ctx->typeArgument();
+    if (type_arguments.size() != 2) {
+      AddError(ctx, td::ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
+               "2 type argument expected.");
+    }
+    if (!type_arguments[0]->typeIdentifier()->primitiveTypeIdentifier()) {
+      AddError(type_arguments[0],
+               td::ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+               "Primitive key type expected.");
+    }
+    // TODO check second type argument.
+  }
+}
+
+void FirstPassListener::AddError(antlr4::ParserRuleContext* ctx,
+                                 td::ParserErrorInfo::Type type,
+                                 std::string msg) {
+  errors_list_.push_back(
+      td::PEIBuilder()
+          .SetType(type)
+          .SetMessage(msg)
+          .SetCharOffset(ctx->start->getStartIndex())
+          .SetLine(ctx->start->getLine())
+          .SetLineOffset(ctx->start->getCharPositionInLine())
+          .SetLength(ctx->stop->getStopIndex() - ctx->start->getStartIndex())
+          .build());
+}
 
 void FirstPassListener::AddError(TypedefParser::IdentifierContext* identifier,
                                  td::ParserErrorInfo::Type type) {
