@@ -8,7 +8,7 @@
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
 
-using namespace std;
+#include "libtypedef/parser/grammar_functions.h"
 
 #define throw_logic_error(str) \
   throw std::logic_error(      \
@@ -19,6 +19,10 @@ using namespace std;
     return;                  \
   }
 
+namespace td {
+
+using namespace std;
+
 void FirstPassListener::enterCompilationUnit(
     TypedefParser::CompilationUnitContext* ctx) {
   // Duplicate symbol detection.
@@ -27,7 +31,7 @@ void FirstPassListener::enterCompilationUnit(
     if (identifiers.find(type_def_ctx->type_identifier->id) !=
         identifiers.end()) {
       AddError(type_def_ctx->type_identifier,
-               td::ParserErrorInfo::DUPLICATE_SYMBOL);
+               ParserErrorInfo::DUPLICATE_SYMBOL);
     }
     identifiers.insert(type_def_ctx->type_identifier->id);
   }
@@ -43,7 +47,7 @@ void FirstPassListener::enterFieldBlock(TypedefParser::FieldBlockContext* ctx) {
     if (identifiers.find(type_def_ctx->type_identifier->id) !=
         identifiers.end()) {
       AddError(type_def_ctx->type_identifier,
-               td::ParserErrorInfo::DUPLICATE_SYMBOL);
+               ParserErrorInfo::DUPLICATE_SYMBOL);
     }
     identifiers.insert(type_def_ctx->type_identifier->id);
   }
@@ -51,7 +55,7 @@ void FirstPassListener::enterFieldBlock(TypedefParser::FieldBlockContext* ctx) {
     if (identifiers.find(field_def_ctx->field_identifier->id) !=
         identifiers.end()) {
       AddError(field_def_ctx->field_identifier,
-               td::ParserErrorInfo::DUPLICATE_SYMBOL);
+               ParserErrorInfo::DUPLICATE_SYMBOL);
     }
     identifiers.insert(field_def_ctx->field_identifier->id);
   }
@@ -62,28 +66,26 @@ void FirstPassListener::enterFieldDefinition(
 
 void FirstPassListener::enterTypeAnnotation(
     TypedefParser::TypeAnnotationContext* ctx) {
-  if (ctx->typeIdentifier()->KW_VECTOR()) {
+  auto* id_ctx = ctx->typeIdentifier();
+  if (id_ctx->KW_VECTOR()) {
     auto type_arguments = ctx->typeArgument();
     if (type_arguments.size() != 1) {
-      AddError(ctx, td::ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
+      AddError(ctx, ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
                "1 type arguments expected.");
     }
     // TODO check type argument.
-  } else if (ctx->typeIdentifier()->KW_MAP()) {
+  } else if (id_ctx->KW_MAP()) {
     auto type_arguments = ctx->typeArgument();
     if (type_arguments.size() != 2) {
-      AddError(ctx, td::ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
+      AddError(ctx, ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
                "2 type argument expected.");
     }
-    auto* key_prim =
-        type_arguments[0]->typeIdentifier()->primitiveTypeIdentifier();
-    if (!key_prim || key_prim->KW_F32() || key_prim->KW_F64()) {
-      AddError(type_arguments[0],
-               td::ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+    auto* key_identifier = type_arguments[0]->typeIdentifier();
+    if (!ReferencesPrimitiveType(key_identifier)) {
+      AddError(type_arguments[0], ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
                "Primitive key type expected.");
-    } else if (key_prim && (key_prim->KW_F32() || key_prim->KW_F64())) {
-      AddError(type_arguments[0],
-               td::ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+    } else if (ReferencesPrimitiveFloatType(key_identifier)) {
+      AddError(type_arguments[0], ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
                "Map key cannot be floating point.");
     }
     // TODO check second type argument.
@@ -91,10 +93,9 @@ void FirstPassListener::enterTypeAnnotation(
 }
 
 void FirstPassListener::AddError(antlr4::ParserRuleContext* ctx,
-                                 td::ParserErrorInfo::Type type,
-                                 std::string msg) {
+                                 ParserErrorInfo::Type type, string msg) {
   errors_list_.push_back(
-      td::PEIBuilder()
+      PEIBuilder()
           .SetType(type)
           .SetMessage(msg)
           .SetCharOffset(ctx->start->getStartIndex())
@@ -105,14 +106,13 @@ void FirstPassListener::AddError(antlr4::ParserRuleContext* ctx,
 }
 
 void FirstPassListener::AddError(TypedefParser::IdentifierContext* identifier,
-                                 td::ParserErrorInfo::Type type) {
+                                 ParserErrorInfo::Type type) {
   AddError(identifier->nki, type);
 }
 
 void FirstPassListener::AddError(antlr4::Token* token,
-                                 td::ParserErrorInfo::Type type,
-                                 std::string msg) {
-  errors_list_.push_back(td::PEIBuilder()
+                                 ParserErrorInfo::Type type, string msg) {
+  errors_list_.push_back(PEIBuilder()
                              .SetType(type)
                              .SetMessage(msg)
                              .SetCharOffset(token->getStartIndex())
@@ -121,3 +121,5 @@ void FirstPassListener::AddError(antlr4::Token* token,
                              .SetLength(token->getText().length())
                              .build());
 }
+
+}  // namespace td

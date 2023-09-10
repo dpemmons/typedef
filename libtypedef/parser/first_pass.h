@@ -12,9 +12,11 @@
 #include "libtypedef/parser/grammar/TypedefParserBaseListener.h"
 #include "libtypedef/parser/parser_error_info.h"
 
+namespace td {
+
 class FirstPassListener : public TypedefParserBaseListener {
  public:
-  FirstPassListener(std::vector<td::ParserErrorInfo> &errors_list)
+  FirstPassListener(std::vector<ParserErrorInfo> &errors_list)
       : errors_list_(errors_list) {}
 
   virtual void enterCompilationUnit(
@@ -31,13 +33,15 @@ class FirstPassListener : public TypedefParserBaseListener {
       TypedefParser::TypeAnnotationContext *ctx) override;
 
  private:
-  void AddError(antlr4::ParserRuleContext *ctx, td::ParserErrorInfo::Type type,
+  void AddError(antlr4::ParserRuleContext *ctx, ParserErrorInfo::Type type,
                 std::string msg = "");
   void AddError(TypedefParser::IdentifierContext *identifier,
-                td::ParserErrorInfo::Type type);
-  void AddError(antlr4::Token *token, td::ParserErrorInfo::Type type,
+                ParserErrorInfo::Type type);
+  void AddError(antlr4::Token *token, ParserErrorInfo::Type type,
                 std::string msg = "");
-  std::vector<td::ParserErrorInfo> &errors_list_;
+  std::vector<ParserErrorInfo> &errors_list_;
 };
+
+}  // namespace td
 
 #endif  // PARSER_FIRST_PASS_H__

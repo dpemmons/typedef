@@ -41,6 +41,7 @@ bool ReferencesBuiltinMapType(TypedefParser::TypeIdentifierContext* ctx);
 
 bool ReferencesPrimitiveType(TypedefParser::TypeAnnotationContext* ctx);
 bool ReferencesPrimitiveType(TypedefParser::TypeIdentifierContext* ctx);
+bool ReferencesPrimitiveFloatType(TypedefParser::TypeIdentifierContext* ctx);
 TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitiveIdentifier(
     TypedefParser::TypeAnnotationContext* ctx);
 

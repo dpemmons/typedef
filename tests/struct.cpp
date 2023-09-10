@@ -331,7 +331,7 @@ struct SomeStruct10 {
 
   auto* fctx = FindField(ctx, "an_inline_struct");
   REQUIRE(fctx);
-  REQUIRE(!HasTypeDefinition(fctx));
+  REQUIRE(HasTypeDefinition(fctx));
   REQUIRE(DefinesStruct(GetTypeDefinition(fctx)));
   REQUIRE(FindField(GetTypeDefinition(fctx), "a"));
   REQUIRE(IsI32(FindField(GetTypeDefinition(fctx), "a")));
@@ -356,7 +356,7 @@ struct SomeStruct11 {
 
   auto* fctx = FindField(ctx, "an_inline_variant");
   REQUIRE(fctx);
-  REQUIRE(!HasTypeDefinition(fctx));
+  REQUIRE(HasTypeDefinition(fctx));
   REQUIRE(DefinesVariant(GetTypeDefinition(fctx)));
   REQUIRE(FindField(GetTypeDefinition(fctx), "va"));
   REQUIRE(IsI32(FindField(GetTypeDefinition(fctx), "va")));
@@ -364,46 +364,43 @@ struct SomeStruct11 {
   REQUIRE(IsStr(FindField(GetTypeDefinition(fctx), "vb")));
 }
 
-// TEST_CASE("Struct with an inline vector", "[struct]") {
-//   Parser parser(R"(
-// typedef=alpha;
-// module test;
+TEST_CASE("Struct with an inline vector", "[struct]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
 
-// struct SomeStruct12 {
-//   inline_vector: vector<i32>;
-// };
-//     )");
-//   REQUIRE(!parser.Parse());
-//   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct12");
-//   REQUIRE(ctx);
+struct SomeStruct12 {
+  inline_vector: vector<i32>;
+};
+    )");
+  REQUIRE(!parser.Parse());
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct12");
+  REQUIRE(ctx);
 
-//   auto inline_vector_field = st->GetField("inline_vector");
-//   REQUIRE(inline_vector_field);
-//   REQUIRE(inline_vector_field->IsVector());
-//   REQUIRE(inline_vector_field->GetVector());
-//   REQUIRE(inline_vector_field->GetVector()->element_type->IsI32());
-// }
+  auto* fctx = FindField(ctx, "inline_vector");
+  REQUIRE(fctx);
+  REQUIRE(!HasTypeDefinition(fctx));
+  REQUIRE(ReferencesBuiltinVectorType(GetTypeAnnotation(fctx)));
+}
 
-// TEST_CASE("Struct with an inline map", "[struct]") {
-//   Parser parser(R"(
-// typedef=alpha;
-// module test;
+TEST_CASE("Struct with an inline map", "[struct]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
 
-// struct SomeStruct13 {
-//   inline_map: map<i32, f64>;
-// };
-//     )");
-//   REQUIRE(!parser.Parse());
-//   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct13");
-//   REQUIRE(ctx);
+struct SomeStruct13 {
+  inline_map: map<i32, f64>;
+};
+    )");
+  REQUIRE(!parser.Parse());
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct13");
+  REQUIRE(ctx);
 
-//   auto inline_map_field = st->GetField("inline_map");
-//   REQUIRE(inline_map_field);
-//   REQUIRE(inline_map_field->IsMap());
-//   REQUIRE(inline_map_field->GetMap());
-//   REQUIRE(inline_map_field->GetMap()->key_type->IsI32());
-//   REQUIRE(inline_map_field->GetMap()->value_type->IsF64());
-// }
+  auto* fctx = FindField(ctx, "inline_map");
+  REQUIRE(fctx);
+  REQUIRE(!HasTypeDefinition(fctx));
+  REQUIRE(ReferencesBuiltinMapType(GetTypeAnnotation(fctx)));
+}
 
 TEST_CASE("Struct with an nested struct", "[struct]") {
   Parser parser(R"(
@@ -530,10 +527,10 @@ typedef=alpha;
 module test;
 
 struct SomeStruct {
-  struct TypeA {};
-  variant TypeA {};
-  vector TypeA<i32>;
-  map TypeA<i32, i32>;
+  struct foo {};
+  variant foo {};
+  foo: vector<i32>;
+  foo: map<i32, i32>;
 };
     )");
   REQUIRE(parser.Parse() == 3);
@@ -597,10 +594,10 @@ module test;
 
 struct SomeStruct {
   inline_struct: struct {
-    struct TypeA {};
-    variant TypeA {};
-    vector TypeA<i32>;
-    map TypeA<i32, i32>;
+    struct foo {};
+    variant foo {};
+    foo: vector<i32>;
+    foo: map<i32, i32>;
   };
 };
     )");

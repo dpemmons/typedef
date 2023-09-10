@@ -123,6 +123,12 @@ bool ReferencesPrimitiveType(TypedefParser::TypeIdentifierContext* ctx) {
   return ctx->primitiveTypeIdentifier() != nullptr;
 }
 
+bool ReferencesPrimitiveFloatType(TypedefParser::TypeIdentifierContext* ctx) {
+  return ctx->primitiveTypeIdentifier() &&
+         (ctx->primitiveTypeIdentifier()->KW_F32() ||
+          ctx->primitiveTypeIdentifier()->KW_F64());
+}
+
 TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitiveIdentifier(
     TypedefParser::TypeAnnotationContext* ctx) {
   return ReferencesPrimitiveType(ctx)
