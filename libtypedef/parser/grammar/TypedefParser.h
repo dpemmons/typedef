@@ -209,12 +209,12 @@ public:
     TypedefParser::IdentifierContext *field_identifier = nullptr;;
     FieldDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    IdentifierContext *identifier();
     antlr4::tree::TerminalNode *COLON();
-    antlr4::tree::TerminalNode *EQ();
-    PrimitiveLiteralContext *primitiveLiteral();
+    IdentifierContext *identifier();
     TypeAnnotationContext *typeAnnotation();
     TypeDefinitionContext *typeDefinition();
+    antlr4::tree::TerminalNode *EQ();
+    PrimitiveLiteralContext *primitiveLiteral();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

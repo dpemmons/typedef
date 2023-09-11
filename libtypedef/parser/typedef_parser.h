@@ -36,6 +36,8 @@ class Parser {
 
   LexerErrorListener lexer_error_listener_;
   ParserErrorListener parser_error_listener_;
+
+  void AttachListeners();
 };
 
 }  // namespace td

@@ -334,10 +334,11 @@ void SetStringLiteral(std::string& literal,
 }
 
 void SetFloatLiteral(FloatLiteral& literal,
+                     TypedefParser::PrimitiveTypeIdentifierContext* type,
                      TypedefParser::FloatLiteralContext* ctx) {
-  if (ctx->KW_F32() != nullptr) {
+  if (type->KW_F32() != nullptr) {
     literal = GetFloatValue<float>(ctx);
-  } else if (ctx->KW_F64() != nullptr) {
+  } else if (type->KW_F64() != nullptr) {
     literal = GetFloatValue<double>(ctx);
   } else {
     literal = GetFloatValue<float>(ctx);
@@ -345,22 +346,23 @@ void SetFloatLiteral(FloatLiteral& literal,
 }
 
 void SetIntegerLiteral(IntegerLiteral& literal,
+                       TypedefParser::PrimitiveTypeIdentifierContext* type,
                        TypedefParser::IntegerLiteralContext* ctx) {
-  if (ctx->KW_U8() != nullptr) {
+  if (type->KW_U8() != nullptr) {
     literal = GetIntValue<std::uint8_t>(ctx->intDigits());
-  } else if (ctx->KW_U16() != nullptr) {
+  } else if (type->KW_U16() != nullptr) {
     literal = GetIntValue<std::uint16_t>(ctx->intDigits());
-  } else if (ctx->KW_U32() != nullptr) {
+  } else if (type->KW_U32() != nullptr) {
     literal = GetIntValue<std::uint32_t>(ctx->intDigits());
-  } else if (ctx->KW_U64() != nullptr) {
+  } else if (type->KW_U64() != nullptr) {
     literal = GetIntValue<std::uint64_t>(ctx->intDigits());
-  } else if (ctx->KW_I8() != nullptr) {
+  } else if (type->KW_I8() != nullptr) {
     literal = GetIntValue<std::int8_t>(ctx->intDigits());
-  } else if (ctx->KW_I16() != nullptr) {
+  } else if (type->KW_I16() != nullptr) {
     literal = GetIntValue<std::int16_t>(ctx->intDigits());
-  } else if (ctx->KW_I32() != nullptr) {
+  } else if (type->KW_I32() != nullptr) {
     literal = GetIntValue<std::int32_t>(ctx->intDigits());
-  } else if (ctx->KW_I64() != nullptr) {
+  } else if (type->KW_I64() != nullptr) {
     literal = GetIntValue<std::int64_t>(ctx->intDigits());
   } else {
     literal = GetIntValue<std::int32_t>(ctx->intDigits());

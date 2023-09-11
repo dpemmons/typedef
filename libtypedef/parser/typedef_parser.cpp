@@ -32,7 +32,9 @@ Parser::Parser(std::string input)
       parser_(&tokens_),
       errors_(),
       lexer_error_listener_(errors_),
-      parser_error_listener_(errors_) {}
+      parser_error_listener_(errors_) {
+  AttachListeners();
+}
 
 Parser::Parser(istream &input)
     : input_stream_(input),
@@ -41,7 +43,17 @@ Parser::Parser(istream &input)
       parser_(&tokens_),
       errors_(),
       lexer_error_listener_(errors_),
-      parser_error_listener_(errors_) {}
+      parser_error_listener_(errors_) {
+  AttachListeners();
+}
+void Parser::AttachListeners() {
+  lexer_.removeErrorListeners();
+  lexer_.addErrorListener(&lexer_error_listener_);
+
+  parser_.removeParseListeners();
+  parser_.removeErrorListeners();
+  parser_.addErrorListener(&parser_error_listener_);
+}
 
 size_t Parser::Parse() {
   // TODO revisit this and how it's used below to make a null compilation

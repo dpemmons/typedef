@@ -18,8 +18,10 @@ void SetCharLiteral(char32_t& literal, TypedefParser::CharLiteralContext* ctx);
 void SetStringLiteral(std::string& literal,
                       TypedefParser::StringLiteralContext* ctx);
 void SetFloatLiteral(FloatLiteral& literal,
+                     TypedefParser::PrimitiveTypeIdentifierContext* type,
                      TypedefParser::FloatLiteralContext* ctx);
 void SetIntegerLiteral(IntegerLiteral& literal,
+                       TypedefParser::PrimitiveTypeIdentifierContext* type,
                        TypedefParser::IntegerLiteralContext* ctx);
 
 // Not really a literal, but for now we consider it one.

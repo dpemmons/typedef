@@ -9,6 +9,7 @@
 #include <fmt/core.h>
 
 #include "libtypedef/parser/grammar_functions.h"
+#include "libtypedef/parser/literals.h"
 
 #define throw_logic_error(str) \
   throw std::logic_error(      \
@@ -62,7 +63,60 @@ void FirstPassListener::enterFieldBlock(TypedefParser::FieldBlockContext* ctx) {
 }
 
 void FirstPassListener::enterFieldDefinition(
-    TypedefParser::FieldDefinitionContext* ctx) {}
+    TypedefParser::FieldDefinitionContext* ctx) {
+  if (ctx->typeAnnotation() &&
+      ctx->typeAnnotation()->typeIdentifier()->primitiveTypeIdentifier()) {
+    auto* primitive_type_annotation =
+        ctx->typeAnnotation()->typeIdentifier()->primitiveTypeIdentifier();
+    if (ctx->primitiveLiteral()) {
+      // Ensure the literal is the same type as the annotation.
+      if (primitive_type_annotation->KW_BOOL()) {
+        if (!ctx->primitiveLiteral()->boolLiteral()) {
+          AddError(ctx->primitiveLiteral(), ParserErrorInfo::TYPE_MISMATCH,
+                   "boolean expected.");
+        }
+      } else if (primitive_type_annotation->KW_CHAR()) {
+        if (!ctx->primitiveLiteral()->charLiteral()) {
+          AddError(ctx->primitiveLiteral(), ParserErrorInfo::TYPE_MISMATCH,
+                   "char expected.");
+        }
+      } else if (primitive_type_annotation->KW_STRING()) {
+        if (!ctx->primitiveLiteral()->stringLiteral()) {
+          AddError(ctx->primitiveLiteral(), ParserErrorInfo::TYPE_MISMATCH,
+                   "str expected.");
+        }
+      } else if (ReferencesPrimitiveFloatType(
+                     ctx->typeAnnotation()->typeIdentifier())) {
+        if (!ctx->primitiveLiteral()->floatLiteral()) {
+          AddError(ctx->primitiveLiteral(), ParserErrorInfo::TYPE_MISMATCH,
+                   "float expected.");
+        } else {
+          SetFloatLiteral(
+              ctx->primitiveLiteral()->floatLiteral()->float_literal,
+              ctx->typeAnnotation()
+                  ->typeIdentifier()
+                  ->primitiveTypeIdentifier(),
+              ctx->primitiveLiteral()->floatLiteral());
+        }
+      } else if (ReferencesPrimitiveIntegerType(
+                     ctx->typeAnnotation()->typeIdentifier())) {
+        if (!ctx->primitiveLiteral()->integerLiteral()) {
+          AddError(ctx->primitiveLiteral(), ParserErrorInfo::TYPE_MISMATCH,
+                   "integer expected.");
+        } else {
+          SetIntegerLiteral(
+              ctx->primitiveLiteral()->integerLiteral()->integer_literal,
+              ctx->typeAnnotation()
+                  ->typeIdentifier()
+                  ->primitiveTypeIdentifier(),
+              ctx->primitiveLiteral()->integerLiteral());
+        }
+      } else {
+        throw_logic_error("invalid state");
+      }
+    }
+  }
+}
 
 void FirstPassListener::enterTypeAnnotation(
     TypedefParser::TypeAnnotationContext* ctx) {

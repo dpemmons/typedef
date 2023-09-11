@@ -190,64 +190,6 @@ struct SomeStruct3 {
   REQUIRE(GetF32(FindField(ctx, "example_f32")) == 3.14f);
   REQUIRE(FindField(ctx, "example_f64"));
   REQUIRE(IsF64(FindField(ctx, "example_f64")));
-  REQUIRE(GetF64(FindField(ctx, "example_f64")) == 5.16f);
-  REQUIRE(FindField(ctx, "example_u8"));
-  REQUIRE(IsU8(FindField(ctx, "example_u8")));
-  REQUIRE(GetU8(FindField(ctx, "example_u8")) == 8);
-  REQUIRE(FindField(ctx, "example_u16"));
-  REQUIRE(IsU16(FindField(ctx, "example_u16")));
-  REQUIRE(GetU16(FindField(ctx, "example_u16")) == 16);
-  REQUIRE(FindField(ctx, "example_u32"));
-  REQUIRE(IsU32(FindField(ctx, "example_u32")));
-  REQUIRE(GetU32(FindField(ctx, "example_u32")) == 32);
-  REQUIRE(FindField(ctx, "example_u64"));
-  REQUIRE(IsU64(FindField(ctx, "example_u64")));
-  REQUIRE(GetU64(FindField(ctx, "example_u64")) == 64);
-  REQUIRE(FindField(ctx, "example_i8"));
-  REQUIRE(IsI8(FindField(ctx, "example_i8")));
-  REQUIRE(GetI8(FindField(ctx, "example_i8")) == -8);
-  REQUIRE(FindField(ctx, "example_i16"));
-  REQUIRE(IsI16(FindField(ctx, "example_i16")));
-  REQUIRE(GetI16(FindField(ctx, "example_i16")) == -16);
-  REQUIRE(FindField(ctx, "example_i32"));
-  REQUIRE(IsI32(FindField(ctx, "example_i32")));
-  REQUIRE(GetI32(FindField(ctx, "example_i32")) == -32);
-  REQUIRE(FindField(ctx, "example_i64"));
-  REQUIRE(IsI64(FindField(ctx, "example_i64")));
-  REQUIRE(GetI64(FindField(ctx, "example_i64")) == -64);
-}
-
-TEST_CASE(
-    "Struct with implicitly typed primitive fields with explicitly typed "
-    "literals.",
-    "[struct]") {
-  Parser parser(R"(
-typedef=alpha;
-module test;
-
-struct SomeStruct4 {
-  example_f32 = 3.14f32;
-  example_f64 = 5.16f64;
-  example_u8 = 8u8;
-  example_u16 = 16u16;
-  example_u32 = 32u32;
-  example_u64 = 64u64;
-  example_i8 = -8i8;
-  example_i16 = -16i16;
-  example_i32 = -32i32;
-  example_i64 = -64i64;
-};
-    )");
-  REQUIRE(!parser.Parse());
-  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct4");
-  REQUIRE(ctx);
-  REQUIRE(DefinesStruct(ctx));
-
-  REQUIRE(FindField(ctx, "example_f32"));
-  REQUIRE(IsF32(FindField(ctx, "example_f32")));
-  REQUIRE(GetF32(FindField(ctx, "example_f32")) == 3.14f);
-  REQUIRE(FindField(ctx, "example_f64"));
-  REQUIRE(IsF64(FindField(ctx, "example_f64")));
   REQUIRE(GetF64(FindField(ctx, "example_f64")) == 5.16);
   REQUIRE(FindField(ctx, "example_u8"));
   REQUIRE(IsU8(FindField(ctx, "example_u8")));
@@ -276,9 +218,30 @@ struct SomeStruct4 {
 }
 
 TEST_CASE(
-    "Struct with implicitly typed primitive fields with implicitly typed "
-    "literals.",
+    "Struct with implicitly typed primitive fields with explicitly typed "
+    "literals should fail.",
     "[struct]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct4 {
+  example_f32 = 3.14f32;
+  example_f64 = 5.16f64;
+  example_u8 = 8u8;
+  example_u16 = 16u16;
+  example_u32 = 32u32;
+  example_u64 = 64u64;
+  example_i8 = -8i8;
+  example_i16 = -16i16;
+  example_i32 = -32i32;
+  example_i64 = -64i64;
+};
+    )");
+  REQUIRE(parser.Parse() == 10);
+}
+
+TEST_CASE("Fields missing type annotations should fail.", "[struct]") {
   Parser parser(R"(
 typedef=alpha;
 module test;
@@ -291,26 +254,7 @@ struct SomeStruct5 {
   example_i32 = -32;
 };
     )");
-  REQUIRE(!parser.Parse());
-  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct5");
-  REQUIRE(ctx);
-  REQUIRE(DefinesStruct(ctx));
-
-  REQUIRE(FindField(ctx, "example_bool"));
-  REQUIRE(IsBool(FindField(ctx, "example_bool")));
-  REQUIRE(GetBool(FindField(ctx, "example_bool")) == true);
-  REQUIRE(FindField(ctx, "example_char"));
-  REQUIRE(IsChar(FindField(ctx, "example_char")));
-  REQUIRE(GetChar(FindField(ctx, "example_char")) == 128293);
-  REQUIRE(FindField(ctx, "example_str"));
-  REQUIRE(IsStr(FindField(ctx, "example_str")));
-  REQUIRE(*GetStr(FindField(ctx, "example_str")) == "hello world");
-  REQUIRE(FindField(ctx, "example_f32"));
-  REQUIRE(IsF32(FindField(ctx, "example_f32")));
-  REQUIRE(GetF32(FindField(ctx, "example_f32")) == 3.14f);
-  REQUIRE(FindField(ctx, "example_i32"));
-  REQUIRE(IsI32(FindField(ctx, "example_i32")));
-  REQUIRE(GetI32(FindField(ctx, "example_i32")) == -32);
+  REQUIRE(parser.Parse() == 5);
 }
 
 TEST_CASE("Struct with an inline struct", "[struct]") {

@@ -32,9 +32,10 @@ typeDefinition: (KW_STRUCT | KW_VARIANT) type_identifier = identifier? (
 fieldBlock: ( typeDefinition | (fieldDefinition ';'))*;
 
 fieldDefinition:
-	field_identifier = identifier (
-		':' (typeAnnotation | typeDefinition)
-	)? ('=' primitiveLiteral)?;
+	field_identifier = identifier ':' (
+		typeAnnotation
+		| typeDefinition
+	) ('=' primitiveLiteral)?;
 
 typeAnnotation:
 	typeIdentifier ('<' typeArgument (',' typeArgument)* '>')?;

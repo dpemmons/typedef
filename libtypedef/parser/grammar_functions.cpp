@@ -129,6 +129,18 @@ bool ReferencesPrimitiveFloatType(TypedefParser::TypeIdentifierContext* ctx) {
           ctx->primitiveTypeIdentifier()->KW_F64());
 }
 
+bool ReferencesPrimitiveIntegerType(TypedefParser::TypeIdentifierContext* ctx) {
+  return ctx->primitiveTypeIdentifier() &&
+         (ctx->primitiveTypeIdentifier()->KW_U8() ||
+          ctx->primitiveTypeIdentifier()->KW_U16() ||
+          ctx->primitiveTypeIdentifier()->KW_U32() ||
+          ctx->primitiveTypeIdentifier()->KW_U64() ||
+          ctx->primitiveTypeIdentifier()->KW_I8() ||
+          ctx->primitiveTypeIdentifier()->KW_I16() ||
+          ctx->primitiveTypeIdentifier()->KW_I32() ||
+          ctx->primitiveTypeIdentifier()->KW_I64());
+}
+
 TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitiveIdentifier(
     TypedefParser::TypeAnnotationContext* ctx) {
   return ReferencesPrimitiveType(ctx)
