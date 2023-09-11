@@ -451,47 +451,6 @@ struct SomeStruct21 {
   REQUIRE(IsStr(FindField(vctx, "vb")));
 }
 
-// TEST_CASE("Struct with an nested vector", "[struct]") {
-//   Parser parser(R"(
-// typedef=alpha;
-// module test;
-
-// struct SomeStruct22 {
-//   vector NestedVector<i32>;
-// };
-//     )");
-//   REQUIRE(!parser.Parse());
-//   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct22");
-//   REQUIRE(ctx);
-
-//   auto vector_field = st->GetType("NestedVector");
-//   REQUIRE(vector_field);
-//   REQUIRE(vector_field->IsVector());
-//   REQUIRE(vector_field->GetVector());
-//   REQUIRE(vector_field->GetVector()->element_type->IsI32());
-// }
-
-// TEST_CASE("Struct with an nested map", "[struct]") {
-//   Parser parser(R"(
-// typedef=alpha;
-// module test;
-
-// struct SomeStruct23 {
-//   map NestedMap<i32, f64>;
-// };
-//     )");
-//   REQUIRE(!parser.Parse());
-//   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct23");
-//   REQUIRE(ctx);
-
-//   auto map_field = st->GetType("NestedMap");
-//   REQUIRE(map_field);
-//   REQUIRE(map_field->IsMap());
-//   REQUIRE(map_field->GetMap());
-//   REQUIRE(map_field->GetMap()->key_type->IsI32());
-//   REQUIRE(map_field->GetMap()->value_type->IsF64());
-// }
-
 TEST_CASE("Struct with an duplicate fields should error", "[struct]") {
   Parser parser(R"(
 typedef=alpha;
