@@ -5,13 +5,13 @@
 #include <string>
 #include <variant>
 
+#include "libtypedef/parser/grammar_functions.h"
 #include "libtypedef/parser/typedef_parser.h"
 
 using namespace std;
 using namespace td;
 using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
-#if 0
 TEST_CASE("Struct with a symbol reference to another struct", "[symref]") {
   Parser parser(R"(
 typedef=alpha;
@@ -34,16 +34,26 @@ struct SomeOtherStruct {
 };
     )");
   REQUIRE(!parser.Parse());
-  auto st = parsed_file->mod->GetStruct("SomeOtherStruct");
-  REQUIRE(st->GetField("ref_to_some_struct")->SymrefIsResolved());
 
-  // Test that the reference resolves to the right thing.
-  auto target = st->GetField("ref_to_some_struct")->Symref();
-  REQUIRE(target);
-  REQUIRE(target->IsStruct());
-  REQUIRE(target->HasStructIdentifier("SomeStruct"));
-  REQUIRE(target->GetStruct()->GetField("inlineMap"));
+  auto* some_struct =
+      FindType(parser.GetCompilationUnitContext(), "SomeStruct");
+
+  auto* some_other_struct =
+      FindType(parser.GetCompilationUnitContext(), "SomeOtherStruct");
+  auto* ref_to_some_struct = FindField(some_other_struct, "ref_to_some_struct");
+  REQUIRE(some_struct == ref_to_some_struct->typeAnnotation()
+                             ->typeIdentifier()
+                             ->userType()
+                             ->type_definition);
+
+  // // Test that the reference resolves to the right thing.
+  // auto target = st->GetField("ref_to_some_struct")->Symref();
+  // REQUIRE(target);
+  // REQUIRE(target->IsStruct());
+  // REQUIRE(target->HasStructIdentifier("SomeStruct"));
+  // REQUIRE(target->GetStruct()->GetField("inlineMap"));
 }
+#if 0
 
 TEST_CASE("Struct with a symbol reference to an non-existant type should fail",
           "[symref]") {

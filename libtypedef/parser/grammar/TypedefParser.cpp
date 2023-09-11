@@ -1005,6 +1005,7 @@ antlrcpp::Any TypedefParser::UserTypeContext::accept(tree::ParseTreeVisitor *vis
 TypedefParser::UserTypeContext* TypedefParser::userType() {
   UserTypeContext *_localctx = _tracker.createInstance<UserTypeContext>(_ctx, getState());
   enterRule(_localctx, 18, TypedefParser::RuleUserType);
+  dynamic_cast<UserTypeContext *>(_localctx)->type_definition =  nullptr;
 
   auto onExit = finally([=] {
     exitRule();

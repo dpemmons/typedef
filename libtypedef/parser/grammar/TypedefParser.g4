@@ -50,7 +50,8 @@ typeIdentifier:
 	| KW_MAP
 	| userType;
 userType
-	returns[TypeDefinitionContext* type_definition]: identifier;
+	returns[TypeDefinitionContext* type_definition]
+	@init {$type_definition = nullptr;}: identifier;
 
 // template DoIt(a: i32, b: str) "{a} {b}";
 templateDefinition:

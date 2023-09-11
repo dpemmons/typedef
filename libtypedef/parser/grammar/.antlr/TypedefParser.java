@@ -815,6 +815,7 @@ public class TypedefParser extends Parser {
 	public final UserTypeContext userType() throws RecognitionException {
 		UserTypeContext _localctx = new UserTypeContext(_ctx, getState());
 		enterRule(_localctx, 18, RULE_userType);
+		((UserTypeContext)_localctx).type_definition =  nullptr;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
