@@ -215,7 +215,7 @@ variant SomeVariant3 {
 
 TEST_CASE(
     "Variant with implicitly typed primitive fields with explicitly typed "
-    "literals.",
+    "literals should fail.",
     "[variant]") {
   Parser parser(R"(
 typedef=alpha;
@@ -234,46 +234,12 @@ variant SomeVariant4 {
   example_i64 = -64i64;
 };
     )");
-  REQUIRE(!parser.Parse());
-  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant4");
-  REQUIRE(ctx);
-  REQUIRE(DefinesVariant(ctx));
-
-  REQUIRE(FindField(ctx, "example_f32"));
-  REQUIRE(IsF32(FindField(ctx, "example_f32")));
-  REQUIRE(GetF32(FindField(ctx, "example_f32")) == 3.14f);
-  REQUIRE(FindField(ctx, "example_f64"));
-  REQUIRE(IsF64(FindField(ctx, "example_f64")));
-  REQUIRE(GetF64(FindField(ctx, "example_f64")) == 5.16);
-  REQUIRE(FindField(ctx, "example_u8"));
-  REQUIRE(IsU8(FindField(ctx, "example_u8")));
-  REQUIRE(GetU8(FindField(ctx, "example_u8")) == 8);
-  REQUIRE(FindField(ctx, "example_u16"));
-  REQUIRE(IsU16(FindField(ctx, "example_u16")));
-  REQUIRE(GetU16(FindField(ctx, "example_u16")) == 16);
-  REQUIRE(FindField(ctx, "example_u32"));
-  REQUIRE(IsU32(FindField(ctx, "example_u32")));
-  REQUIRE(GetU32(FindField(ctx, "example_u32")) == 32);
-  REQUIRE(FindField(ctx, "example_u64"));
-  REQUIRE(IsU64(FindField(ctx, "example_u64")));
-  REQUIRE(GetU64(FindField(ctx, "example_u64")) == 64);
-  REQUIRE(FindField(ctx, "example_i8"));
-  REQUIRE(IsI8(FindField(ctx, "example_i8")));
-  REQUIRE(GetI8(FindField(ctx, "example_i8")) == -8);
-  REQUIRE(FindField(ctx, "example_i16"));
-  REQUIRE(IsI16(FindField(ctx, "example_i16")));
-  REQUIRE(GetI16(FindField(ctx, "example_i16")) == -16);
-  REQUIRE(FindField(ctx, "example_i32"));
-  REQUIRE(IsI32(FindField(ctx, "example_i32")));
-  REQUIRE(GetI32(FindField(ctx, "example_i32")) == -32);
-  REQUIRE(FindField(ctx, "example_i64"));
-  REQUIRE(IsI64(FindField(ctx, "example_i64")));
-  REQUIRE(GetI64(FindField(ctx, "example_i64")) == -64);
+  REQUIRE(parser.Parse() == 10);
 }
 
 TEST_CASE(
     "Variant with implicitly typed primitive fields with implicitly typed "
-    "literals.",
+    "literals should fail.",
     "[variant]") {
   Parser parser(R"(
 typedef=alpha;
@@ -287,26 +253,7 @@ variant SomeVariant5 {
   example_i32 = -32;
 };
     )");
-  REQUIRE(!parser.Parse());
-  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant5");
-  REQUIRE(ctx);
-  REQUIRE(DefinesVariant(ctx));
-
-  REQUIRE(FindField(ctx, "example_bool"));
-  REQUIRE(IsBool(FindField(ctx, "example_bool")));
-  REQUIRE(GetBool(FindField(ctx, "example_bool")) == true);
-  REQUIRE(FindField(ctx, "example_char"));
-  REQUIRE(IsChar(FindField(ctx, "example_char")));
-  REQUIRE(GetChar(FindField(ctx, "example_char")) == 128293);
-  REQUIRE(FindField(ctx, "example_str"));
-  REQUIRE(IsStr(FindField(ctx, "example_str")));
-  REQUIRE(*GetStr(FindField(ctx, "example_str")) == "hello world");
-  REQUIRE(FindField(ctx, "example_f32"));
-  REQUIRE(IsF32(FindField(ctx, "example_f32")));
-  REQUIRE(GetF32(FindField(ctx, "example_f32")) == 3.14f);
-  REQUIRE(FindField(ctx, "example_i32"));
-  REQUIRE(IsI32(FindField(ctx, "example_i32")));
-  REQUIRE(GetI32(FindField(ctx, "example_i32")) == -32);
+  REQUIRE(parser.Parse() == 5);
 }
 
 TEST_CASE("Variant with an inline struct", "[variant]") {
@@ -327,7 +274,7 @@ variant SomeVariant10 {
 
   auto* fctx = FindField(ctx, "an_inline_struct");
   REQUIRE(fctx);
-  REQUIRE(!HasTypeDefinition(fctx));
+  REQUIRE(HasTypeDefinition(fctx));
   REQUIRE(DefinesStruct(GetTypeDefinition(fctx)));
   REQUIRE(FindField(GetTypeDefinition(fctx), "a"));
   REQUIRE(IsI32(FindField(GetTypeDefinition(fctx), "a")));
@@ -352,7 +299,7 @@ variant SomeVariant11 {
 
   auto* fctx = FindField(ctx, "an_inline_variant");
   REQUIRE(fctx);
-  REQUIRE(!HasTypeDefinition(fctx));
+  REQUIRE(HasTypeDefinition(fctx));
   REQUIRE(DefinesVariant(GetTypeDefinition(fctx)));
   REQUIRE(FindField(GetTypeDefinition(fctx), "va"));
   REQUIRE(IsI32(FindField(GetTypeDefinition(fctx), "va")));
@@ -360,46 +307,43 @@ variant SomeVariant11 {
   REQUIRE(IsStr(FindField(GetTypeDefinition(fctx), "vb")));
 }
 
-// TEST_CASE("Variant with an inline vector", "[variant]") {
-//   Parser parser(R"(
-// typedef=alpha;
-// module test;
+TEST_CASE("Variant with an inline vector", "[variant]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
 
-// variant SomeVariant12 {
-//   inline_vector: vector<i32>;
-// };
-//     )");
-//   REQUIRE(!parser.Parse());
-//   auto var = parsed_file->mod->GetVariant("SomeVariant12");
-//   REQUIRE(var);
+variant SomeVariant12 {
+  inline_vector: vector<i32>;
+};
+    )");
+  REQUIRE(!parser.Parse());
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant12");
+  REQUIRE(ctx);
 
-//   auto inline_vector_field = var->GetField("inline_vector");
-//   REQUIRE(inline_vector_field);
-//   REQUIRE(inline_vector_field->IsVector());
-//   REQUIRE(inline_vector_field->GetVector());
-//   REQUIRE(inline_vector_field->GetVector()->element_type->IsI32());
-// }
+  auto* fctx = FindField(ctx, "inline_vector");
+  REQUIRE(fctx);
+  REQUIRE(!HasTypeDefinition(fctx));
+  REQUIRE(ReferencesBuiltinVectorType(GetTypeAnnotation(fctx)));
+}
 
-// TEST_CASE("Variant with an inline map", "[variant]") {
-//   Parser parser(R"(
-// typedef=alpha;
-// module test;
+TEST_CASE("Variant with an inline map", "[variant]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
 
-// variant SomeVariant13 {
-//   inline_map: map<i32, f64>;
-// };
-//     )");
-//   REQUIRE(!parser.Parse());
-//   auto var = parsed_file->mod->GetVariant("SomeVariant13");
-//   REQUIRE(var);
+variant SomeVariant13 {
+  inline_map: map<i32, f64>;
+};
+    )");
+  REQUIRE(!parser.Parse());
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant13");
+  REQUIRE(ctx);
 
-//   auto inline_map_field = var->GetField("inline_map");
-//   REQUIRE(inline_map_field);
-//   REQUIRE(inline_map_field->IsMap());
-//   REQUIRE(inline_map_field->GetMap());
-//   REQUIRE(inline_map_field->GetMap()->key_type->IsI32());
-//   REQUIRE(inline_map_field->GetMap()->value_type->IsF64());
-// }
+  auto* fctx = FindField(ctx, "inline_map");
+  REQUIRE(fctx);
+  REQUIRE(!HasTypeDefinition(fctx));
+  REQUIRE(ReferencesBuiltinMapType(GetTypeAnnotation(fctx)));
+}
 
 TEST_CASE("Variant with an nested struct", "[variant]") {
   Parser parser(R"(
@@ -450,47 +394,6 @@ variant SomeVariant21 {
   REQUIRE(IsStr(FindField(vctx, "vb")));
 }
 
-// TEST_CASE("Variant with an nested vector", "[variant]") {
-//   Parser parser(R"(
-// typedef=alpha;
-// module test;
-
-// variant SomeVariant22 {
-//   vector NestedVector<i32>;
-// };
-//     )");
-//   REQUIRE(!parser.Parse());
-//   auto var = parsed_file->mod->GetVariant("SomeVariant22");
-//   REQUIRE(var);
-
-//   auto vector_field = var->GetType("NestedVector");
-//   REQUIRE(vector_field);
-//   REQUIRE(vector_field->IsVector());
-//   REQUIRE(vector_field->GetVector());
-//   REQUIRE(vector_field->GetVector()->element_type->IsI32());
-// }
-
-// TEST_CASE("Variant with an nested map", "[variant]") {
-//   Parser parser(R"(
-// typedef=alpha;
-// module test;
-
-// variant SomeVariant23 {
-//   map NestedMap<i32, f64>;
-// };
-//     )");
-//   REQUIRE(!parser.Parse());
-//   auto var = parsed_file->mod->GetVariant("SomeVariant23");
-//   REQUIRE(var);
-
-//   auto map_field = var->GetType("NestedMap");
-//   REQUIRE(map_field);
-//   REQUIRE(map_field->IsMap());
-//   REQUIRE(map_field->GetMap());
-//   REQUIRE(map_field->GetMap()->key_type->IsI32());
-//   REQUIRE(map_field->GetMap()->value_type->IsF64());
-// }
-
 TEST_CASE("Variant with an duplicate fields should error", "[variant]") {
   Parser parser(R"(
 typedef=alpha;
@@ -526,10 +429,10 @@ typedef=alpha;
 module test;
 
 variant SomeVariant {
-  variant TypeA {};
-  variant TypeA {};
-  vector TypeA<i32>;
-  map TypeA<i32, i32>;
+  struct foo {};
+  variant foo {};
+  foo: vector <i32>;
+  foo: map <i32, i32>;
 };
     )");
   REQUIRE(parser.Parse() == 3);
@@ -594,10 +497,10 @@ module test;
 
 variant SomeVariant {
   inline_variant: variant {
-    variant TypeA {};
-    variant TypeA {};
-    vector TypeA<i32>;
-    map TypeA<i32, i32>;
+    struct foo {};
+    variant foo {};
+    foo: vector<i32>;
+    foo: map<i32, i32>;
   };
 };
     )");
