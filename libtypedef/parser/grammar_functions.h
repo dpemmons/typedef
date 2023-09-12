@@ -3,6 +3,7 @@
 
 #include <antlr4/antlr4-runtime.h>
 
+#include <filesystem>
 #include <string>
 
 #include "libtypedef/parser/grammar/TypedefParser.h"
@@ -14,6 +15,8 @@ std::string ToString(TypedefParser::SymbolPathContext* ctx,
 
 std::string ToString(TypedefParser::ModuleDeclarationContext* ctx,
                      const std::string& delimiter = "::");
+
+std::filesystem::path ToPath(TypedefParser::ModuleDeclarationContext* ctx);
 
 bool DefinesUserType(TypedefParser::TypeDefinitionContext* type);
 bool DefinesStruct(TypedefParser::TypeDefinitionContext* type);

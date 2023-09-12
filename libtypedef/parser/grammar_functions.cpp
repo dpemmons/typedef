@@ -42,6 +42,16 @@ std::string ToString(TypedefParser::ModuleDeclarationContext* ctx,
   return ss.str();
 }
 
+std::filesystem::path ToPath(TypedefParser::ModuleDeclarationContext* ctx) {
+  std::filesystem::path path;
+
+  for (auto identifier : ctx->symbolPath()->identifier()) {
+    path /= identifier->id;
+  }
+
+  return path;
+}
+
 // ---- User types -------------------------------------------------------------
 
 bool DefinesUserType(TypedefParser::TypeDefinitionContext* type) {

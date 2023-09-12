@@ -3,6 +3,7 @@
 #include <cassert>
 #include <filesystem>
 #include <iostream>
+#include <stdexcept>
 
 namespace td {
 
@@ -23,7 +24,8 @@ void FilePrinter::Open() {
   }
   out_.open(out_path_);
   if (!out_.is_open()) {
-    assert(false);  // unreachable
+    throw std::runtime_error("Cannot open file for writing '" +
+                             out_path_.string() + "'");
   }
 }
 

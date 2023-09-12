@@ -345,9 +345,10 @@ json GetUserTypeDecls(vector<TypeDefinitionContext*> types) {
 void CodegenCpp(OutPathBase* out_path,
                 TypedefParser::CompilationUnitContext* compilation_unit_ctx) {
   filesystem::path hdr_filename =
-      ToString(compilation_unit_ctx->moduleDeclaration(), "/") + ".h";
-  filesystem::path source_filename =
-      ToString(compilation_unit_ctx->moduleDeclaration(), "/") + ".cpp";
+      ToPath(compilation_unit_ctx->moduleDeclaration());
+  filesystem::path source_filename = hdr_filename;
+  hdr_filename.replace_extension(".h");
+  source_filename.replace_extension(".cpp");
 
   auto hdr_file = out_path->OpenOutputFile(hdr_filename);
   hdr_file->Open();
