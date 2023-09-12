@@ -48,28 +48,46 @@ bool DefinesUserType(TypedefParser::TypeDefinitionContext* type) {
   return DefinesStruct(type) || DefinesVariant(type);
 }
 bool DefinesStruct(TypedefParser::TypeDefinitionContext* type) {
-  return type->KW_STRUCT() != nullptr;
+  return type->KW_STRUCT();
 }
 bool DefinesVariant(TypedefParser::TypeDefinitionContext* type) {
-  return type->KW_VARIANT() != nullptr;
+  return type->KW_VARIANT();
 }
 
 bool DefinesAndUsesInlineUserType(
     TypedefParser::FieldDefinitionContext* field) {
-  return field->typeDefinition() != nullptr;
+  return field->typeDefinition();
+}
+
+TypedefParser::TypeDefinitionContext* GetInlineUserType(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  return ctx->typeDefinition();
+}
+
+bool ReferencesUserType(TypedefParser::FieldDefinitionContext* ctx) {
+  return ctx->typeAnnotation() &&
+         ReferencesUserType(ctx->typeAnnotation()->typeIdentifier());
 }
 
 bool ReferencesUserType(TypedefParser::TypeIdentifierContext* ctx) {
-  return ctx->userType() != nullptr && ctx->userType()->identifier() != nullptr;
+  return ctx->userType() && ctx->userType()->identifier();
 }
 
-TypedefParser::UserTypeContext* GetReferencedUserType(
+TypedefParser::TypeDefinitionContext* GetReferencedUserType(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  if (ReferencesUserType(ctx)) {
+    return ctx->typeAnnotation()->typeIdentifier()->userType()->type_definition;
+  }
+  return nullptr;
+}
+
+TypedefParser::TypeDefinitionContext* GetReferencedUserType(
     TypedefParser::TypeIdentifierContext* ctx) {
-  return ReferencesUserType(ctx) ? ctx->userType() : nullptr;
+  return ReferencesUserType(ctx) ? ctx->userType()->type_definition : nullptr;
 }
 
 bool HasTypeAnnotation(TypedefParser::FieldDefinitionContext* ctx) {
-  return ctx->typeAnnotation() != nullptr;
+  return ctx->typeAnnotation();
 }
 
 TypedefParser::TypeAnnotationContext* GetTypeAnnotation(
@@ -78,7 +96,7 @@ TypedefParser::TypeAnnotationContext* GetTypeAnnotation(
 }
 
 bool HasTypeDefinition(TypedefParser::FieldDefinitionContext* ctx) {
-  return ctx->typeDefinition() != nullptr;
+  return ctx->typeDefinition();
 }
 
 TypedefParser::TypeDefinitionContext* GetTypeDefinition(
@@ -97,19 +115,19 @@ bool ReferencesBuiltinType(TypedefParser::TypeIdentifierContext* ctx) {
 }
 
 bool ReferencesBuiltinVectorType(TypedefParser::TypeAnnotationContext* ctx) {
-  return ctx->typeIdentifier() && ctx->typeIdentifier()->KW_VECTOR() != nullptr;
+  return ctx->typeIdentifier() && ctx->typeIdentifier()->KW_VECTOR();
 }
 
 bool ReferencesBuiltinVectorType(TypedefParser::TypeIdentifierContext* ctx) {
-  return ctx->KW_VECTOR() != nullptr;
+  return ctx->KW_VECTOR();
 }
 
 bool ReferencesBuiltinMapType(TypedefParser::TypeAnnotationContext* ctx) {
-  return ctx->typeIdentifier() && ctx->typeIdentifier()->KW_MAP() != nullptr;
+  return ctx->typeIdentifier() && ctx->typeIdentifier()->KW_MAP();
 }
 
 bool ReferencesBuiltinMapType(TypedefParser::TypeIdentifierContext* ctx) {
-  return ctx->KW_MAP() != nullptr;
+  return ctx->KW_MAP();
 }
 
 // ---- Primitive field types --------------------------------------------------
@@ -120,7 +138,7 @@ bool ReferencesPrimitiveType(TypedefParser::TypeAnnotationContext* ctx) {
 }
 
 bool ReferencesPrimitiveType(TypedefParser::TypeIdentifierContext* ctx) {
-  return ctx->primitiveTypeIdentifier() != nullptr;
+  return ctx->primitiveTypeIdentifier();
 }
 
 bool ReferencesPrimitiveFloatType(TypedefParser::TypeIdentifierContext* ctx) {
@@ -167,91 +185,91 @@ TypedefParser::PrimitiveLiteralContext* GetPrimitiveLiteral(
 }
 
 bool IsBool(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  return ctx->KW_BOOL() != nullptr;
+  return ctx->KW_BOOL();
 }
 bool IsBool(TypedefParser::FieldDefinitionContext* ctx) {
   return ReferencesPrimitiveType(ctx) &&
          IsBool(GetReferencedPrimitiveIdentifier(ctx));
 }
 bool IsChar(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  return ctx->KW_CHAR() != nullptr;
+  return ctx->KW_CHAR();
 }
 bool IsChar(TypedefParser::FieldDefinitionContext* ctx) {
   return ReferencesPrimitiveType(ctx) &&
          IsChar(GetReferencedPrimitiveIdentifier(ctx));
 }
 bool IsStr(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  return ctx->KW_STRING() != nullptr;
+  return ctx->KW_STRING();
 }
 bool IsStr(TypedefParser::FieldDefinitionContext* ctx) {
   return ReferencesPrimitiveType(ctx) &&
          IsStr(GetReferencedPrimitiveIdentifier(ctx));
 }
 bool IsF32(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  return ctx->KW_F32() != nullptr;
+  return ctx->KW_F32();
 }
 bool IsF32(TypedefParser::FieldDefinitionContext* ctx) {
   return ReferencesPrimitiveType(ctx) &&
          IsF32(GetReferencedPrimitiveIdentifier(ctx));
 }
 bool IsF64(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  return ctx->KW_F64() != nullptr;
+  return ctx->KW_F64();
 }
 bool IsF64(TypedefParser::FieldDefinitionContext* ctx) {
   return ReferencesPrimitiveType(ctx) &&
          IsF64(GetReferencedPrimitiveIdentifier(ctx));
 }
 bool IsU8(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  return ctx->KW_U8() != nullptr;
+  return ctx->KW_U8();
 }
 bool IsU8(TypedefParser::FieldDefinitionContext* ctx) {
   return ReferencesPrimitiveType(ctx) &&
          IsU8(GetReferencedPrimitiveIdentifier(ctx));
 }
 bool IsU16(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  return ctx->KW_U16() != nullptr;
+  return ctx->KW_U16();
 }
 bool IsU16(TypedefParser::FieldDefinitionContext* ctx) {
   return ReferencesPrimitiveType(ctx) &&
          IsU16(GetReferencedPrimitiveIdentifier(ctx));
 }
 bool IsU32(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  return ctx->KW_U32() != nullptr;
+  return ctx->KW_U32();
 }
 bool IsU32(TypedefParser::FieldDefinitionContext* ctx) {
   return ReferencesPrimitiveType(ctx) &&
          IsU32(GetReferencedPrimitiveIdentifier(ctx));
 }
 bool IsU64(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  return ctx->KW_U64() != nullptr;
+  return ctx->KW_U64();
 }
 bool IsU64(TypedefParser::FieldDefinitionContext* ctx) {
   return ReferencesPrimitiveType(ctx) &&
          IsU64(GetReferencedPrimitiveIdentifier(ctx));
 }
 bool IsI8(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  return ctx->KW_I8() != nullptr;
+  return ctx->KW_I8();
 }
 bool IsI8(TypedefParser::FieldDefinitionContext* ctx) {
   return ReferencesPrimitiveType(ctx) &&
          IsI8(GetReferencedPrimitiveIdentifier(ctx));
 }
 bool IsI16(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  return ctx->KW_I16() != nullptr;
+  return ctx->KW_I16();
 }
 bool IsI16(TypedefParser::FieldDefinitionContext* ctx) {
   return ReferencesPrimitiveType(ctx) &&
          IsI16(GetReferencedPrimitiveIdentifier(ctx));
 }
 bool IsI32(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  return ctx->KW_I32() != nullptr;
+  return ctx->KW_I32();
 }
 bool IsI32(TypedefParser::FieldDefinitionContext* ctx) {
   return ReferencesPrimitiveType(ctx) &&
          IsI32(GetReferencedPrimitiveIdentifier(ctx));
 }
 bool IsI64(TypedefParser::PrimitiveTypeIdentifierContext* ctx) {
-  return ctx->KW_I64() != nullptr;
+  return ctx->KW_I64();
 }
 
 bool IsI64(TypedefParser::FieldDefinitionContext* ctx) {
@@ -260,65 +278,55 @@ bool IsI64(TypedefParser::FieldDefinitionContext* ctx) {
 }
 
 bool IsBoolLiteral(TypedefParser::PrimitiveLiteralContext* ctx) {
-  return ctx->boolLiteral() != nullptr;
+  return ctx->boolLiteral();
 }
 
 bool IsCharLiteral(TypedefParser::PrimitiveLiteralContext* ctx) {
-  return ctx->charLiteral() != nullptr;
+  return ctx->charLiteral();
 }
 
 bool IsStrLiteral(TypedefParser::PrimitiveLiteralContext* ctx) {
-  return ctx->stringLiteral() != nullptr;
+  return ctx->stringLiteral();
 }
 
 bool IsF32Literal(TypedefParser::PrimitiveLiteralContext* ctx) {
-  return ctx->floatLiteral() != nullptr &&
-         IsF32(ctx->floatLiteral()->float_literal);
+  return ctx->floatLiteral() && IsF32(ctx->floatLiteral()->float_literal);
 }
 
 bool IsF64Literal(TypedefParser::PrimitiveLiteralContext* ctx) {
-  return ctx->floatLiteral() != nullptr &&
-         IsF64(ctx->floatLiteral()->float_literal);
+  return ctx->floatLiteral() && IsF64(ctx->floatLiteral()->float_literal);
 }
 
 bool IsU8Literal(TypedefParser::PrimitiveLiteralContext* ctx) {
-  return ctx->integerLiteral() != nullptr &&
-         IsU8(ctx->integerLiteral()->integer_literal);
+  return ctx->integerLiteral() && IsU8(ctx->integerLiteral()->integer_literal);
 }
 
 bool IsU16Literal(TypedefParser::PrimitiveLiteralContext* ctx) {
-  return ctx->integerLiteral() != nullptr &&
-         IsU16(ctx->integerLiteral()->integer_literal);
+  return ctx->integerLiteral() && IsU16(ctx->integerLiteral()->integer_literal);
 }
 
 bool IsU32Literal(TypedefParser::PrimitiveLiteralContext* ctx) {
-  return ctx->integerLiteral() != nullptr &&
-         IsU32(ctx->integerLiteral()->integer_literal);
+  return ctx->integerLiteral() && IsU32(ctx->integerLiteral()->integer_literal);
 }
 
 bool IsU64Literal(TypedefParser::PrimitiveLiteralContext* ctx) {
-  return ctx->integerLiteral() != nullptr &&
-         IsU64(ctx->integerLiteral()->integer_literal);
+  return ctx->integerLiteral() && IsU64(ctx->integerLiteral()->integer_literal);
 }
 
 bool IsI8Literal(TypedefParser::PrimitiveLiteralContext* ctx) {
-  return ctx->integerLiteral() != nullptr &&
-         IsI8(ctx->integerLiteral()->integer_literal);
+  return ctx->integerLiteral() && IsI8(ctx->integerLiteral()->integer_literal);
 }
 
 bool IsI16Literal(TypedefParser::PrimitiveLiteralContext* ctx) {
-  return ctx->integerLiteral() != nullptr &&
-         IsI16(ctx->integerLiteral()->integer_literal);
+  return ctx->integerLiteral() && IsI16(ctx->integerLiteral()->integer_literal);
 }
 
 bool IsI32Literal(TypedefParser::PrimitiveLiteralContext* ctx) {
-  return ctx->integerLiteral() != nullptr &&
-         IsI32(ctx->integerLiteral()->integer_literal);
+  return ctx->integerLiteral() && IsI32(ctx->integerLiteral()->integer_literal);
 }
 
 bool IsI64Literal(TypedefParser::PrimitiveLiteralContext* ctx) {
-  return ctx->integerLiteral() != nullptr &&
-         IsI64(ctx->integerLiteral()->integer_literal);
+  return ctx->integerLiteral() && IsI64(ctx->integerLiteral()->integer_literal);
 }
 
 bool GetBool(TypedefParser::PrimitiveLiteralContext* pctx) {
@@ -528,15 +536,19 @@ TypedefParser::TypeDefinitionContext* FindType(
 }
 
 TypedefParser::TypeDefinitionContext* FindType(
-    TypedefParser::TypeDefinitionContext* td_ctx,
-    const std::string& identifier) {
-  for (TypedefParser::TypeDefinitionContext* td :
-       td_ctx->fieldBlock()->typeDefinition()) {
+    TypedefParser::FieldBlockContext* ctx, const std::string& identifier) {
+  for (TypedefParser::TypeDefinitionContext* td : ctx->typeDefinition()) {
     if (td->type_identifier->id == identifier) {
       return td;
     }
   }
   return nullptr;
+}
+
+TypedefParser::TypeDefinitionContext* FindType(
+    TypedefParser::TypeDefinitionContext* td_ctx,
+    const std::string& identifier) {
+  return FindType(td_ctx->fieldBlock(), identifier);
 }
 
 TypedefParser::FieldDefinitionContext* FindField(

@@ -108,11 +108,11 @@ json GetAccessInfoForType(TypeIdentifierContext* ctx) {
       throw_logic_error("invalid state");
     }
   } else if (ReferencesUserType(ctx)) {
-    UserTypeContext* user_type = GetReferencedUserType(ctx);
-    if (!user_type->type_definition) {
+    TypeDefinitionContext* user_type = GetReferencedUserType(ctx);
+    if (!user_type) {
       throw_logic_error("Unresolved user type reference.");
     }
-    j = GetAccessInfoForType(user_type->type_definition);
+    j = GetAccessInfoForType(user_type);
   }
   return j;
 }

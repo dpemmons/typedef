@@ -4,6 +4,7 @@
 #include <memory>
 #include <set>
 #include <stdexcept>
+#include <variant>
 
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
@@ -26,6 +27,7 @@ using namespace std;
 
 void FirstPassListener::enterCompilationUnit(
     TypedefParser::CompilationUnitContext* ctx) {
+  type_contexts_.push_back(ctx);
   // Duplicate symbol detection.
   set<string> identifiers;
   for (auto* type_def_ctx : ctx->typeDefinition()) {
@@ -43,6 +45,7 @@ void FirstPassListener::enterTypeDefinition(
 
 void FirstPassListener::enterFieldBlock(TypedefParser::FieldBlockContext* ctx) {
   // Duplicate symbol detection.
+  type_contexts_.push_back(ctx);
   set<string> identifiers;
   for (auto* type_def_ctx : ctx->typeDefinition()) {
     if (identifiers.find(type_def_ctx->type_identifier->id) !=
@@ -60,6 +63,10 @@ void FirstPassListener::enterFieldBlock(TypedefParser::FieldBlockContext* ctx) {
     }
     identifiers.insert(field_def_ctx->field_identifier->id);
   }
+}
+
+void FirstPassListener::exitFieldBlock(TypedefParser::FieldBlockContext* ctx) {
+  type_contexts_.pop_back();
 }
 
 void FirstPassListener::enterFieldDefinition(
@@ -146,6 +153,38 @@ void FirstPassListener::enterTypeAnnotation(
   }
 }
 
+void FirstPassListener::enterUserType(TypedefParser::UserTypeContext* ctx) {
+  ctx->type_definition =
+      FindSymbolInTypeStack(type_contexts_.size() - 1, &ctx->identifier()->id);
+  if (!ctx->type_definition) {
+    AddError(ctx, ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
+  }
+}
+
+TypedefParser::TypeDefinitionContext* FirstPassListener::FindSymbolInTypeStack(
+    size_t current_idx, const string* identifier) {
+  TypedefParser::TypeDefinitionContext* found_typedef = nullptr;
+
+  TypeContext& curr_context = type_contexts_[current_idx];
+
+  if (holds_alternative<TypedefParser::CompilationUnitContext*>(curr_context)) {
+    found_typedef = FindType(
+        get<TypedefParser::CompilationUnitContext*>(curr_context), *identifier);
+  } else if (holds_alternative<TypedefParser::FieldBlockContext*>(
+                 curr_context)) {
+    found_typedef = FindType(
+        get<TypedefParser::FieldBlockContext*>(curr_context), *identifier);
+  } else {
+    throw_logic_error("unknown type contest");
+  }
+
+  if (current_idx > 0 && !found_typedef) {
+    found_typedef =
+        FindSymbolInTypeStack(current_idx - 1, identifier);
+  }
+  return found_typedef;
+}
+
 void FirstPassListener::AddError(antlr4::ParserRuleContext* ctx,
                                  ParserErrorInfo::Type type, string msg) {
   errors_list_.push_back(
@@ -155,7 +194,7 @@ void FirstPassListener::AddError(antlr4::ParserRuleContext* ctx,
           .SetCharOffset(ctx->start->getStartIndex())
           .SetLine(ctx->start->getLine())
           .SetLineOffset(ctx->start->getCharPositionInLine())
-          .SetLength(ctx->stop->getStopIndex() - ctx->start->getStartIndex())
+          .SetLength(ctx->stop->getStopIndex() - ctx->start->getStartIndex() + 1)
           .build());
 }
 

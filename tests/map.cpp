@@ -145,9 +145,11 @@ TEST_CASE("Map with a vector key type should error", "[map]") {
 typedef=alpha;
 module test;
 
+struct A {};
+
 struct SomeStruct {
   vec_a: vector<i32>;
-  some_bool_map: map<VecA, str>;
+  some_bool_map: map<A, str>;
 }
     )");
   REQUIRE(parser.Parse() == 1);
@@ -160,9 +162,11 @@ TEST_CASE("Map with a map key type should error", "[map]") {
 typedef=alpha;
 module test;
 
+struct A {};
+
 struct SomeStruct {
   map_a: map<i32, str>;
-  some_bool_map: map<MapA, str>;
+  some_bool_map: map<A, str>;
 }
     )");
   REQUIRE(parser.Parse() == 1);

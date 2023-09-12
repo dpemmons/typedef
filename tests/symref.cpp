@@ -41,19 +41,9 @@ struct SomeOtherStruct {
   auto* some_other_struct =
       FindType(parser.GetCompilationUnitContext(), "SomeOtherStruct");
   auto* ref_to_some_struct = FindField(some_other_struct, "ref_to_some_struct");
-  REQUIRE(some_struct == ref_to_some_struct->typeAnnotation()
-                             ->typeIdentifier()
-                             ->userType()
-                             ->type_definition);
-
-  // // Test that the reference resolves to the right thing.
-  // auto target = st->GetField("ref_to_some_struct")->Symref();
-  // REQUIRE(target);
-  // REQUIRE(target->IsStruct());
-  // REQUIRE(target->HasStructIdentifier("SomeStruct"));
-  // REQUIRE(target->GetStruct()->GetField("inlineMap"));
+  REQUIRE(ReferencesUserType(ref_to_some_struct));
+  REQUIRE(some_struct == GetReferencedUserType(ref_to_some_struct));
 }
-#if 0
 
 TEST_CASE("Struct with a symbol reference to an non-existant type should fail",
           "[symref]") {
@@ -66,7 +56,7 @@ struct SomeOtherStruct {
 };
     )");
   REQUIRE(parser.Parse() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
+  REQUIRE(parser.GetError().error_type ==
           ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
 }
 
@@ -84,7 +74,7 @@ struct SomeStruct {
 };
     )");
   REQUIRE(parser.Parse() == 1);
-  REQUIRE(parsed_file->errors[0].error_type ==
+  REQUIRE(parser.GetError().error_type ==
           ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
 }
 
@@ -102,15 +92,17 @@ struct SomeStruct {
     )");
   REQUIRE(!parser.Parse());
 
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
-  REQUIRE(st->GetField("ref_to_nested"));
+  auto* some_struct =
+      FindType(parser.GetCompilationUnitContext(), "SomeStruct");
 
-  // Test that the reference resolves to the right thing.
-  auto target = st->GetField("ref_to_nested")->Symref();
-  REQUIRE(target);
-  REQUIRE(target->IsStruct());
-  REQUIRE(target->HasStructIdentifier("NestedStruct"));
-  REQUIRE(target->GetStruct()->GetField("valA"));
+  auto* ref_to_nested = FindField(some_struct, "ref_to_nested");
+  REQUIRE(ref_to_nested);
+
+  auto* nested_struct = FindType(some_struct, "NestedStruct");
+  REQUIRE(nested_struct);
+
+  REQUIRE(ReferencesUserType(ref_to_nested));
+  REQUIRE(nested_struct == GetReferencedUserType(ref_to_nested));
 }
 
 TEST_CASE("Inline struct with a symbol reference to an nested struct",
@@ -120,48 +112,32 @@ typedef=alpha;
 module test;
 
 struct SomeStruct {
-  inline_struct: struct {
-    nested_struct: NestedStruct;
-  };
   struct NestedStruct {
     valA: i32;
   };
+  inline_struct: struct {
+    foo: NestedStruct;
+  };
 };
     )");
   REQUIRE(!parser.Parse());
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
+  auto* some_struct =
+      FindType(parser.GetCompilationUnitContext(), "SomeStruct");
 
-  auto target = st->GetField("inline_struct")
-                    ->GetStruct()
-                    ->GetField("nested_struct")
-                    ->Symref();
-  REQUIRE(target);
-  REQUIRE(target->IsStruct());
-  REQUIRE(target->HasStructIdentifier("NestedStruct"));
-  REQUIRE(target->GetStruct()->GetField("valA"));
-}
+  auto* nested_struct = FindType(some_struct, "NestedStruct");
+  REQUIRE(nested_struct);
 
-TEST_CASE("Struct with a symbol reference to a vector type", "[symref]") {
-  Parser parser(R"(
-typedef=alpha;
-module test;
+  auto* inline_struct = FindField(some_struct, "inline_struct");
+  REQUIRE(inline_struct);
+  REQUIRE(DefinesAndUsesInlineUserType(inline_struct));
+  auto* anonymous_inline_struct = GetInlineUserType(inline_struct);
+  REQUIRE(anonymous_inline_struct);
 
-vector VecA<u8>;
+  auto* foo = FindField(anonymous_inline_struct, "foo");
+  REQUIRE(foo);
 
-struct SomeStruct {
-  vec_a: VecA;
-};
-    )");
-  REQUIRE(!parser.Parse());
-
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
-  REQUIRE(st->GetField("vec_a"));
-
-  // Test that the reference resolves to the right thing.
-  auto target = st->GetField("vec_a")->Symref();
-  REQUIRE(target);
-  REQUIRE(target->IsVector());
-  REQUIRE(*target->GetIdentifier() == "VecA");
+  REQUIRE(ReferencesUserType(foo));
+  REQUIRE(nested_struct == GetReferencedUserType(foo));
 }
 
 TEST_CASE("Struct with a symbol reference to a variant type", "[symref]") {
@@ -179,38 +155,14 @@ struct SomeStruct {
 };
     )");
   REQUIRE(!parser.Parse());
+  auto* variant_a = FindType(parser.GetCompilationUnitContext(), "VariantA");
+  auto* some_struct =
+      FindType(parser.GetCompilationUnitContext(), "SomeStruct");
 
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
-  REQUIRE(st->GetField("var_a"));
-
-  // Test that the reference resolves to the right thing.
-  auto target = st->GetField("var_a")->Symref();
-  REQUIRE(target);
-  REQUIRE(target->IsVariant());
-  REQUIRE(*target->GetIdentifier() == "VariantA");
-}
-
-TEST_CASE("Struct with a symbol reference to a map type", "[symref]") {
-  Parser parser(R"(
-typedef=alpha;
-module test;
-
-map MapA<i32, str>;
-
-struct SomeStruct {
-  map_a: MapA;
-};
-    )");
-  REQUIRE(!parser.Parse());
-
-  auto st = parsed_file->mod->GetStruct("SomeStruct");
-  REQUIRE(st->GetField("map_a"));
-
-  // Test that the reference resolves to the right thing.
-  auto target = st->GetField("map_a")->Symref();
-  REQUIRE(target);
-  REQUIRE(target->IsMap());
-  REQUIRE(*target->GetIdentifier() == "MapA");
+  auto* var_a = FindField(some_struct, "var_a");
+  REQUIRE(var_a);
+  REQUIRE(ReferencesUserType(var_a));
+  REQUIRE(variant_a == GetReferencedUserType(var_a));
 }
 
 TEST_CASE("Variant with a symbol reference to a struct type", "[symref]") {
@@ -224,20 +176,21 @@ struct SomeStruct {
 
 variant SomeVariant {
   a_str: str;
-  some_struct: SomeStruct;
+  foo: SomeStruct;
 };
 
     )");
   REQUIRE(!parser.Parse());
 
-  auto var = parsed_file->mod->GetVariant("SomeVariant");
-  REQUIRE(var->GetField("some_struct"));
+  auto* some_variant =
+      FindType(parser.GetCompilationUnitContext(), "SomeVariant");
+  auto* some_struct =
+      FindType(parser.GetCompilationUnitContext(), "SomeStruct");
 
-  // Test that the reference resolves to the right thing.
-  auto target = var->GetField("some_struct")->Symref();
-  REQUIRE(target);
-  REQUIRE(target->IsStruct());
-  REQUIRE(*target->GetIdentifier() == "SomeStruct");
+  auto* foo = FindField(some_variant, "foo");
+  REQUIRE(foo);
+  REQUIRE(ReferencesUserType(foo));
+  REQUIRE(some_struct == GetReferencedUserType(foo));
 }
 
 TEST_CASE("Variant with a symbol reference to another variant type",
@@ -253,67 +206,20 @@ variant SomeOtherVariant {
 
 variant SomeVariant {
   a_str: str;
-  some_other_variant: SomeOtherVariant;
+  foo: SomeOtherVariant;
 };
     )");
   REQUIRE(!parser.Parse());
 
-  auto var = parsed_file->mod->GetVariant("SomeVariant");
-  REQUIRE(var->GetField("some_other_variant"));
+  auto* some_other_variant =
+      FindType(parser.GetCompilationUnitContext(), "SomeOtherVariant");
+  auto* some_variant =
+      FindType(parser.GetCompilationUnitContext(), "SomeVariant");
 
-  // Test that the reference resolves to the right thing.
-  auto target = var->GetField("some_other_variant")->Symref();
-  REQUIRE(target);
-  REQUIRE(target->IsVariant());
-  REQUIRE(*target->GetIdentifier() == "SomeOtherVariant");
-}
-
-TEST_CASE("Variant with a symbol reference to a vector type", "[symref]") {
-  Parser parser(R"(
-typedef=alpha;
-module test;
-
-vector VecA<u8>;
-
-variant SomeVariant {
-  a_str: str;
-  vec_a: VecA;
-};
-    )");
-  REQUIRE(!parser.Parse());
-
-  auto var = parsed_file->mod->GetVariant("SomeVariant");
-  REQUIRE(var->GetField("vec_a"));
-
-  // Test that the reference resolves to the right thing.
-  auto target = var->GetField("vec_a")->Symref();
-  REQUIRE(target);
-  REQUIRE(target->IsVector());
-  REQUIRE(*target->GetIdentifier() == "VecA");
-}
-
-TEST_CASE("Variant with a symbol reference to a map type", "[symref]") {
-  Parser parser(R"(
-typedef=alpha;
-module test;
-
-map MapA<i32, str>;
-
-variant SomeVariant {
-  a_str: str;
-  map_a: MapA;
-};
-    )");
-  REQUIRE(!parser.Parse());
-
-  auto var = parsed_file->mod->GetVariant("SomeVariant");
-  REQUIRE(var->GetField("map_a"));
-
-  // Test that the reference resolves to the right thing.
-  auto target = var->GetField("map_a")->Symref();
-  REQUIRE(target);
-  REQUIRE(target->IsMap());
-  REQUIRE(*target->GetIdentifier() == "MapA");
+  auto* foo = FindField(some_variant, "foo");
+  REQUIRE(foo);
+  REQUIRE(ReferencesUserType(foo));
+  REQUIRE(some_other_variant == GetReferencedUserType(foo));
 }
 
 TEST_CASE("Vector with a symbol reference to a struct type", "[symref]") {
@@ -321,20 +227,27 @@ TEST_CASE("Vector with a symbol reference to a struct type", "[symref]") {
 typedef=alpha;
 module test;
 
-struct SomeStruct {
+struct SomeOtherStruct {
   an_int: i32;
 };
 
-vector SomeVector<SomeStruct>;
+struct SomeStruct {
+  foo: vector<SomeOtherStruct>;
+}
 
     )");
   REQUIRE(!parser.Parse());
 
-  auto vec = parsed_file->mod->GetVector("SomeVector");
-  REQUIRE(vec->element_type->IsSymref());
-  REQUIRE(vec->element_type->SymrefIsResolved());
-  REQUIRE(*vec->element_type->Symref()->GetIdentifier() == "SomeStruct");
-  REQUIRE(vec->element_type->Symref()->GetStruct()->GetField("an_int"));
+  auto* some_other_struct =
+      FindType(parser.GetCompilationUnitContext(), "SomeOtherStruct");
+  auto* some_struct =
+      FindType(parser.GetCompilationUnitContext(), "SomeStruct");
+
+  auto* foo = FindField(some_struct, "foo");
+  REQUIRE(foo);
+
+  // TODO test for type specialization
+  REQUIRE(false);
 }
 
 TEST_CASE("Vector with a symbol reference to a variant type", "[symref]") {
@@ -347,51 +260,22 @@ variant SomeOtherVariant {
   another_int: i64;
 };
 
-vector SomeVector<SomeOtherVariant>;
-    )");
-  REQUIRE(!parser.Parse());
-
-  auto vec = parsed_file->mod->GetVector("SomeVector");
-  REQUIRE(vec->element_type->IsSymref());
-  REQUIRE(vec->element_type->SymrefIsResolved());
-  REQUIRE(*vec->element_type->Symref()->GetIdentifier() == "SomeOtherVariant");
-  REQUIRE(vec->element_type->Symref()->GetVariant()->GetField("an_int"));
+struct SomeStruct {
+  foo: vector<SomeOtherVariant>;
 }
-
-TEST_CASE("Vector with a symbol reference to another vector type", "[symref]") {
-  Parser parser(R"(
-typedef=alpha;
-module test;
-
-vector VecA<u8>;
-
-vector SomeVector<VecA>;
     )");
   REQUIRE(!parser.Parse());
 
-  auto vec = parsed_file->mod->GetVector("SomeVector");
-  REQUIRE(vec->element_type->IsSymref());
-  REQUIRE(vec->element_type->SymrefIsResolved());
-  REQUIRE(*vec->element_type->Symref()->GetIdentifier() == "VecA");
-  REQUIRE(vec->element_type->Symref()->GetVector()->element_type->IsU8());
-}
+  auto* some_other_variant =
+      FindType(parser.GetCompilationUnitContext(), "SomeOtherVariant");
+  auto* some_struct =
+      FindType(parser.GetCompilationUnitContext(), "SomeStruct");
 
-TEST_CASE("Vector with a symbol reference to a map type", "[symref]") {
-  Parser parser(R"(
-typedef=alpha;
-module test;
+  auto* foo = FindField(some_struct, "foo");
+  REQUIRE(foo);
 
-map MapA<i32, str>;
-
-vector SomeVector<MapA>;
-    )");
-  REQUIRE(!parser.Parse());
-
-  auto vec = parsed_file->mod->GetVector("SomeVector");
-  REQUIRE(vec->element_type->IsSymref());
-  REQUIRE(vec->element_type->SymrefIsResolved());
-  REQUIRE(*vec->element_type->Symref()->GetIdentifier() == "MapA");
-  REQUIRE(vec->element_type->Symref()->GetMap()->key_type->IsI32());
+  // TODO test for type specialization
+  REQUIRE(false);
 }
 
 TEST_CASE("Map with a symbol reference to a struct type", "[symref]") {
@@ -403,16 +287,22 @@ struct SomeStruct {
   an_int: i32;
 };
 
-map SomeMap<i32, SomeStruct>;
-
+struct SomeOtherStruct {
+  foo: map<i32, SomeStruct>;
+}
     )");
   REQUIRE(!parser.Parse());
 
-  auto map = parsed_file->mod->GetMap("SomeMap");
-  REQUIRE(map->value_type->IsSymref());
-  REQUIRE(map->value_type->SymrefIsResolved());
-  REQUIRE(*map->value_type->Symref()->GetIdentifier() == "SomeStruct");
-  REQUIRE(map->value_type->Symref()->GetStruct()->GetField("an_int")->IsI32());
+  auto* some_struct =
+      FindType(parser.GetCompilationUnitContext(), "SomeStruct");
+  auto* some_other_struct =
+      FindType(parser.GetCompilationUnitContext(), "SomeOtherStruct");
+
+  auto* foo = FindField(some_other_struct, "foo");
+  REQUIRE(foo);
+
+  // TODO test for type specialization
+  REQUIRE(false);
 }
 
 TEST_CASE("Map with a symbol reference to a variant type", "[symref]") {
@@ -425,50 +315,20 @@ variant SomeVariant {
   another_int: i64;
 };
 
-map SomeMap<i32, SomeVariant>;
+struct SomeStruct {
+  foo: map<i32, SomeVariant>;
+}
     )");
   REQUIRE(!parser.Parse());
 
-  auto map = parsed_file->mod->GetMap("SomeMap");
-  REQUIRE(map->value_type->IsSymref());
-  REQUIRE(map->value_type->SymrefIsResolved());
-  REQUIRE(*map->value_type->Symref()->GetIdentifier() == "SomeVariant");
-  REQUIRE(map->value_type->Symref()->GetVariant()->GetField("an_int")->IsI32());
+  auto* some_variant =
+      FindType(parser.GetCompilationUnitContext(), "SomeVariant");
+  auto* some_struct =
+      FindType(parser.GetCompilationUnitContext(), "SomeStruct");
+
+  auto* foo = FindField(some_struct, "foo");
+  REQUIRE(foo);
+
+  // TODO test for type specialization
+  REQUIRE(false);
 }
-
-TEST_CASE("Map with a symbol reference to a vector type", "[symref]") {
-  Parser parser(R"(
-typedef=alpha;
-module test;
-
-vector VecA<u8>;
-
-map SomeMap<i32, VecA>;
-    )");
-  REQUIRE(!parser.Parse());
-
-  auto map = parsed_file->mod->GetMap("SomeMap");
-  REQUIRE(map->value_type->IsSymref());
-  REQUIRE(map->value_type->SymrefIsResolved());
-  REQUIRE(*map->value_type->Symref()->GetIdentifier() == "VecA");
-  REQUIRE(map->value_type->Symref()->GetVector()->element_type->IsU8());
-}
-
-TEST_CASE("Map with a symbol reference to another map type", "[symref]") {
-  Parser parser(R"(
-typedef=alpha;
-module test;
-
-map MapA<i32, str>;
-
-map SomeMap<i32, MapA>;
-    )");
-  REQUIRE(!parser.Parse());
-
-  auto map = parsed_file->mod->GetMap("SomeMap");
-  REQUIRE(map->value_type->IsSymref());
-  REQUIRE(map->value_type->SymrefIsResolved());
-  REQUIRE(*map->value_type->Symref()->GetIdentifier() == "MapA");
-  REQUIRE(map->value_type->Symref()->GetMap()->key_type->IsI32());
-}
-#endif

@@ -20,9 +20,14 @@ bool DefinesStruct(TypedefParser::TypeDefinitionContext* type);
 bool DefinesVariant(TypedefParser::TypeDefinitionContext* type);
 
 bool DefinesAndUsesInlineUserType(TypedefParser::FieldDefinitionContext* field);
+TypedefParser::TypeDefinitionContext* GetInlineUserType(
+    TypedefParser::FieldDefinitionContext* ctx);
 
+bool ReferencesUserType(TypedefParser::FieldDefinitionContext* ctx);
 bool ReferencesUserType(TypedefParser::TypeIdentifierContext* ctx);
-TypedefParser::UserTypeContext* GetReferencedUserType(
+TypedefParser::TypeDefinitionContext* GetReferencedUserType(
+    TypedefParser::FieldDefinitionContext* ctx);
+TypedefParser::TypeDefinitionContext* GetReferencedUserType(
     TypedefParser::TypeIdentifierContext* ctx);
 
 bool HasTypeAnnotation(TypedefParser::FieldDefinitionContext* ctx);
@@ -124,6 +129,10 @@ int64_t GetI64(TypedefParser::FieldDefinitionContext* ctx);
 TypedefParser::TypeDefinitionContext* FindType(
     TypedefParser::CompilationUnitContext* cu_ctx,
     const std::string& identifier);
+
+// Returns nullptr if there isn't one.
+TypedefParser::TypeDefinitionContext* FindType(
+    TypedefParser::FieldBlockContext* ctx, const std::string& identifier);
 
 // Returns nullptr if there isn't one.
 TypedefParser::TypeDefinitionContext* FindType(
