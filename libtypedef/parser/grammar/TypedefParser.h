@@ -111,6 +111,8 @@ public:
     UseDeclarationContext* useDeclaration(size_t i);
     std::vector<TypeDefinitionContext *> typeDefinition();
     TypeDefinitionContext* typeDefinition(size_t i);
+    std::vector<TemplateDefinitionContext *> templateDefinition();
+    TemplateDefinitionContext* templateDefinition(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

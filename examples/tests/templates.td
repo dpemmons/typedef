@@ -7,4 +7,4 @@ struct SomeVals {
 
 template DoIt(name: str, bar: SomeVals) t#"
 Hello <name>!
-"#;
+"#

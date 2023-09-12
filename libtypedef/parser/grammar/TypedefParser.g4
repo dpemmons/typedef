@@ -19,6 +19,7 @@ options {
 compilationUnit:
 	typedefVersionDeclaration moduleDeclaration (useDeclaration)* (
 		typeDefinition
+		| templateDefinition
 	)* EOF;
 
 typedefVersionDeclaration: 'typedef' EQ identifier ';';
