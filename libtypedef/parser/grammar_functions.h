@@ -23,6 +23,10 @@ bool DefinesAndUsesInlineUserType(TypedefParser::FieldDefinitionContext* field);
 TypedefParser::TypeDefinitionContext* GetInlineUserType(
     TypedefParser::FieldDefinitionContext* ctx);
 
+bool ReferencesUserType(TypedefParser::TypeArgumentContext* ctx);
+TypedefParser::TypeDefinitionContext* GetReferencedUserType(
+    TypedefParser::TypeArgumentContext* ctx);
+
 bool ReferencesUserType(TypedefParser::FieldDefinitionContext* ctx);
 bool ReferencesUserType(TypedefParser::TypeIdentifierContext* ctx);
 TypedefParser::TypeDefinitionContext* GetReferencedUserType(
@@ -36,6 +40,10 @@ TypedefParser::TypeAnnotationContext* GetTypeAnnotation(
 bool HasTypeDefinition(TypedefParser::FieldDefinitionContext* ctx);
 TypedefParser::TypeDefinitionContext* GetTypeDefinition(
     TypedefParser::FieldDefinitionContext* ctx);
+
+size_t HasTypeArguments(TypedefParser::TypeAnnotationContext* ctx);
+TypedefParser::TypeArgumentContext* GetTypeArgument(
+    TypedefParser::TypeAnnotationContext* ctx, size_t ii = 0);
 
 bool ReferencesBuiltinType(TypedefParser::TypeAnnotationContext* ctx);
 bool ReferencesBuiltinType(TypedefParser::TypeIdentifierContext* ctx);

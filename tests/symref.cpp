@@ -245,9 +245,14 @@ struct SomeStruct {
 
   auto* foo = FindField(some_struct, "foo");
   REQUIRE(foo);
+  auto* vec = GetTypeAnnotation(foo);
+  REQUIRE(vec);
+  REQUIRE(HasTypeArguments(vec) == 1);
 
-  // TODO test for type specialization
-  REQUIRE(false);
+  auto* type_arg_0 = GetTypeArgument(vec, 0);
+  REQUIRE(type_arg_0);
+  REQUIRE(ReferencesUserType(type_arg_0));
+  REQUIRE(some_other_struct == GetReferencedUserType(type_arg_0));
 }
 
 TEST_CASE("Vector with a symbol reference to a variant type", "[symref]") {
@@ -273,9 +278,14 @@ struct SomeStruct {
 
   auto* foo = FindField(some_struct, "foo");
   REQUIRE(foo);
+  auto* vec = GetTypeAnnotation(foo);
+  REQUIRE(vec);
+  REQUIRE(HasTypeArguments(vec) == 1);
 
-  // TODO test for type specialization
-  REQUIRE(false);
+  auto* type_arg_0 = GetTypeArgument(vec, 0);
+  REQUIRE(type_arg_0);
+  REQUIRE(ReferencesUserType(type_arg_0));
+  REQUIRE(some_other_variant == GetReferencedUserType(type_arg_0));
 }
 
 TEST_CASE("Map with a symbol reference to a struct type", "[symref]") {
@@ -300,9 +310,14 @@ struct SomeOtherStruct {
 
   auto* foo = FindField(some_other_struct, "foo");
   REQUIRE(foo);
+  auto* map = GetTypeAnnotation(foo);
+  REQUIRE(map);
+  REQUIRE(HasTypeArguments(map) == 2);
 
-  // TODO test for type specialization
-  REQUIRE(false);
+  auto* type_arg_1 = GetTypeArgument(map, 1);
+  REQUIRE(type_arg_1);
+  REQUIRE(ReferencesUserType(type_arg_1));
+  REQUIRE(some_struct == GetReferencedUserType(type_arg_1));
 }
 
 TEST_CASE("Map with a symbol reference to a variant type", "[symref]") {
@@ -328,7 +343,12 @@ struct SomeStruct {
 
   auto* foo = FindField(some_struct, "foo");
   REQUIRE(foo);
+  auto* map = GetTypeAnnotation(foo);
+  REQUIRE(map);
+  REQUIRE(HasTypeArguments(map) == 2);
 
-  // TODO test for type specialization
-  REQUIRE(false);
+  auto* type_arg_1 = GetTypeArgument(map, 1);
+  REQUIRE(type_arg_1);
+  REQUIRE(ReferencesUserType(type_arg_1));
+  REQUIRE(some_variant == GetReferencedUserType(type_arg_1));
 }

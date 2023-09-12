@@ -64,6 +64,17 @@ TypedefParser::TypeDefinitionContext* GetInlineUserType(
   return ctx->typeDefinition();
 }
 
+bool ReferencesUserType(TypedefParser::TypeArgumentContext* ctx) {
+  return ctx->typeIdentifier() && ctx->typeIdentifier()->userType();
+}
+
+TypedefParser::TypeDefinitionContext* GetReferencedUserType(
+    TypedefParser::TypeArgumentContext* ctx) {
+  return ReferencesUserType(ctx)
+             ? ctx->typeIdentifier()->userType()->type_definition
+             : nullptr;
+}
+
 bool ReferencesUserType(TypedefParser::FieldDefinitionContext* ctx) {
   return ctx->typeAnnotation() &&
          ReferencesUserType(ctx->typeAnnotation()->typeIdentifier());
@@ -102,6 +113,15 @@ bool HasTypeDefinition(TypedefParser::FieldDefinitionContext* ctx) {
 TypedefParser::TypeDefinitionContext* GetTypeDefinition(
     TypedefParser::FieldDefinitionContext* ctx) {
   return ctx->typeDefinition();
+}
+
+size_t HasTypeArguments(TypedefParser::TypeAnnotationContext* ctx) {
+  return ctx->typeArgument().size();
+}
+
+TypedefParser::TypeArgumentContext* GetTypeArgument(
+    TypedefParser::TypeAnnotationContext* ctx, size_t ii) {
+  return ctx->typeArgument(ii);
 }
 
 // ---- Builtin types ----------------------------------------------------------
