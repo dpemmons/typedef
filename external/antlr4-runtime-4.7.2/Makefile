@@ -1,7 +1,5 @@
 include ${CURDIR}/../../common.mk
 
-BUILD := debug
-COMPILER=gcc
 BASE_BUILD_DIR := ${CURDIR}/../../build/${BUILD}/external/antlr4-runtime-4.7.2
 
 LIB_SRC_DIRS := .

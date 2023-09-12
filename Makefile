@@ -4,6 +4,8 @@ include ${CURDIR}/common.mk
 
 BASE_BUILD_DIR := ${CURDIR}/build/${BUILD}
 
+$(info $$BASE_BUILD_DIR is [${BASE_BUILD_DIR}])
+
 ###############################################################################
 # LIB Rules
 LIBTYPEDEF_SRC_DIRS := ./libtypedef
