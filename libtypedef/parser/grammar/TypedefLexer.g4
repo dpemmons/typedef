@@ -206,9 +206,6 @@ STRING_LITERAL:
 		| ESC_NEWLINE
 	)* '"';
 
-TEMPLATE_LITERAL: 't' STRING_LITERAL;
-RAW_TEMPLATE_LITERAL: 't' RAW_STRING_CONTENT;
-
 RAW_STRING_LITERAL: 'r' RAW_STRING_CONTENT;
 
 fragment RAW_STRING_CONTENT:
@@ -265,6 +262,7 @@ HEX_PREFIX: '0x';
 OCT_PREFIX: '0o';
 BIN_PREFIX: '0b';
 
+START_TEMPLATE: 't#"' -> pushMode(TemplateIsland);
 RAW_ESCAPE: 'r#';
 PLUS: '+';
 MINUS: '-';
@@ -316,4 +314,23 @@ RBRACK: ']';
 LPAREN: '(';
 RPAREN: ')';
 
-WS: ([\p{Zs}] | ('\r\n' | [\r\n]))+ -> skip ; 
+WS: ([\p{Zs}] | ('\r\n' | [\r\n]))+ -> skip;
+
+mode TemplateIsland;
+END_TEMPLATE: '"#' -> popMode;
+TEMPLATE_CONTENTS: .;
+
+// TMPL_OPEN: '<' -> pushMode(LogicExpressionIsland);
+// TMPL_TEXT: ~'<'+; // clump all text together
+
+// mode LogicExpressionIsland;
+// TMPL_CLOSE: '>' -> popMode;
+// TMPL_SLASH: '/';
+// TMPL_COMMA: ',';
+// TMPL_LPAREN: '(';
+// TMPL_RPAREN: ')';
+// TMPL_PATHSEP: '::';
+// TMPL_KW_FOR: 'for';
+// TMPL_KW_IN: 'in';
+// TMPL_KW_IF: 'if';
+// TMPL_KW_ELSE: 'else';

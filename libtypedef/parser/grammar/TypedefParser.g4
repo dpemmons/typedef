@@ -27,7 +27,7 @@ moduleDeclaration: 'module' symbolPath ';';
 
 // struct|variant SomeVariant { optionA: i32; optionB: str; }
 typeDefinition: (KW_STRUCT | KW_VARIANT) type_identifier = identifier? (
-		'<' (type_parameter = identifier ',')+ '>'
+		LT (type_parameter = identifier COMMA)+ GT
 	)? '{' fieldBlock '}' ';'?;
 
 fieldBlock: ( typeDefinition | (fieldDefinition ';'))*;
@@ -39,7 +39,7 @@ fieldDefinition:
 	) ('=' primitiveLiteral)?;
 
 typeAnnotation:
-	typeIdentifier ('<' typeArgument (',' typeArgument)* '>')?;
+	typeIdentifier (LT typeArgument (COMMA typeArgument)* GT)?;
 
 // TODO since we're dropping the `vector SomeVec<>; sytax figure out inline types for vectors so you
 // can have vectors of vectors, and of maps.
@@ -56,13 +56,11 @@ userType
 
 // template DoIt(a: i32, b: str) "{a} {b}";
 templateDefinition:
-	KW_TEMPLATE identifier '(' (
+	KW_TEMPLATE identifier LPAREN (
 		functionParameter (COMMA functionParameter)*
-	) ')' ('=>' KW_STRING)? templateBlock;
+	) RPAREN templateBlock;
 
-templateBlock
-	returns[std::string template_block]
-	@after {td::SetTemplateBlock($template_block, $ctx);}: TEMPLATE_LITERAL | RAW_TEMPLATE_LITERAL;
+templateBlock: START_TEMPLATE TEMPLATE_CONTENTS* END_TEMPLATE;
 
 functionParameter
 	returns[std::unique_ptr<td::FunctionParameter> func_param]:
@@ -72,8 +70,8 @@ parameterType: primitiveTypeIdentifier | identifier;
 
 useDeclaration: 'use' symbolPath ';';
 
-symbolPath: (leading_pathsep = '::')? identifier (
-		'::' identifier
+symbolPath: (leading_pathsep = PATHSEP)? identifier (
+		PATHSEP identifier
 	)*;
 
 primitiveLiteral:
