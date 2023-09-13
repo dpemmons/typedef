@@ -102,23 +102,12 @@ TYPEDEF_PARSER_G4 := ./libtypedef/parser/grammar/TypedefParser.g4
 TYPEDEF_LEXER_CPP := ./libtypedef/parser/grammar/TypedefLexer.cpp
 TYPEDEF_LEXER_G4 := ./libtypedef/parser/grammar/TypedefLexer.g4
 
-TMPL_STR_PARSER_CPP := ./libtypedef/parser/grammar/TmplStrParser.cpp
-TMPL_STR_PARSER_G4 := ./libtypedef/parser/grammar/TmplStrParser.g4
-
-TMPL_STR_LEXER_CPP := ./libtypedef/parser/grammar/TmplStrLexer.cpp
-TMPL_STR_LEXER_G4 := ./libtypedef/parser/grammar/TmplStrLexer.g4
-
 $(TYPEDEF_PARSER_CPP): $(TYPEDEF_LEXER_CPP) $(TYPEDEF_PARSER_G4)
 	/usr/bin/antlr4 -Dlanguage=Cpp -visitor $(TYPEDEF_PARSER_G4)
 $(TYPEDEF_LEXER_CPP): $(TYPEDEF_LEXER_G4)
 	/usr/bin/antlr4 -Dlanguage=Cpp $(TYPEDEF_LEXER_G4)
 
-$(TMPL_STR_PARSER_CPP): $(TMPL_STR_LEXER_CPP) $(TMPL_STR_PARSER_G4)
-	/usr/bin/antlr4 -Dlanguage=Cpp -visitor $(TMPL_STR_PARSER_G4)
-$(TMPL_STR_LEXER_CPP): $(TMPL_STR_LEXER_G4)
-	/usr/bin/antlr4 -Dlanguage=Cpp $(TMPL_STR_LEXER_G4)
-
-grammar: $(TYPEDEF_LEXER_CPP) $(TYPEDEF_PARSER_CPP) $(TMPL_STR_LEXER_CPP) $(TMPL_STR_PARSER_CPP)
+grammar: $(TYPEDEF_LEXER_CPP) $(TYPEDEF_PARSER_CPP)
 #
 ###############################################################################
 

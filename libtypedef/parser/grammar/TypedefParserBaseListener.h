@@ -49,11 +49,62 @@ public:
   virtual void enterUserType(TypedefParser::UserTypeContext * /*ctx*/) override { }
   virtual void exitUserType(TypedefParser::UserTypeContext * /*ctx*/) override { }
 
-  virtual void enterTemplateDefinition(TypedefParser::TemplateDefinitionContext * /*ctx*/) override { }
-  virtual void exitTemplateDefinition(TypedefParser::TemplateDefinitionContext * /*ctx*/) override { }
+  virtual void enterTmplDefinition(TypedefParser::TmplDefinitionContext * /*ctx*/) override { }
+  virtual void exitTmplDefinition(TypedefParser::TmplDefinitionContext * /*ctx*/) override { }
 
-  virtual void enterTemplateBlock(TypedefParser::TemplateBlockContext * /*ctx*/) override { }
-  virtual void exitTemplateBlock(TypedefParser::TemplateBlockContext * /*ctx*/) override { }
+  virtual void enterTmplBlock(TypedefParser::TmplBlockContext * /*ctx*/) override { }
+  virtual void exitTmplBlock(TypedefParser::TmplBlockContext * /*ctx*/) override { }
+
+  virtual void enterTmplItem(TypedefParser::TmplItemContext * /*ctx*/) override { }
+  virtual void exitTmplItem(TypedefParser::TmplItemContext * /*ctx*/) override { }
+
+  virtual void enterTmplText(TypedefParser::TmplTextContext * /*ctx*/) override { }
+  virtual void exitTmplText(TypedefParser::TmplTextContext * /*ctx*/) override { }
+
+  virtual void enterTmplInsertion(TypedefParser::TmplInsertionContext * /*ctx*/) override { }
+  virtual void exitTmplInsertion(TypedefParser::TmplInsertionContext * /*ctx*/) override { }
+
+  virtual void enterTmplCall(TypedefParser::TmplCallContext * /*ctx*/) override { }
+  virtual void exitTmplCall(TypedefParser::TmplCallContext * /*ctx*/) override { }
+
+  virtual void enterTmplIf(TypedefParser::TmplIfContext * /*ctx*/) override { }
+  virtual void exitTmplIf(TypedefParser::TmplIfContext * /*ctx*/) override { }
+
+  virtual void enterTmplIfStmt(TypedefParser::TmplIfStmtContext * /*ctx*/) override { }
+  virtual void exitTmplIfStmt(TypedefParser::TmplIfStmtContext * /*ctx*/) override { }
+
+  virtual void enterTmplIfBlock(TypedefParser::TmplIfBlockContext * /*ctx*/) override { }
+  virtual void exitTmplIfBlock(TypedefParser::TmplIfBlockContext * /*ctx*/) override { }
+
+  virtual void enterTmplElIfStmt(TypedefParser::TmplElIfStmtContext * /*ctx*/) override { }
+  virtual void exitTmplElIfStmt(TypedefParser::TmplElIfStmtContext * /*ctx*/) override { }
+
+  virtual void enterTmplElifBlock(TypedefParser::TmplElifBlockContext * /*ctx*/) override { }
+  virtual void exitTmplElifBlock(TypedefParser::TmplElifBlockContext * /*ctx*/) override { }
+
+  virtual void enterTmplElseStmt(TypedefParser::TmplElseStmtContext * /*ctx*/) override { }
+  virtual void exitTmplElseStmt(TypedefParser::TmplElseStmtContext * /*ctx*/) override { }
+
+  virtual void enterTmplElseBlock(TypedefParser::TmplElseBlockContext * /*ctx*/) override { }
+  virtual void exitTmplElseBlock(TypedefParser::TmplElseBlockContext * /*ctx*/) override { }
+
+  virtual void enterTmplIfClose(TypedefParser::TmplIfCloseContext * /*ctx*/) override { }
+  virtual void exitTmplIfClose(TypedefParser::TmplIfCloseContext * /*ctx*/) override { }
+
+  virtual void enterTmplFor(TypedefParser::TmplForContext * /*ctx*/) override { }
+  virtual void exitTmplFor(TypedefParser::TmplForContext * /*ctx*/) override { }
+
+  virtual void enterTmplForStmt(TypedefParser::TmplForStmtContext * /*ctx*/) override { }
+  virtual void exitTmplForStmt(TypedefParser::TmplForStmtContext * /*ctx*/) override { }
+
+  virtual void enterTmplForClose(TypedefParser::TmplForCloseContext * /*ctx*/) override { }
+  virtual void exitTmplForClose(TypedefParser::TmplForCloseContext * /*ctx*/) override { }
+
+  virtual void enterTmplExpression(TypedefParser::TmplExpressionContext * /*ctx*/) override { }
+  virtual void exitTmplExpression(TypedefParser::TmplExpressionContext * /*ctx*/) override { }
+
+  virtual void enterTmplIdentifier(TypedefParser::TmplIdentifierContext * /*ctx*/) override { }
+  virtual void exitTmplIdentifier(TypedefParser::TmplIdentifierContext * /*ctx*/) override { }
 
   virtual void enterFunctionParameter(TypedefParser::FunctionParameterContext * /*ctx*/) override { }
   virtual void exitFunctionParameter(TypedefParser::FunctionParameterContext * /*ctx*/) override { }

@@ -318,19 +318,24 @@ WS: ([\p{Zs}] | ('\r\n' | [\r\n]))+ -> skip;
 
 mode TemplateIsland;
 END_TEMPLATE: '"#' -> popMode;
-TEMPLATE_CONTENTS: .;
+TMPL_EXPR_OPEN: '<' -> pushMode(LogicExpressionIsland);
+TMPL_TEXT: .+?;
 
-// TMPL_OPEN: '<' -> pushMode(LogicExpressionIsland);
-// TMPL_TEXT: ~'<'+; // clump all text together
+mode LogicExpressionIsland;
+TMPL_EXPR_CLOSE: '>' -> popMode;
+TMPL_SLASH: '/';
+TMPL_COMMA: ',';
+TMPL_LPAREN: '(';
+TMPL_RPAREN: ')';
+TMPL_PATHSEP: '::';
+TMPL_KW_FOR: 'for';
+TMPL_KW_IN: 'in';
+TMPL_KW_IF: 'if';
+TMPL_KW_ELSE: 'else';
+TMPL_KW_ELIF: 'elif';
 
-// mode LogicExpressionIsland;
-// TMPL_CLOSE: '>' -> popMode;
-// TMPL_SLASH: '/';
-// TMPL_COMMA: ',';
-// TMPL_LPAREN: '(';
-// TMPL_RPAREN: ')';
-// TMPL_PATHSEP: '::';
-// TMPL_KW_FOR: 'for';
-// TMPL_KW_IN: 'in';
-// TMPL_KW_IF: 'if';
-// TMPL_KW_ELSE: 'else';
+TMPL_NON_KEYWORD_IDENTIFIER:
+	XID_Start XID_Continue*
+	| '_' XID_Continue+;
+
+TMPL_WS: ([\p{Zs}] | ('\r\n' | [\r\n])) -> skip;

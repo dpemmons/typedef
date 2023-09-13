@@ -47,11 +47,62 @@ public:
   virtual void enterUserType(TypedefParser::UserTypeContext *ctx) = 0;
   virtual void exitUserType(TypedefParser::UserTypeContext *ctx) = 0;
 
-  virtual void enterTemplateDefinition(TypedefParser::TemplateDefinitionContext *ctx) = 0;
-  virtual void exitTemplateDefinition(TypedefParser::TemplateDefinitionContext *ctx) = 0;
+  virtual void enterTmplDefinition(TypedefParser::TmplDefinitionContext *ctx) = 0;
+  virtual void exitTmplDefinition(TypedefParser::TmplDefinitionContext *ctx) = 0;
 
-  virtual void enterTemplateBlock(TypedefParser::TemplateBlockContext *ctx) = 0;
-  virtual void exitTemplateBlock(TypedefParser::TemplateBlockContext *ctx) = 0;
+  virtual void enterTmplBlock(TypedefParser::TmplBlockContext *ctx) = 0;
+  virtual void exitTmplBlock(TypedefParser::TmplBlockContext *ctx) = 0;
+
+  virtual void enterTmplItem(TypedefParser::TmplItemContext *ctx) = 0;
+  virtual void exitTmplItem(TypedefParser::TmplItemContext *ctx) = 0;
+
+  virtual void enterTmplText(TypedefParser::TmplTextContext *ctx) = 0;
+  virtual void exitTmplText(TypedefParser::TmplTextContext *ctx) = 0;
+
+  virtual void enterTmplInsertion(TypedefParser::TmplInsertionContext *ctx) = 0;
+  virtual void exitTmplInsertion(TypedefParser::TmplInsertionContext *ctx) = 0;
+
+  virtual void enterTmplCall(TypedefParser::TmplCallContext *ctx) = 0;
+  virtual void exitTmplCall(TypedefParser::TmplCallContext *ctx) = 0;
+
+  virtual void enterTmplIf(TypedefParser::TmplIfContext *ctx) = 0;
+  virtual void exitTmplIf(TypedefParser::TmplIfContext *ctx) = 0;
+
+  virtual void enterTmplIfStmt(TypedefParser::TmplIfStmtContext *ctx) = 0;
+  virtual void exitTmplIfStmt(TypedefParser::TmplIfStmtContext *ctx) = 0;
+
+  virtual void enterTmplIfBlock(TypedefParser::TmplIfBlockContext *ctx) = 0;
+  virtual void exitTmplIfBlock(TypedefParser::TmplIfBlockContext *ctx) = 0;
+
+  virtual void enterTmplElIfStmt(TypedefParser::TmplElIfStmtContext *ctx) = 0;
+  virtual void exitTmplElIfStmt(TypedefParser::TmplElIfStmtContext *ctx) = 0;
+
+  virtual void enterTmplElifBlock(TypedefParser::TmplElifBlockContext *ctx) = 0;
+  virtual void exitTmplElifBlock(TypedefParser::TmplElifBlockContext *ctx) = 0;
+
+  virtual void enterTmplElseStmt(TypedefParser::TmplElseStmtContext *ctx) = 0;
+  virtual void exitTmplElseStmt(TypedefParser::TmplElseStmtContext *ctx) = 0;
+
+  virtual void enterTmplElseBlock(TypedefParser::TmplElseBlockContext *ctx) = 0;
+  virtual void exitTmplElseBlock(TypedefParser::TmplElseBlockContext *ctx) = 0;
+
+  virtual void enterTmplIfClose(TypedefParser::TmplIfCloseContext *ctx) = 0;
+  virtual void exitTmplIfClose(TypedefParser::TmplIfCloseContext *ctx) = 0;
+
+  virtual void enterTmplFor(TypedefParser::TmplForContext *ctx) = 0;
+  virtual void exitTmplFor(TypedefParser::TmplForContext *ctx) = 0;
+
+  virtual void enterTmplForStmt(TypedefParser::TmplForStmtContext *ctx) = 0;
+  virtual void exitTmplForStmt(TypedefParser::TmplForStmtContext *ctx) = 0;
+
+  virtual void enterTmplForClose(TypedefParser::TmplForCloseContext *ctx) = 0;
+  virtual void exitTmplForClose(TypedefParser::TmplForCloseContext *ctx) = 0;
+
+  virtual void enterTmplExpression(TypedefParser::TmplExpressionContext *ctx) = 0;
+  virtual void exitTmplExpression(TypedefParser::TmplExpressionContext *ctx) = 0;
+
+  virtual void enterTmplIdentifier(TypedefParser::TmplIdentifierContext *ctx) = 0;
+  virtual void exitTmplIdentifier(TypedefParser::TmplIdentifierContext *ctx) = 0;
 
   virtual void enterFunctionParameter(TypedefParser::FunctionParameterContext *ctx) = 0;
   virtual void exitFunctionParameter(TypedefParser::FunctionParameterContext *ctx) = 0;

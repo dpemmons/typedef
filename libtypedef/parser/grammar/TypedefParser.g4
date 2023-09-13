@@ -19,7 +19,7 @@ options {
 compilationUnit:
 	typedefVersionDeclaration moduleDeclaration (useDeclaration)* (
 		typeDefinition
-		| templateDefinition
+		| tmplDefinition
 	)* EOF;
 
 typedefVersionDeclaration: 'typedef' EQ identifier ';';
@@ -55,12 +55,42 @@ userType
 	@init {$type_definition = nullptr;}: identifier;
 
 // template DoIt(a: i32, b: str) "{a} {b}";
-templateDefinition:
+tmplDefinition:
 	KW_TEMPLATE identifier LPAREN (
 		functionParameter (COMMA functionParameter)*
-	) RPAREN templateBlock;
+	) RPAREN tmplBlock;
 
-templateBlock: START_TEMPLATE TEMPLATE_CONTENTS* END_TEMPLATE;
+tmplBlock: START_TEMPLATE tmplItem* END_TEMPLATE;
+tmplItem: tmplText | tmplInsertion | tmplCall | tmplIf | tmplFor;
+
+tmplText: TMPL_TEXT;
+tmplInsertion: TMPL_EXPR_OPEN tmplIdentifier TMPL_EXPR_CLOSE;
+tmplCall: TMPL_EXPR_OPEN identifier TMPL_LPAREN TMPL_RPAREN TMPL_EXPR_CLOSE;
+
+// <if (expression)> <elif (expression)> <else> </if>
+tmplIf: tmplIfBlock tmplElifBlock* tmplElseBlock? tmplIfClose;
+tmplIfStmt:
+	TMPL_EXPR_OPEN TMPL_KW_IF tmplExpression TMPL_EXPR_CLOSE;
+tmplIfBlock: tmplIfStmt tmplItem*;
+tmplElIfStmt:
+	TMPL_EXPR_OPEN TMPL_KW_ELIF tmplExpression TMPL_EXPR_CLOSE;
+tmplElifBlock: tmplElIfStmt tmplItem*;
+tmplElseStmt: TMPL_EXPR_OPEN TMPL_KW_ELSE TMPL_EXPR_CLOSE;
+tmplElseBlock: tmplElseStmt tmplItem*;
+tmplIfClose:
+	TMPL_EXPR_OPEN TMPL_SLASH TMPL_KW_IF TMPL_EXPR_CLOSE;
+
+// <for fo in bar> </for>
+tmplFor: tmplForStmt tmplItem* tmplForClose;
+tmplForStmt:
+	TMPL_EXPR_OPEN TMPL_KW_FOR identifier TMPL_KW_IN identifier TMPL_EXPR_CLOSE;
+tmplForClose:
+	TMPL_EXPR_OPEN TMPL_SLASH TMPL_KW_FOR TMPL_EXPR_CLOSE;
+
+tmplExpression: tmplIdentifier;
+tmplIdentifier
+	returns[std::string id]
+	@after {$id = $ctx->nki->getText();}: nki = TMPL_NON_KEYWORD_IDENTIFIER;
 
 functionParameter
 	returns[std::unique_ptr<td::FunctionParameter> func_param]:

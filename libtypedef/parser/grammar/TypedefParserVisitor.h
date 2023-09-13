@@ -42,9 +42,43 @@ public:
 
     virtual antlrcpp::Any visitUserType(TypedefParser::UserTypeContext *context) = 0;
 
-    virtual antlrcpp::Any visitTemplateDefinition(TypedefParser::TemplateDefinitionContext *context) = 0;
+    virtual antlrcpp::Any visitTmplDefinition(TypedefParser::TmplDefinitionContext *context) = 0;
 
-    virtual antlrcpp::Any visitTemplateBlock(TypedefParser::TemplateBlockContext *context) = 0;
+    virtual antlrcpp::Any visitTmplBlock(TypedefParser::TmplBlockContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplItem(TypedefParser::TmplItemContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplText(TypedefParser::TmplTextContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplInsertion(TypedefParser::TmplInsertionContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplCall(TypedefParser::TmplCallContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplIf(TypedefParser::TmplIfContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplIfStmt(TypedefParser::TmplIfStmtContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplIfBlock(TypedefParser::TmplIfBlockContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplElIfStmt(TypedefParser::TmplElIfStmtContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplElifBlock(TypedefParser::TmplElifBlockContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplElseStmt(TypedefParser::TmplElseStmtContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplElseBlock(TypedefParser::TmplElseBlockContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplIfClose(TypedefParser::TmplIfCloseContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplFor(TypedefParser::TmplForContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplForStmt(TypedefParser::TmplForStmtContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplForClose(TypedefParser::TmplForCloseContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplExpression(TypedefParser::TmplExpressionContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplIdentifier(TypedefParser::TmplIdentifierContext *context) = 0;
 
     virtual antlrcpp::Any visitFunctionParameter(TypedefParser::FunctionParameterContext *context) = 0;
 

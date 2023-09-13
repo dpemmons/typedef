@@ -18,7 +18,6 @@
 #include "libtypedef/parser/parser_common.h"
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/second_pass.h"
-#include "libtypedef/parser/tmpl_str_parser.h"
 #include "typedef_parser.h"
 
 namespace td {

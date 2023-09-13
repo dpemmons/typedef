@@ -4,7 +4,6 @@
 #include <stdexcept>
 
 #include "libtypedef/parser/parser_common.h"
-#include "libtypedef/parser/tmpl_str_parser.h"
 
 #define throw_logic_error(str) \
   throw std::logic_error(      \
