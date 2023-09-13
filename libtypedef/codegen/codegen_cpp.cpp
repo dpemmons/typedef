@@ -30,6 +30,8 @@ using PrimitiveTypeIdentifierContext =
 using UserTypeContext = TypedefParser::UserTypeContext;
 using TypeAnnotationContext = TypedefParser::TypeAnnotationContext;
 using TypeIdentifierContext = TypedefParser::TypeIdentifierContext;
+using TmplDefinitionContext = TypedefParser::TmplDefinitionContext;
+using FunctionParameterContext = TypedefParser::FunctionParameterContext;
 
 json GetMap(TypeAnnotationContext* ctx, string identifier);
 json GetVector(TypeAnnotationContext* ctx, string identifier);
@@ -212,6 +214,28 @@ json GetMap(TypeAnnotationContext* ctx, string identifier) {
   return j;
 }
 
+json GetTypeDeclaration(TypedefParser::TypeDefinitionContext* type,
+                        optional<string> maybe_identifier) {
+  json j;
+  if (DefinesStruct(type)) {
+    j["struct"] = GetStruct(type, maybe_identifier);
+  } else if (DefinesVariant(type)) {
+    // The data fed to the template is the same as for struct.
+    j["variant"] = GetStruct(type, maybe_identifier);
+  } else {
+    throw_logic_error("invalid state");
+  }
+  return j;
+}
+
+json GetUserTypeDecls(vector<TypeDefinitionContext*> types) {
+  json arr = json::array();
+  for (TypeDefinitionContext* type : types) {
+    arr.push_back(GetTypeDeclaration(type, nullopt));
+  }
+  return arr;
+}
+
 // json GetTemplateInsertion(td::TmplStrTable::InsertionPtr insertion) {
 //   json j;
 //   return j;
@@ -247,99 +271,56 @@ json GetMap(TypeAnnotationContext* ctx, string identifier) {
 //   return j;
 // }
 
-// json GetTemplate(TemplateFunctionDefinition* template_function) {
-//   json j;
-
-//   j["identifier"] =
-//       escape_utf8_to_cpp_identifier(*template_function->identifier);
-//   for (td::table::FunctionParameter* param : template_function->params) {
-//     json p;
-
-//     p["identifier"] = escape_utf8_to_cpp_identifier(*param->param_name);
-//     if (param->parameter_type->IsPrimitive()) {
-//       if (param->parameter_type->IsBool()) {
-//         p["cpp_type"] = "bool";
-//         p["access_by"] = "value";
-//       } else if (param->parameter_type->IsChar()) {
-//         p["cpp_type"] = "char32_t";
-//         p["access_by"] = "value";
-//       } else if (param->parameter_type->IsStr()) {
-//         p["cpp_type"] = "std::string";
-//         p["access_by"] = "reference";
-//       } else if (param->parameter_type->IsF32()) {
-//         p["cpp_type"] = "float";
-//         p["access_by"] = "value";
-//       } else if (param->parameter_type->IsF64()) {
-//         p["cpp_type"] = "double";
-//         p["access_by"] = "value";
-//       } else if (param->parameter_type->IsU8()) {
-//         p["cpp_type"] = "std::uint8_t";
-//         p["access_by"] = "value";
-//       } else if (param->parameter_type->IsU16()) {
-//         p["cpp_type"] = "std::uint16_t";
-//         p["access_by"] = "value";
-//       } else if (param->parameter_type->IsU32()) {
-//         p["cpp_type"] = "std::uint32_t";
-//         p["access_by"] = "value";
-//       } else if (param->parameter_type->IsU64()) {
-//         p["cpp_type"] = "std::uint64_t";
-//         p["access_by"] = "value";
-//       } else if (param->parameter_type->IsI8()) {
-//         p["cpp_type"] = "std::int8_t";
-//         p["access_by"] = "value";
-//       } else if (param->parameter_type->IsI16()) {
-//         p["cpp_type"] = "std::int16_t";
-//         p["access_by"] = "value";
-//       } else if (param->parameter_type->IsI32()) {
-//         p["cpp_type"] = "std::int32_t";
-//         p["access_by"] = "value";
-//       } else if (param->parameter_type->IsI64()) {
-//         p["cpp_type"] = "std::int64_t";
-//         p["access_by"] = "value";
-//       } else {
-//         throw_logic_error("invalid state");
-//       }
-//     } else if (param->parameter_type->IsSymref()) {
-//       CppTypeInfo cpp_type_info =
-//           GetAccessInfoForType(param->parameter_type->symref_target.get());
-//       p["cpp_type"] = cpp_type_info.cpp_type;
-//       p["access_by"] = cpp_type_info.access_by;
-//     } else {
-//       throw_logic_error("invalid state");
-//     }
-
-//     j["params"].push_back(p);
-//   }
-
-//   j["items"] = json::array();
-//   for (td::TmplStrTable::ItemPtr item :
-//        template_function->tmpl_string_table->items) {
-//     j["items"].push_back(GetTemplateItem(item));
-//   }
-
-//   return j;
-// }
-
-json GetTypeDeclaration(TypedefParser::TypeDefinitionContext* type,
-                        optional<string> maybe_identifier) {
+json GetFunctionParameter(FunctionParameterContext* func_param) {
   json j;
-  if (DefinesStruct(type)) {
-    j["struct"] = GetStruct(type, maybe_identifier);
-  } else if (DefinesVariant(type)) {
-    // The data fed to the template is the same as for struct.
-    j["variant"] = GetStruct(type, maybe_identifier);
+  j["identifier"] = escape_utf8_to_cpp_identifier(func_param->identifier()->id);
+  j.merge_patch(GetAccessInfoForType(func_param->parameter_type));
+  return j;
+}
+
+json GetTemplateItem(TypedefParser::TmplItemContext* itm_ctx) {
+  json j;
+  if (itm_ctx->tmplText()) {
+    j["text"] = itm_ctx->tmplText()->text;
+  } else if (itm_ctx->tmplInsertion()) {
+
+  } else if (itm_ctx->tmplCall()) {
+
+  } else if (itm_ctx->tmplIf()) {
+
+  } else if (itm_ctx->tmplFor()) {
+
   } else {
     throw_logic_error("invalid state");
   }
   return j;
 }
 
-json GetUserTypeDecls(vector<TypeDefinitionContext*> types) {
-  json arr = json::array();
-  for (TypeDefinitionContext* type : types) {
-    arr.push_back(GetTypeDeclaration(type, nullopt));
+json GetTemplateFunc(TmplDefinitionContext* tmpl_def) {
+  json j;
+  j["identifier"] = tmpl_def->identifier()->id;
+  json params = json::array();
+  for (FunctionParameterContext* func_param : tmpl_def->functionParameter()) {
+    params.push_back(GetFunctionParameter(func_param));
   }
-  return arr;
+  j["params"] = params;
+
+  json items = json::array();
+  for (TypedefParser::TmplItemContext* itm_ctx :
+       tmpl_def->tmplBlock()->tmplItem()) {
+    items.push_back(GetTemplateItem(itm_ctx));
+  }
+  j["items"] = items;
+
+  return j;
+}
+
+json GetTemplateFuncs(vector<TmplDefinitionContext*> tmpl_defs) {
+  json j = json::array();
+  for (TmplDefinitionContext* tmpl_def : tmpl_defs) {
+    j.push_back(GetTemplateFunc(tmpl_def));
+  }
+  return j;
 }
 
 void CodegenCpp(OutPathBase* out_path,
@@ -366,6 +347,7 @@ void CodegenCpp(OutPathBase* out_path,
 
   data["user_type_decls"] =
       GetUserTypeDecls(compilation_unit_ctx->typeDefinition());
+  data["tmpl_funcs"] = GetTemplateFuncs(compilation_unit_ctx->tmplDefinition());
 
   std::cout << data.dump(1) << std::endl;
 
@@ -409,18 +391,25 @@ void CodegenCpp(OutPathBase* out_path,
     return env.render(params_list, arg);
   });
 
-  Template tmpl_hdr_tmpl;
-  env.add_callback("tmpl_hdr", 1, [&](Arguments& args) mutable {
+  Template tmpl_func_declaration;
+  env.add_callback("tmpl_func_declaration", 1, [&](Arguments& args) mutable {
     json arg = args.at(0)->get<json>();
     // std::cout << arg.dump(1) << std::endl;
-    return env.render(tmpl_hdr_tmpl, arg);
+    return env.render(tmpl_func_declaration, arg);
   });
 
-  Template tmpl_src_tmpl;
-  env.add_callback("tmpl_src", 1, [&](Arguments& args) mutable {
+  Template tmpl_func_definition;
+  env.add_callback("tmpl_func_definition", 1, [&](Arguments& args) mutable {
     json arg = args.at(0)->get<json>();
     // std::cout << arg.dump(1) << std::endl;
-    return env.render(tmpl_src_tmpl, arg);
+    return env.render(tmpl_func_definition, arg);
+  });
+
+  Template tmpl_item;
+  env.add_callback("tmpl_item", 1, [&](Arguments& args) mutable {
+    json arg = args.at(0)->get<json>();
+    // std::cout << arg.dump(1) << std::endl;
+    return env.render(tmpl_item, arg);
   });
 
   struct_tmpl = env.parse(R"(
@@ -722,13 +711,21 @@ class {{identifier}} : public std::map<{{key.cpp_type}}, {{value.cpp_type}}> {
  {{ param.identifier -}}
 {%- endfor %})");
 
-  tmpl_hdr_tmpl = env.parse(R"(
+  tmpl_func_declaration = env.parse(R"(
 void {{identifier}}(std::ostream& os{{params_list(params)}});
   )");
 
-  tmpl_src_tmpl = env.parse(R"(
+  tmpl_item = env.parse(R"(
+## if exists("text")
+  os << R"asdf({{text}})asdf";
+## endif
+  )");
+
+  tmpl_func_definition = env.parse(R"(
 void {{identifier}}(std::ostream& os{{params_list(params)}}) {
-  
+## for item in items
+{{tmpl_item(item)}}
+## endfor
 }
   )");
 
@@ -741,6 +738,7 @@ void {{identifier}}(std::ostream& os{{params_list(params)}}) {
 #include <string>
 #include <vector>
 #include <map>
+#include <ostream>
 
 #define TD_STRINGIZE_DETAIL(x) #x
 #define TD_STRINGIZE(x) TD_STRINGIZE_DETAIL(x)
@@ -763,9 +761,11 @@ namespace {{namespace}} {
   {{ vector(type_decl.vector) }}
 ## else if existsIn(type_decl, "map")
   {{ map(type_decl.map) }}
-## else if existsIn(type_decl, "template")
-  {{ tmpl_hdr(type_decl.template) }}
 ## endif
+## endfor
+
+## for tmpl_func in tmpl_funcs
+{{ tmpl_func_declaration(tmpl_func) }}
 ## endfor
 
 ## for namespace in namespaces
@@ -786,10 +786,8 @@ namespace {{namespace}} {
 namespace {{namespace}} {
 ## endfor
 
-## for type_decl in user_type_decls
-## if existsIn(type_decl, "template")
-{{ tmpl_src(type_decl.template) }}
-## endif
+## for tmpl_func in tmpl_funcs
+{{ tmpl_func_definition(tmpl_func) }}
 ## endfor
 
 ## for namespace in namespaces

@@ -61,11 +61,19 @@ tmplDefinition:
 	) RPAREN tmplBlock;
 
 tmplBlock: START_TEMPLATE tmplItem* END_TEMPLATE;
-tmplItem: tmplText | tmplInsertion | tmplCall | tmplIf | tmplFor;
+tmplItem:
+	tmplText
+	| tmplInsertion
+	| tmplCall
+	| tmplIf
+	| tmplFor;
 
-tmplText: TMPL_TEXT;
+tmplText
+	returns[std::string text]
+	@after {$text = $ctx->txt->getText();}: txt = TMPL_TEXT;
 tmplInsertion: TMPL_EXPR_OPEN tmplIdentifier TMPL_EXPR_CLOSE;
-tmplCall: TMPL_EXPR_OPEN identifier TMPL_LPAREN TMPL_RPAREN TMPL_EXPR_CLOSE;
+tmplCall:
+	TMPL_EXPR_OPEN identifier TMPL_LPAREN TMPL_RPAREN TMPL_EXPR_CLOSE;
 
 // <if (expression)> <elif (expression)> <else> </if>
 tmplIf: tmplIfBlock tmplElifBlock* tmplElseBlock? tmplIfClose;
@@ -92,11 +100,8 @@ tmplIdentifier
 	returns[std::string id]
 	@after {$id = $ctx->nki->getText();}: nki = TMPL_NON_KEYWORD_IDENTIFIER;
 
-functionParameter
-	returns[std::unique_ptr<td::FunctionParameter> func_param]:
-	identifier ':' parameterType;
-
-parameterType: primitiveTypeIdentifier | identifier;
+functionParameter:
+	identifier ':' parameter_type = typeIdentifier;
 
 useDeclaration: 'use' symbolPath ';';
 

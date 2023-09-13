@@ -319,7 +319,7 @@ WS: ([\p{Zs}] | ('\r\n' | [\r\n]))+ -> skip;
 mode TemplateIsland;
 END_TEMPLATE: '"#' -> popMode;
 TMPL_EXPR_OPEN: '<' -> pushMode(LogicExpressionIsland);
-TMPL_TEXT: .+?;
+TMPL_TEXT: ~["<]+;
 
 mode LogicExpressionIsland;
 TMPL_EXPR_CLOSE: '>' -> popMode;

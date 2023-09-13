@@ -9,11 +9,6 @@
 
 namespace td {
 
-class TypeDefinition {};
-class FieldDefinition {};
-class FunctionParameter {};
-class TypeParameter {};
-
 // ---- Float Literal functions ------------------------------------------------
 
 using FloatLiteral = std::variant<float, double>;

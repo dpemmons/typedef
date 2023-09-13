@@ -109,9 +109,6 @@ public:
   virtual void enterFunctionParameter(TypedefParser::FunctionParameterContext * /*ctx*/) override { }
   virtual void exitFunctionParameter(TypedefParser::FunctionParameterContext * /*ctx*/) override { }
 
-  virtual void enterParameterType(TypedefParser::ParameterTypeContext * /*ctx*/) override { }
-  virtual void exitParameterType(TypedefParser::ParameterTypeContext * /*ctx*/) override { }
-
   virtual void enterUseDeclaration(TypedefParser::UseDeclarationContext * /*ctx*/) override { }
   virtual void exitUseDeclaration(TypedefParser::UseDeclarationContext * /*ctx*/) override { }
 
