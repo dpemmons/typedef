@@ -38,6 +38,7 @@ json GetVector(TypeAnnotationContext* ctx, string identifier);
 json GetUserTypeDecls(vector<TypeDefinitionContext*> types);
 json GetTypeDeclaration(TypedefParser::TypeDefinitionContext* type,
                         optional<string> maybe_identifier);
+json GetTemplateItems(vector<TypedefParser::TmplItemContext*> itm_ctxs);
 
 std::string GetNestedTypeIdentifier(FieldDefinitionContext* field) {
   return escape_utf8_to_cpp_identifier(field->field_identifier->id + "T");
@@ -236,40 +237,51 @@ json GetUserTypeDecls(vector<TypeDefinitionContext*> types) {
   return arr;
 }
 
-// json GetTemplateInsertion(td::TmplStrTable::InsertionPtr insertion) {
-//   json j;
-//   return j;
-// }
-// json GetTemplateFunctionCall(td::TmplStrTable::FunctionCallPtr fc) {
-//   json j;
-//   return j;
-// }
-// json GetTemplateIfBlock(td::TmplStrTable::IfBlockPtr ib) {
-//   json j;
-//   return j;
-// }
-// json GetTemplateForBlock(td::TmplStrTable::ForBlockPtr fb) {
-//   json j;
-//   return j;
-// }
+json GetTemplateInsertion(TypedefParser::TmplInsertionContext* ctx) {
+  json j;
+  j["identifier"] = escape_utf8_to_cpp_identifier(ctx->tmplIdentifier()->id);
+  return j;
+}
 
-// json GetTemplateItem(td::TmplStrTable::ItemPtr item) {
-//   json j;
-//   if (item->text) {
-//     j["text"] = *item->text;
-//   } else if (item->insertion) {
-//     j["insertion"] = GetTemplateInsertion(item->insertion);
-//   } else if (item->function_call) {
-//     j["function_call"] = GetTemplateFunctionCall(item->function_call);
-//   } else if (item->if_block) {
-//     j["if_block"] = GetTemplateIfBlock(item->if_block);
-//   } else if (item->for_block) {
-//     j["for_block"] = GetTemplateForBlock(item->for_block);
-//   } else {
-//     throw_logic_error("invalid state");
-//   }
-//   return j;
-// }
+json GetTemplateFunctionCall(TypedefParser::TmplCallContext* ctx) {
+  json j;
+  auto identifiers = ctx->tmplIdentifier();
+  j["func"] = escape_utf8_to_cpp_identifier(identifiers[0]->id);
+  j["args"] = json::array();
+  for (int ii = 1; ii < identifiers.size(); ii++) {
+    j["args"].push_back(identifiers[ii]->id);
+  }
+  return j;
+}
+
+json GetTemplateIfBlock(TypedefParser::TmplIfContext* ctx) {
+  json j;
+  j["stmt"] =
+      ctx->tmplIfBlock()->tmplIfStmt()->tmplExpression()->tmplIdentifier()->id;
+  j["items"] = GetTemplateItems(ctx->tmplIfBlock()->tmplItem());
+
+  j["elifs"] = json::array();
+  for (auto* elif : ctx->tmplElifBlock()) {
+    json e;
+    e["stmt"] = elif->tmplElIfStmt()->tmplExpression()->tmplIdentifier()->id;
+    e["items"] = GetTemplateItems(elif->tmplItem());
+    j["elifs"].push_back(e);
+  }
+
+  if (ctx->tmplElseBlock()) {
+    j["else"]["items"] = GetTemplateItems(ctx->tmplElseBlock()->tmplItem());
+  }
+
+  return j;
+}
+
+json GetTemplateForBlock(TypedefParser::TmplForContext* ctx) {
+  json j;
+  j["var"] = ctx->tmplForStmt()->var->id;
+  j["collection"] = ctx->tmplForStmt()->collection->id;
+  j["items"] = GetTemplateItems(ctx->tmplItem());
+  return j;
+}
 
 json GetFunctionParameter(FunctionParameterContext* func_param) {
   json j;
@@ -283,17 +295,25 @@ json GetTemplateItem(TypedefParser::TmplItemContext* itm_ctx) {
   if (itm_ctx->tmplText()) {
     j["text"] = itm_ctx->tmplText()->text;
   } else if (itm_ctx->tmplInsertion()) {
-
+    j["insertion"] = GetTemplateInsertion(itm_ctx->tmplInsertion());
   } else if (itm_ctx->tmplCall()) {
-
+    j["call"] = GetTemplateFunctionCall(itm_ctx->tmplCall());
   } else if (itm_ctx->tmplIf()) {
-
+    j["if"] = GetTemplateIfBlock(itm_ctx->tmplIf());
   } else if (itm_ctx->tmplFor()) {
-
+    j["for"] = GetTemplateForBlock(itm_ctx->tmplFor());
   } else {
     throw_logic_error("invalid state");
   }
   return j;
+}
+
+json GetTemplateItems(vector<TypedefParser::TmplItemContext*> itm_ctxs) {
+  json items = json::array();
+  for (TypedefParser::TmplItemContext* itm_ctx : itm_ctxs) {
+    items.push_back(GetTemplateItem(itm_ctx));
+  }
+  return items;
 }
 
 json GetTemplateFunc(TmplDefinitionContext* tmpl_def) {
@@ -304,13 +324,7 @@ json GetTemplateFunc(TmplDefinitionContext* tmpl_def) {
     params.push_back(GetFunctionParameter(func_param));
   }
   j["params"] = params;
-
-  json items = json::array();
-  for (TypedefParser::TmplItemContext* itm_ctx :
-       tmpl_def->tmplBlock()->tmplItem()) {
-    items.push_back(GetTemplateItem(itm_ctx));
-  }
-  j["items"] = items;
+  j["items"] = GetTemplateItems(tmpl_def->tmplBlock()->tmplItem());
 
   return j;
 }
@@ -715,19 +729,36 @@ class {{identifier}} : public std::map<{{key.cpp_type}}, {{value.cpp_type}}> {
 void {{identifier}}(std::ostream& os{{params_list(params)}});
   )");
 
-  tmpl_item = env.parse(R"(
-## if exists("text")
-  os << R"asdf({{text}})asdf";
-## endif
-  )");
+  // Text escape uses a long random* string to minimize chance of collision.
+  // * well, once upon a time it was random.
+  tmpl_item = env.parse(
+      R"(## if exists("text")
+  os << R"oohequoh1Gah8AiYaida({{text}})oohequoh1Gah8AiYaida";
+## else if exists("insertion")
+  os << {{insertion.identifier}};
+## else if exists("call")
+  {{call.func}}(os, {%for arg in call.args%}{{arg}}{% if not loop.is_last %}, {%endif%}{%-endfor%});
+## else if exists("if")
+  if ({{if.stmt}}) {
+    {%for item in if.items%}{{tmpl_item(item)}}{%endfor%}
+  {% for elif in if.elifs %}
+  } else if ({{elif.stmt}}) {
+    {%for item in elif.items%}{{tmpl_item(item)}}{%endfor%}
+  {%endfor%}
+  } {% if existsIn(if, "else") %} else {
+    {%for item in if.else.items%}{{tmpl_item(item)}}{%endfor%}
+  }{%endif%}
+
+## else if exists("for")
+  for (auto {{for.var}} : {{for.collection}}) {
+    {%for item in for.items%}{{tmpl_item(item)}}{%endfor%}
+  }
+## endif)");
 
   tmpl_func_definition = env.parse(R"(
 void {{identifier}}(std::ostream& os{{params_list(params)}}) {
-## for item in items
-{{tmpl_item(item)}}
-## endfor
-}
-  )");
+{% for item in items %}{{tmpl_item(item)}}{% endfor %}
+})");
 
   auto header_tmpl = env.parse(R"(
 #ifndef {{header_guard}}

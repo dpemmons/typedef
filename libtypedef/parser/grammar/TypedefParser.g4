@@ -73,7 +73,9 @@ tmplText
 	@after {$text = $ctx->txt->getText();}: txt = TMPL_TEXT;
 tmplInsertion: TMPL_EXPR_OPEN tmplIdentifier TMPL_EXPR_CLOSE;
 tmplCall:
-	TMPL_EXPR_OPEN identifier TMPL_LPAREN TMPL_RPAREN TMPL_EXPR_CLOSE;
+	TMPL_EXPR_OPEN tmplIdentifier TMPL_LPAREN tmplIdentifier? (
+		tmplIdentifier TMPL_COMMA
+	)* TMPL_RPAREN TMPL_EXPR_CLOSE;
 
 // <if (expression)> <elif (expression)> <else> </if>
 tmplIf: tmplIfBlock tmplElifBlock* tmplElseBlock? tmplIfClose;
@@ -91,7 +93,8 @@ tmplIfClose:
 // <for fo in bar> </for>
 tmplFor: tmplForStmt tmplItem* tmplForClose;
 tmplForStmt:
-	TMPL_EXPR_OPEN TMPL_KW_FOR identifier TMPL_KW_IN identifier TMPL_EXPR_CLOSE;
+	TMPL_EXPR_OPEN TMPL_KW_FOR var = tmplIdentifier TMPL_KW_IN collection = tmplIdentifier
+		TMPL_EXPR_CLOSE;
 tmplForClose:
 	TMPL_EXPR_OPEN TMPL_SLASH TMPL_KW_FOR TMPL_EXPR_CLOSE;
 
