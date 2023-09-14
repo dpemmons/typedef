@@ -11,6 +11,8 @@ Items in ***bold*** are in-progress.
   - [ ] escape delimiters
   - [ ] prevent unbounded recursion
 - [ ] tests...
+- [ ] code generation
+  - [ ] escape reserved words like protoc: https://protobuf.dev/reference/cpp/cpp-generated/#generated-filenames
 - [ ] more types
   - [ ] optionals
   - [ ] Foundational
