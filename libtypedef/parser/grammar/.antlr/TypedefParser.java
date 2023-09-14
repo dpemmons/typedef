@@ -47,10 +47,11 @@ public class TypedefParser extends Parser {
 		DOT=144, DOTDOT=145, DOTDOTDOT=146, COMMA=147, SEMI=148, COLON=149, PATHSEP=150, 
 		RARROW=151, FATARROW=152, POUND=153, DOLLAR=154, QUESTION=155, LBRACE=156, 
 		RBRACE=157, LBRACK=158, RBRACK=159, LPAREN=160, RPAREN=161, WS=162, END_TEMPLATE=163, 
-		TMPL_EXPR_OPEN=164, TMPL_TEXT=165, TMPL_KW_CLOSE_FOR=166, TMPL_KW_CLOSEIF=167, 
-		TMPL_EXPR_CLOSE=168, TMPL_SLASH=169, TMPL_COMMA=170, TMPL_DOT=171, TMPL_LPAREN=172, 
-		TMPL_RPAREN=173, TMPL_PATHSEP=174, TMPL_KW_FOR=175, TMPL_KW_IN=176, TMPL_KW_IF=177, 
-		TMPL_KW_ELSE=178, TMPL_KW_ELIF=179, TMPL_NON_KEYWORD_IDENTIFIER=180, TMPL_WS=181;
+		TMPL_EXPR_OPEN=164, TMPL_TEXT=165, TMPL_EXPR_CLOSE=166, TMPL_SLASH=167, 
+		TMPL_COMMA=168, TMPL_DOT=169, TMPL_LPAREN=170, TMPL_RPAREN=171, TMPL_PATHSEP=172, 
+		TMPL_KW_FOR=173, TMPL_KW_CLOSE_FOR=174, TMPL_KW_IN=175, TMPL_KW_IF=176, 
+		TMPL_KW_CLOSEIF=177, TMPL_KW_ELSE=178, TMPL_KW_ELIF=179, TMPL_NON_KEYWORD_IDENTIFIER=180, 
+		TMPL_WS=181;
 	public static final int
 		RULE_compilationUnit = 0, RULE_typedefVersionDeclaration = 1, RULE_moduleDeclaration = 2, 
 		RULE_typeDefinition = 3, RULE_fieldBlock = 4, RULE_fieldDefinition = 5, 
@@ -103,7 +104,7 @@ public class TypedefParser extends Parser {
 			null, "'>='", "'<='", "'@'", "'_'", null, "'..'", "'...'", null, "';'", 
 			"':'", null, "'->'", "'=>'", "'#'", "'$'", "'?'", "'{'", "'}'", "'['", 
 			"']'", null, null, null, "'\"#'", null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, "'elif'"
+			null, null, null, null, "'/for'", null, null, "'/if'", null, "'elif'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -135,10 +136,10 @@ public class TypedefParser extends Parser {
 			"LT", "GE", "LE", "AT", "UNDERSCORE", "DOT", "DOTDOT", "DOTDOTDOT", "COMMA", 
 			"SEMI", "COLON", "PATHSEP", "RARROW", "FATARROW", "POUND", "DOLLAR", 
 			"QUESTION", "LBRACE", "RBRACE", "LBRACK", "RBRACK", "LPAREN", "RPAREN", 
-			"WS", "END_TEMPLATE", "TMPL_EXPR_OPEN", "TMPL_TEXT", "TMPL_KW_CLOSE_FOR", 
-			"TMPL_KW_CLOSEIF", "TMPL_EXPR_CLOSE", "TMPL_SLASH", "TMPL_COMMA", "TMPL_DOT", 
-			"TMPL_LPAREN", "TMPL_RPAREN", "TMPL_PATHSEP", "TMPL_KW_FOR", "TMPL_KW_IN", 
-			"TMPL_KW_IF", "TMPL_KW_ELSE", "TMPL_KW_ELIF", "TMPL_NON_KEYWORD_IDENTIFIER", 
+			"WS", "END_TEMPLATE", "TMPL_EXPR_OPEN", "TMPL_TEXT", "TMPL_EXPR_CLOSE", 
+			"TMPL_SLASH", "TMPL_COMMA", "TMPL_DOT", "TMPL_LPAREN", "TMPL_RPAREN", 
+			"TMPL_PATHSEP", "TMPL_KW_FOR", "TMPL_KW_CLOSE_FOR", "TMPL_KW_IN", "TMPL_KW_IF", 
+			"TMPL_KW_CLOSEIF", "TMPL_KW_ELSE", "TMPL_KW_ELIF", "TMPL_NON_KEYWORD_IDENTIFIER", 
 			"TMPL_WS"
 		};
 	}
@@ -2714,35 +2715,35 @@ public class TypedefParser extends Parser {
 		"\u00c8\3\2\2\2\u00cd\u00c9\3\2\2\2\u00cd\u00ca\3\2\2\2\u00cd\u00cb\3\2"+
 		"\2\2\u00cd\u00cc\3\2\2\2\u00ce\33\3\2\2\2\u00cf\u00d0\7\u00a7\2\2\u00d0"+
 		"\35\3\2\2\2\u00d1\u00d2\7\u00a6\2\2\u00d2\u00d3\5\66\34\2\u00d3\u00d4"+
-		"\7\u00aa\2\2\u00d4\37\3\2\2\2\u00d5\u00d6\7\u00a6\2\2\u00d6\u00d7\5:\36"+
-		"\2\u00d7\u00d9\7\u00ae\2\2\u00d8\u00da\5\66\34\2\u00d9\u00d8\3\2\2\2\u00d9"+
+		"\7\u00a8\2\2\u00d4\37\3\2\2\2\u00d5\u00d6\7\u00a6\2\2\u00d6\u00d7\5:\36"+
+		"\2\u00d7\u00d9\7\u00ac\2\2\u00d8\u00da\5\66\34\2\u00d9\u00d8\3\2\2\2\u00d9"+
 		"\u00da\3\2\2\2\u00da\u00e0\3\2\2\2\u00db\u00dc\5\66\34\2\u00dc\u00dd\7"+
-		"\u00ac\2\2\u00dd\u00df\3\2\2\2\u00de\u00db\3\2\2\2\u00df\u00e2\3\2\2\2"+
+		"\u00aa\2\2\u00dd\u00df\3\2\2\2\u00de\u00db\3\2\2\2\u00df\u00e2\3\2\2\2"+
 		"\u00e0\u00de\3\2\2\2\u00e0\u00e1\3\2\2\2\u00e1\u00e3\3\2\2\2\u00e2\u00e0"+
-		"\3\2\2\2\u00e3\u00e4\7\u00af\2\2\u00e4\u00e5\7\u00aa\2\2\u00e5!\3\2\2"+
+		"\3\2\2\2\u00e3\u00e4\7\u00ad\2\2\u00e4\u00e5\7\u00a8\2\2\u00e5!\3\2\2"+
 		"\2\u00e6\u00ea\5&\24\2\u00e7\u00e9\5*\26\2\u00e8\u00e7\3\2\2\2\u00e9\u00ec"+
 		"\3\2\2\2\u00ea\u00e8\3\2\2\2\u00ea\u00eb\3\2\2\2\u00eb\u00ee\3\2\2\2\u00ec"+
 		"\u00ea\3\2\2\2\u00ed\u00ef\5.\30\2\u00ee\u00ed\3\2\2\2\u00ee\u00ef\3\2"+
-		"\2\2\u00ef\u00f0\3\2\2\2\u00f0\u00f1\7\u00a6\2\2\u00f1\u00f2\7\u00a9\2"+
-		"\2\u00f2\u00f3\7\u00aa\2\2\u00f3#\3\2\2\2\u00f4\u00f5\7\u00a6\2\2\u00f5"+
-		"\u00f6\7\u00b3\2\2\u00f6\u00f7\5\64\33\2\u00f7\u00f8\7\u00aa\2\2\u00f8"+
+		"\2\2\u00ef\u00f0\3\2\2\2\u00f0\u00f1\7\u00a6\2\2\u00f1\u00f2\7\u00b3\2"+
+		"\2\u00f2\u00f3\7\u00a8\2\2\u00f3#\3\2\2\2\u00f4\u00f5\7\u00a6\2\2\u00f5"+
+		"\u00f6\7\u00b2\2\2\u00f6\u00f7\5\64\33\2\u00f7\u00f8\7\u00a8\2\2\u00f8"+
 		"%\3\2\2\2\u00f9\u00fd\5$\23\2\u00fa\u00fc\5\32\16\2\u00fb\u00fa\3\2\2"+
 		"\2\u00fc\u00ff\3\2\2\2\u00fd\u00fb\3\2\2\2\u00fd\u00fe\3\2\2\2\u00fe\'"+
 		"\3\2\2\2\u00ff\u00fd\3\2\2\2\u0100\u0101\7\u00a6\2\2\u0101\u0102\7\u00b5"+
-		"\2\2\u0102\u0103\5\64\33\2\u0103\u0104\7\u00aa\2\2\u0104)\3\2\2\2\u0105"+
+		"\2\2\u0102\u0103\5\64\33\2\u0103\u0104\7\u00a8\2\2\u0104)\3\2\2\2\u0105"+
 		"\u0109\5(\25\2\u0106\u0108\5\32\16\2\u0107\u0106\3\2\2\2\u0108\u010b\3"+
 		"\2\2\2\u0109\u0107\3\2\2\2\u0109\u010a\3\2\2\2\u010a+\3\2\2\2\u010b\u0109"+
 		"\3\2\2\2\u010c\u010d\7\u00a6\2\2\u010d\u010e\7\u00b4\2\2\u010e\u010f\7"+
-		"\u00aa\2\2\u010f-\3\2\2\2\u0110\u0114\5,\27\2\u0111\u0113\5\32\16\2\u0112"+
+		"\u00a8\2\2\u010f-\3\2\2\2\u0110\u0114\5,\27\2\u0111\u0113\5\32\16\2\u0112"+
 		"\u0111\3\2\2\2\u0113\u0116\3\2\2\2\u0114\u0112\3\2\2\2\u0114\u0115\3\2"+
 		"\2\2\u0115/\3\2\2\2\u0116\u0114\3\2\2\2\u0117\u011b\5\62\32\2\u0118\u011a"+
 		"\5\32\16\2\u0119\u0118\3\2\2\2\u011a\u011d\3\2\2\2\u011b\u0119\3\2\2\2"+
 		"\u011b\u011c\3\2\2\2\u011c\u011e\3\2\2\2\u011d\u011b\3\2\2\2\u011e\u011f"+
-		"\7\u00a6\2\2\u011f\u0120\7\u00a8\2\2\u0120\u0121\7\u00aa\2\2\u0121\61"+
-		"\3\2\2\2\u0122\u0123\7\u00a6\2\2\u0123\u0124\7\u00b1\2\2\u0124\u0125\5"+
-		":\36\2\u0125\u0126\7\u00b2\2\2\u0126\u0127\5\66\34\2\u0127\u0128\7\u00aa"+
+		"\7\u00a6\2\2\u011f\u0120\7\u00b0\2\2\u0120\u0121\7\u00a8\2\2\u0121\61"+
+		"\3\2\2\2\u0122\u0123\7\u00a6\2\2\u0123\u0124\7\u00af\2\2\u0124\u0125\5"+
+		":\36\2\u0125\u0126\7\u00b1\2\2\u0126\u0127\5\66\34\2\u0127\u0128\7\u00a8"+
 		"\2\2\u0128\63\3\2\2\2\u0129\u012a\5\66\34\2\u012a\65\3\2\2\2\u012b\u0130"+
-		"\58\35\2\u012c\u012d\7\u00ad\2\2\u012d\u012f\58\35\2\u012e\u012c\3\2\2"+
+		"\58\35\2\u012c\u012d\7\u00ab\2\2\u012d\u012f\58\35\2\u012e\u012c\3\2\2"+
 		"\2\u012f\u0132\3\2\2\2\u0130\u012e\3\2\2\2\u0130\u0131\3\2\2\2\u0131\67"+
 		"\3\2\2\2\u0132\u0130\3\2\2\2\u0133\u0134\5:\36\2\u01349\3\2\2\2\u0135"+
 		"\u0136\7\u00b6\2\2\u0136;\3\2\2\2\u0137\u0138\5P)\2\u0138\u0139\7\u0097"+
