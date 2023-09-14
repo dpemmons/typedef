@@ -6,4 +6,3 @@ Note: This project is not currently very well documented but this folder contain
   * [Template String Templating Engine](./template_strings.md)
 * [Typedef Coding Conventions](./conventions.md)
 * [Architecture](./architecture.md)
-* [Project TODOs](./todo.md)

@@ -1,6 +1,68 @@
 # typedef
 
-Typedef is (will be) a statically typed data serialization and interface definition language with built-in string templating. Its serialiaation protocol emphasizes fast and efficient encoding/decoding with minimal data copying.
+***IN DEVELOPMENT***
 
-**The language is currently in heavy development and should not be used for anything.**
-See the [todo list](/docs/todo.md) for progress.
+Typedef is statically typed data declaration language for data serialization, interface defintion and generation, and string templating. It will implement a variation of the FlatBuffers serialiaation protocol, emphasizing fast and efficient encoding/decoding with minimal data copying.
+
+## Preliminary Documentation
+
+* [Types](./docs/types.md)
+  * [Template String Templating Engine](./docs/template_strings.md)
+* [Typedef Coding Conventions](./docs/conventions.md)
+* [Architecture](./docs/architecture.md)
+
+## TODO List
+
+Items in ***bold*** are in-progress.
+
+* [ ] **string templates**
+  * [ ] configurable opening / closing strings
+    * [ ] formatting
+  * [ ] type checking
+  * [ ] subtemplates
+  * [ ] comments
+  * [ ] escape delimiters
+  * [ ] prevent unbounded recursion
+* [ ] tests...
+* [ ] code generation
+  * [ ] escape reserved words like protoc: <https://protobuf.dev/reference/cpp/cpp-generated/#generated-filenames>
+* [ ] more types
+  * [ ] optionals
+  * [ ] Foundational
+    * [ ] fixed length arrays
+    * [ ] message
+    * [ ] enum
+  * [ ] Features
+    * [ ] dates
+    * [ ] IPv4 and IPv6 addresses
+    * [ ] domain names
+    * [ ] paths
+    * [ ] TODO: look up postgres types for inspiration
+* [ ] meson build system
+* [ ] more literals
+  * [ ] byte literals
+  * [ ] byte strings
+  * [ ] raw byte strings
+* [ ] set type? (does it make sense?)
+* [ ] raw identifiers (do they just work?)
+* [ ] generated cpp features (probably after template engine)
+  * [ ] move semantics
+  * [ ] print methods
+  * [ ] comparison operators
+  * [ ] prevent keyword collisions
+
+Done moved here (and then eventually deleted):
+
+* [x] actually resolve symbols, and make SymRef's point to their symbols.
+* [x] fix unique_ptr for vectors, maps, etc.
+* [x] inline types: structs, vectors, maps.
+* [x] nested types
+* [x] consider making cpp codegen more sane?
+* [x] pitchfork repo layout
+* [x] separate type declaration from field, value, etc. declaration
+* [x] make symbol references independent of declaration order
+
+string templates
+
+* [x] simple replacement
+* [x] if/then, for (vector and map)
