@@ -8,6 +8,7 @@
 #include <vector>
 
 #define FMT_HEADER_ONLY
+#include <fmt/color.h>
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 
@@ -27,7 +28,7 @@ int main(int argc, const char** argv) {
 
   std::ifstream inputStream(args.getInpuFilename());
   if (!inputStream.is_open()) {
-    fmt::print("Unable to open file: {}\n", args.getInpuFilename());
+    fmt::print("Unable to open input file: {}\n", args.getInpuFilename());
     return 1;
   }
 
@@ -40,15 +41,23 @@ int main(int argc, const char** argv) {
       inputStream.seekg(std::ios::beg);
       std::string line;
 
-      fmt::print(stderr, "{}:{}:{}: error: {} {}\n", args.getInpuFilename(),
-                 err.line, err.line_offset, err.ErrorTypeToString(),
-                 err.message);
+      std::cerr << fmt::format(fmt::emphasis::bold,
+                               "{}:{}:{}: ", args.getInpuFilename(), err.line,
+                               err.line_offset);
+      std::cerr << fmt::format(fmt::emphasis::bold | fg(fmt::color::orange_red),
+                               "error: ");
+      std::cerr << fmt::format(fmt::emphasis::bold, "{} {}",
+                               err.ErrorTypeToString(), err.message);
+      std::cerr << std::endl;
 
       for (int l = 0; std::getline(inputStream, line); l++) {
         if (l == err.line - 1) {
           fmt::print(stderr, "{}\n", line);
           size_t len = err.length ? err.length : 1;
-          fmt::print(stderr, "{: >{}}{:^>{}}\n", "", err.line_offset, "", len);
+          // Print the carrot under the problem token(s).
+          std::cerr << fmt::format(
+              fmt::emphasis::bold | fg(fmt::color::orange_red),
+              "{: >{}}{:^>{}}\n", "", err.line_offset, "", len);
         }
       }
     }
@@ -64,12 +73,6 @@ int main(int argc, const char** argv) {
     auto outpath = std::make_unique<td::OutPath>(args.GetCppOut());
     td::CodegenCpp(outpath.get(), parser.GetCompilationUnitContext());
   }
-
-  // fmt::print("File contains {} symbols:\n", parser->GetSymbols());
-  // for (int i = 0; i < parser->GetSymbols(); i++) {
-  //   auto symbol = parser->GetSymbol(i);
-  //   fmt::print("{}\n", fmt::streamed(*symbol));
-  // }
 
   return 0;
 }
