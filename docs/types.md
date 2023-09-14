@@ -187,14 +187,12 @@ variant VariantA {
 Vectors are ordered, variable-length collections of any other type.
 
 ```typedef
-vector VecOfBools<bool>;
-
-// may hold an arbitrary number of StructA's.
-vector VecOfStructA<StructA>;
-
 // Inline is ok too.
 struct StructC {
-  some_vec: VecOfBools<bool>;
+  vec_of_bools: vector<bool>;
+
+  // may hold an arbitrary number of StructA's.
+  vec_of_structAs: vector<StructA>;
 };
 ```
 
@@ -209,16 +207,8 @@ Arrays are fixed-length collections of any other type.
 An [associative array](https://en.wikipedia.org/wiki/Associative_array) type that maps a [primitive type](#primitive-types) to any other type.
 
 ```typedef
-// Declaration
-map MapA<i32, StructA>;
-
 struct StructB {
-  some_map: MapA;
-};
-
-// Inline is ok too.
-struct StructC {
-  some_map: MapA<i32, StructA>;
+  some_map: map<i32, StructA>;
 };
 ```
 
