@@ -2,27 +2,17 @@
 
 Items in ***bold*** are in-progress.
 
-- [ ] actually resolve symbols, and make SymRef's point to their symbols.
-- [ ] Don't use unique_ptr for vectors, maps, etc.
-- [ ] multiple function arguments (templates, etc.)
-  - [ ] Resolve the function types! Pipe them through to the code generator.
-- [x] separate type declaration from field, value, etc. declaration
-- [x] make symbol references independent of declaration order
-- [ ] ***optionals***
-- [x] inline types: structs, vectors, maps.
-- [x] nested types
-- [x] consider making cpp codegen more sane?
-- [x] pitchfork repo layout
 - [ ] string templates
-    - [x] simple replacement
-      - [ ] formatting
-    - [x] if/then, for (vector and map)
-    - [ ] subtemplates
-    - [ ] comments
-    - [ ] escape delimiters
-- [ ] self-host symbol table
+  - [ ] configurable opening / closing strings
+    - [ ] formatting
+  - [ ] type checking
+  - [ ] subtemplates
+  - [ ] comments
+  - [ ] escape delimiters
+  - [ ] prevent unbounded recursion
 - [ ] tests...
 - [ ] more types
+  - [ ] optionals
   - [ ] Foundational
     - [ ] fixed length arrays
     - [ ] message
@@ -33,6 +23,7 @@ Items in ***bold*** are in-progress.
     - [ ] domain names
     - [ ] paths
     - [ ] TODO: look up postgres types for inspiration
+- [ ] meson build system
 - [ ] more literals
   - [ ] byte literals
   - [ ] byte strings
@@ -45,3 +36,17 @@ Items in ***bold*** are in-progress.
   - [ ] comparison operators
   - [ ] prevent keyword collisions
 
+Done moved here:
+
+- [x] actually resolve symbols, and make SymRef's point to their symbols.
+- [x] fix unique_ptr for vectors, maps, etc.
+- [x] inline types: structs, vectors, maps.
+- [x] nested types
+- [x] consider making cpp codegen more sane?
+- [x] pitchfork repo layout
+- [x] separate type declaration from field, value, etc. declaration
+- [x] make symbol references independent of declaration order
+
+string templates
+- [x] simple replacement
+- [x] if/then, for (vector and map)

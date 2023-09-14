@@ -2,7 +2,6 @@
 
 - [Overview](#overview)
 - [Synopsis](#synopsis)
-- [Overview](#overview-1)
   - [Simple Replacement](#simple-replacement)
   - [Control Flow](#control-flow)
     - [If / Else](#if--else)
@@ -20,53 +19,31 @@ Typedef implements a string template engine that includes replacement, control f
 typedef=alpha;
 module StExample;
 
-struct TemplateExample {
 
-  struct Person {
-    name: str;
-    birthday: struct {
-      year: uint16;
-    };
-    friends: vector<Person>;
-    sayHi: stringTemplate<Person> = "Hi <name>!";
+struct Person {
+  name: str;
+  birthday: struct {
+    year: uint16;
+  };
+  friends: vector<Person>;
+}
 
-    // but does this make sense then?
-    stringTemplate SomeTempl<Person> = "Hi <name>!";
-    sayYo: SomeTempl<Person>;
+template sayHi(who: Person) t#"Hello <person.name>!"#
+template sayBirthday(who: Person) t#"Hello <who.name>, your birthday is <who.birthday.year>!"#;
 
-    // or should it be:
-    sayHi: stringTemplate<Person>("Hi <name>!");
-  }
+template multilineLoop(friends: vector<Person>) t#"
+  <for friend in friends>
+    Hi <friend.name>!
+  <endfor>
+"#;
 
-  simple: stringTemplate<Person> = "Hello <name>!";
-
-  subStruct: stringTemplate<Person> = "Hello <name>, your birthday is <birthday.year>!";
-
-  multilineLoop: stringTemplate<Person> = r#"
-    <for friend in friends>
-      Hi <friend.name>!
-    <endfor>
-  "#;
-
-  // TODO: how to resolve ambiguity?
-  callsAnother: stringTemplate<Person> = r#"
-    <for friend in friends>
-      <sayHi(friend)>
-    <endfor>
-  "#;
-};
+template callsAnother(who: Person) = t#"
+  <for friend in friends>
+    <sayHi(friend)>
+  <endfor>
+"#;
 
 ```
-
-Called via C++:
-```cpp
-```
-
-Result:
-```
-```
-
-## Overview
 
 ### Simple Replacement
 
@@ -79,7 +56,3 @@ Result:
 ### Calls
 
 ### Recursion
-
-
-
-
