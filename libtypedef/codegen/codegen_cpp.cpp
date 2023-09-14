@@ -244,10 +244,12 @@ json GetUserTypeDecls(vector<TypeDefinitionContext*> types) {
 
 json GetTemplateValueDereference(
     TypedefParser::TmplValueReferencePathContext* ctx) {
-  json j = json::array();
+  json j;
+  j["val_ref_path"] = json::array();
   for (TypedefParser::TmplValueReferenceContext* val_ref :
        ctx->tmplValueReference()) {
-    j.push_back(escape_utf8_to_cpp_identifier(val_ref->tmplIdentifier()->id));
+    j["val_ref_path"].push_back(
+        escape_utf8_to_cpp_identifier(val_ref->tmplIdentifier()->id));
   }
   return j;
 }
@@ -438,6 +440,12 @@ void CodegenCpp(OutPathBase* out_path,
     // * well, once upon a time it was random.
     arg["escape"] = "";  //"oohequoh1Gah8AiYaida";
     return env.render(tmpl_item, arg);
+  });
+
+  Template tmpl_val_ref;
+  env.add_callback("tmpl_val_ref", 1, [&](Arguments& args) mutable {
+    json arg = args.at(0)->get<json>();
+    return env.render(tmpl_val_ref, arg);
   });
 
   struct_tmpl = env.parse(R"(
@@ -720,6 +728,7 @@ class {{identifier}} : public std::vector<{{element.cpp_type}}> {
  private:
 };  // class {{identifier}}
   )");
+
   map_tmpl = env.parse(R"(
 class {{identifier}} : public std::map<{{key.cpp_type}}, {{value.cpp_type}}> {
  public:
@@ -739,6 +748,8 @@ class {{identifier}} : public std::map<{{key.cpp_type}}, {{value.cpp_type}}> {
  {{ param.identifier -}}
 {%- endfor %})");
 
+  tmpl_val_ref = env.parse(R"({%for val_ref in val_ref_path%}{{val_ref}}{%if not loop.is_last%}.{%endif%}{%endfor%})");
+
   tmpl_func_declaration = env.parse(R"(
 void {{identifier}}(std::ostream& os{{params_list(params)}});
   )");
@@ -747,14 +758,14 @@ void {{identifier}}(std::ostream& os{{params_list(params)}});
       R"(## if exists("text")
   os << R"{{escape}}({{text}}){{escape}}";
 ## else if exists("insertion")
-  os << {{insertion.identifier}};
+  os << {{ tmpl_val_ref(insertion.identifier) }};
 ## else if exists("call")
-  {{call.func}}(os, {%for arg in call.args%}{{arg}}{% if not loop.is_last %}, {%endif%}{%-endfor%});
+  {{call.func}}(os, {%for arg in call.args%}{{tmpl_val_ref(arg)}} {% if not loop.is_last %}, {%endif%}{%endfor%});
 ## else if exists("if")
-  if ({{if.stmt}}) {
+  if ({{tmpl_val_ref(if.stmt)}}) {
     {%for item in if.items%}{{tmpl_item(item)}}{%endfor%}
   {% for elif in if.elifs %}
-  } else if ({{elif.stmt}}) {
+  } else if ({{tmpl_val_ref(elif.stmt)}}) {
     {%for item in elif.items%}{{tmpl_item(item)}}{%endfor%}
   {%endfor%}
   } {% if existsIn(if, "else") %} else {
@@ -762,7 +773,7 @@ void {{identifier}}(std::ostream& os{{params_list(params)}});
   }{%endif%}
 
 ## else if exists("for")
-  for (auto {{for.var}} : {{for.collection}}) {
+  for (auto {{for.var}} : {{tmpl_val_ref(for.collection)}}) {
     {%for item in for.items%}{{tmpl_item(item)}}{%endfor%}
   }
 ## endif)");
