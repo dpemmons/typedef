@@ -47,8 +47,8 @@ int main(int argc, const char** argv) {
       for (int l = 0; std::getline(inputStream, line); l++) {
         if (l == err.line - 1) {
           fmt::print(stderr, "{}\n", line);
-          fmt::print(stderr, "{: >{}}{:^>{}}\n", "", err.line_offset, "",
-                     err.length);
+          size_t len = err.length ? err.length : 1;
+          fmt::print(stderr, "{: >{}}{:^>{}}\n", "", err.line_offset, "", len);
         }
       }
     }
