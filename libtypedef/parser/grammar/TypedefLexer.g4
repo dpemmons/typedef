@@ -325,12 +325,15 @@ mode LogicExpressionIsland;
 TMPL_EXPR_CLOSE: '>' -> popMode;
 TMPL_SLASH: '/';
 TMPL_COMMA: ',';
+TMPL_DOT: '.';
 TMPL_LPAREN: '(';
 TMPL_RPAREN: ')';
 TMPL_PATHSEP: '::';
 TMPL_KW_FOR: 'for';
+TMPL_KW_CLOSE_FOR: '/for';
 TMPL_KW_IN: 'in';
 TMPL_KW_IF: 'if';
+TMPL_KW_CLOSEIF: '/if';
 TMPL_KW_ELSE: 'else';
 TMPL_KW_ELIF: 'elif';
 

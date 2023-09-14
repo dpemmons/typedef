@@ -120,6 +120,11 @@ json GetAccessInfoForType(TypeIdentifierContext* ctx) {
   return j;
 }
 
+json GetAccessInfoForType(TypeAnnotationContext* ctx) {
+  // TODO: This isn't correct because it doesn't handle type arguments.
+  return GetAccessInfoForType(ctx->typeIdentifier());
+}
+
 json GetField(FieldDefinitionContext* field) {
   json j;
   j["identifier"] = escape_utf8_to_cpp_identifier(field->field_identifier->id);
@@ -237,33 +242,46 @@ json GetUserTypeDecls(vector<TypeDefinitionContext*> types) {
   return arr;
 }
 
+json GetTemplateValueDereference(
+    TypedefParser::TmplValueReferencePathContext* ctx) {
+  json j = json::array();
+  for (TypedefParser::TmplValueReferenceContext* val_ref :
+       ctx->tmplValueReference()) {
+    j.push_back(escape_utf8_to_cpp_identifier(val_ref->tmplIdentifier()->id));
+  }
+  return j;
+}
+
 json GetTemplateInsertion(TypedefParser::TmplInsertionContext* ctx) {
   json j;
-  j["identifier"] = escape_utf8_to_cpp_identifier(ctx->tmplIdentifier()->id);
+  j["identifier"] = GetTemplateValueDereference(ctx->tmplValueReferencePath());
   return j;
 }
 
 json GetTemplateFunctionCall(TypedefParser::TmplCallContext* ctx) {
   json j;
-  auto identifiers = ctx->tmplIdentifier();
-  j["func"] = escape_utf8_to_cpp_identifier(identifiers[0]->id);
+  j["func"] = escape_utf8_to_cpp_identifier(ctx->tmplIdentifier()->id);
   j["args"] = json::array();
-  for (int ii = 1; ii < identifiers.size(); ii++) {
-    j["args"].push_back(identifiers[ii]->id);
+  for (TypedefParser::TmplValueReferencePathContext* path :
+       ctx->tmplValueReferencePath()) {
+    j["args"].push_back(GetTemplateValueDereference(path));
   }
   return j;
 }
 
 json GetTemplateIfBlock(TypedefParser::TmplIfContext* ctx) {
   json j;
-  j["stmt"] =
-      ctx->tmplIfBlock()->tmplIfStmt()->tmplExpression()->tmplIdentifier()->id;
+  j["stmt"] = GetTemplateValueDereference(ctx->tmplIfBlock()
+                                              ->tmplIfStmt()
+                                              ->tmplExpression()
+                                              ->tmplValueReferencePath());
   j["items"] = GetTemplateItems(ctx->tmplIfBlock()->tmplItem());
 
   j["elifs"] = json::array();
   for (auto* elif : ctx->tmplElifBlock()) {
     json e;
-    e["stmt"] = elif->tmplElIfStmt()->tmplExpression()->tmplIdentifier()->id;
+    e["stmt"] = GetTemplateValueDereference(
+        elif->tmplElIfStmt()->tmplExpression()->tmplValueReferencePath());
     e["items"] = GetTemplateItems(elif->tmplItem());
     j["elifs"].push_back(e);
   }
@@ -278,7 +296,7 @@ json GetTemplateIfBlock(TypedefParser::TmplIfContext* ctx) {
 json GetTemplateForBlock(TypedefParser::TmplForContext* ctx) {
   json j;
   j["var"] = ctx->tmplForStmt()->var->id;
-  j["collection"] = ctx->tmplForStmt()->collection->id;
+  j["collection"] = GetTemplateValueDereference(ctx->tmplForStmt()->collection);
   j["items"] = GetTemplateItems(ctx->tmplItem());
   return j;
 }
@@ -372,21 +390,18 @@ void CodegenCpp(OutPathBase* out_path,
   Template struct_tmpl;
   env.add_callback("struct", 1, [&](Arguments& args) mutable {
     json arg = args.at(0)->get<json>();
-    // std::cout << arg.dump(1) << std::endl;
     return env.render(struct_tmpl, arg);
   });
 
   Template variant_tmpl;
   env.add_callback("variant", 1, [&](Arguments& args) mutable {
     json arg = args.at(0)->get<json>();
-    // std::cout << arg.dump(1) << std::endl;
     return env.render(variant_tmpl, arg);
   });
 
   Template vector_tmpl;
   env.add_callback("vector", 1, [&](Arguments& args) mutable {
     json arg = args.at(0)->get<json>();
-    // std::cout << arg.dump(1) << std::endl;
     return env.render(vector_tmpl, arg);
   });
 
@@ -401,28 +416,27 @@ void CodegenCpp(OutPathBase* out_path,
   env.add_callback("params_list", 1, [&](Arguments& args) mutable {
     json arg;
     arg["params"] = args.at(0)->get<json>();
-    // std::cout << arg.dump(1) << std::endl;
     return env.render(params_list, arg);
   });
 
   Template tmpl_func_declaration;
   env.add_callback("tmpl_func_declaration", 1, [&](Arguments& args) mutable {
     json arg = args.at(0)->get<json>();
-    // std::cout << arg.dump(1) << std::endl;
     return env.render(tmpl_func_declaration, arg);
   });
 
   Template tmpl_func_definition;
   env.add_callback("tmpl_func_definition", 1, [&](Arguments& args) mutable {
     json arg = args.at(0)->get<json>();
-    // std::cout << arg.dump(1) << std::endl;
     return env.render(tmpl_func_definition, arg);
   });
 
   Template tmpl_item;
   env.add_callback("tmpl_item", 1, [&](Arguments& args) mutable {
     json arg = args.at(0)->get<json>();
-    // std::cout << arg.dump(1) << std::endl;
+    // Text escape uses a long random* string to minimize chance of collision.
+    // * well, once upon a time it was random.
+    arg["escape"] = "";  //"oohequoh1Gah8AiYaida";
     return env.render(tmpl_item, arg);
   });
 
@@ -729,11 +743,9 @@ class {{identifier}} : public std::map<{{key.cpp_type}}, {{value.cpp_type}}> {
 void {{identifier}}(std::ostream& os{{params_list(params)}});
   )");
 
-  // Text escape uses a long random* string to minimize chance of collision.
-  // * well, once upon a time it was random.
   tmpl_item = env.parse(
       R"(## if exists("text")
-  os << R"oohequoh1Gah8AiYaida({{text}})oohequoh1Gah8AiYaida";
+  os << R"{{escape}}({{text}}){{escape}}";
 ## else if exists("insertion")
   os << {{insertion.identifier}};
 ## else if exists("call")

@@ -110,10 +110,6 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTmplIfClose(TypedefParser::TmplIfCloseContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual antlrcpp::Any visitTmplFor(TypedefParser::TmplForContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -122,11 +118,15 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTmplForClose(TypedefParser::TmplForCloseContext *ctx) override {
+  virtual antlrcpp::Any visitTmplExpression(TypedefParser::TmplExpressionContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTmplExpression(TypedefParser::TmplExpressionContext *ctx) override {
+  virtual antlrcpp::Any visitTmplValueReferencePath(TypedefParser::TmplValueReferencePathContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitTmplValueReference(TypedefParser::TmplValueReferenceContext *ctx) override {
     return visitChildren(ctx);
   }
 

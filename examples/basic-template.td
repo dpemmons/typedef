@@ -1,11 +1,25 @@
 typedef=alpha;
 module test;
 
-struct SomeVals {
-  val_a: i32;
-};
+struct Person {
+  name: str;
+  birthday: struct {
+    year: u16;
+  };
+  friends: vector<Person>;
+}
 
-template TrivialTemplate(foo: i32, bar: SomeVals) t#"
-this is a trivial template.
-< foo >
+template sayHi(who: Person) t#"Hello <person.name>!"#
+template sayBirthday(who: Person) t#"Hello <who.name>, your birthday is <who.birthday.year>!"#
+
+template multilineLoop(friends: vector<Person>) t#"
+  <for friend in friends>
+    Hi <friend.name>!
+  </for>
+"#
+
+template callsAnother(who: Person) t#"
+  <for friend in friends>
+    <sayHi(friend)>
+  </for>
 "#

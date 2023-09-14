@@ -68,15 +68,15 @@ public:
 
     virtual antlrcpp::Any visitTmplElseBlock(TypedefParser::TmplElseBlockContext *context) = 0;
 
-    virtual antlrcpp::Any visitTmplIfClose(TypedefParser::TmplIfCloseContext *context) = 0;
-
     virtual antlrcpp::Any visitTmplFor(TypedefParser::TmplForContext *context) = 0;
 
     virtual antlrcpp::Any visitTmplForStmt(TypedefParser::TmplForStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitTmplForClose(TypedefParser::TmplForCloseContext *context) = 0;
-
     virtual antlrcpp::Any visitTmplExpression(TypedefParser::TmplExpressionContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplValueReferencePath(TypedefParser::TmplValueReferencePathContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplValueReference(TypedefParser::TmplValueReferenceContext *context) = 0;
 
     virtual antlrcpp::Any visitTmplIdentifier(TypedefParser::TmplIdentifierContext *context) = 0;
 

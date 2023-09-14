@@ -71,14 +71,18 @@ tmplItem:
 tmplText
 	returns[std::string text]
 	@after {$text = $ctx->txt->getText();}: txt = TMPL_TEXT;
-tmplInsertion: TMPL_EXPR_OPEN tmplIdentifier TMPL_EXPR_CLOSE;
+tmplInsertion:
+	TMPL_EXPR_OPEN tmplValueReferencePath TMPL_EXPR_CLOSE;
 tmplCall:
-	TMPL_EXPR_OPEN tmplIdentifier TMPL_LPAREN tmplIdentifier? (
-		tmplIdentifier TMPL_COMMA
+	TMPL_EXPR_OPEN tmplIdentifier TMPL_LPAREN tmplValueReferencePath? (
+		tmplValueReferencePath TMPL_COMMA
 	)* TMPL_RPAREN TMPL_EXPR_CLOSE;
 
 // <if (expression)> <elif (expression)> <else> </if>
-tmplIf: tmplIfBlock tmplElifBlock* tmplElseBlock? tmplIfClose;
+tmplIf:
+	tmplIfBlock tmplElifBlock* tmplElseBlock? (
+		TMPL_EXPR_OPEN TMPL_KW_CLOSEIF TMPL_EXPR_CLOSE
+	);
 tmplIfStmt:
 	TMPL_EXPR_OPEN TMPL_KW_IF tmplExpression TMPL_EXPR_CLOSE;
 tmplIfBlock: tmplIfStmt tmplItem*;
@@ -87,24 +91,28 @@ tmplElIfStmt:
 tmplElifBlock: tmplElIfStmt tmplItem*;
 tmplElseStmt: TMPL_EXPR_OPEN TMPL_KW_ELSE TMPL_EXPR_CLOSE;
 tmplElseBlock: tmplElseStmt tmplItem*;
-tmplIfClose:
-	TMPL_EXPR_OPEN TMPL_SLASH TMPL_KW_IF TMPL_EXPR_CLOSE;
 
 // <for fo in bar> </for>
-tmplFor: tmplForStmt tmplItem* tmplForClose;
+tmplFor:
+	tmplForStmt tmplItem* (
+		TMPL_EXPR_OPEN TMPL_KW_CLOSE_FOR TMPL_EXPR_CLOSE
+	);
 tmplForStmt:
-	TMPL_EXPR_OPEN TMPL_KW_FOR var = tmplIdentifier TMPL_KW_IN collection = tmplIdentifier
+	TMPL_EXPR_OPEN TMPL_KW_FOR var = tmplIdentifier TMPL_KW_IN collection = tmplValueReferencePath
 		TMPL_EXPR_CLOSE;
-tmplForClose:
-	TMPL_EXPR_OPEN TMPL_SLASH TMPL_KW_FOR TMPL_EXPR_CLOSE;
 
-tmplExpression: tmplIdentifier;
+tmplExpression: tmplValueReferencePath;
+tmplValueReferencePath:
+	tmplValueReference (TMPL_DOT tmplValueReference)*;
+tmplValueReference
+	returns[TypeDefinitionContext* type_definition]:
+	tmplIdentifier;
 tmplIdentifier
 	returns[std::string id]
 	@after {$id = $ctx->nki->getText();}: nki = TMPL_NON_KEYWORD_IDENTIFIER;
 
 functionParameter:
-	identifier ':' parameter_type = typeIdentifier;
+	identifier ':' parameter_type = typeAnnotation;
 
 useDeclaration: 'use' symbolPath ';';
 

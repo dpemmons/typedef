@@ -88,20 +88,20 @@ public:
   virtual void enterTmplElseBlock(TypedefParser::TmplElseBlockContext * /*ctx*/) override { }
   virtual void exitTmplElseBlock(TypedefParser::TmplElseBlockContext * /*ctx*/) override { }
 
-  virtual void enterTmplIfClose(TypedefParser::TmplIfCloseContext * /*ctx*/) override { }
-  virtual void exitTmplIfClose(TypedefParser::TmplIfCloseContext * /*ctx*/) override { }
-
   virtual void enterTmplFor(TypedefParser::TmplForContext * /*ctx*/) override { }
   virtual void exitTmplFor(TypedefParser::TmplForContext * /*ctx*/) override { }
 
   virtual void enterTmplForStmt(TypedefParser::TmplForStmtContext * /*ctx*/) override { }
   virtual void exitTmplForStmt(TypedefParser::TmplForStmtContext * /*ctx*/) override { }
 
-  virtual void enterTmplForClose(TypedefParser::TmplForCloseContext * /*ctx*/) override { }
-  virtual void exitTmplForClose(TypedefParser::TmplForCloseContext * /*ctx*/) override { }
-
   virtual void enterTmplExpression(TypedefParser::TmplExpressionContext * /*ctx*/) override { }
   virtual void exitTmplExpression(TypedefParser::TmplExpressionContext * /*ctx*/) override { }
+
+  virtual void enterTmplValueReferencePath(TypedefParser::TmplValueReferencePathContext * /*ctx*/) override { }
+  virtual void exitTmplValueReferencePath(TypedefParser::TmplValueReferencePathContext * /*ctx*/) override { }
+
+  virtual void enterTmplValueReference(TypedefParser::TmplValueReferenceContext * /*ctx*/) override { }
+  virtual void exitTmplValueReference(TypedefParser::TmplValueReferenceContext * /*ctx*/) override { }
 
   virtual void enterTmplIdentifier(TypedefParser::TmplIdentifierContext * /*ctx*/) override { }
   virtual void exitTmplIdentifier(TypedefParser::TmplIdentifierContext * /*ctx*/) override { }
