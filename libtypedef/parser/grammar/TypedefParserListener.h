@@ -38,9 +38,6 @@ public:
   virtual void enterTypeAnnotation(TypedefParser::TypeAnnotationContext *ctx) = 0;
   virtual void exitTypeAnnotation(TypedefParser::TypeAnnotationContext *ctx) = 0;
 
-  virtual void enterTypeArgument(TypedefParser::TypeArgumentContext *ctx) = 0;
-  virtual void exitTypeArgument(TypedefParser::TypeArgumentContext *ctx) = 0;
-
   virtual void enterTypeIdentifier(TypedefParser::TypeIdentifierContext *ctx) = 0;
   virtual void exitTypeIdentifier(TypedefParser::TypeIdentifierContext *ctx) = 0;
 

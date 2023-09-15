@@ -92,8 +92,7 @@ void FirstPassListener::enterFieldDefinition(
           AddError(ctx->primitiveLiteral(), ParserErrorInfo::TYPE_MISMATCH,
                    "str expected.");
         }
-      } else if (ReferencesPrimitiveFloatType(
-                     ctx->typeAnnotation()->typeIdentifier())) {
+      } else if (ReferencesPrimitiveFloatType(ctx->typeAnnotation())) {
         if (!ctx->primitiveLiteral()->floatLiteral()) {
           AddError(ctx->primitiveLiteral(), ParserErrorInfo::TYPE_MISMATCH,
                    "float expected.");
@@ -105,8 +104,7 @@ void FirstPassListener::enterFieldDefinition(
                   ->primitiveTypeIdentifier(),
               ctx->primitiveLiteral()->floatLiteral());
         }
-      } else if (ReferencesPrimitiveIntegerType(
-                     ctx->typeAnnotation()->typeIdentifier())) {
+      } else if (ReferencesPrimitiveIntegerType(ctx->typeAnnotation())) {
         if (!ctx->primitiveLiteral()->integerLiteral()) {
           AddError(ctx->primitiveLiteral(), ParserErrorInfo::TYPE_MISMATCH,
                    "integer expected.");
@@ -129,24 +127,23 @@ void FirstPassListener::enterTypeAnnotation(
     TypedefParser::TypeAnnotationContext* ctx) {
   auto* id_ctx = ctx->typeIdentifier();
   if (id_ctx->KW_VECTOR()) {
-    auto type_arguments = ctx->typeArgument();
-    if (type_arguments.size() != 1) {
+    auto type_arguments = ctx->typeAnnotation();
+    if (HasTypeArguments(ctx) != 1) {
       AddError(ctx, ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
                "1 type arguments expected.");
     }
     // TODO check type argument.
   } else if (id_ctx->KW_MAP()) {
-    auto type_arguments = ctx->typeArgument();
-    if (type_arguments.size() != 2) {
+    if (HasTypeArguments(ctx) != 2) {
       AddError(ctx, ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
                "2 type argument expected.");
     }
-    auto* key_identifier = type_arguments[0]->typeIdentifier();
+    auto* key_identifier = GetTypeArgument(ctx, 0);
     if (!ReferencesPrimitiveType(key_identifier)) {
-      AddError(type_arguments[0], ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+      AddError(key_identifier, ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
                "Primitive key type expected.");
     } else if (ReferencesPrimitiveFloatType(key_identifier)) {
-      AddError(type_arguments[0], ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+      AddError(key_identifier, ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
                "Map key cannot be floating point.");
     }
     // TODO check second type argument.
@@ -179,23 +176,22 @@ TypedefParser::TypeDefinitionContext* FirstPassListener::FindSymbolInTypeStack(
   }
 
   if (current_idx > 0 && !found_typedef) {
-    found_typedef =
-        FindSymbolInTypeStack(current_idx - 1, identifier);
+    found_typedef = FindSymbolInTypeStack(current_idx - 1, identifier);
   }
   return found_typedef;
 }
 
 void FirstPassListener::AddError(antlr4::ParserRuleContext* ctx,
                                  ParserErrorInfo::Type type, string msg) {
-  errors_list_.push_back(
-      PEIBuilder()
-          .SetType(type)
-          .SetMessage(msg)
-          .SetCharOffset(ctx->start->getStartIndex())
-          .SetLine(ctx->start->getLine())
-          .SetLineOffset(ctx->start->getCharPositionInLine())
-          .SetLength(ctx->stop->getStopIndex() - ctx->start->getStartIndex() + 1)
-          .build());
+  errors_list_.push_back(PEIBuilder()
+                             .SetType(type)
+                             .SetMessage(msg)
+                             .SetCharOffset(ctx->start->getStartIndex())
+                             .SetLine(ctx->start->getLine())
+                             .SetLineOffset(ctx->start->getCharPositionInLine())
+                             .SetLength(ctx->stop->getStopIndex() -
+                                        ctx->start->getStartIndex() + 1)
+                             .build());
 }
 
 void FirstPassListener::AddError(TypedefParser::IdentifierContext* identifier,

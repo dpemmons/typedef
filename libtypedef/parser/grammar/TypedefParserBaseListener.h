@@ -40,9 +40,6 @@ public:
   virtual void enterTypeAnnotation(TypedefParser::TypeAnnotationContext * /*ctx*/) override { }
   virtual void exitTypeAnnotation(TypedefParser::TypeAnnotationContext * /*ctx*/) override { }
 
-  virtual void enterTypeArgument(TypedefParser::TypeArgumentContext * /*ctx*/) override { }
-  virtual void exitTypeArgument(TypedefParser::TypeArgumentContext * /*ctx*/) override { }
-
   virtual void enterTypeIdentifier(TypedefParser::TypeIdentifierContext * /*ctx*/) override { }
   virtual void exitTypeIdentifier(TypedefParser::TypeIdentifierContext * /*ctx*/) override { }
 

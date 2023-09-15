@@ -33,8 +33,6 @@ using TypeIdentifierContext = TypedefParser::TypeIdentifierContext;
 using TmplDefinitionContext = TypedefParser::TmplDefinitionContext;
 using FunctionParameterContext = TypedefParser::FunctionParameterContext;
 
-json GetMap(TypeAnnotationContext* ctx, string identifier);
-json GetVector(TypeAnnotationContext* ctx, string identifier);
 json GetUserTypeDecls(vector<TypeDefinitionContext*> types);
 json GetTypeDeclaration(TypedefParser::TypeDefinitionContext* type,
                         optional<string> maybe_identifier);
@@ -42,6 +40,10 @@ json GetTemplateItems(vector<TypedefParser::TmplItemContext*> itm_ctxs);
 
 std::string GetNestedTypeIdentifier(FieldDefinitionContext* field) {
   return escape_utf8_to_cpp_identifier(field->field_identifier->id + "T");
+}
+
+std::string GetInlineCppType(FieldDefinitionContext* ctx) {
+  return escape_utf8_to_cpp_identifier(ctx->field_identifier->id + "T");
 }
 
 string HeaderGuard(const filesystem::path& source_filename) {
@@ -53,76 +55,73 @@ string HeaderGuard(const filesystem::path& source_filename) {
   return hdr_guard;
 }
 
-json GetAccessInfoForType(TypeDefinitionContext* type) {
+json GetAccessInfoForType(TypeAnnotationContext* ctx) {
   json j;
-  if (DefinesStruct(type) || DefinesVariant(type)) {
-    j["cpp_type"] = escape_utf8_to_cpp_identifier(type->type_identifier->id);
-    j["access_by"] = "pointer";
-  } else {
-    throw_logic_error("invalid state");
-  }
-  return j;
-}
-
-json GetAccessInfoForType(TypeIdentifierContext* ctx) {
-  json j;
-  if (ctx->primitiveTypeIdentifier()) {
-    PrimitiveTypeIdentifierContext* p = ctx->primitiveTypeIdentifier();
-    if (IsBool(p)) {
+  if (ReferencesPrimitiveType(ctx)) {
+    if (IsBool(ctx)) {
       j["cpp_type"] = "bool";
       j["access_by"] = "value";
-    } else if (IsChar(p)) {
+    } else if (IsChar(ctx)) {
       j["cpp_type"] = "char32_t";
       j["access_by"] = "value";
-    } else if (IsStr(p)) {
+    } else if (IsStr(ctx)) {
       j["cpp_type"] = "std::string";
       j["access_by"] = "reference";
-    } else if (IsF32(p)) {
+    } else if (IsF32(ctx)) {
       j["cpp_type"] = "float";
       j["access_by"] = "value";
-    } else if (IsF64(p)) {
+    } else if (IsF64(ctx)) {
       j["cpp_type"] = "double";
       j["access_by"] = "value";
-    } else if (IsU8(p)) {
+    } else if (IsU8(ctx)) {
       j["cpp_type"] = "std::uint8_t";
       j["access_by"] = "value";
-    } else if (IsU16(p)) {
+    } else if (IsU16(ctx)) {
       j["cpp_type"] = "std::uint16_t";
       j["access_by"] = "value";
-    } else if (IsU32(p)) {
+    } else if (IsU32(ctx)) {
       j["cpp_type"] = "std::uint32_t";
       j["access_by"] = "value";
-    } else if (IsU64(p)) {
+    } else if (IsU64(ctx)) {
       j["cpp_type"] = "std::uint64_t";
       j["access_by"] = "value";
-    } else if (IsI8(p)) {
+    } else if (IsI8(ctx)) {
       j["cpp_type"] = "std::int8_t";
       j["access_by"] = "value";
-    } else if (IsI16(p)) {
+    } else if (IsI16(ctx)) {
       j["cpp_type"] = "std::int16_t";
       j["access_by"] = "value";
-    } else if (IsI32(p)) {
+    } else if (IsI32(ctx)) {
       j["cpp_type"] = "std::int32_t";
       j["access_by"] = "value";
-    } else if (IsI64(p)) {
+    } else if (IsI64(ctx)) {
       j["cpp_type"] = "std::int64_t";
       j["access_by"] = "value";
     } else {
       throw_logic_error("invalid state");
     }
+  } else if (ReferencesBuiltinVectorType(ctx)) {
+    j["cpp_type"] = "td::Vector";
+    j["access_by"] = "reference";
+    j["type_arguments"] = json::array();
+    j["type_arguments"].push_back(
+        GetAccessInfoForType(GetTypeArgument(ctx, 0)));
+  } else if (ReferencesBuiltinMapType(ctx)) {
+    j["cpp_type"] = "td::Map";
+    j["access_by"] = "reference";
+    j["type_arguments"] = json::array();
+    j["type_arguments"].push_back(
+        GetAccessInfoForType(GetTypeArgument(ctx, 0)));
+    j["type_arguments"].push_back(
+        GetAccessInfoForType(GetTypeArgument(ctx, 1)));
   } else if (ReferencesUserType(ctx)) {
-    TypeDefinitionContext* user_type = GetReferencedUserType(ctx);
-    if (!user_type) {
-      throw_logic_error("Unresolved user type reference.");
-    }
-    j = GetAccessInfoForType(user_type);
+    j["cpp_type"] = escape_utf8_to_cpp_identifier(
+        GetReferencedUserType(ctx)->type_identifier->id);
+    j["access_by"] = "pointer";
+  } else {
+    throw_logic_error("invalid state");
   }
   return j;
-}
-
-json GetAccessInfoForType(TypeAnnotationContext* ctx) {
-  // TODO: This isn't correct because it doesn't handle type arguments.
-  return GetAccessInfoForType(ctx->typeIdentifier());
 }
 
 json GetField(FieldDefinitionContext* field) {
@@ -131,21 +130,9 @@ json GetField(FieldDefinitionContext* field) {
   if (DefinesAndUsesInlineUserType(field)) {
     j["cpp_type"] = GetNestedTypeIdentifier(field);
     j["access_by"] = "pointer";
-  } else if (field->typeAnnotation()) {
-    TypeAnnotationContext* tac = field->typeAnnotation();
-    TypeIdentifierContext* tic = tac->typeIdentifier();
-    if (ReferencesPrimitiveType(tic) || ReferencesUserType(tic)) {
-      j.merge_patch(GetAccessInfoForType(tic));
-    } else if (ReferencesBuiltinType(tic)) {
-      j["cpp_type"] = GetNestedTypeIdentifier(field);
-      j["access_by"] = "reference";
-    } else {
-      throw_logic_error("invalid state");
-    }
   } else {
-    throw_logic_error("invalid state");
+    j.merge_patch(GetAccessInfoForType(field->typeAnnotation()));
   }
-
   return j;
 }
 
@@ -153,8 +140,7 @@ json GetReferencedBuiltinTypeDeclaration(
     TypedefParser::TypeAnnotationContext* type, const string& identifier) {
   json j;
   j["access_by"] = "reference";
-  if (ReferencesBuiltinMapType(type->typeIdentifier()) ||
-      ReferencesBuiltinMapType(type->typeIdentifier())) {
+  if (ReferencesBuiltinVectorType(type) || ReferencesBuiltinMapType(type)) {
     j["cpp_type"] = escape_utf8_to_cpp_identifier(identifier) + "T";
   } else {
     throw_logic_error("invalid state");
@@ -179,19 +165,6 @@ json GetStruct(TypeDefinitionContext* type, optional<string> maybe_identifier) {
     if (DefinesAndUsesInlineUserType(field)) {
       j["inline_type_decls"].push_back(GetTypeDeclaration(
           field->typeDefinition(), GetNestedTypeIdentifier(field)));
-    } else if (field->typeAnnotation()) {
-      TypeAnnotationContext* tac = field->typeAnnotation();
-      if (ReferencesBuiltinType(tac)) {
-        json ilt;
-        if (ReferencesBuiltinVectorType(tac)) {
-          ilt["vector"] = GetVector(tac, GetNestedTypeIdentifier(field));
-        } else if (ReferencesBuiltinMapType(tac)) {
-          ilt["map"] = GetMap(tac, GetNestedTypeIdentifier(field));
-        } else {
-          throw_logic_error("invalid state");
-        }
-        j["inline_type_decls"].push_back(ilt);
-      }
     }
   }
 
@@ -199,24 +172,6 @@ json GetStruct(TypeDefinitionContext* type, optional<string> maybe_identifier) {
     j["fields"].push_back(GetField(field));
   }
 
-  return j;
-}
-
-json GetVector(TypeAnnotationContext* ctx, string identifier) {
-  json j;
-  j["identifier"] = identifier;
-  TypeIdentifierContext* element_ctx = ctx->typeArgument(0)->typeIdentifier();
-  j["element"] = GetAccessInfoForType(element_ctx);
-  return j;
-}
-
-json GetMap(TypeAnnotationContext* ctx, string identifier) {
-  json j;
-  j["identifier"] = identifier;
-  TypeIdentifierContext* key_ctx = ctx->typeArgument(0)->typeIdentifier();
-  j["key"] = GetAccessInfoForType(key_ctx);
-  TypeIdentifierContext* value_ctx = ctx->typeArgument(1)->typeIdentifier();
-  j["value"] = GetAccessInfoForType(value_ctx);
   return j;
 }
 
@@ -401,24 +356,17 @@ void CodegenCpp(OutPathBase* out_path,
     return env.render(variant_tmpl, arg);
   });
 
-  Template vector_tmpl;
-  env.add_callback("vector", 1, [&](Arguments& args) mutable {
-    json arg = args.at(0)->get<json>();
-    return env.render(vector_tmpl, arg);
-  });
-
-  Template map_tmpl;
-  env.add_callback("map", 1, [&](Arguments& args) mutable {
-    json arg = args.at(0)->get<json>();
-    // std::cout << arg.dump(1) << std::endl;
-    return env.render(map_tmpl, arg);
-  });
-
   Template params_list;
   env.add_callback("params_list", 1, [&](Arguments& args) mutable {
     json arg;
     arg["params"] = args.at(0)->get<json>();
     return env.render(params_list, arg);
+  });
+
+  Template cpp_type;
+  env.add_callback("cpp_type", 1, [&](Arguments& args) mutable {
+    json arg = args.at(0)->get<json>();
+    return env.render(cpp_type, arg);
   });
 
   Template tmpl_func_declaration;
@@ -458,10 +406,6 @@ class {{identifier}} {
   {{ struct(type_decl.struct) }}
 ## else if existsIn(type_decl, "variant")
   {{ variant(type_decl.variant) }}
-## else if existsIn(type_decl, "vector")
-  {{ vector(type_decl.vector) }}
-## else if existsIn(type_decl, "map")
-  {{ map(type_decl.map) }}
 ## endif
 ## endfor
 ## endif
@@ -473,10 +417,6 @@ class {{identifier}} {
   {{ struct(type_decl.struct) }}
 ## else if existsIn(type_decl, "variant")
   {{ variant(type_decl.variant) }}
-## else if existsIn(type_decl, "vector")
-  {{ vector(type_decl.vector) }}
-## else if existsIn(type_decl, "map")
-  {{ map(type_decl.map) }}
 ## endif
 ## endfor
 ## endif
@@ -564,10 +504,6 @@ class {{identifier}} {
   {{ struct(type_decl.struct) }}
 ## else if existsIn(type_decl, "variant")
   {{ variant(type_decl.variant) }}
-## else if existsIn(type_decl, "vector")
-  {{ vector(type_decl.vector) }}
-## else if existsIn(type_decl, "map")
-  {{ map(type_decl.map) }}
 ## endif
 ## endfor
 ## endif
@@ -579,10 +515,6 @@ class {{identifier}} {
   {{ struct(type_decl.struct) }}
 ## else if existsIn(type_decl, "variant")
   {{ variant(type_decl.variant) }}
-## else if existsIn(type_decl, "vector")
-  {{ vector(type_decl.vector) }}
-## else if existsIn(type_decl, "map")
-  {{ map(type_decl.map) }}
 ## endif
 ## endfor
 ## endif
@@ -716,39 +648,15 @@ class {{identifier}} {
 };  // class {{identifier}}
   )");
 
-  vector_tmpl = env.parse(R"(
-class {{identifier}} : public std::vector<{{element.cpp_type}}> {
- public:
-  {{identifier}}() = default;
-  ~{{identifier}}() = default;
-
-  {{identifier}}({{identifier}}&& other) noexcept = default;
-  {{identifier}}& operator=({{identifier}}&& other) noexcept = default;
-
- private:
-};  // class {{identifier}}
-  )");
-
-  map_tmpl = env.parse(R"(
-class {{identifier}} : public std::map<{{key.cpp_type}}, {{value.cpp_type}}> {
- public:
-  {{identifier}}() = default;
-  ~{{identifier}}() = default;
-
-  {{identifier}}({{identifier}}&& other) noexcept = default;
-  {{identifier}}& operator=({{identifier}}&& other) noexcept = default;
-
- private:
-};  // class {{identifier}}
-  )");
+  // cpp_type<cpp_type
+  cpp_type = env.parse(R"({{ cpp_type }}{% if exists("type_arguments") %}<{% for type_argument in type_arguments %}{{ cpp_type(type_argument) }}{% if not loop.is_last %}, {% endif %}{% endfor %}>{% endif %})");
 
   params_list = env.parse(R"({%- for param in params -%}
-, const {{ param.cpp_type -}}
-{% if param.access_by == "reference" %}&{% else if param.access_by == "pointer" %}*{% endif %}
- {{ param.identifier -}}
+, const {{ cpp_type(param) }}& {{ param.identifier -}}
 {%- endfor %})");
 
-  tmpl_val_ref = env.parse(R"({%for val_ref in val_ref_path%}{{val_ref}}{%if not loop.is_last%}.{%endif%}{%endfor%})");
+  tmpl_val_ref = env.parse(
+      R"({%for val_ref in val_ref_path%}{{val_ref}}{%if not loop.is_last%}.{%endif%}{%endfor%})");
 
   tmpl_func_declaration = env.parse(R"(
 void {{identifier}}(std::ostream& os{{params_list(params)}});
@@ -790,9 +698,9 @@ void {{identifier}}(std::ostream& os{{params_list(params)}}) {
 #include <cstdint>
 #include <memory>
 #include <string>
-#include <vector>
-#include <map>
 #include <ostream>
+
+#include <typedef/stubs.h>
 
 #define TD_STRINGIZE_DETAIL(x) #x
 #define TD_STRINGIZE(x) TD_STRINGIZE_DETAIL(x)
@@ -811,10 +719,6 @@ namespace {{namespace}} {
   {{ struct(type_decl.struct) }}
 ## else if existsIn(type_decl, "variant")
   {{ variant(type_decl.variant) }}
-## else if existsIn(type_decl, "vector")
-  {{ vector(type_decl.vector) }}
-## else if existsIn(type_decl, "map")
-  {{ map(type_decl.map) }}
 ## endif
 ## endfor
 
@@ -833,8 +737,6 @@ namespace {{namespace}} {
 #include "{{header_filename}}"
 
 #include <string>
-#include <vector>
-#include <map>
 
 ## for namespace in namespaces
 namespace {{namespace}} {

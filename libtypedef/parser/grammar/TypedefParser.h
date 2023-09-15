@@ -58,17 +58,17 @@ public:
   enum {
     RuleCompilationUnit = 0, RuleTypedefVersionDeclaration = 1, RuleModuleDeclaration = 2, 
     RuleTypeDefinition = 3, RuleFieldBlock = 4, RuleFieldDefinition = 5, 
-    RuleTypeAnnotation = 6, RuleTypeArgument = 7, RuleTypeIdentifier = 8, 
-    RuleUserType = 9, RuleTmplDefinition = 10, RuleTmplBlock = 11, RuleTmplItem = 12, 
-    RuleTmplText = 13, RuleTmplInsertion = 14, RuleTmplCall = 15, RuleTmplIf = 16, 
-    RuleTmplIfStmt = 17, RuleTmplIfBlock = 18, RuleTmplElIfStmt = 19, RuleTmplElifBlock = 20, 
-    RuleTmplElseStmt = 21, RuleTmplElseBlock = 22, RuleTmplFor = 23, RuleTmplForStmt = 24, 
-    RuleTmplExpression = 25, RuleTmplValueReferencePath = 26, RuleTmplValueReference = 27, 
-    RuleTmplIdentifier = 28, RuleFunctionParameter = 29, RuleUseDeclaration = 30, 
-    RuleSymbolPath = 31, RulePrimitiveLiteral = 32, RuleBoolLiteral = 33, 
-    RuleCharLiteral = 34, RuleStringLiteral = 35, RuleFloatLiteral = 36, 
-    RuleIntegerLiteral = 37, RuleIntDigits = 38, RuleIdentifier = 39, RulePrimitiveTypeIdentifier = 40, 
-    RuleKeyword = 41
+    RuleTypeAnnotation = 6, RuleTypeIdentifier = 7, RuleUserType = 8, RuleTmplDefinition = 9, 
+    RuleTmplBlock = 10, RuleTmplItem = 11, RuleTmplText = 12, RuleTmplInsertion = 13, 
+    RuleTmplCall = 14, RuleTmplIf = 15, RuleTmplIfStmt = 16, RuleTmplIfBlock = 17, 
+    RuleTmplElIfStmt = 18, RuleTmplElifBlock = 19, RuleTmplElseStmt = 20, 
+    RuleTmplElseBlock = 21, RuleTmplFor = 22, RuleTmplForStmt = 23, RuleTmplExpression = 24, 
+    RuleTmplValueReferencePath = 25, RuleTmplValueReference = 26, RuleTmplIdentifier = 27, 
+    RuleFunctionParameter = 28, RuleUseDeclaration = 29, RuleSymbolPath = 30, 
+    RulePrimitiveLiteral = 31, RuleBoolLiteral = 32, RuleCharLiteral = 33, 
+    RuleStringLiteral = 34, RuleFloatLiteral = 35, RuleIntegerLiteral = 36, 
+    RuleIntDigits = 37, RuleIdentifier = 38, RulePrimitiveTypeIdentifier = 39, 
+    RuleKeyword = 40
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -88,7 +88,6 @@ public:
   class FieldBlockContext;
   class FieldDefinitionContext;
   class TypeAnnotationContext;
-  class TypeArgumentContext;
   class TypeIdentifierContext;
   class UserTypeContext;
   class TmplDefinitionContext;
@@ -257,8 +256,8 @@ public:
     virtual size_t getRuleIndex() const override;
     TypeIdentifierContext *typeIdentifier();
     antlr4::tree::TerminalNode *LT();
-    std::vector<TypeArgumentContext *> typeArgument();
-    TypeArgumentContext* typeArgument(size_t i);
+    std::vector<TypeAnnotationContext *> typeAnnotation();
+    TypeAnnotationContext* typeAnnotation(size_t i);
     antlr4::tree::TerminalNode *GT();
     std::vector<antlr4::tree::TerminalNode *> COMMA();
     antlr4::tree::TerminalNode* COMMA(size_t i);
@@ -271,21 +270,6 @@ public:
   };
 
   TypeAnnotationContext* typeAnnotation();
-
-  class  TypeArgumentContext : public antlr4::ParserRuleContext {
-  public:
-    TypeArgumentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    TypeIdentifierContext *typeIdentifier();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  TypeArgumentContext* typeArgument();
 
   class  TypeIdentifierContext : public antlr4::ParserRuleContext {
   public:

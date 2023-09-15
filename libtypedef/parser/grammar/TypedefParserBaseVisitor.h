@@ -46,10 +46,6 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTypeArgument(TypedefParser::TypeArgumentContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual antlrcpp::Any visitTypeIdentifier(TypedefParser::TypeIdentifierContext *ctx) override {
     return visitChildren(ctx);
   }

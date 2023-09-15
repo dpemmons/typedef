@@ -26,16 +26,16 @@ bool DefinesAndUsesInlineUserType(TypedefParser::FieldDefinitionContext* field);
 TypedefParser::TypeDefinitionContext* GetInlineUserType(
     TypedefParser::FieldDefinitionContext* ctx);
 
-bool ReferencesUserType(TypedefParser::TypeArgumentContext* ctx);
+bool ReferencesUserType(TypedefParser::TypeAnnotationContext* ctx);
 TypedefParser::TypeDefinitionContext* GetReferencedUserType(
-    TypedefParser::TypeArgumentContext* ctx);
+    TypedefParser::TypeAnnotationContext* ctx);
 
 bool ReferencesUserType(TypedefParser::FieldDefinitionContext* ctx);
-bool ReferencesUserType(TypedefParser::TypeIdentifierContext* ctx);
+bool ReferencesUserType(TypedefParser::TypeAnnotationContext* ctx);
 TypedefParser::TypeDefinitionContext* GetReferencedUserType(
     TypedefParser::FieldDefinitionContext* ctx);
 TypedefParser::TypeDefinitionContext* GetReferencedUserType(
-    TypedefParser::TypeIdentifierContext* ctx);
+    TypedefParser::TypeAnnotationContext* ctx);
 
 bool HasTypeAnnotation(TypedefParser::FieldDefinitionContext* ctx);
 TypedefParser::TypeAnnotationContext* GetTypeAnnotation(
@@ -45,20 +45,16 @@ TypedefParser::TypeDefinitionContext* GetTypeDefinition(
     TypedefParser::FieldDefinitionContext* ctx);
 
 size_t HasTypeArguments(TypedefParser::TypeAnnotationContext* ctx);
-TypedefParser::TypeArgumentContext* GetTypeArgument(
+TypedefParser::TypeAnnotationContext* GetTypeArgument(
     TypedefParser::TypeAnnotationContext* ctx, size_t ii = 0);
 
 bool ReferencesBuiltinType(TypedefParser::TypeAnnotationContext* ctx);
-bool ReferencesBuiltinType(TypedefParser::TypeIdentifierContext* ctx);
 bool ReferencesBuiltinVectorType(TypedefParser::TypeAnnotationContext* ctx);
-bool ReferencesBuiltinVectorType(TypedefParser::TypeIdentifierContext* ctx);
 bool ReferencesBuiltinMapType(TypedefParser::TypeAnnotationContext* ctx);
-bool ReferencesBuiltinMapType(TypedefParser::TypeIdentifierContext* ctx);
 
 bool ReferencesPrimitiveType(TypedefParser::TypeAnnotationContext* ctx);
-bool ReferencesPrimitiveType(TypedefParser::TypeIdentifierContext* ctx);
-bool ReferencesPrimitiveFloatType(TypedefParser::TypeIdentifierContext* ctx);
-bool ReferencesPrimitiveIntegerType(TypedefParser::TypeIdentifierContext* ctx);
+bool ReferencesPrimitiveFloatType(TypedefParser::TypeAnnotationContext* ctx);
+bool ReferencesPrimitiveIntegerType(TypedefParser::TypeAnnotationContext* ctx);
 TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitiveIdentifier(
     TypedefParser::TypeAnnotationContext* ctx);
 
@@ -68,31 +64,31 @@ TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitiveIdentifier(
 TypedefParser::PrimitiveLiteralContext* GetPrimitiveLiteral(
     TypedefParser::FieldDefinitionContext* ctx);
 
-bool IsBool(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
+bool IsBool(TypedefParser::TypeAnnotationContext* ctx);
 bool IsBool(TypedefParser::FieldDefinitionContext* ctx);
-bool IsChar(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
+bool IsChar(TypedefParser::TypeAnnotationContext* ctx);
 bool IsChar(TypedefParser::FieldDefinitionContext* ctx);
-bool IsStr(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
+bool IsStr(TypedefParser::TypeAnnotationContext* ctx);
 bool IsStr(TypedefParser::FieldDefinitionContext* ctx);
-bool IsF32(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
+bool IsF32(TypedefParser::TypeAnnotationContext* ctx);
 bool IsF32(TypedefParser::FieldDefinitionContext* ctx);
-bool IsF64(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
+bool IsF64(TypedefParser::TypeAnnotationContext* ctx);
 bool IsF64(TypedefParser::FieldDefinitionContext* ctx);
-bool IsU8(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
+bool IsU8(TypedefParser::TypeAnnotationContext* ctx);
 bool IsU8(TypedefParser::FieldDefinitionContext* ctx);
-bool IsU16(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
+bool IsU16(TypedefParser::TypeAnnotationContext* ctx);
 bool IsU16(TypedefParser::FieldDefinitionContext* ctx);
-bool IsU32(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
+bool IsU32(TypedefParser::TypeAnnotationContext* ctx);
 bool IsU32(TypedefParser::FieldDefinitionContext* ctx);
-bool IsU64(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
+bool IsU64(TypedefParser::TypeAnnotationContext* ctx);
 bool IsU64(TypedefParser::FieldDefinitionContext* ctx);
-bool IsI8(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
+bool IsI8(TypedefParser::TypeAnnotationContext* ctx);
 bool IsI8(TypedefParser::FieldDefinitionContext* ctx);
-bool IsI16(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
+bool IsI16(TypedefParser::TypeAnnotationContext* ctx);
 bool IsI16(TypedefParser::FieldDefinitionContext* ctx);
-bool IsI32(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
+bool IsI32(TypedefParser::TypeAnnotationContext* ctx);
 bool IsI32(TypedefParser::FieldDefinitionContext* ctx);
-bool IsI64(TypedefParser::PrimitiveTypeIdentifierContext* ctx);
+bool IsI64(TypedefParser::TypeAnnotationContext* ctx);
 bool IsI64(TypedefParser::FieldDefinitionContext* ctx);
 
 bool IsBoolLiteral(TypedefParser::PrimitiveLiteralContext* ctx);

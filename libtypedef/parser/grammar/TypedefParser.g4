@@ -39,12 +39,8 @@ fieldDefinition:
 	) ('=' primitiveLiteral)?;
 
 typeAnnotation:
-	typeIdentifier (LT typeArgument (COMMA typeArgument)* GT)?;
+	typeIdentifier (LT typeAnnotation (COMMA typeAnnotation)* GT)?;
 
-// TODO since we're dropping the `vector SomeVec<>; sytax figure out inline types for vectors so you
-// can have vectors of vectors, and of maps.
-
-typeArgument: typeIdentifier;
 typeIdentifier:
 	primitiveTypeIdentifier
 	| KW_VECTOR

@@ -36,8 +36,6 @@ public:
 
     virtual antlrcpp::Any visitTypeAnnotation(TypedefParser::TypeAnnotationContext *context) = 0;
 
-    virtual antlrcpp::Any visitTypeArgument(TypedefParser::TypeArgumentContext *context) = 0;
-
     virtual antlrcpp::Any visitTypeIdentifier(TypedefParser::TypeIdentifierContext *context) = 0;
 
     virtual antlrcpp::Any visitUserType(TypedefParser::UserTypeContext *context) = 0;
