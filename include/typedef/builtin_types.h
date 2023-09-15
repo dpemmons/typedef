@@ -7,7 +7,7 @@
 namespace td {
 
 template <typename T>
-class Vector : public std::vector<Person> {
+class Vector : public std::vector<T> {
  public:
   Vector() = default;
   ~Vector() = default;
@@ -24,7 +24,7 @@ class Map : public std::map<K, V> {
   Map() = default;
   ~Map() = default;
 
-  Map(asdfT&& other) noexcept = default;
+  Map(Map&& other) noexcept = default;
   Map& operator=(Map&& other) noexcept = default;
 
  private:

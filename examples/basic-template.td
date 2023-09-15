@@ -10,21 +10,21 @@ struct Person {
   asdf: map<i32, str>;
 }
 
-template sayHi(who: Person) t#"Hello <person.name>!"#
-template sayBirthday(who: Person) t#"Hello <who.name>, your birthday is <who.birthday.year>!"#
+template sayHi(w: Person) t#"Hello <w.name>!"#
+template sayBirthday(w: Person) t#"Hello <w.name>, your birthday is <w.birthday.year>!"#
 
-template callAnother(friend: Person) t#"
-<sayHi(friend)>
+template callAnother(f: Person) t#"
+<sayHi(f)>
 "#
 
-template multilineLoop(friends: vector<Person>) t#"
-  <for friend in friends>
-    Hi <friend.name>!
+template multilineLoop(fs: vector<Person>) t#"
+  <for asdf in fs>
+    Hi <asdf.name>!
   </for>
 "#
 
-template friendsSayingHiToEachOther(friends: map<str, str>) t#"
-  <for first in friends>
-    <first> says hi to <second>
+template friendsSayingHiToEachOther(fs: map<str, str>) t#"
+  <for a, b in fs>
+    <a> says hi to <b>
   </for>
 "#

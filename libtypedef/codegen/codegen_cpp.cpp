@@ -252,7 +252,12 @@ json GetTemplateIfBlock(TypedefParser::TmplIfContext* ctx) {
 
 json GetTemplateForBlock(TypedefParser::TmplForContext* ctx) {
   json j;
-  j["var"] = ctx->tmplForStmt()->var->id;
+  if (ctx->tmplForStmt()->tmplIdentifier().size() == 1) {
+    j["var"] = ctx->tmplForStmt()->tmplIdentifier()[0]->id;
+  } else if (ctx->tmplForStmt()->tmplIdentifier().size() == 2) {
+    j["key"] = ctx->tmplForStmt()->tmplIdentifier()[0]->id;
+    j["val"] = ctx->tmplForStmt()->tmplIdentifier()[1]->id;
+  }
   j["collection"] = GetTemplateValueDereference(ctx->tmplForStmt()->collection);
   j["items"] = GetTemplateItems(ctx->tmplItem());
   return j;
@@ -431,20 +436,26 @@ class {{identifier}} {
 ## if exists("fields")
 ## for field in fields
 ## if field.access_by == "value" 
-  {{field.cpp_type}} get_{{field.identifier}}() {
+  {{cpp_type(field)}} get_{{field.identifier}}() const {
     return {{field.identifier}}_;
   }
-  void set_{{field.identifier}}({{field.cpp_type}} val) {
+  void set_{{field.identifier}}({{cpp_type(field)}} val) {
     {{field.identifier}}_ = val;
   }
-  {{field.cpp_type}}& ref_{{field.identifier}}() {
+  {{cpp_type(field)}}& {{field.identifier}}() {
+    return {{field.identifier}}_;
+  }
+  const {{cpp_type(field)}}& {{field.identifier}}() const {
     return {{field.identifier}}_;
   }
 ## else if field.access_by == "reference" 
-  void set_{{field.identifier}}({{field.cpp_type}}&& val) {
+  void set_{{field.identifier}}({{cpp_type(field)}}&& val) {
     {{field.identifier}}_ = std::move(val);
   }
-  {{field.cpp_type}}& ref_{{field.identifier}}() {
+  {{cpp_type(field)}}& {{field.identifier}}() {
+    return {{field.identifier}}_;
+  }
+  const {{cpp_type(field)}}& {{field.identifier}}() const {
     return {{field.identifier}}_;
   }
 ## else if field.access_by == "pointer" 
@@ -452,18 +463,18 @@ class {{identifier}} {
     return {{field.identifier}}_.operator bool();
   }
   void alloc_{{field.identifier}}() {
-    {{field.identifier}}_ = std::make_unique<{{field.cpp_type}}>();
+    {{field.identifier}}_ = std::make_unique<{{cpp_type(field)}}>();
   }
   void delete_{{field.identifier}}() {
     return {{field.identifier}}_.reset(nullptr);
   }
-  void set_{{field.identifier}}(std::unique_ptr<{{field.cpp_type}}> val) {
+  void set_{{field.identifier}}(std::unique_ptr<{{cpp_type(field)}}> val) {
     {{field.identifier}}_ = std::move(val);
   }
-  void set_{{field.identifier}}({{field.cpp_type}}* val) {
+  void set_{{field.identifier}}({{cpp_type(field)}}* val) {
     {{field.identifier}}_.reset(std::move(val));
   }
-  {{field.cpp_type}}* ptr_{{field.identifier}}() {
+  {{cpp_type(field)}}* ptr_{{field.identifier}}() {
     #if TD_AUTO_ALLOC
     if (!has_{{field.identifier}}()) {
       alloc_{{field.identifier}}();
@@ -476,6 +487,17 @@ class {{identifier}} {
     #endif
     return {{field.identifier}}_.get();
   }
+  {{cpp_type(field)}}& {{field.identifier}}() {
+    return *ptr_{{field.identifier}}();
+  }
+  const {{cpp_type(field)}}& {{field.identifier}}() const {
+    #ifdef DEBUG
+    if (!has_{{field.identifier}}()) {
+      TD_THROW("Attempted null reference");
+    }
+    #endif
+    return *{{field.identifier}}_.get();
+  }
 ## endif
 
 ## endfor
@@ -485,9 +507,9 @@ class {{identifier}} {
 ## if exists("fields")
 ## for field in fields
 ## if field.access_by == "pointer" 
-  std::unique_ptr<{{field.cpp_type}}> {{field.identifier}}_;
+  std::unique_ptr<{{cpp_type(field)}}> {{field.identifier}}_;
 ## else
-  {{field.cpp_type}} {{field.identifier}}_;
+  {{cpp_type(field)}} {{field.identifier}}_;
 ## endif
 ## endfor
 ## endif
@@ -546,25 +568,45 @@ class {{identifier}} {
     return (tag == Tag::TAG_{{field.identifier}});
   }
 ## if field.access_by == "value" 
-  {{field.cpp_type}} get_{{field.identifier}}() {
+  {{cpp_type(field)}} get_{{field.identifier}}() const {
     if (!is_{{field.identifier}}()) {
       TD_THROW("Attempted invalid variant access");
     }
     return {{field.identifier}}_;
   }
-  void set_{{field.identifier}}({{field.cpp_type}} val) {
+  void set_{{field.identifier}}({{cpp_type(field)}} val) {
     MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
     {{field.identifier}}_ = val;
   }
-## else if field.access_by == "reference"
-  {{field.cpp_type}}& ref_{{field.identifier}}() {
+  {{cpp_type(field)}}& {{field.identifier}}() {
+    if (!is_{{field.identifier}}()) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_{{field.identifier}};
+    }
+    return {{field.identifier}}_;
+  }
+  const {{cpp_type(field)}}& {{field.identifier}}() const {
     if (!is_{{field.identifier}}()) {
       TD_THROW("Attempted invalid variant access");
     }
     return {{field.identifier}}_;
   }
-  void set_{{field.identifier}}({{field.cpp_type}}&& val) {
+## else if field.access_by == "reference"
+  {{cpp_type(field)}}& {{field.identifier}}() {
+    if (!is_{{field.identifier}}()) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_{{field.identifier}};
+    }
+    return {{field.identifier}}_;
+  }
+  const {{cpp_type(field)}}& {{field.identifier}}() const {
+    if (!is_{{field.identifier}}()) {
+      TD_THROW("Attempted invalid variant access");
+    }
+    return {{field.identifier}}_;
+  }
+  void set_{{field.identifier}}({{cpp_type(field)}}&& val) {
     MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
     {{field.identifier}}_ = std::move(val);
@@ -579,7 +621,7 @@ class {{identifier}} {
   void alloc_{{field.identifier}}() {
     MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
-    {{field.identifier}}_ = std::make_unique<{{field.cpp_type}}>();
+    {{field.identifier}}_ = std::make_unique<{{cpp_type(field)}}>();
   }
   void delete_{{field.identifier}}() {
     if (!is_{{field.identifier}}()) {
@@ -587,17 +629,17 @@ class {{identifier}} {
     }
     return {{field.identifier}}_.reset(nullptr);
   }
-  void set_{{field.identifier}}(std::unique_ptr<{{field.cpp_type}}> val) {
+  void set_{{field.identifier}}(std::unique_ptr<{{cpp_type(field)}}> val) {
     MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
     {{field.identifier}}_ = std::move(val);
   }
-  void set_{{field.identifier}}({{field.cpp_type}}* val) {
+  void set_{{field.identifier}}({{cpp_type(field)}}* val) {
     MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
     {{field.identifier}}_.reset(std::move(val));
   }
-  {{field.cpp_type}}* ptr_{{field.identifier}}() {
+  {{cpp_type(field)}}* ptr_{{field.identifier}}() {
     #if TD_AUTO_ALLOC
     if (!has_{{field.identifier}}()) {
       alloc_{{field.identifier}}();
@@ -610,6 +652,21 @@ class {{identifier}} {
     #endif
     return {{field.identifier}}_.get();
   }
+  {{cpp_type(field)}}& {{field.identifier}}() {
+    if (!is_{{field.identifier}}()) {
+      MaybeDeleteExistingMember();
+      tag = Tag::TAG_{{field.identifier}};
+    }
+    return *ptr_{{field.identifier}}();
+  }
+  const {{cpp_type(field)}}& {{field.identifier}}() const {
+    #ifdef DEBUG
+    if (!has_{{field.identifier}}()) {
+      TD_THROW("Attempted null reference");
+    }
+    #endif
+    return *{{field.identifier}}_.get();
+  }
 ## endif
 
 ## endfor
@@ -621,9 +678,9 @@ class {{identifier}} {
 ## if exists("fields")
 ## for field in fields
 ## if field.access_by == "pointer" 
-    std::unique_ptr<{{field.cpp_type}}> {{field.identifier}}_;
+    std::unique_ptr<{{cpp_type(field)}}> {{field.identifier}}_;
 ## else
-    {{field.cpp_type}} {{field.identifier}}_;
+    {{cpp_type(field)}} {{field.identifier}}_;
 ## endif
 ## endfor
 ## endif
@@ -649,14 +706,15 @@ class {{identifier}} {
   )");
 
   // cpp_type<cpp_type
-  cpp_type = env.parse(R"({{ cpp_type }}{% if exists("type_arguments") %}<{% for type_argument in type_arguments %}{{ cpp_type(type_argument) }}{% if not loop.is_last %}, {% endif %}{% endfor %}>{% endif %})");
+  cpp_type = env.parse(
+      R"({{ cpp_type }}{% if exists("type_arguments") %}<{% for type_argument in type_arguments %}{{ cpp_type(type_argument) }}{% if not loop.is_last %}, {% endif %}{% endfor %}>{% endif %})");
 
   params_list = env.parse(R"({%- for param in params -%}
 , const {{ cpp_type(param) }}& {{ param.identifier -}}
 {%- endfor %})");
 
   tmpl_val_ref = env.parse(
-      R"({%for val_ref in val_ref_path%}{{val_ref}}{%if not loop.is_last%}.{%endif%}{%endfor%})");
+      R"({%for val_ref in val_ref_path%}{{val_ref}}{%if not loop.is_first%}(){%endif%}{%if not loop.is_last%}.{%endif%}{%endfor%})");
 
   tmpl_func_declaration = env.parse(R"(
 void {{identifier}}(std::ostream& os{{params_list(params)}});
@@ -681,7 +739,14 @@ void {{identifier}}(std::ostream& os{{params_list(params)}});
   }{%endif%}
 
 ## else if exists("for")
-  for (auto {{for.var}} : {{tmpl_val_ref(for.collection)}}) {
+{%if existsIn(for, "var")%}
+  for (auto& {{for.var}} : {{tmpl_val_ref(for.collection)}}) {
+{%else%}
+  auto _typedef__it = {{tmpl_val_ref(for.collection)}}.begin();
+  while (_typedef__it != {{tmpl_val_ref(for.collection)}}.end()) {
+    auto& {{for.key}} = _typedef__it->first;
+    auto& {{for.val}} = _typedef__it->second;
+{%endif%}
     {%for item in for.items%}{{tmpl_item(item)}}{%endfor%}
   }
 ## endif)");
@@ -700,7 +765,7 @@ void {{identifier}}(std::ostream& os{{params_list(params)}}) {
 #include <string>
 #include <ostream>
 
-#include <typedef/stubs.h>
+#include <typedef/builtin_types.h>
 
 #define TD_STRINGIZE_DETAIL(x) #x
 #define TD_STRINGIZE(x) TD_STRINGIZE_DETAIL(x)

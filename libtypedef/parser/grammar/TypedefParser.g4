@@ -94,8 +94,9 @@ tmplFor:
 		TMPL_EXPR_OPEN TMPL_KW_CLOSE_FOR TMPL_EXPR_CLOSE
 	);
 tmplForStmt:
-	TMPL_EXPR_OPEN TMPL_KW_FOR var = tmplIdentifier TMPL_KW_IN collection = tmplValueReferencePath
-		TMPL_EXPR_CLOSE;
+	TMPL_EXPR_OPEN TMPL_KW_FOR tmplIdentifier (
+		TMPL_COMMA tmplIdentifier
+	)? TMPL_KW_IN collection = tmplValueReferencePath TMPL_EXPR_CLOSE;
 
 tmplExpression: tmplValueReferencePath;
 tmplValueReferencePath:

@@ -569,16 +569,17 @@ public:
 
   class  TmplForStmtContext : public antlr4::ParserRuleContext {
   public:
-    TypedefParser::TmplIdentifierContext *var = nullptr;;
     TypedefParser::TmplValueReferencePathContext *collection = nullptr;;
     TmplForStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *TMPL_EXPR_OPEN();
     antlr4::tree::TerminalNode *TMPL_KW_FOR();
+    std::vector<TmplIdentifierContext *> tmplIdentifier();
+    TmplIdentifierContext* tmplIdentifier(size_t i);
     antlr4::tree::TerminalNode *TMPL_KW_IN();
     antlr4::tree::TerminalNode *TMPL_EXPR_CLOSE();
-    TmplIdentifierContext *tmplIdentifier();
     TmplValueReferencePathContext *tmplValueReferencePath();
+    antlr4::tree::TerminalNode *TMPL_COMMA();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
