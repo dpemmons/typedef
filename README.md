@@ -16,9 +16,9 @@ The language is currently ***in active development***; the gramamr is stabilizin
 Items in ***bold*** are in-progress.
 
 * [ ] **string templates**
+  * [ ] type checking  <- next up
   * [ ] configurable opening / closing strings
     * [ ] formatting
-  * [ ] type checking
   * [ ] subtemplates
   * [ ] comments
   * [ ] escape delimiters
