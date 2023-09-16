@@ -101,9 +101,7 @@ tmplForStmt:
 tmplExpression: tmplValueReferencePath;
 tmplValueReferencePath:
 	tmplValueReference (TMPL_DOT tmplValueReference)*;
-tmplValueReference
-	returns[TypeDefinitionContext* type_definition]:
-	tmplIdentifier;
+tmplValueReference: tmplIdentifier;
 tmplIdentifier
 	returns[std::string id]
 	@after {$id = $ctx->nki->getText();}: nki = TMPL_NON_KEYWORD_IDENTIFIER;

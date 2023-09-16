@@ -1769,7 +1769,6 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class TmplValueReferenceContext extends ParserRuleContext {
-		public TypeDefinitionContext* type_definition;
 		public TmplIdentifierContext tmplIdentifier() {
 			return getRuleContext(TmplIdentifierContext.class,0);
 		}

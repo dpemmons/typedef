@@ -158,6 +158,58 @@ void FirstPassListener::enterUserType(TypedefParser::UserTypeContext* ctx) {
   }
 }
 
+void FirstPassListener::enterTmplDefinition(
+    TypedefParser::TmplDefinitionContext* ctx) {
+  template_type_contexts_.push_back(ctx);
+}
+
+void FirstPassListener::exitTmplDefinition(
+    TypedefParser::TmplDefinitionContext* ctx) {
+  template_type_contexts_.pop_back();
+}
+
+void FirstPassListener::enterTmplIfBlock(
+    TypedefParser::TmplIfBlockContext* ctx) {
+  template_type_contexts_.push_back(ctx);
+}
+
+void FirstPassListener::exitTmplIfBlock(
+    TypedefParser::TmplIfBlockContext* ctx) {
+  template_type_contexts_.pop_back();
+}
+
+void FirstPassListener::enterTmplElifBlock(
+    TypedefParser::TmplElifBlockContext* ctx) {
+  template_type_contexts_.push_back(ctx);
+}
+
+void FirstPassListener::exitTmplElifBlock(
+    TypedefParser::TmplElifBlockContext* ctx) {
+  template_type_contexts_.pop_back();
+}
+
+void FirstPassListener::enterTmplFor(TypedefParser::TmplForContext* ctx) {
+  template_type_contexts_.push_back(ctx);
+}
+
+void FirstPassListener::exitTmplFor(TypedefParser::TmplForContext* ctx) {
+  template_type_contexts_.pop_back();
+}
+
+void FirstPassListener::enterTmplValueReferencePath(
+    TypedefParser::TmplValueReferencePathContext* ctx) {
+  //  Walk up template_type_contexts_ to find the identifier.
+
+  std::vector<TypedefParser::TmplValueReferenceContext*> path =
+      ctx->tmplValueReference();
+
+  TemplateIdentifier id = FindSymbolInTemplateTypeStack(
+      template_type_contexts_.size() - 1, &path[0]->tmplIdentifier()->id);
+  if (holds_alternative<std::monostate>(id)) {
+    AddError(ctx, ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
+  }
+}
+
 TypedefParser::TypeDefinitionContext* FirstPassListener::FindSymbolInTypeStack(
     size_t current_idx, const string* identifier) {
   TypedefParser::TypeDefinitionContext* found_typedef = nullptr;
@@ -172,13 +224,37 @@ TypedefParser::TypeDefinitionContext* FirstPassListener::FindSymbolInTypeStack(
     found_typedef = FindType(
         get<TypedefParser::FieldBlockContext*>(curr_context), *identifier);
   } else {
-    throw_logic_error("unknown type contest");
+    throw_logic_error("unhandled type contest");
   }
 
   if (current_idx > 0 && !found_typedef) {
     found_typedef = FindSymbolInTypeStack(current_idx - 1, identifier);
   }
   return found_typedef;
+}
+
+FirstPassListener::TemplateIdentifier
+FirstPassListener::FindSymbolInTemplateTypeStack(
+    size_t current_idx, const std::string* identifier) {
+  TemplateIdentifier id;
+
+  TemplateTypeContext& curr_context = template_type_contexts_[current_idx];
+
+  //  TODO fill these in....
+  if (holds_alternative<TypedefParser::TmplDefinitionContext*>(curr_context)) {
+  } else if (holds_alternative<TypedefParser::TmplIfBlockContext*>(
+                 curr_context)) {
+  } else if (holds_alternative<TypedefParser::TmplElifBlockContext*>(
+                 curr_context)) {
+  } else if (holds_alternative<TypedefParser::TmplForContext*>(curr_context)) {
+  } else {
+    throw_logic_error("unhandled type contest");
+  }
+
+  if (current_idx > 0 && holds_alternative<std::monostate>(id)) {
+    id = FindSymbolInTemplateTypeStack(current_idx - 1, identifier);
+  }
+  return id;
 }
 
 void FirstPassListener::AddError(antlr4::ParserRuleContext* ctx,

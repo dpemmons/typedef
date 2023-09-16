@@ -37,6 +37,26 @@ class FirstPassListener : public TypedefParserBaseListener {
 
   virtual void enterUserType(TypedefParser::UserTypeContext *ctx) override;
 
+  virtual void enterTmplDefinition(
+      TypedefParser::TmplDefinitionContext *ctx) override;
+  virtual void exitTmplDefinition(
+      TypedefParser::TmplDefinitionContext *ctx) override;
+
+  virtual void enterTmplIfBlock(
+      TypedefParser::TmplIfBlockContext *ctx) override;
+  virtual void exitTmplIfBlock(TypedefParser::TmplIfBlockContext *ctx) override;
+
+  virtual void enterTmplElifBlock(
+      TypedefParser::TmplElifBlockContext *ctx) override;
+  virtual void exitTmplElifBlock(
+      TypedefParser::TmplElifBlockContext *ctx) override;
+
+  virtual void enterTmplFor(TypedefParser::TmplForContext *ctx) override;
+  virtual void exitTmplFor(TypedefParser::TmplForContext *ctx) override;
+
+  virtual void enterTmplValueReferencePath(
+      TypedefParser::TmplValueReferencePathContext *ctx) override;
+
  private:
   // Used for user symbol resolution.
   using TypeContext = std::variant<TypedefParser::CompilationUnitContext *,
@@ -44,6 +64,20 @@ class FirstPassListener : public TypedefParserBaseListener {
   std::vector<TypeContext> type_contexts_;
 
   TypedefParser::TypeDefinitionContext *FindSymbolInTypeStack(
+      size_t current_idx, const std::string *identifier);
+
+  using TemplateIdentifier =
+      std::variant<std::monostate,                           //
+                   TypedefParser::IdentifierContext *,       //
+                   TypedefParser::TmplIdentifierContext *>;  //
+  using TemplateTypeContext =
+      std::variant<TypedefParser::TmplDefinitionContext *,  //
+                   TypedefParser::TmplIfBlockContext *,     //
+                   TypedefParser::TmplElifBlockContext *,   //
+                   TypedefParser::TmplForContext *>;        //
+  std::vector<TemplateTypeContext> template_type_contexts_;
+
+  TemplateIdentifier FindSymbolInTemplateTypeStack(
       size_t current_idx, const std::string *identifier);
 
   void AddError(antlr4::ParserRuleContext *ctx, ParserErrorInfo::Type type,
