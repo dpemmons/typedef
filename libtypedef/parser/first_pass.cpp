@@ -27,46 +27,48 @@ using namespace std;
 
 void FirstPassListener::enterCompilationUnit(
     TypedefParser::CompilationUnitContext* ctx) {
-  type_contexts_.push_back(ctx);
-  // Duplicate symbol detection.
-  set<string> identifiers;
-  for (auto* type_def_ctx : ctx->typeDefinition()) {
-    if (identifiers.find(type_def_ctx->type_identifier->id) !=
-        identifiers.end()) {
-      AddError(type_def_ctx->type_identifier,
-               ParserErrorInfo::DUPLICATE_SYMBOL);
+  for (auto* tctx : ctx->typeDefinition()) {
+    if (!identifiers_.try_emplace(tctx->type_identifier->id, tctx).second) {
+      AddError(tctx->type_identifier, ParserErrorInfo::DUPLICATE_SYMBOL);
     }
-    identifiers.insert(type_def_ctx->type_identifier->id);
+  }
+  for (auto* tctx : ctx->tmplDefinition()) {
+    if (!identifiers_.try_emplace(tctx->identifier()->id, tctx).second) {
+      AddError(tctx->identifier(), ParserErrorInfo::DUPLICATE_SYMBOL);
+    }
   }
 }
 
-void FirstPassListener::enterTypeDefinition(
-    TypedefParser::TypeDefinitionContext* ctx) {}
+void FirstPassListener::exitCompilationUnit(
+    TypedefParser::CompilationUnitContext* ctx) {
+  for (auto* tctx : ctx->typeDefinition()) {
+    identifiers_.erase(tctx->type_identifier->id);
+  }
+  for (auto* tctx : ctx->tmplDefinition()) {
+    identifiers_.erase(tctx->identifier()->id);
+  }
+}
 
 void FirstPassListener::enterFieldBlock(TypedefParser::FieldBlockContext* ctx) {
-  // Duplicate symbol detection.
-  type_contexts_.push_back(ctx);
-  set<string> identifiers;
-  for (auto* type_def_ctx : ctx->typeDefinition()) {
-    if (identifiers.find(type_def_ctx->type_identifier->id) !=
-        identifiers.end()) {
-      AddError(type_def_ctx->type_identifier,
-               ParserErrorInfo::DUPLICATE_SYMBOL);
+  for (auto* tctx : ctx->typeDefinition()) {
+    if (!identifiers_.try_emplace(tctx->type_identifier->id, tctx).second) {
+      AddError(tctx->type_identifier, ParserErrorInfo::DUPLICATE_SYMBOL);
     }
-    identifiers.insert(type_def_ctx->type_identifier->id);
   }
-  for (auto* field_def_ctx : ctx->fieldDefinition()) {
-    if (identifiers.find(field_def_ctx->field_identifier->id) !=
-        identifiers.end()) {
-      AddError(field_def_ctx->field_identifier,
-               ParserErrorInfo::DUPLICATE_SYMBOL);
+  for (auto* fctx : ctx->fieldDefinition()) {
+    if (!identifiers_.try_emplace(fctx->field_identifier->id, fctx).second) {
+      AddError(fctx->field_identifier, ParserErrorInfo::DUPLICATE_SYMBOL);
     }
-    identifiers.insert(field_def_ctx->field_identifier->id);
   }
 }
 
 void FirstPassListener::exitFieldBlock(TypedefParser::FieldBlockContext* ctx) {
-  type_contexts_.pop_back();
+  for (auto* tctx : ctx->typeDefinition()) {
+    identifiers_.erase(tctx->type_identifier->id);
+  }
+  for (auto* fctx : ctx->fieldDefinition()) {
+    identifiers_.erase(fctx->field_identifier->id);
+  }
 }
 
 void FirstPassListener::enterFieldDefinition(
@@ -151,110 +153,89 @@ void FirstPassListener::enterTypeAnnotation(
 }
 
 void FirstPassListener::enterUserType(TypedefParser::UserTypeContext* ctx) {
-  ctx->type_definition =
-      FindSymbolInTypeStack(type_contexts_.size() - 1, &ctx->identifier()->id);
-  if (!ctx->type_definition) {
+  auto search = identifiers_.find(ctx->identifier()->id);
+  if (search == identifiers_.end()) {
     AddError(ctx, ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
+  } else if (!holds_alternative<TypedefParser::TypeDefinitionContext*>(
+                 search->second)) {
+    AddError(ctx, ParserErrorInfo::NOT_A_TYPE);
+  } else {
+    ctx->type_definition =
+        get<TypedefParser::TypeDefinitionContext*>(search->second);
   }
 }
 
 void FirstPassListener::enterTmplDefinition(
     TypedefParser::TmplDefinitionContext* ctx) {
-  template_type_contexts_.push_back(ctx);
+  for (TypedefParser::FunctionParameterContext* fctx :
+       ctx->functionParameter()) {
+    if (!identifiers_.emplace(fctx->identifier()->id, fctx).second) {
+      AddError(ctx, ParserErrorInfo::DUPLICATE_SYMBOL);
+    };
+  }
 }
 
 void FirstPassListener::exitTmplDefinition(
     TypedefParser::TmplDefinitionContext* ctx) {
-  template_type_contexts_.pop_back();
+  for (TypedefParser::FunctionParameterContext* fctx :
+       ctx->functionParameter()) {
+    identifiers_.erase(fctx->identifier()->id);
+  }
 }
 
-void FirstPassListener::enterTmplIfBlock(
-    TypedefParser::TmplIfBlockContext* ctx) {
-  template_type_contexts_.push_back(ctx);
-}
-
-void FirstPassListener::exitTmplIfBlock(
-    TypedefParser::TmplIfBlockContext* ctx) {
-  template_type_contexts_.pop_back();
-}
-
-void FirstPassListener::enterTmplElifBlock(
-    TypedefParser::TmplElifBlockContext* ctx) {
-  template_type_contexts_.push_back(ctx);
-}
-
-void FirstPassListener::exitTmplElifBlock(
-    TypedefParser::TmplElifBlockContext* ctx) {
-  template_type_contexts_.pop_back();
+void FirstPassListener::exitTmplCall(TypedefParser::TmplCallContext* ctx) {
+  auto search = identifiers_.find(ctx->tmplIdentifier()->id);
+  if (search == identifiers_.end()) {
+    AddError(ctx->tmplIdentifier(),
+             ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
+  } else if (!holds_alternative<TypedefParser::TmplDefinitionContext*>(
+                 search->second)) {
+    AddError(ctx->tmplIdentifier(), ParserErrorInfo::NOT_A_TEMPLATE_FUNCTION);
+  }
 }
 
 void FirstPassListener::enterTmplFor(TypedefParser::TmplForContext* ctx) {
-  template_type_contexts_.push_back(ctx);
+  // TODO: NEXT UP!
+  // Ensure collection symbol points at a map or vector, and that
+  // the correct number of binding variables are used.
+  for (auto* bvctx : ctx->tmplForStmt()->tmplBindingVariable()) {
+    if (!identifiers_.try_emplace(bvctx->tmplIdentifier()->id, bvctx).second) {
+      AddError(bvctx->tmplIdentifier(), ParserErrorInfo::DUPLICATE_SYMBOL);
+    }
+  }
 }
 
 void FirstPassListener::exitTmplFor(TypedefParser::TmplForContext* ctx) {
-  template_type_contexts_.pop_back();
+  for (auto* bvctx : ctx->tmplForStmt()->tmplBindingVariable()) {
+    identifiers_.erase(bvctx->tmplIdentifier()->id);
+  }
 }
 
 void FirstPassListener::enterTmplValueReferencePath(
     TypedefParser::TmplValueReferencePathContext* ctx) {
-  //  Walk up template_type_contexts_ to find the identifier.
-
-  std::vector<TypedefParser::TmplValueReferenceContext*> path =
-      ctx->tmplValueReference();
-
-  TemplateIdentifier id = FindSymbolInTemplateTypeStack(
-      template_type_contexts_.size() - 1, &path[0]->tmplIdentifier()->id);
-  if (holds_alternative<std::monostate>(id)) {
+  auto search =
+      identifiers_.find(ctx->tmplValueReference(0)->tmplIdentifier()->id);
+  if (search == identifiers_.end()) {
     AddError(ctx, ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
+    return;
   }
-}
 
-TypedefParser::TypeDefinitionContext* FirstPassListener::FindSymbolInTypeStack(
-    size_t current_idx, const string* identifier) {
-  TypedefParser::TypeDefinitionContext* found_typedef = nullptr;
+  // TODO: NEXT UP!
+  // Walk down the path and ensure each item is valid.
 
-  TypeContext& curr_context = type_contexts_[current_idx];
-
-  if (holds_alternative<TypedefParser::CompilationUnitContext*>(curr_context)) {
-    found_typedef = FindType(
-        get<TypedefParser::CompilationUnitContext*>(curr_context), *identifier);
-  } else if (holds_alternative<TypedefParser::FieldBlockContext*>(
-                 curr_context)) {
-    found_typedef = FindType(
-        get<TypedefParser::FieldBlockContext*>(curr_context), *identifier);
+  if (holds_alternative<TypedefParser::FunctionParameterContext*>(
+          search->second)) {
+    auto* func_param =
+        get<TypedefParser::FunctionParameterContext*>(search->second);
+  } else if (holds_alternative<TypedefParser::TmplBindingVariableContext*>(
+                 search->second)) {
+    auto* binding_var =
+        get<TypedefParser::TmplBindingVariableContext*>(search->second);
   } else {
-    throw_logic_error("unhandled type contest");
+    AddError(ctx, ParserErrorInfo::NOT_A_VALUE_TYPE,
+             "symbol must refer to either a function parameter or binding "
+             "variable.");
   }
-
-  if (current_idx > 0 && !found_typedef) {
-    found_typedef = FindSymbolInTypeStack(current_idx - 1, identifier);
-  }
-  return found_typedef;
-}
-
-FirstPassListener::TemplateIdentifier
-FirstPassListener::FindSymbolInTemplateTypeStack(
-    size_t current_idx, const std::string* identifier) {
-  TemplateIdentifier id;
-
-  TemplateTypeContext& curr_context = template_type_contexts_[current_idx];
-
-  //  TODO fill these in....
-  if (holds_alternative<TypedefParser::TmplDefinitionContext*>(curr_context)) {
-  } else if (holds_alternative<TypedefParser::TmplIfBlockContext*>(
-                 curr_context)) {
-  } else if (holds_alternative<TypedefParser::TmplElifBlockContext*>(
-                 curr_context)) {
-  } else if (holds_alternative<TypedefParser::TmplForContext*>(curr_context)) {
-  } else {
-    throw_logic_error("unhandled type contest");
-  }
-
-  if (current_idx > 0 && holds_alternative<std::monostate>(id)) {
-    id = FindSymbolInTemplateTypeStack(current_idx - 1, identifier);
-  }
-  return id;
 }
 
 void FirstPassListener::AddError(antlr4::ParserRuleContext* ctx,

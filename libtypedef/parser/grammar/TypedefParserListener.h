@@ -98,6 +98,9 @@ public:
   virtual void enterTmplValueReference(TypedefParser::TmplValueReferenceContext *ctx) = 0;
   virtual void exitTmplValueReference(TypedefParser::TmplValueReferenceContext *ctx) = 0;
 
+  virtual void enterTmplBindingVariable(TypedefParser::TmplBindingVariableContext *ctx) = 0;
+  virtual void exitTmplBindingVariable(TypedefParser::TmplBindingVariableContext *ctx) = 0;
+
   virtual void enterTmplIdentifier(TypedefParser::TmplIdentifierContext *ctx) = 0;
   virtual void exitTmplIdentifier(TypedefParser::TmplIdentifierContext *ctx) = 0;
 

@@ -94,14 +94,15 @@ tmplFor:
 		TMPL_EXPR_OPEN TMPL_KW_CLOSE_FOR TMPL_EXPR_CLOSE
 	);
 tmplForStmt:
-	TMPL_EXPR_OPEN TMPL_KW_FOR tmplIdentifier (
-		TMPL_COMMA tmplIdentifier
+	TMPL_EXPR_OPEN TMPL_KW_FOR tmplBindingVariable (
+		TMPL_COMMA tmplBindingVariable
 	)? TMPL_KW_IN collection = tmplValueReferencePath TMPL_EXPR_CLOSE;
 
 tmplExpression: tmplValueReferencePath;
 tmplValueReferencePath:
 	tmplValueReference (TMPL_DOT tmplValueReference)*;
 tmplValueReference: tmplIdentifier;
+tmplBindingVariable: tmplIdentifier;
 tmplIdentifier
 	returns[std::string id]
 	@after {$id = $ctx->nki->getText();}: nki = TMPL_NON_KEYWORD_IDENTIFIER;

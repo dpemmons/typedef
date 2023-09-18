@@ -252,11 +252,14 @@ json GetTemplateIfBlock(TypedefParser::TmplIfContext* ctx) {
 
 json GetTemplateForBlock(TypedefParser::TmplForContext* ctx) {
   json j;
-  if (ctx->tmplForStmt()->tmplIdentifier().size() == 1) {
-    j["var"] = ctx->tmplForStmt()->tmplIdentifier()[0]->id;
-  } else if (ctx->tmplForStmt()->tmplIdentifier().size() == 2) {
-    j["key"] = ctx->tmplForStmt()->tmplIdentifier()[0]->id;
-    j["val"] = ctx->tmplForStmt()->tmplIdentifier()[1]->id;
+  auto binding_vars = ctx->tmplForStmt()->tmplBindingVariable();
+  if (binding_vars.size() == 1) {
+    j["var"] = binding_vars[0]->tmplIdentifier()->id;
+  } else if (binding_vars.size() == 2) {
+    j["key"] = binding_vars[0]->tmplIdentifier()->id;
+    j["val"] = binding_vars[1]->tmplIdentifier()->id;
+  } else {
+    throw_logic_error("invalid state");
   }
   j["collection"] = GetTemplateValueDereference(ctx->tmplForStmt()->collection);
   j["items"] = GetTemplateItems(ctx->tmplItem());

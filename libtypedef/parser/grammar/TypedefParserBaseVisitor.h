@@ -126,6 +126,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitTmplBindingVariable(TypedefParser::TmplBindingVariableContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitTmplIdentifier(TypedefParser::TmplIdentifierContext *ctx) override {
     return visitChildren(ctx);
   }

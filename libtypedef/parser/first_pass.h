@@ -22,9 +22,8 @@ class FirstPassListener : public TypedefParserBaseListener {
 
   virtual void enterCompilationUnit(
       TypedefParser::CompilationUnitContext *ctx) override;
-
-  virtual void enterTypeDefinition(
-      TypedefParser::TypeDefinitionContext *ctx) override;
+  virtual void exitCompilationUnit(
+      TypedefParser::CompilationUnitContext *ctx) override;
 
   virtual void enterFieldBlock(TypedefParser::FieldBlockContext *ctx) override;
   virtual void exitFieldBlock(TypedefParser::FieldBlockContext *ctx) override;
@@ -42,14 +41,7 @@ class FirstPassListener : public TypedefParserBaseListener {
   virtual void exitTmplDefinition(
       TypedefParser::TmplDefinitionContext *ctx) override;
 
-  virtual void enterTmplIfBlock(
-      TypedefParser::TmplIfBlockContext *ctx) override;
-  virtual void exitTmplIfBlock(TypedefParser::TmplIfBlockContext *ctx) override;
-
-  virtual void enterTmplElifBlock(
-      TypedefParser::TmplElifBlockContext *ctx) override;
-  virtual void exitTmplElifBlock(
-      TypedefParser::TmplElifBlockContext *ctx) override;
+  virtual void exitTmplCall(TypedefParser::TmplCallContext *ctx) override;
 
   virtual void enterTmplFor(TypedefParser::TmplForContext *ctx) override;
   virtual void exitTmplFor(TypedefParser::TmplForContext *ctx) override;
@@ -58,27 +50,15 @@ class FirstPassListener : public TypedefParserBaseListener {
       TypedefParser::TmplValueReferencePathContext *ctx) override;
 
  private:
-  // Used for user symbol resolution.
-  using TypeContext = std::variant<TypedefParser::CompilationUnitContext *,
-                                   TypedefParser::FieldBlockContext *>;
-  std::vector<TypeContext> type_contexts_;
+  using IdentifierCtx =
+      std::variant<std::monostate,                               //
+                   TypedefParser::TypeDefinitionContext *,       //
+                   TypedefParser::TmplDefinitionContext *,       //
+                   TypedefParser::FieldDefinitionContext *,      //
+                   TypedefParser::TmplBindingVariableContext *,  //
+                   TypedefParser::FunctionParameterContext *>;   //
 
-  TypedefParser::TypeDefinitionContext *FindSymbolInTypeStack(
-      size_t current_idx, const std::string *identifier);
-
-  using TemplateIdentifier =
-      std::variant<std::monostate,                           //
-                   TypedefParser::IdentifierContext *,       //
-                   TypedefParser::TmplIdentifierContext *>;  //
-  using TemplateTypeContext =
-      std::variant<TypedefParser::TmplDefinitionContext *,  //
-                   TypedefParser::TmplIfBlockContext *,     //
-                   TypedefParser::TmplElifBlockContext *,   //
-                   TypedefParser::TmplForContext *>;        //
-  std::vector<TemplateTypeContext> template_type_contexts_;
-
-  TemplateIdentifier FindSymbolInTemplateTypeStack(
-      size_t current_idx, const std::string *identifier);
+  std::unordered_map<std::string, IdentifierCtx> identifiers_;
 
   void AddError(antlr4::ParserRuleContext *ctx, ParserErrorInfo::Type type,
                 std::string msg = "");

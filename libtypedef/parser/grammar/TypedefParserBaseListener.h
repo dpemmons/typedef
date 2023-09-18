@@ -100,6 +100,9 @@ public:
   virtual void enterTmplValueReference(TypedefParser::TmplValueReferenceContext * /*ctx*/) override { }
   virtual void exitTmplValueReference(TypedefParser::TmplValueReferenceContext * /*ctx*/) override { }
 
+  virtual void enterTmplBindingVariable(TypedefParser::TmplBindingVariableContext * /*ctx*/) override { }
+  virtual void exitTmplBindingVariable(TypedefParser::TmplBindingVariableContext * /*ctx*/) override { }
+
   virtual void enterTmplIdentifier(TypedefParser::TmplIdentifierContext * /*ctx*/) override { }
   virtual void exitTmplIdentifier(TypedefParser::TmplIdentifierContext * /*ctx*/) override { }
 

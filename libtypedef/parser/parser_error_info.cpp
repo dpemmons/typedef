@@ -367,6 +367,14 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
       return "INVALID_RAW_TEMPLATE_STRING_LITERAL";
     case INVALID_TYPE_ARGUMENTS:
       return "INVALID_TYPE_ARGUMENTS";
+    case NOT_A_TYPE:
+      return "NOT_A_TYPE";
+    case INACCESSIBLE_SYMBOL:
+      return "INACCESSIBLE_SYMBOL";
+    case NOT_A_VALUE_TYPE:
+      return "NOT_A_VALUE_TYPE";
+    case NOT_A_TEMPLATE_FUNCTION:
+      return "NOT_A_TEMPLATE_FUNCTION";
     default:
       throw fmt::format("Unhandled error ID in ErrorTypeToString(): {}",
                         (int)error_type);

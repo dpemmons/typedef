@@ -76,6 +76,8 @@ public:
 
     virtual antlrcpp::Any visitTmplValueReference(TypedefParser::TmplValueReferenceContext *context) = 0;
 
+    virtual antlrcpp::Any visitTmplBindingVariable(TypedefParser::TmplBindingVariableContext *context) = 0;
+
     virtual antlrcpp::Any visitTmplIdentifier(TypedefParser::TmplIdentifierContext *context) = 0;
 
     virtual antlrcpp::Any visitFunctionParameter(TypedefParser::FunctionParameterContext *context) = 0;
