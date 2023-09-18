@@ -6,25 +6,32 @@ struct Person {
   birthday: struct {
     year: u16;
   };
-  friends: vector<Person>;
+  buddies: vector<Buddy>;
   asdf: map<i32, str>;
 }
 
+struct Buddy {
+  buddy_name: str;
+  parent: Person;
+}
+
 template sayHi(w: Person) t#"Hello <w.name>!"#
-template sayBirthday(w: Person) t#"Hello <w.name>, your birthday is <w.birthday.year>!"#
 
 template callAnother(f: Person) t#"
-<sayHi(f)>
+  <sayHi(f)>
 "#
 
-template multilineLoop(fs: vector<Person>) t#"
-  <for asdf in fs>
-    Hi <asdf.name>!
+template VectorLoop(fs: vector<Person>) t#"
+  <for foo in fs>
+    Hi <foo.name>!
   </for>
 "#
 
-template friendsSayingHiToEachOther(fs: map<str, str>) t#"
+template MapLoop(fs: map<str, Person>) t#"
   <for a, b in fs>
-    <a> says hi to <b>
+    <a> says hi to <b.name>, whose birthday is <b.birthday.year>
+    <for bud in b.buddies>
+      <b.name> is also friends with <bud.buddy_name> whose parent is <bud.parent.name>. <sayHi(bud.parent)>
+    </for>
   </for>
 "#
