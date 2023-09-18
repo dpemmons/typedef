@@ -1,8 +1,8 @@
 # typedef
 
-Typedef is a statically typed data declaration language for interface defintion and generation, data serialization, and string templating. It will implement a variation of the FlatBuffers serialiaation protocol, emphasizing fast and efficient encoding/decoding with minimal data copying.
+Typedef is a statically typed data declaration language, intended for interface definition and generation, data serialization, and string templating. It will implement a variation of the FlatBuffers serialization protocol for fast and efficient encoding/decoding with minimal data copying.
 
-The language is currently ***in active development***; the gramamr is stabilizing but may change and code generation is very incomplete.
+The language is ***in active development***; the gramamr is stabilizing but may change and code generation is very incomplete.
 
 ## Documentation (Incomplete, In-Progress)
 
