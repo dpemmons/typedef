@@ -25,7 +25,10 @@ class Parser {
     return compilation_unit_;
   }
 
+  const std::string& InputString() { return input_string_; }
+
  private:
+  std::string input_string_;
   antlr4::ANTLRInputStream input_stream_;
   TypedefLexer lexer_;
   antlr4::CommonTokenStream tokens_;

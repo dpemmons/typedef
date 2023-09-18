@@ -25,7 +25,8 @@ namespace td {
 using namespace std;
 
 Parser::Parser(std::string input)
-    : input_stream_(input),
+    : input_string_(input),
+      input_stream_(input_string_),
       lexer_(&input_stream_),
       tokens_(&lexer_),
       parser_(&tokens_),
