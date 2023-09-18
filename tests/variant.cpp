@@ -5,6 +5,7 @@
 #include <string>
 #include <variant>
 
+#include "helpers.h"
 #include "libtypedef/parser/grammar_functions.h"
 #include "libtypedef/parser/typedef_parser.h"
 
@@ -34,7 +35,7 @@ variant SomeVariant0 {
   example_i64: i64;
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant0");
   REQUIRE(ctx);
   REQUIRE(DefinesVariant(ctx));
@@ -81,7 +82,7 @@ variant SomeVariant1 {
   example_str: str = "hello world";
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant1");
   REQUIRE(ctx);
   REQUIRE(DefinesVariant(ctx));
@@ -118,7 +119,7 @@ variant SomeVariant2 {
   example_i64: i64 = -64i64;
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant2");
   REQUIRE(ctx);
   REQUIRE(DefinesVariant(ctx));
@@ -176,7 +177,7 @@ variant SomeVariant3 {
   example_i64: i64 = -64;
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant3");
   REQUIRE(ctx);
   REQUIRE(DefinesVariant(ctx));
@@ -267,7 +268,7 @@ variant SomeVariant10 {
   };
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant10");
   REQUIRE(ctx);
   REQUIRE(DefinesVariant(ctx));
@@ -292,7 +293,7 @@ variant SomeVariant11 {
   };
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant11");
   REQUIRE(ctx);
   REQUIRE(DefinesVariant(ctx));
@@ -316,7 +317,7 @@ variant SomeVariant12 {
   inline_vector: vector<i32>;
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant12");
   REQUIRE(ctx);
 
@@ -335,7 +336,7 @@ variant SomeVariant13 {
   inline_map: map<i32, f64>;
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant13");
   REQUIRE(ctx);
 
@@ -356,7 +357,7 @@ variant SomeVariant20 {
   };
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant20");
   REQUIRE(ctx);
   REQUIRE(DefinesVariant(ctx));
@@ -380,7 +381,7 @@ variant SomeVariant21 {
   };
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeVariant21");
   REQUIRE(ctx);
   REQUIRE(DefinesVariant(ctx));

@@ -5,6 +5,7 @@
 #include <string>
 #include <variant>
 
+#include "helpers.h"
 #include "libtypedef/parser/grammar_functions.h"
 #include "libtypedef/parser/typedef_parser.h"
 
@@ -39,7 +40,7 @@ struct SomeStruct0 {
   example_i64: i64;
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct0");
   REQUIRE(ctx);
   REQUIRE(DefinesStruct(ctx));
@@ -86,7 +87,7 @@ struct SomeStruct1 {
   example_str: str = "hello world";
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct1");
   REQUIRE(ctx);
   REQUIRE(DefinesStruct(ctx));
@@ -122,7 +123,7 @@ struct SomeStruct2 {
   example_i64: i64 = -64i64;
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct2");
   REQUIRE(ctx);
   REQUIRE(DefinesStruct(ctx));
@@ -180,7 +181,7 @@ struct SomeStruct3 {
   example_i64: i64 = -64;
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct3");
   REQUIRE(ctx);
   REQUIRE(DefinesStruct(ctx));
@@ -268,7 +269,7 @@ struct SomeStruct10 {
   };
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct10");
   REQUIRE(ctx);
   REQUIRE(DefinesStruct(ctx));
@@ -293,7 +294,7 @@ struct SomeStruct11 {
   };
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct11");
   REQUIRE(ctx);
   REQUIRE(DefinesStruct(ctx));
@@ -317,7 +318,7 @@ struct SomeStruct12 {
   inline_vector: vector<i32>;
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct12");
   REQUIRE(ctx);
 
@@ -336,7 +337,7 @@ struct SomeStruct13 {
   inline_map: map<i32, f64>;
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct13");
   REQUIRE(ctx);
 
@@ -357,7 +358,7 @@ struct SomeStruct20 {
   };
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct20");
   REQUIRE(ctx);
   REQUIRE(DefinesStruct(ctx));
@@ -381,7 +382,7 @@ struct SomeStruct21 {
   };
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct21");
   REQUIRE(ctx);
   REQUIRE(DefinesStruct(ctx));

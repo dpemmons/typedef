@@ -5,6 +5,7 @@
 #include <string>
 #include <variant>
 
+#include "helpers.h"
 #include "libtypedef/parser/grammar_functions.h"
 #include "libtypedef/parser/typedef_parser.h"
 
@@ -33,7 +34,7 @@ struct SomeOtherStruct {
   ref_to_some_struct: SomeStruct;
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
 
   auto* some_struct =
       FindType(parser.GetCompilationUnitContext(), "SomeStruct");
@@ -74,8 +75,7 @@ struct SomeStruct {
 };
     )");
   REQUIRE(parser.Parse() == 1);
-  REQUIRE(parser.GetError().error_type ==
-          ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::NOT_A_TYPE);
 }
 
 TEST_CASE("Struct with a symbol reference to an nested struct", "[symref]") {
@@ -90,7 +90,7 @@ struct SomeStruct {
   };
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
 
   auto* some_struct =
       FindType(parser.GetCompilationUnitContext(), "SomeStruct");
@@ -120,7 +120,7 @@ struct SomeStruct {
   };
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* some_struct =
       FindType(parser.GetCompilationUnitContext(), "SomeStruct");
 
@@ -154,7 +154,7 @@ struct SomeStruct {
   var_a: VariantA;
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
   auto* variant_a = FindType(parser.GetCompilationUnitContext(), "VariantA");
   auto* some_struct =
       FindType(parser.GetCompilationUnitContext(), "SomeStruct");
@@ -180,7 +180,7 @@ variant SomeVariant {
 };
 
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
 
   auto* some_variant =
       FindType(parser.GetCompilationUnitContext(), "SomeVariant");
@@ -209,7 +209,7 @@ variant SomeVariant {
   foo: SomeOtherVariant;
 };
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
 
   auto* some_other_variant =
       FindType(parser.GetCompilationUnitContext(), "SomeOtherVariant");
@@ -236,7 +236,7 @@ struct SomeStruct {
 }
 
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
 
   auto* some_other_struct =
       FindType(parser.GetCompilationUnitContext(), "SomeOtherStruct");
@@ -269,7 +269,7 @@ struct SomeStruct {
   foo: vector<SomeOtherVariant>;
 }
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
 
   auto* some_other_variant =
       FindType(parser.GetCompilationUnitContext(), "SomeOtherVariant");
@@ -301,7 +301,7 @@ struct SomeOtherStruct {
   foo: map<i32, SomeStruct>;
 }
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
 
   auto* some_struct =
       FindType(parser.GetCompilationUnitContext(), "SomeStruct");
@@ -334,7 +334,7 @@ struct SomeStruct {
   foo: map<i32, SomeVariant>;
 }
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
 
   auto* some_variant =
       FindType(parser.GetCompilationUnitContext(), "SomeVariant");

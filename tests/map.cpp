@@ -5,6 +5,7 @@
 #include <string>
 #include <variant>
 
+#include "helpers.h"
 #include "libtypedef/parser/grammar_functions.h"
 #include "libtypedef/parser/typedef_parser.h"
 
@@ -32,7 +33,8 @@ struct SomeStruct {
   some_str_map: map<str, str>;
 }
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+  // TODO: finish these...
   // REQUIRE(parsed_file->mod->GetMap("SomeBoolMap"));
   // REQUIRE(parsed_file->mod->GetMap("SomeBoolMap")->key_type->IsBool());
   // REQUIRE(parsed_file->mod->GetMap("SomeBoolMap")->value_type->IsStr());

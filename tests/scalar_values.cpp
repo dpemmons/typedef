@@ -11,6 +11,7 @@
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 
+#include "helpers.h"
 #include "libtypedef/parser/grammar/TypedefLexer.h"
 #include "libtypedef/parser/grammar/TypedefParser.h"
 #include "libtypedef/parser/typedef_parser.h"

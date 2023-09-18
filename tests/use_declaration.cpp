@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 
+#include "helpers.h"
 #include "libtypedef/parser/typedef_parser.h"
 
 using Catch::Matchers::Equals;
@@ -16,5 +17,5 @@ typedef=alpha;
 module test;
 use someModule;
     )");
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
 }

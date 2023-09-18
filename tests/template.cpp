@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 
+#include "helpers.h"
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/typedef_parser.h"
 
@@ -20,8 +21,7 @@ struct SomeVals {
 template DoIt(foo: i32, bar: SomeVals) t#"
 this is a template test.
 "#
-
   )");
 
-  REQUIRE(!parser.Parse());
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
 }
