@@ -541,7 +541,7 @@ public:
 
   class  TmplValueReferencePathContext : public antlr4::ParserRuleContext {
   public:
-    TypeAnnotationContext* referenced_ctx;
+    TypeAnnotationContext* base_referenced_ctx;
     TmplValueReferencePathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<TmplValueReferenceContext *> tmplValueReference();

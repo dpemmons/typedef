@@ -2198,7 +2198,7 @@ antlrcpp::Any TypedefParser::TmplValueReferencePathContext::accept(tree::ParseTr
 TypedefParser::TmplValueReferencePathContext* TypedefParser::tmplValueReferencePath() {
   TmplValueReferencePathContext *_localctx = _tracker.createInstance<TmplValueReferencePathContext>(_ctx, getState());
   enterRule(_localctx, 42, TypedefParser::RuleTmplValueReferencePath);
-  dynamic_cast<TmplValueReferencePathContext *>(_localctx)->referenced_ctx =  nullptr;
+  dynamic_cast<TmplValueReferencePathContext *>(_localctx)->base_referenced_ctx =  nullptr;
   size_t _la = 0;
 
   auto onExit = finally([=] {

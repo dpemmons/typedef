@@ -1606,7 +1606,7 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class TmplValueReferencePathContext extends ParserRuleContext {
-		public TypeAnnotationContext* referenced_ctx;
+		public TypeAnnotationContext* base_referenced_ctx;
 		public List<TmplValueReferenceContext> tmplValueReference() {
 			return getRuleContexts(TmplValueReferenceContext.class);
 		}
@@ -1626,7 +1626,7 @@ public class TypedefParser extends Parser {
 	public final TmplValueReferencePathContext tmplValueReferencePath() throws RecognitionException {
 		TmplValueReferencePathContext _localctx = new TmplValueReferencePathContext(_ctx, getState());
 		enterRule(_localctx, 42, RULE_tmplValueReferencePath);
-		((TmplValueReferencePathContext)_localctx).referenced_ctx =  nullptr;
+		((TmplValueReferencePathContext)_localctx).base_referenced_ctx =  nullptr;
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);

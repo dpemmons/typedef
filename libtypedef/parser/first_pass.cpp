@@ -232,7 +232,7 @@ void FirstPassListener::enterTmplValueReferencePath(
           search->second)) {
     auto* func_param =
         get<TypedefParser::FunctionParameterContext*>(search->second);
-    ctx->referenced_ctx = func_param->parameter_type;
+    ctx->base_referenced_ctx = func_param->parameter_type;
   } else if (holds_alternative<TypedefParser::TmplBindingVariableContext*>(
                  search->second)) {
     // auto* binding_var =
@@ -240,13 +240,44 @@ void FirstPassListener::enterTmplValueReferencePath(
     // base->idctx = binding_var;
     AddError(base, ParserErrorInfo::UNIMPLEMENTED,
              "resolving binding variables not yet supported");
+    return;
   } else {
     AddError(ctx, ParserErrorInfo::NOT_A_VALUE_TYPE,
              "symbol must refer to either a function parameter or binding "
              "variable.");
+    return;
   }
+
+  if (path_parts.size() == 1) {
+    if (!ReferencesPrimitiveType(ctx->base_referenced_ctx)) {
+      AddError(path_parts[0], ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+               "Must be a printable type (eg. strings, integers, etc.)");
+    }
+    return;
+  }
+
+  TypedefParser::TypeDefinitionContext* type_def_previous_field =
+      GetReferencedUserType(ctx->base_referenced_ctx);
   for (size_t ii = 1; ii < path_parts.size(); ii++) {
-    TypedefParser::TmplValueReferenceContext* this_part = path_parts[ii];
+    TypedefParser::TmplValueReferenceContext* part = path_parts[ii];
+    TypedefParser::FieldDefinitionContext* field =
+        FindField(type_def_previous_field, part->tmplIdentifier()->id);
+    if (!field) {
+      AddError(part, ParserErrorInfo::FIELD_NOT_FOUND);
+    }
+    if (ii == path_parts.size() - 1) {
+      if (!ReferencesPrimitiveType(field)) {
+        AddError(part, ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+                 "Must be a printable type (eg. strings, integers, etc.)");
+      }
+    } else {
+      if (!ReferencesUserType(field)) {
+        AddError(part, ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+                 "Does not reference a struct or variant.");
+      } else {
+        type_def_previous_field = GetReferencedUserType(field);
+      }
+    }
   }
 }
 

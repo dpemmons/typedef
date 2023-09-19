@@ -107,8 +107,8 @@ tmplForBlock:
 	(TMPL_EXPR_OPEN TMPL_KW_CLOSE_FOR TMPL_EXPR_CLOSE); //
 
 tmplValueReferencePath
-	returns[TypeAnnotationContext* referenced_ctx]
-	@init {$referenced_ctx = nullptr;}: //
+	returns[TypeAnnotationContext* base_referenced_ctx]
+	@init {$base_referenced_ctx = nullptr;}: //
 	tmplValueReference (TMPL_DOT tmplValueReference)*;
 tmplValueReference: tmplIdentifier;
 tmplBindingVariable: tmplIdentifier;

@@ -375,6 +375,8 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
       return "NOT_A_VALUE_TYPE";
     case NOT_A_TEMPLATE_FUNCTION:
       return "NOT_A_TEMPLATE_FUNCTION";
+    case FIELD_NOT_FOUND:
+      return "FIELD_NOT_FOUND";
     default:
       throw fmt::format("Unhandled error ID in ErrorTypeToString(): {}",
                         (int)error_type);

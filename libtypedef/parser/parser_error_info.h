@@ -47,6 +47,7 @@ struct ParserErrorInfo {
     INACCESSIBLE_SYMBOL = 26,
     NOT_A_VALUE_TYPE = 27,
     NOT_A_TEMPLATE_FUNCTION = 28,
+    FIELD_NOT_FOUND = 29,
   };
   Type error_type;
 

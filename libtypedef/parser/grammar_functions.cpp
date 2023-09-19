@@ -542,8 +542,11 @@ int64_t GetI64(TypedefParser::FieldDefinitionContext* ctx) {
 TypedefParser::TypeDefinitionContext* FindType(
     TypedefParser::CompilationUnitContext* cu_ctx,
     const std::string& identifier) {
+  if (identifier.length() == 0) {
+    throw_logic_error("Searching for zero length type identifier.");
+  }
   for (TypedefParser::TypeDefinitionContext* td : cu_ctx->typeDefinition()) {
-    if (td->type_identifier->id == identifier) {
+    if (td->type_identifier->id.compare(identifier) == 0) {
       return td;
     }
   }
@@ -553,8 +556,13 @@ TypedefParser::TypeDefinitionContext* FindType(
 TypedefParser::TmplDefinitionContext* FindTempalteFunc(
     TypedefParser::CompilationUnitContext* cu_ctx,
     const std::string& identifier) {
+  if (identifier.length() == 0) {
+    throw_logic_error(
+        "Searching for zero length tempalte function identifier.");
+  }
+
   for (TypedefParser::TmplDefinitionContext* td : cu_ctx->tmplDefinition()) {
-    if (td->identifier()->id == identifier) {
+    if (td->identifier()->id.compare(identifier) == 0) {
       return td;
     }
   }
@@ -563,8 +571,11 @@ TypedefParser::TmplDefinitionContext* FindTempalteFunc(
 
 TypedefParser::TypeDefinitionContext* FindType(
     TypedefParser::FieldBlockContext* ctx, const std::string& identifier) {
+  if (identifier.length() == 0) {
+    throw_logic_error("Searching for zero length type identifier.");
+  }
   for (TypedefParser::TypeDefinitionContext* td : ctx->typeDefinition()) {
-    if (td->type_identifier->id == identifier) {
+    if (td->type_identifier->id.compare(identifier) == 0) {
       return td;
     }
   }
@@ -580,8 +591,11 @@ TypedefParser::TypeDefinitionContext* FindType(
 TypedefParser::FieldDefinitionContext* FindField(
     TypedefParser::TypeDefinitionContext* td_ctx,
     const std::string& identifier) {
+  if (identifier.length() == 0) {
+    throw_logic_error("Searching for zero length field identifier.");
+  }
   for (auto* f : td_ctx->fieldBlock()->fieldDefinition()) {
-    if (f->identifier()->id == identifier) {
+    if (f->identifier()->id.compare(identifier) == 0) {
       return f;
     }
   }
@@ -589,7 +603,7 @@ TypedefParser::FieldDefinitionContext* FindField(
 }
 
 TypedefParser::TmplExpressionContext* GetTmplExpression(
-    TypedefParser::TmplDefinitionContext* ctx, size_t idx){
+    TypedefParser::TmplDefinitionContext* ctx, size_t idx) {
   size_t count = 0;
   for (auto* item : ctx->tmplBlock()->tmplItem()) {
     if (item->tmplExpression()) {
