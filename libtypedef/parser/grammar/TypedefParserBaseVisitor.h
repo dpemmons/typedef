@@ -70,19 +70,15 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTmplInsertion(TypedefParser::TmplInsertionContext *ctx) override {
+  virtual antlrcpp::Any visitTmplExpression(TypedefParser::TmplExpressionContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTmplCall(TypedefParser::TmplCallContext *ctx) override {
+  virtual antlrcpp::Any visitTmplFunctionCall(TypedefParser::TmplFunctionCallContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTmplIf(TypedefParser::TmplIfContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitTmplIfStmt(TypedefParser::TmplIfStmtContext *ctx) override {
+  virtual antlrcpp::Any visitTmplStringExpression(TypedefParser::TmplStringExpressionContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -90,31 +86,19 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTmplElIfStmt(TypedefParser::TmplElIfStmtContext *ctx) override {
+  virtual antlrcpp::Any visitTmplIfSubBlock(TypedefParser::TmplIfSubBlockContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTmplElifBlock(TypedefParser::TmplElifBlockContext *ctx) override {
+  virtual antlrcpp::Any visitTmplElIfSubBlock(TypedefParser::TmplElIfSubBlockContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTmplElseStmt(TypedefParser::TmplElseStmtContext *ctx) override {
+  virtual antlrcpp::Any visitTmplElseSubBlock(TypedefParser::TmplElseSubBlockContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTmplElseBlock(TypedefParser::TmplElseBlockContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitTmplFor(TypedefParser::TmplForContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitTmplForStmt(TypedefParser::TmplForStmtContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitTmplExpression(TypedefParser::TmplExpressionContext *ctx) override {
+  virtual antlrcpp::Any visitTmplForBlock(TypedefParser::TmplForBlockContext *ctx) override {
     return visitChildren(ctx);
   }
 

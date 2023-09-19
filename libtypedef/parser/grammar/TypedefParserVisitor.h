@@ -48,29 +48,21 @@ public:
 
     virtual antlrcpp::Any visitTmplText(TypedefParser::TmplTextContext *context) = 0;
 
-    virtual antlrcpp::Any visitTmplInsertion(TypedefParser::TmplInsertionContext *context) = 0;
+    virtual antlrcpp::Any visitTmplExpression(TypedefParser::TmplExpressionContext *context) = 0;
 
-    virtual antlrcpp::Any visitTmplCall(TypedefParser::TmplCallContext *context) = 0;
+    virtual antlrcpp::Any visitTmplFunctionCall(TypedefParser::TmplFunctionCallContext *context) = 0;
 
-    virtual antlrcpp::Any visitTmplIf(TypedefParser::TmplIfContext *context) = 0;
-
-    virtual antlrcpp::Any visitTmplIfStmt(TypedefParser::TmplIfStmtContext *context) = 0;
+    virtual antlrcpp::Any visitTmplStringExpression(TypedefParser::TmplStringExpressionContext *context) = 0;
 
     virtual antlrcpp::Any visitTmplIfBlock(TypedefParser::TmplIfBlockContext *context) = 0;
 
-    virtual antlrcpp::Any visitTmplElIfStmt(TypedefParser::TmplElIfStmtContext *context) = 0;
+    virtual antlrcpp::Any visitTmplIfSubBlock(TypedefParser::TmplIfSubBlockContext *context) = 0;
 
-    virtual antlrcpp::Any visitTmplElifBlock(TypedefParser::TmplElifBlockContext *context) = 0;
+    virtual antlrcpp::Any visitTmplElIfSubBlock(TypedefParser::TmplElIfSubBlockContext *context) = 0;
 
-    virtual antlrcpp::Any visitTmplElseStmt(TypedefParser::TmplElseStmtContext *context) = 0;
+    virtual antlrcpp::Any visitTmplElseSubBlock(TypedefParser::TmplElseSubBlockContext *context) = 0;
 
-    virtual antlrcpp::Any visitTmplElseBlock(TypedefParser::TmplElseBlockContext *context) = 0;
-
-    virtual antlrcpp::Any visitTmplFor(TypedefParser::TmplForContext *context) = 0;
-
-    virtual antlrcpp::Any visitTmplForStmt(TypedefParser::TmplForStmtContext *context) = 0;
-
-    virtual antlrcpp::Any visitTmplExpression(TypedefParser::TmplExpressionContext *context) = 0;
+    virtual antlrcpp::Any visitTmplForBlock(TypedefParser::TmplForBlockContext *context) = 0;
 
     virtual antlrcpp::Any visitTmplValueReferencePath(TypedefParser::TmplValueReferencePathContext *context) = 0;
 

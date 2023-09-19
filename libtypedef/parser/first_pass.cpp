@@ -134,7 +134,6 @@ void FirstPassListener::enterTypeAnnotation(
       AddError(ctx, ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
                "1 type arguments expected.");
     }
-    // TODO check type argument.
   } else if (id_ctx->KW_MAP()) {
     if (HasTypeArguments(ctx) != 2) {
       AddError(ctx, ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
@@ -148,7 +147,6 @@ void FirstPassListener::enterTypeAnnotation(
       AddError(key_identifier, ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
                "Map key cannot be floating point.");
     }
-    // TODO check second type argument.
   }
 }
 
@@ -183,7 +181,27 @@ void FirstPassListener::exitTmplDefinition(
   }
 }
 
-void FirstPassListener::exitTmplCall(TypedefParser::TmplCallContext* ctx) {
+void FirstPassListener::enterTmplForBlock(
+    TypedefParser::TmplForBlockContext* ctx) {
+  // TODO: NEXT UP!
+  // Ensure collection symbol points at a map or vector, and that
+  // the correct number of binding variables are used.
+  for (auto* bvctx : ctx->tmplBindingVariable()) {
+    if (!identifiers_.try_emplace(bvctx->tmplIdentifier()->id, bvctx).second) {
+      AddError(bvctx->tmplIdentifier(), ParserErrorInfo::DUPLICATE_SYMBOL);
+    }
+  }
+}
+
+void FirstPassListener::exitTmplForBlock(
+    TypedefParser::TmplForBlockContext* ctx) {
+  for (auto* bvctx : ctx->tmplBindingVariable()) {
+    identifiers_.erase(bvctx->tmplIdentifier()->id);
+  }
+}
+
+void FirstPassListener::enterTmplFunctionCall(
+    TypedefParser::TmplFunctionCallContext* ctx) {
   auto search = identifiers_.find(ctx->tmplIdentifier()->id);
   if (search == identifiers_.end()) {
     AddError(ctx->tmplIdentifier(),
@@ -194,47 +212,41 @@ void FirstPassListener::exitTmplCall(TypedefParser::TmplCallContext* ctx) {
   }
 }
 
-void FirstPassListener::enterTmplFor(TypedefParser::TmplForContext* ctx) {
-  // TODO: NEXT UP!
-  // Ensure collection symbol points at a map or vector, and that
-  // the correct number of binding variables are used.
-  for (auto* bvctx : ctx->tmplForStmt()->tmplBindingVariable()) {
-    if (!identifiers_.try_emplace(bvctx->tmplIdentifier()->id, bvctx).second) {
-      AddError(bvctx->tmplIdentifier(), ParserErrorInfo::DUPLICATE_SYMBOL);
-    }
-  }
-}
-
-void FirstPassListener::exitTmplFor(TypedefParser::TmplForContext* ctx) {
-  for (auto* bvctx : ctx->tmplForStmt()->tmplBindingVariable()) {
-    identifiers_.erase(bvctx->tmplIdentifier()->id);
-  }
-}
+void FirstPassListener::exitTmplFunctionCall(
+    TypedefParser::TmplFunctionCallContext* ctx) {}
 
 void FirstPassListener::enterTmplValueReferencePath(
     TypedefParser::TmplValueReferencePathContext* ctx) {
-  auto search =
-      identifiers_.find(ctx->tmplValueReference(0)->tmplIdentifier()->id);
+  vector<TypedefParser::TmplValueReferenceContext*> path_parts =
+      ctx->tmplValueReference();
+
+  // Find the symbol of the base.
+  auto search = identifiers_.find(path_parts[0]->tmplIdentifier()->id);
   if (search == identifiers_.end()) {
     AddError(ctx, ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
     return;
   }
-
-  // TODO: NEXT UP!
-  // Walk down the path and ensure each item is valid.
+  TypedefParser::TmplValueReferenceContext* base = path_parts[0];
 
   if (holds_alternative<TypedefParser::FunctionParameterContext*>(
           search->second)) {
     auto* func_param =
         get<TypedefParser::FunctionParameterContext*>(search->second);
+    ctx->referenced_ctx = func_param->parameter_type;
   } else if (holds_alternative<TypedefParser::TmplBindingVariableContext*>(
                  search->second)) {
-    auto* binding_var =
-        get<TypedefParser::TmplBindingVariableContext*>(search->second);
+    // auto* binding_var =
+    //     get<TypedefParser::TmplBindingVariableContext*>(search->second);
+    // base->idctx = binding_var;
+    AddError(base, ParserErrorInfo::UNIMPLEMENTED,
+             "resolving binding variables not yet supported");
   } else {
     AddError(ctx, ParserErrorInfo::NOT_A_VALUE_TYPE,
              "symbol must refer to either a function parameter or binding "
              "variable.");
+  }
+  for (size_t ii = 1; ii < path_parts.size(); ii++) {
+    TypedefParser::TmplValueReferenceContext* this_part = path_parts[ii];
   }
 }
 

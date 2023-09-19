@@ -41,10 +41,15 @@ class FirstPassListener : public TypedefParserBaseListener {
   virtual void exitTmplDefinition(
       TypedefParser::TmplDefinitionContext *ctx) override;
 
-  virtual void exitTmplCall(TypedefParser::TmplCallContext *ctx) override;
+  virtual void enterTmplForBlock(
+      TypedefParser::TmplForBlockContext *ctx) override;
+  virtual void exitTmplForBlock(
+      TypedefParser::TmplForBlockContext *ctx) override;
 
-  virtual void enterTmplFor(TypedefParser::TmplForContext *ctx) override;
-  virtual void exitTmplFor(TypedefParser::TmplForContext *ctx) override;
+  virtual void enterTmplFunctionCall(
+      TypedefParser::TmplFunctionCallContext *ctx) override;
+  virtual void exitTmplFunctionCall(
+      TypedefParser::TmplFunctionCallContext *ctx) override;
 
   virtual void enterTmplValueReferencePath(
       TypedefParser::TmplValueReferencePathContext *ctx) override;
@@ -57,7 +62,6 @@ class FirstPassListener : public TypedefParserBaseListener {
                    TypedefParser::FieldDefinitionContext *,      //
                    TypedefParser::TmplBindingVariableContext *,  //
                    TypedefParser::FunctionParameterContext *>;   //
-
   std::unordered_map<std::string, IdentifierCtx> identifiers_;
 
   void AddError(antlr4::ParserRuleContext *ctx, ParserErrorInfo::Type type,

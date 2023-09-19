@@ -550,6 +550,17 @@ TypedefParser::TypeDefinitionContext* FindType(
   return nullptr;
 }
 
+TypedefParser::TmplDefinitionContext* FindTempalteFunc(
+    TypedefParser::CompilationUnitContext* cu_ctx,
+    const std::string& identifier) {
+  for (TypedefParser::TmplDefinitionContext* td : cu_ctx->tmplDefinition()) {
+    if (td->identifier()->id == identifier) {
+      return td;
+    }
+  }
+  return nullptr;
+}
+
 TypedefParser::TypeDefinitionContext* FindType(
     TypedefParser::FieldBlockContext* ctx, const std::string& identifier) {
   for (TypedefParser::TypeDefinitionContext* td : ctx->typeDefinition()) {
@@ -574,6 +585,25 @@ TypedefParser::FieldDefinitionContext* FindField(
       return f;
     }
   }
+  return nullptr;
+}
+
+TypedefParser::TmplExpressionContext* GetTmplExpression(
+    TypedefParser::TmplDefinitionContext* ctx, size_t idx){
+  size_t count = 0;
+  for (auto* item : ctx->tmplBlock()->tmplItem()) {
+    if (item->tmplExpression()) {
+      if (count == idx) {
+        return item->tmplExpression();
+      }
+      count++;
+    }
+  }
+  return nullptr;
+}
+
+TypedefParser::TypeAnnotationContext* GetReferencedTypeAnnotation(
+    TypedefParser::TmplValueReferencePathContext* ctx) {
   return nullptr;
 }
 

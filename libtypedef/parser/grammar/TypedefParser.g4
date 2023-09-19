@@ -12,6 +12,7 @@ options {
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <variant>
 #include <string>
 #include "libtypedef/parser/literals.h"
 }
@@ -59,47 +60,55 @@ tmplDefinition:
 tmplBlock: START_TEMPLATE tmplItem* END_TEMPLATE;
 tmplItem:
 	tmplText
-	| tmplInsertion
-	| tmplCall
-	| tmplIf
-	| tmplFor;
+	| (TMPL_EXPR_OPEN tmplExpression TMPL_EXPR_CLOSE)
+	| tmplIfBlock
+	| tmplForBlock;
 
 tmplText
 	returns[std::string text]
 	@after {$text = $ctx->txt->getText();}: txt = TMPL_TEXT;
-tmplInsertion:
-	TMPL_EXPR_OPEN tmplValueReferencePath TMPL_EXPR_CLOSE;
-tmplCall:
-	TMPL_EXPR_OPEN tmplIdentifier TMPL_LPAREN tmplValueReferencePath? (
-		tmplValueReferencePath TMPL_COMMA
-	)* TMPL_RPAREN TMPL_EXPR_CLOSE;
 
-// <if (expression)> <elif (expression)> <else> </if>
-tmplIf:
-	tmplIfBlock tmplElifBlock* tmplElseBlock? (
-		TMPL_EXPR_OPEN TMPL_KW_CLOSEIF TMPL_EXPR_CLOSE
-	);
-tmplIfStmt:
-	TMPL_EXPR_OPEN TMPL_KW_IF tmplExpression TMPL_EXPR_CLOSE;
-tmplIfBlock: tmplIfStmt tmplItem*;
-tmplElIfStmt:
-	TMPL_EXPR_OPEN TMPL_KW_ELIF tmplExpression TMPL_EXPR_CLOSE;
-tmplElifBlock: tmplElIfStmt tmplItem*;
-tmplElseStmt: TMPL_EXPR_OPEN TMPL_KW_ELSE TMPL_EXPR_CLOSE;
-tmplElseBlock: tmplElseStmt tmplItem*;
+tmplExpression:
+	tmplValueReferencePath
+	| tmplFunctionCall
+	| tmplStringExpression;
+tmplFunctionCall:
+	tmplIdentifier TMPL_LPAREN tmplValueReferencePath? (
+		tmplValueReferencePath TMPL_COMMA
+	)* TMPL_RPAREN;
+tmplStringExpression:; // not yet supported.
+
+tmplIfBlock:
+	tmplIfSubBlock //
+	tmplElIfSubBlock* //
+	tmplElseSubBlock? //
+	(TMPL_EXPR_OPEN TMPL_KW_CLOSEIF TMPL_EXPR_CLOSE);
+tmplIfSubBlock: (
+		TMPL_EXPR_OPEN TMPL_KW_IF tmplExpression TMPL_EXPR_CLOSE
+	) //
+	tmplItem*; //
+tmplElIfSubBlock:
+	(
+		TMPL_EXPR_OPEN TMPL_KW_ELIF tmplExpression TMPL_EXPR_CLOSE
+	) //
+	tmplItem*;
+tmplElseSubBlock:
+	TMPL_EXPR_OPEN TMPL_KW_ELSE TMPL_EXPR_CLOSE //
+	tmplItem*;
 
 // <for fo in bar> </for>
-tmplFor:
-	tmplForStmt tmplItem* (
-		TMPL_EXPR_OPEN TMPL_KW_CLOSE_FOR TMPL_EXPR_CLOSE
-	);
-tmplForStmt:
-	TMPL_EXPR_OPEN TMPL_KW_FOR tmplBindingVariable (
-		TMPL_COMMA tmplBindingVariable
-	)? TMPL_KW_IN collection = tmplValueReferencePath TMPL_EXPR_CLOSE;
+tmplForBlock:
+	(
+		TMPL_EXPR_OPEN TMPL_KW_FOR //
+		tmplBindingVariable (TMPL_COMMA tmplBindingVariable)? //
+		TMPL_KW_IN collection = tmplValueReferencePath TMPL_EXPR_CLOSE
+	) //
+	tmplItem* //
+	(TMPL_EXPR_OPEN TMPL_KW_CLOSE_FOR TMPL_EXPR_CLOSE); //
 
-tmplExpression: tmplValueReferencePath;
-tmplValueReferencePath:
+tmplValueReferencePath
+	returns[TypeAnnotationContext* referenced_ctx]
+	@init {$referenced_ctx = nullptr;}: //
 	tmplValueReference (TMPL_DOT tmplValueReference)*;
 tmplValueReference: tmplIdentifier;
 tmplBindingVariable: tmplIdentifier;

@@ -59,16 +59,15 @@ public:
     RuleCompilationUnit = 0, RuleTypedefVersionDeclaration = 1, RuleModuleDeclaration = 2, 
     RuleTypeDefinition = 3, RuleFieldBlock = 4, RuleFieldDefinition = 5, 
     RuleTypeAnnotation = 6, RuleTypeIdentifier = 7, RuleUserType = 8, RuleTmplDefinition = 9, 
-    RuleTmplBlock = 10, RuleTmplItem = 11, RuleTmplText = 12, RuleTmplInsertion = 13, 
-    RuleTmplCall = 14, RuleTmplIf = 15, RuleTmplIfStmt = 16, RuleTmplIfBlock = 17, 
-    RuleTmplElIfStmt = 18, RuleTmplElifBlock = 19, RuleTmplElseStmt = 20, 
-    RuleTmplElseBlock = 21, RuleTmplFor = 22, RuleTmplForStmt = 23, RuleTmplExpression = 24, 
-    RuleTmplValueReferencePath = 25, RuleTmplValueReference = 26, RuleTmplBindingVariable = 27, 
-    RuleTmplIdentifier = 28, RuleFunctionParameter = 29, RuleUseDeclaration = 30, 
-    RuleSymbolPath = 31, RulePrimitiveLiteral = 32, RuleBoolLiteral = 33, 
-    RuleCharLiteral = 34, RuleStringLiteral = 35, RuleFloatLiteral = 36, 
-    RuleIntegerLiteral = 37, RuleIntDigits = 38, RuleIdentifier = 39, RulePrimitiveTypeIdentifier = 40, 
-    RuleKeyword = 41
+    RuleTmplBlock = 10, RuleTmplItem = 11, RuleTmplText = 12, RuleTmplExpression = 13, 
+    RuleTmplFunctionCall = 14, RuleTmplStringExpression = 15, RuleTmplIfBlock = 16, 
+    RuleTmplIfSubBlock = 17, RuleTmplElIfSubBlock = 18, RuleTmplElseSubBlock = 19, 
+    RuleTmplForBlock = 20, RuleTmplValueReferencePath = 21, RuleTmplValueReference = 22, 
+    RuleTmplBindingVariable = 23, RuleTmplIdentifier = 24, RuleFunctionParameter = 25, 
+    RuleUseDeclaration = 26, RuleSymbolPath = 27, RulePrimitiveLiteral = 28, 
+    RuleBoolLiteral = 29, RuleCharLiteral = 30, RuleStringLiteral = 31, 
+    RuleFloatLiteral = 32, RuleIntegerLiteral = 33, RuleIntDigits = 34, 
+    RuleIdentifier = 35, RulePrimitiveTypeIdentifier = 36, RuleKeyword = 37
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -94,18 +93,14 @@ public:
   class TmplBlockContext;
   class TmplItemContext;
   class TmplTextContext;
-  class TmplInsertionContext;
-  class TmplCallContext;
-  class TmplIfContext;
-  class TmplIfStmtContext;
-  class TmplIfBlockContext;
-  class TmplElIfStmtContext;
-  class TmplElifBlockContext;
-  class TmplElseStmtContext;
-  class TmplElseBlockContext;
-  class TmplForContext;
-  class TmplForStmtContext;
   class TmplExpressionContext;
+  class TmplFunctionCallContext;
+  class TmplStringExpressionContext;
+  class TmplIfBlockContext;
+  class TmplIfSubBlockContext;
+  class TmplElIfSubBlockContext;
+  class TmplElseSubBlockContext;
+  class TmplForBlockContext;
   class TmplValueReferencePathContext;
   class TmplValueReferenceContext;
   class TmplBindingVariableContext;
@@ -352,10 +347,11 @@ public:
     TmplItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     TmplTextContext *tmplText();
-    TmplInsertionContext *tmplInsertion();
-    TmplCallContext *tmplCall();
-    TmplIfContext *tmplIf();
-    TmplForContext *tmplFor();
+    antlr4::tree::TerminalNode *TMPL_EXPR_OPEN();
+    TmplExpressionContext *tmplExpression();
+    antlr4::tree::TerminalNode *TMPL_EXPR_CLOSE();
+    TmplIfBlockContext *tmplIfBlock();
+    TmplForBlockContext *tmplForBlock();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -383,13 +379,13 @@ public:
 
   TmplTextContext* tmplText();
 
-  class  TmplInsertionContext : public antlr4::ParserRuleContext {
+  class  TmplExpressionContext : public antlr4::ParserRuleContext {
   public:
-    TmplInsertionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    TmplExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *TMPL_EXPR_OPEN();
     TmplValueReferencePathContext *tmplValueReferencePath();
-    antlr4::tree::TerminalNode *TMPL_EXPR_CLOSE();
+    TmplFunctionCallContext *tmplFunctionCall();
+    TmplStringExpressionContext *tmplStringExpression();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -398,17 +394,15 @@ public:
    
   };
 
-  TmplInsertionContext* tmplInsertion();
+  TmplExpressionContext* tmplExpression();
 
-  class  TmplCallContext : public antlr4::ParserRuleContext {
+  class  TmplFunctionCallContext : public antlr4::ParserRuleContext {
   public:
-    TmplCallContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    TmplFunctionCallContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *TMPL_EXPR_OPEN();
     TmplIdentifierContext *tmplIdentifier();
     antlr4::tree::TerminalNode *TMPL_LPAREN();
     antlr4::tree::TerminalNode *TMPL_RPAREN();
-    antlr4::tree::TerminalNode *TMPL_EXPR_CLOSE();
     std::vector<TmplValueReferencePathContext *> tmplValueReferencePath();
     TmplValueReferencePathContext* tmplValueReferencePath(size_t i);
     std::vector<antlr4::tree::TerminalNode *> TMPL_COMMA();
@@ -421,19 +415,12 @@ public:
    
   };
 
-  TmplCallContext* tmplCall();
+  TmplFunctionCallContext* tmplFunctionCall();
 
-  class  TmplIfContext : public antlr4::ParserRuleContext {
+  class  TmplStringExpressionContext : public antlr4::ParserRuleContext {
   public:
-    TmplIfContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    TmplStringExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    TmplIfBlockContext *tmplIfBlock();
-    antlr4::tree::TerminalNode *TMPL_EXPR_OPEN();
-    antlr4::tree::TerminalNode *TMPL_KW_CLOSEIF();
-    antlr4::tree::TerminalNode *TMPL_EXPR_CLOSE();
-    std::vector<TmplElifBlockContext *> tmplElifBlock();
-    TmplElifBlockContext* tmplElifBlock(size_t i);
-    TmplElseBlockContext *tmplElseBlock();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -442,33 +429,19 @@ public:
    
   };
 
-  TmplIfContext* tmplIf();
-
-  class  TmplIfStmtContext : public antlr4::ParserRuleContext {
-  public:
-    TmplIfStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *TMPL_EXPR_OPEN();
-    antlr4::tree::TerminalNode *TMPL_KW_IF();
-    TmplExpressionContext *tmplExpression();
-    antlr4::tree::TerminalNode *TMPL_EXPR_CLOSE();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  TmplIfStmtContext* tmplIfStmt();
+  TmplStringExpressionContext* tmplStringExpression();
 
   class  TmplIfBlockContext : public antlr4::ParserRuleContext {
   public:
     TmplIfBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    TmplIfStmtContext *tmplIfStmt();
-    std::vector<TmplItemContext *> tmplItem();
-    TmplItemContext* tmplItem(size_t i);
+    TmplIfSubBlockContext *tmplIfSubBlock();
+    antlr4::tree::TerminalNode *TMPL_EXPR_OPEN();
+    antlr4::tree::TerminalNode *TMPL_KW_CLOSEIF();
+    antlr4::tree::TerminalNode *TMPL_EXPR_CLOSE();
+    std::vector<TmplElIfSubBlockContext *> tmplElIfSubBlock();
+    TmplElIfSubBlockContext* tmplElIfSubBlock(size_t i);
+    TmplElseSubBlockContext *tmplElseSubBlock();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -479,29 +452,34 @@ public:
 
   TmplIfBlockContext* tmplIfBlock();
 
-  class  TmplElIfStmtContext : public antlr4::ParserRuleContext {
+  class  TmplIfSubBlockContext : public antlr4::ParserRuleContext {
   public:
-    TmplElIfStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    TmplIfSubBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *TMPL_EXPR_OPEN();
+    antlr4::tree::TerminalNode *TMPL_KW_IF();
+    TmplExpressionContext *tmplExpression();
+    antlr4::tree::TerminalNode *TMPL_EXPR_CLOSE();
+    std::vector<TmplItemContext *> tmplItem();
+    TmplItemContext* tmplItem(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  TmplIfSubBlockContext* tmplIfSubBlock();
+
+  class  TmplElIfSubBlockContext : public antlr4::ParserRuleContext {
+  public:
+    TmplElIfSubBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *TMPL_EXPR_OPEN();
     antlr4::tree::TerminalNode *TMPL_KW_ELIF();
     TmplExpressionContext *tmplExpression();
     antlr4::tree::TerminalNode *TMPL_EXPR_CLOSE();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  TmplElIfStmtContext* tmplElIfStmt();
-
-  class  TmplElifBlockContext : public antlr4::ParserRuleContext {
-  public:
-    TmplElifBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    TmplElIfStmtContext *tmplElIfStmt();
     std::vector<TmplItemContext *> tmplItem();
     TmplItemContext* tmplItem(size_t i);
 
@@ -512,30 +490,15 @@ public:
    
   };
 
-  TmplElifBlockContext* tmplElifBlock();
+  TmplElIfSubBlockContext* tmplElIfSubBlock();
 
-  class  TmplElseStmtContext : public antlr4::ParserRuleContext {
+  class  TmplElseSubBlockContext : public antlr4::ParserRuleContext {
   public:
-    TmplElseStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    TmplElseSubBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *TMPL_EXPR_OPEN();
     antlr4::tree::TerminalNode *TMPL_KW_ELSE();
     antlr4::tree::TerminalNode *TMPL_EXPR_CLOSE();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  TmplElseStmtContext* tmplElseStmt();
-
-  class  TmplElseBlockContext : public antlr4::ParserRuleContext {
-  public:
-    TmplElseBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    TmplElseStmtContext *tmplElseStmt();
     std::vector<TmplItemContext *> tmplItem();
     TmplItemContext* tmplItem(size_t i);
 
@@ -546,40 +509,25 @@ public:
    
   };
 
-  TmplElseBlockContext* tmplElseBlock();
+  TmplElseSubBlockContext* tmplElseSubBlock();
 
-  class  TmplForContext : public antlr4::ParserRuleContext {
-  public:
-    TmplForContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    TmplForStmtContext *tmplForStmt();
-    antlr4::tree::TerminalNode *TMPL_EXPR_OPEN();
-    antlr4::tree::TerminalNode *TMPL_KW_CLOSE_FOR();
-    antlr4::tree::TerminalNode *TMPL_EXPR_CLOSE();
-    std::vector<TmplItemContext *> tmplItem();
-    TmplItemContext* tmplItem(size_t i);
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  TmplForContext* tmplFor();
-
-  class  TmplForStmtContext : public antlr4::ParserRuleContext {
+  class  TmplForBlockContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::TmplValueReferencePathContext *collection = nullptr;;
-    TmplForStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    TmplForBlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *TMPL_EXPR_OPEN();
+    std::vector<antlr4::tree::TerminalNode *> TMPL_EXPR_OPEN();
+    antlr4::tree::TerminalNode* TMPL_EXPR_OPEN(size_t i);
     antlr4::tree::TerminalNode *TMPL_KW_FOR();
     std::vector<TmplBindingVariableContext *> tmplBindingVariable();
     TmplBindingVariableContext* tmplBindingVariable(size_t i);
     antlr4::tree::TerminalNode *TMPL_KW_IN();
-    antlr4::tree::TerminalNode *TMPL_EXPR_CLOSE();
+    std::vector<antlr4::tree::TerminalNode *> TMPL_EXPR_CLOSE();
+    antlr4::tree::TerminalNode* TMPL_EXPR_CLOSE(size_t i);
+    antlr4::tree::TerminalNode *TMPL_KW_CLOSE_FOR();
     TmplValueReferencePathContext *tmplValueReferencePath();
+    std::vector<TmplItemContext *> tmplItem();
+    TmplItemContext* tmplItem(size_t i);
     antlr4::tree::TerminalNode *TMPL_COMMA();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -589,25 +537,11 @@ public:
    
   };
 
-  TmplForStmtContext* tmplForStmt();
-
-  class  TmplExpressionContext : public antlr4::ParserRuleContext {
-  public:
-    TmplExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    TmplValueReferencePathContext *tmplValueReferencePath();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  TmplExpressionContext* tmplExpression();
+  TmplForBlockContext* tmplForBlock();
 
   class  TmplValueReferencePathContext : public antlr4::ParserRuleContext {
   public:
+    TypeAnnotationContext* referenced_ctx;
     TmplValueReferencePathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<TmplValueReferenceContext *> tmplValueReference();

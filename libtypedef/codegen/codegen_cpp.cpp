@@ -8,6 +8,7 @@
 #include <string>
 
 #include "libtypedef/codegen/codegen_cpp_helpers.h"
+#include "libtypedef/parser/grammar/TypedefParser.h"
 #include "libtypedef/parser/grammar_functions.h"
 #include "libtypedef/parser/tmpl_str_table.h"
 
@@ -30,8 +31,6 @@ using PrimitiveTypeIdentifierContext =
 using UserTypeContext = TypedefParser::UserTypeContext;
 using TypeAnnotationContext = TypedefParser::TypeAnnotationContext;
 using TypeIdentifierContext = TypedefParser::TypeIdentifierContext;
-using TmplDefinitionContext = TypedefParser::TmplDefinitionContext;
-using FunctionParameterContext = TypedefParser::FunctionParameterContext;
 
 json GetUserTypeDecls(vector<TypeDefinitionContext*> types);
 json GetTypeDeclaration(TypedefParser::TypeDefinitionContext* type,
@@ -209,13 +208,7 @@ json GetTemplateValueDereference(
   return j;
 }
 
-json GetTemplateInsertion(TypedefParser::TmplInsertionContext* ctx) {
-  json j;
-  j["identifier"] = GetTemplateValueDereference(ctx->tmplValueReferencePath());
-  return j;
-}
-
-json GetTemplateFunctionCall(TypedefParser::TmplCallContext* ctx) {
+json GetTemplateFunctionCall(TypedefParser::TmplFunctionCallContext* ctx) {
   json j;
   j["func"] = escape_utf8_to_cpp_identifier(ctx->tmplIdentifier()->id);
   j["args"] = json::array();
@@ -226,33 +219,45 @@ json GetTemplateFunctionCall(TypedefParser::TmplCallContext* ctx) {
   return j;
 }
 
-json GetTemplateIfBlock(TypedefParser::TmplIfContext* ctx) {
+json GetTemplateExpression(TypedefParser::TmplExpressionContext* ctx) {
   json j;
-  j["stmt"] = GetTemplateValueDereference(ctx->tmplIfBlock()
-                                              ->tmplIfStmt()
-                                              ->tmplExpression()
-                                              ->tmplValueReferencePath());
-  j["items"] = GetTemplateItems(ctx->tmplIfBlock()->tmplItem());
+  if (ctx->tmplValueReferencePath()) {
+    j["value_ref"] = GetTemplateValueDereference(ctx->tmplValueReferencePath());
+  } else if (ctx->tmplFunctionCall()) {
+    j["call"] = GetTemplateFunctionCall(ctx->tmplFunctionCall());
+  } else if (ctx->tmplStringExpression()) {
+    throw_logic_error("string expressions not currently supported");
+  } else {
+    throw_logic_error("invalid state");
+  }
+  return j;
+}
+
+json GetTemplateIfBlock(TypedefParser::TmplIfBlockContext* ctx) {
+  json j;
+  j["stmt"] = GetTemplateValueDereference(
+      ctx->tmplIfSubBlock()->tmplExpression()->tmplValueReferencePath());
+  j["items"] = GetTemplateItems(ctx->tmplIfSubBlock()->tmplItem());
 
   j["elifs"] = json::array();
-  for (auto* elif : ctx->tmplElifBlock()) {
+  for (auto* elif : ctx->tmplElIfSubBlock()) {
     json e;
     e["stmt"] = GetTemplateValueDereference(
-        elif->tmplElIfStmt()->tmplExpression()->tmplValueReferencePath());
+        elif->tmplExpression()->tmplValueReferencePath());
     e["items"] = GetTemplateItems(elif->tmplItem());
     j["elifs"].push_back(e);
   }
 
-  if (ctx->tmplElseBlock()) {
-    j["else"]["items"] = GetTemplateItems(ctx->tmplElseBlock()->tmplItem());
+  if (ctx->tmplElseSubBlock()) {
+    j["else"]["items"] = GetTemplateItems(ctx->tmplElseSubBlock()->tmplItem());
   }
 
   return j;
 }
 
-json GetTemplateForBlock(TypedefParser::TmplForContext* ctx) {
+json GetTemplateForBlock(TypedefParser::TmplForBlockContext* ctx) {
   json j;
-  auto binding_vars = ctx->tmplForStmt()->tmplBindingVariable();
+  auto binding_vars = ctx->tmplBindingVariable();
   if (binding_vars.size() == 1) {
     j["var"] = binding_vars[0]->tmplIdentifier()->id;
   } else if (binding_vars.size() == 2) {
@@ -261,30 +266,28 @@ json GetTemplateForBlock(TypedefParser::TmplForContext* ctx) {
   } else {
     throw_logic_error("invalid state");
   }
-  j["collection"] = GetTemplateValueDereference(ctx->tmplForStmt()->collection);
+  j["collection"] = GetTemplateValueDereference(ctx->collection);
   j["items"] = GetTemplateItems(ctx->tmplItem());
   return j;
 }
 
-json GetFunctionParameter(FunctionParameterContext* func_param) {
+json GetFunctionParameter(TypedefParser::FunctionParameterContext* func_param) {
   json j;
   j["identifier"] = escape_utf8_to_cpp_identifier(func_param->identifier()->id);
   j.merge_patch(GetAccessInfoForType(func_param->parameter_type));
   return j;
 }
 
-json GetTemplateItem(TypedefParser::TmplItemContext* itm_ctx) {
+json GetTemplateItem(TypedefParser::TmplItemContext* ctx) {
   json j;
-  if (itm_ctx->tmplText()) {
-    j["text"] = itm_ctx->tmplText()->text;
-  } else if (itm_ctx->tmplInsertion()) {
-    j["insertion"] = GetTemplateInsertion(itm_ctx->tmplInsertion());
-  } else if (itm_ctx->tmplCall()) {
-    j["call"] = GetTemplateFunctionCall(itm_ctx->tmplCall());
-  } else if (itm_ctx->tmplIf()) {
-    j["if"] = GetTemplateIfBlock(itm_ctx->tmplIf());
-  } else if (itm_ctx->tmplFor()) {
-    j["for"] = GetTemplateForBlock(itm_ctx->tmplFor());
+  if (ctx->tmplText()) {
+    j["text"] = ctx->tmplText()->text;
+  } else if (ctx->tmplExpression()) {
+    j["expression"] = GetTemplateExpression(ctx->tmplExpression());
+  } else if (ctx->tmplIfBlock()) {
+    j["if"] = GetTemplateIfBlock(ctx->tmplIfBlock());
+  } else if (ctx->tmplForBlock()) {
+    j["for"] = GetTemplateForBlock(ctx->tmplForBlock());
   } else {
     throw_logic_error("invalid state");
   }
@@ -299,11 +302,12 @@ json GetTemplateItems(vector<TypedefParser::TmplItemContext*> itm_ctxs) {
   return items;
 }
 
-json GetTemplateFunc(TmplDefinitionContext* tmpl_def) {
+json GetTemplateFunc(TypedefParser::TmplDefinitionContext* tmpl_def) {
   json j;
   j["identifier"] = tmpl_def->identifier()->id;
   json params = json::array();
-  for (FunctionParameterContext* func_param : tmpl_def->functionParameter()) {
+  for (TypedefParser::FunctionParameterContext* func_param :
+       tmpl_def->functionParameter()) {
     params.push_back(GetFunctionParameter(func_param));
   }
   j["params"] = params;
@@ -312,9 +316,9 @@ json GetTemplateFunc(TmplDefinitionContext* tmpl_def) {
   return j;
 }
 
-json GetTemplateFuncs(vector<TmplDefinitionContext*> tmpl_defs) {
+json GetTemplateFuncs(vector<TypedefParser::TmplDefinitionContext*> tmpl_defs) {
   json j = json::array();
-  for (TmplDefinitionContext* tmpl_def : tmpl_defs) {
+  for (TypedefParser::TmplDefinitionContext* tmpl_def : tmpl_defs) {
     j.push_back(GetTemplateFunc(tmpl_def));
   }
   return j;
@@ -387,6 +391,12 @@ void CodegenCpp(OutPathBase* out_path,
   env.add_callback("tmpl_func_definition", 1, [&](Arguments& args) mutable {
     json arg = args.at(0)->get<json>();
     return env.render(tmpl_func_definition, arg);
+  });
+
+  Template tmpl_expression;
+  env.add_callback("tmpl_expression", 1, [&](Arguments& args) mutable {
+    json arg = args.at(0)->get<json>();
+    return env.render(tmpl_expression, arg);
   });
 
   Template tmpl_item;
@@ -723,13 +733,19 @@ class {{identifier}} {
 void {{identifier}}(std::ostream& os{{params_list(params)}});
   )");
 
+  tmpl_expression = env.parse(R"(
+## if exists("value_ref")
+  os << {{ tmpl_val_ref(value_ref) }};
+## else if exists("call")
+  {{call.func}}(os, {%for arg in call.args%}{{tmpl_val_ref(arg)}} {% if not loop.is_last %}, {%endif%}{%endfor%});
+## endif
+  )");
+
   tmpl_item = env.parse(
       R"(## if exists("text")
   os << R"{{escape}}({{text}}){{escape}}";
-## else if exists("insertion")
-  os << {{ tmpl_val_ref(insertion.identifier) }};
-## else if exists("call")
-  {{call.func}}(os, {%for arg in call.args%}{{tmpl_val_ref(arg)}} {% if not loop.is_last %}, {%endif%}{%endfor%});
+## else if exists("expression")
+  {{ tmpl_expression(expression) }}
 ## else if exists("if")
   if ({{tmpl_val_ref(if.stmt)}}) {
     {%for item in if.items%}{{tmpl_item(item)}}{%endfor%}
@@ -780,6 +796,15 @@ void {{identifier}}(std::ostream& os{{params_list(params)}}) {
 
 ## for namespace in namespaces
 namespace {{namespace}} {
+## endfor
+
+// Forward declarations.
+## for type_decl in user_type_decls
+## if existsIn(type_decl, "struct")
+class {{type_decl.struct.identifier}};
+## else if existsIn(type_decl, "variant")
+class {{type_decl.variant.identifier}};
+## endif
 ## endfor
 
 ## for type_decl in user_type_decls

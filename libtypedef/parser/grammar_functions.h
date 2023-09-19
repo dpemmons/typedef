@@ -137,6 +137,10 @@ TypedefParser::TypeDefinitionContext* FindType(
     TypedefParser::CompilationUnitContext* cu_ctx,
     const std::string& identifier);
 
+TypedefParser::TmplDefinitionContext* FindTempalteFunc(
+    TypedefParser::CompilationUnitContext* cu_ctx,
+    const std::string& identifier);
+
 // Returns nullptr if there isn't one.
 TypedefParser::TypeDefinitionContext* FindType(
     TypedefParser::FieldBlockContext* ctx, const std::string& identifier);
@@ -150,6 +154,12 @@ TypedefParser::TypeDefinitionContext* FindType(
 TypedefParser::FieldDefinitionContext* FindField(
     TypedefParser::TypeDefinitionContext* td_ctx,
     const std::string& identifier);
+
+TypedefParser::TmplExpressionContext* GetTmplExpression(
+    TypedefParser::TmplDefinitionContext* ctx, size_t idx);
+
+TypedefParser::TypeAnnotationContext* GetReferencedTypeAnnotation(
+    TypedefParser::TmplValueReferencePathContext* ctx);
 
 }  // namespace td
 

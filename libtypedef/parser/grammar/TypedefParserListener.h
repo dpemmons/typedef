@@ -56,41 +56,29 @@ public:
   virtual void enterTmplText(TypedefParser::TmplTextContext *ctx) = 0;
   virtual void exitTmplText(TypedefParser::TmplTextContext *ctx) = 0;
 
-  virtual void enterTmplInsertion(TypedefParser::TmplInsertionContext *ctx) = 0;
-  virtual void exitTmplInsertion(TypedefParser::TmplInsertionContext *ctx) = 0;
+  virtual void enterTmplExpression(TypedefParser::TmplExpressionContext *ctx) = 0;
+  virtual void exitTmplExpression(TypedefParser::TmplExpressionContext *ctx) = 0;
 
-  virtual void enterTmplCall(TypedefParser::TmplCallContext *ctx) = 0;
-  virtual void exitTmplCall(TypedefParser::TmplCallContext *ctx) = 0;
+  virtual void enterTmplFunctionCall(TypedefParser::TmplFunctionCallContext *ctx) = 0;
+  virtual void exitTmplFunctionCall(TypedefParser::TmplFunctionCallContext *ctx) = 0;
 
-  virtual void enterTmplIf(TypedefParser::TmplIfContext *ctx) = 0;
-  virtual void exitTmplIf(TypedefParser::TmplIfContext *ctx) = 0;
-
-  virtual void enterTmplIfStmt(TypedefParser::TmplIfStmtContext *ctx) = 0;
-  virtual void exitTmplIfStmt(TypedefParser::TmplIfStmtContext *ctx) = 0;
+  virtual void enterTmplStringExpression(TypedefParser::TmplStringExpressionContext *ctx) = 0;
+  virtual void exitTmplStringExpression(TypedefParser::TmplStringExpressionContext *ctx) = 0;
 
   virtual void enterTmplIfBlock(TypedefParser::TmplIfBlockContext *ctx) = 0;
   virtual void exitTmplIfBlock(TypedefParser::TmplIfBlockContext *ctx) = 0;
 
-  virtual void enterTmplElIfStmt(TypedefParser::TmplElIfStmtContext *ctx) = 0;
-  virtual void exitTmplElIfStmt(TypedefParser::TmplElIfStmtContext *ctx) = 0;
+  virtual void enterTmplIfSubBlock(TypedefParser::TmplIfSubBlockContext *ctx) = 0;
+  virtual void exitTmplIfSubBlock(TypedefParser::TmplIfSubBlockContext *ctx) = 0;
 
-  virtual void enterTmplElifBlock(TypedefParser::TmplElifBlockContext *ctx) = 0;
-  virtual void exitTmplElifBlock(TypedefParser::TmplElifBlockContext *ctx) = 0;
+  virtual void enterTmplElIfSubBlock(TypedefParser::TmplElIfSubBlockContext *ctx) = 0;
+  virtual void exitTmplElIfSubBlock(TypedefParser::TmplElIfSubBlockContext *ctx) = 0;
 
-  virtual void enterTmplElseStmt(TypedefParser::TmplElseStmtContext *ctx) = 0;
-  virtual void exitTmplElseStmt(TypedefParser::TmplElseStmtContext *ctx) = 0;
+  virtual void enterTmplElseSubBlock(TypedefParser::TmplElseSubBlockContext *ctx) = 0;
+  virtual void exitTmplElseSubBlock(TypedefParser::TmplElseSubBlockContext *ctx) = 0;
 
-  virtual void enterTmplElseBlock(TypedefParser::TmplElseBlockContext *ctx) = 0;
-  virtual void exitTmplElseBlock(TypedefParser::TmplElseBlockContext *ctx) = 0;
-
-  virtual void enterTmplFor(TypedefParser::TmplForContext *ctx) = 0;
-  virtual void exitTmplFor(TypedefParser::TmplForContext *ctx) = 0;
-
-  virtual void enterTmplForStmt(TypedefParser::TmplForStmtContext *ctx) = 0;
-  virtual void exitTmplForStmt(TypedefParser::TmplForStmtContext *ctx) = 0;
-
-  virtual void enterTmplExpression(TypedefParser::TmplExpressionContext *ctx) = 0;
-  virtual void exitTmplExpression(TypedefParser::TmplExpressionContext *ctx) = 0;
+  virtual void enterTmplForBlock(TypedefParser::TmplForBlockContext *ctx) = 0;
+  virtual void exitTmplForBlock(TypedefParser::TmplForBlockContext *ctx) = 0;
 
   virtual void enterTmplValueReferencePath(TypedefParser::TmplValueReferencePathContext *ctx) = 0;
   virtual void exitTmplValueReferencePath(TypedefParser::TmplValueReferencePathContext *ctx) = 0;
