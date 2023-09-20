@@ -124,25 +124,24 @@ antlr4-runtime: $(ANTLR4_LIB)
 .PHONY: example-main-run
 example-main-run: typedef
 	$(MAKE) -C examples example-main-run
-.PHONY: example-main-clean
-example-main-clean:
-	$(MAKE) -C examples clean
 
 .PHONY: clean
-clean:
-	rm -rf $(BASE_BUILD_DIR)/libtypedef $(BASE_BUILD_DIR)/typedef $(BASE_BUILD_DIR)/test $(BASE_BUILD_DIR)/examples
+clean: typedef-clean test-clean examples-clean
 
 .PHONY: typedef-clean
 typedef-clean:
-	rm -rf $(BASE_BUILD_DIR)/typedef
-
-.PHONY: libtypedef-clean
-libtypedef-clean:
-	rm -rf $(BASE_BUILD_DIR)/libtypedef
+	rm -rf 	$(BASE_BUILD_DIR)/typedef \
+					$(BASE_BUILD_DIR)/libtypedef \
+					$(BASE_BUILD_DIR)/libtypedef.a
 
 .PHONY: test-clean
 test-clean:
-	rm -rf $(BASE_BUILD_DIR)/test
+	rm -rf $(BASE_BUILD_DIR)/test \
+					$(BASE_BUILD_DIR)/tests
+
+.PHONY: examples-clean
+examples-clean:
+	rm -rf $(BASE_BUILD_DIR)/examples
 
 .PHONY: all-clean
 all-clean:
@@ -150,7 +149,7 @@ all-clean:
 
 .PHONY: tests
 tests: $(TESTS_EXEC)
-	$(TESTS_EXEC) $(TESTS_FILTER)
+	$(TESTS_EXEC) "$(TESTS_FILTER)"
 
 # or run an individual test suite like:
 # test: $(TESTS_EXEC)
