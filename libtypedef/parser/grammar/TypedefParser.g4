@@ -68,15 +68,12 @@ tmplText
 	returns[std::string text]
 	@after {$text = $ctx->txt->getText();}: txt = TMPL_TEXT;
 
-tmplExpression:
-	tmplValueReferencePath
-	| tmplFunctionCall
-	| tmplStringExpression;
+tmplExpression: tmplFunctionCall | tmplStringExpression;
 tmplFunctionCall:
 	tmplIdentifier TMPL_LPAREN tmplValueReferencePath? (
 		tmplValueReferencePath TMPL_COMMA
 	)* TMPL_RPAREN;
-tmplStringExpression:; // not yet supported.
+tmplStringExpression: tmplValueReferencePath;
 
 tmplIfBlock:
 	tmplIfSubBlock //
@@ -107,11 +104,19 @@ tmplForBlock:
 	(TMPL_EXPR_OPEN TMPL_KW_CLOSE_FOR TMPL_EXPR_CLOSE); //
 
 tmplValueReferencePath
-	returns[TypeAnnotationContext* base_referenced_ctx]
-	@init {$base_referenced_ctx = nullptr;}: //
+	returns[bool first_pass_visited, //
+					// One or the other.
+					TypeAnnotationContext* leaf_annotation, //
+					TypeDefinitionContext* leaf_definition] //
+	@init {	$first_pass_visited = false; //
+					$leaf_annotation = nullptr; //
+					$leaf_definition = nullptr;}: //
 	tmplValueReference (TMPL_DOT tmplValueReference)*;
 tmplValueReference: tmplIdentifier;
-tmplBindingVariable: tmplIdentifier;
+tmplBindingVariable
+	returns[TypeAnnotationContext* type] //
+	@init {$type = nullptr;}: //
+	tmplIdentifier;
 tmplIdentifier
 	returns[std::string id]
 	@after {$id = $ctx->nki->getText();}: nki = TMPL_NON_KEYWORD_IDENTIFIER;

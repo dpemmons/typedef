@@ -51,6 +51,9 @@ class FirstPassListener : public TypedefParserBaseListener {
   virtual void exitTmplFunctionCall(
       TypedefParser::TmplFunctionCallContext *ctx) override;
 
+  virtual void exitTmplStringExpression(
+      TypedefParser::TmplStringExpressionContext *ctx) override;
+
   virtual void enterTmplValueReferencePath(
       TypedefParser::TmplValueReferencePathContext *ctx) override;
 

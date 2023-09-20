@@ -221,10 +221,11 @@ json GetTemplateFunctionCall(TypedefParser::TmplFunctionCallContext* ctx) {
 
 json GetTemplateExpression(TypedefParser::TmplExpressionContext* ctx) {
   json j;
-  if (ctx->tmplValueReferencePath()) {
-    j["value_ref"] = GetTemplateValueDereference(ctx->tmplValueReferencePath());
-  } else if (ctx->tmplFunctionCall()) {
+  if (ctx->tmplFunctionCall()) {
     j["call"] = GetTemplateFunctionCall(ctx->tmplFunctionCall());
+  } else if (ctx->tmplStringExpression()) {
+    j["value_ref"] = GetTemplateValueDereference(
+        ctx->tmplStringExpression()->tmplValueReferencePath());
   } else if (ctx->tmplStringExpression()) {
     throw_logic_error("string expressions not currently supported");
   } else {
@@ -235,15 +236,18 @@ json GetTemplateExpression(TypedefParser::TmplExpressionContext* ctx) {
 
 json GetTemplateIfBlock(TypedefParser::TmplIfBlockContext* ctx) {
   json j;
-  j["stmt"] = GetTemplateValueDereference(
-      ctx->tmplIfSubBlock()->tmplExpression()->tmplValueReferencePath());
+  j["stmt"] = GetTemplateValueDereference(ctx->tmplIfSubBlock()
+                                              ->tmplExpression()
+                                              ->tmplStringExpression()
+                                              ->tmplValueReferencePath());
   j["items"] = GetTemplateItems(ctx->tmplIfSubBlock()->tmplItem());
 
   j["elifs"] = json::array();
   for (auto* elif : ctx->tmplElIfSubBlock()) {
     json e;
-    e["stmt"] = GetTemplateValueDereference(
-        elif->tmplExpression()->tmplValueReferencePath());
+    e["stmt"] = GetTemplateValueDereference(elif->tmplExpression()
+                                                ->tmplStringExpression()
+                                                ->tmplValueReferencePath());
     e["items"] = GetTemplateItems(elif->tmplItem());
     j["elifs"].push_back(e);
   }

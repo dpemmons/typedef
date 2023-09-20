@@ -183,13 +183,44 @@ void FirstPassListener::exitTmplDefinition(
 
 void FirstPassListener::enterTmplForBlock(
     TypedefParser::TmplForBlockContext* ctx) {
-  // TODO: NEXT UP!
-  // Ensure collection symbol points at a map or vector, and that
-  // the correct number of binding variables are used.
   for (auto* bvctx : ctx->tmplBindingVariable()) {
     if (!identifiers_.try_emplace(bvctx->tmplIdentifier()->id, bvctx).second) {
       AddError(bvctx->tmplIdentifier(), ParserErrorInfo::DUPLICATE_SYMBOL);
     }
+  }
+  // TODO: NEXT UP!
+  // Ensure collection symbol points at a map or vector, and that
+  // the correct number of binding variables are used.
+
+  // The tree walker hasn't gotten to the VRP yet, so do it ahead of time.
+  // The alternative to calling this here would be a second pass over the
+  // tree.
+  enterTmplValueReferencePath(ctx->collection);
+  if (!ctx->collection->leaf_annotation) {
+    return;
+  }
+  std::vector<TypedefParser::TmplBindingVariableContext*> binding_vars =
+      ctx->tmplBindingVariable();
+  if (ReferencesBuiltinVectorType(ctx->collection->leaf_annotation)) {
+    if (binding_vars.size() != 1) {
+      AddError(ctx->collection, ParserErrorInfo::BINDING_VARIABLE_MISMATCH,
+               "Unexpected number of binding variables for 'vector'. Expected "
+               "1.");
+    }
+    binding_vars[0]->type = GetTypeArgument(ctx->collection->leaf_annotation);
+  } else if (ReferencesBuiltinMapType(ctx->collection->leaf_annotation)) {
+    if (binding_vars.size() != 2) {
+      AddError(ctx->collection, ParserErrorInfo::BINDING_VARIABLE_MISMATCH,
+               "Unexpected number of binding variables for 'map'. Expected "
+               "2.");
+    }
+    binding_vars[0]->type =
+        GetTypeArgument(ctx->collection->leaf_annotation, 0);
+    binding_vars[1]->type =
+        GetTypeArgument(ctx->collection->leaf_annotation, 1);
+  } else {
+    AddError(ctx->collection, ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+             "Must be a collection type.");
   }
 }
 
@@ -215,68 +246,109 @@ void FirstPassListener::enterTmplFunctionCall(
 void FirstPassListener::exitTmplFunctionCall(
     TypedefParser::TmplFunctionCallContext* ctx) {}
 
+void FirstPassListener::exitTmplStringExpression(
+    TypedefParser::TmplStringExpressionContext* ctx) {
+  if (ctx->tmplValueReferencePath()->leaf_definition) {
+    AddError(ctx->tmplValueReferencePath()->tmplValueReference().back(),
+             ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
+             "Primitive (stringable) type expected.");
+    return;
+  }
+
+  if (!ctx->tmplValueReferencePath()->leaf_annotation) {
+    return;
+  }
+  if (!ReferencesPrimitiveType(
+          ctx->tmplValueReferencePath()->leaf_annotation)) {
+    AddError(ctx->tmplValueReferencePath()->tmplValueReference().back(),
+             ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
+             "Primitive (stringable) type expected.");
+  }
+}
+
 void FirstPassListener::enterTmplValueReferencePath(
     TypedefParser::TmplValueReferencePathContext* ctx) {
+  // In some contexts (eg. for blocks) VRP's are pre-computed
+  // before the normal tree walker gets to them. Keep track of that
+  // so we don't throw the same errors twice.
+  if (ctx->first_pass_visited) {
+    return;
+  }
+  ctx->first_pass_visited = true;
+
   vector<TypedefParser::TmplValueReferenceContext*> path_parts =
       ctx->tmplValueReference();
 
   // Find the symbol of the base.
-  auto search = identifiers_.find(path_parts[0]->tmplIdentifier()->id);
-  if (search == identifiers_.end()) {
-    AddError(ctx, ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
-    return;
+  td::FirstPassListener::IdentifierCtx base_identifier_ctx;
+  {
+    auto search = identifiers_.find(path_parts[0]->tmplIdentifier()->id);
+    if (search == identifiers_.end()) {
+      AddError(ctx, ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
+      return;
+    }
+    base_identifier_ctx = search->second;
   }
   TypedefParser::TmplValueReferenceContext* base = path_parts[0];
+  TypedefParser::TypeAnnotationContext* base_annotation = nullptr;
 
   if (holds_alternative<TypedefParser::FunctionParameterContext*>(
-          search->second)) {
+          base_identifier_ctx)) {
     auto* func_param =
-        get<TypedefParser::FunctionParameterContext*>(search->second);
-    ctx->base_referenced_ctx = func_param->parameter_type;
+        get<TypedefParser::FunctionParameterContext*>(base_identifier_ctx);
+    base_annotation = func_param->parameter_type;
   } else if (holds_alternative<TypedefParser::TmplBindingVariableContext*>(
-                 search->second)) {
-    // auto* binding_var =
-    //     get<TypedefParser::TmplBindingVariableContext*>(search->second);
-    // base->idctx = binding_var;
-    AddError(base, ParserErrorInfo::UNIMPLEMENTED,
-             "resolving binding variables not yet supported");
-    return;
+                 base_identifier_ctx)) {
+    auto* binding_var =
+        get<TypedefParser::TmplBindingVariableContext*>(base_identifier_ctx);
+    base_annotation = binding_var->type;
   } else {
     AddError(ctx, ParserErrorInfo::NOT_A_VALUE_TYPE,
              "symbol must refer to either a function parameter or binding "
              "variable.");
     return;
   }
-
+  if (!base_annotation) {
+    AddError(base, ParserErrorInfo::UNKNOWN_TYPE);
+    return;
+  }
   if (path_parts.size() == 1) {
-    if (!ReferencesPrimitiveType(ctx->base_referenced_ctx)) {
-      AddError(path_parts[0], ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
-               "Must be a printable type (eg. strings, integers, etc.)");
-    }
+    ctx->leaf_annotation = base_annotation;
+    ctx->leaf_definition = GetReferencedUserType(base_annotation);
     return;
   }
 
+  TypedefParser::TypeAnnotationContext* type_annotation_previous_field =
+      base_annotation;
   TypedefParser::TypeDefinitionContext* type_def_previous_field =
-      GetReferencedUserType(ctx->base_referenced_ctx);
+      GetReferencedUserType(base_annotation);
   for (size_t ii = 1; ii < path_parts.size(); ii++) {
     TypedefParser::TmplValueReferenceContext* part = path_parts[ii];
     TypedefParser::FieldDefinitionContext* field =
         FindField(type_def_previous_field, part->tmplIdentifier()->id);
     if (!field) {
       AddError(part, ParserErrorInfo::FIELD_NOT_FOUND);
+      return;
+    }
+    // if (!HasTypeAnnotation(field)) {
+    //   // TODO handle inline types!
+    //   AddError(part, ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+    //            "Type expcted.");
+    //   return;
+    // }
+    if (ReferencesUserType(field)) {
+      type_annotation_previous_field = nullptr;
+      type_def_previous_field = GetReferencedUserType(field);
+    } else if (HasTypeDefinition(field)) {
+      type_annotation_previous_field = nullptr;
+      type_def_previous_field = GetTypeDefinition(field);
+    } else {
+      type_annotation_previous_field = GetTypeAnnotation(field);
+      type_def_previous_field = nullptr;
     }
     if (ii == path_parts.size() - 1) {
-      if (!ReferencesPrimitiveType(field)) {
-        AddError(part, ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
-                 "Must be a printable type (eg. strings, integers, etc.)");
-      }
-    } else {
-      if (!ReferencesUserType(field)) {
-        AddError(part, ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
-                 "Does not reference a struct or variant.");
-      } else {
-        type_def_previous_field = GetReferencedUserType(field);
-      }
+      ctx->leaf_annotation = type_annotation_previous_field;
+      ctx->leaf_definition = type_def_previous_field;
     }
   }
 }

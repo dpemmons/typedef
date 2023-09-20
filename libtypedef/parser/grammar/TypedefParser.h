@@ -383,7 +383,6 @@ public:
   public:
     TmplExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    TmplValueReferencePathContext *tmplValueReferencePath();
     TmplFunctionCallContext *tmplFunctionCall();
     TmplStringExpressionContext *tmplStringExpression();
 
@@ -421,6 +420,7 @@ public:
   public:
     TmplStringExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    TmplValueReferencePathContext *tmplValueReferencePath();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -541,7 +541,9 @@ public:
 
   class  TmplValueReferencePathContext : public antlr4::ParserRuleContext {
   public:
-    TypeAnnotationContext* base_referenced_ctx;
+    bool first_pass_visited;
+    TypeAnnotationContext* leaf_annotation;
+    TypeDefinitionContext* leaf_definition;
     TmplValueReferencePathContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<TmplValueReferenceContext *> tmplValueReference();
@@ -575,6 +577,7 @@ public:
 
   class  TmplBindingVariableContext : public antlr4::ParserRuleContext {
   public:
+    TypeAnnotationContext* type;
     TmplBindingVariableContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     TmplIdentifierContext *tmplIdentifier();
