@@ -379,6 +379,8 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
       return "FIELD_NOT_FOUND";
     case BINDING_VARIABLE_MISMATCH:
       return "BINDING_VARIABLE_MISMATCH";
+    case INVALID_ARGUMENT:
+      return "INVALID_ARGUMENT";
     default:
       throw fmt::format("Unhandled error ID in ErrorTypeToString(): {}",
                         (int)error_type);

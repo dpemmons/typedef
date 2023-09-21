@@ -397,6 +397,7 @@ public:
 
   class  TmplFunctionCallContext : public antlr4::ParserRuleContext {
   public:
+    TmplDefinitionContext* tmpl_def;
     TmplFunctionCallContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     TmplIdentifierContext *tmplIdentifier();

@@ -8,6 +8,7 @@
 #include <variant>
 #include <vector>
 
+#include "libtypedef/parser/base_listener.h"
 #include "libtypedef/parser/grammar/TypedefLexer.h"
 #include "libtypedef/parser/grammar/TypedefParser.h"
 #include "libtypedef/parser/grammar/TypedefParserBaseListener.h"
@@ -15,10 +16,10 @@
 
 namespace td {
 
-class FirstPassListener : public TypedefParserBaseListener {
+class FirstPassListener : public BaseListener {
  public:
   FirstPassListener(std::vector<ParserErrorInfo> &errors_list)
-      : errors_list_(errors_list) {}
+      : BaseListener(errors_list) {}
 
   virtual void enterCompilationUnit(
       TypedefParser::CompilationUnitContext *ctx) override;
@@ -48,8 +49,6 @@ class FirstPassListener : public TypedefParserBaseListener {
 
   virtual void enterTmplFunctionCall(
       TypedefParser::TmplFunctionCallContext *ctx) override;
-  virtual void exitTmplFunctionCall(
-      TypedefParser::TmplFunctionCallContext *ctx) override;
 
   virtual void exitTmplStringExpression(
       TypedefParser::TmplStringExpressionContext *ctx) override;
@@ -66,14 +65,6 @@ class FirstPassListener : public TypedefParserBaseListener {
                    TypedefParser::TmplBindingVariableContext *,  //
                    TypedefParser::FunctionParameterContext *>;   //
   std::unordered_map<std::string, IdentifierCtx> identifiers_;
-
-  void AddError(antlr4::ParserRuleContext *ctx, ParserErrorInfo::Type type,
-                std::string msg = "");
-  void AddError(TypedefParser::IdentifierContext *identifier,
-                ParserErrorInfo::Type type);
-  void AddError(antlr4::Token *token, ParserErrorInfo::Type type,
-                std::string msg = "");
-  std::vector<ParserErrorInfo> &errors_list_;
 };
 
 }  // namespace td

@@ -71,7 +71,7 @@ int main(int argc, const char** argv) {
   }
   if (!args.GetCppOut().empty()) {
     auto outpath = std::make_unique<td::OutPath>(args.GetCppOut());
-    td::CodegenCpp(outpath.get(), parser.GetCompilationUnitContext());
+    td::CodegenCpp(outpath.get(), parser.GetCompilationUnitContext(), nullptr);
   }
 
   return 0;

@@ -48,7 +48,8 @@ template SomeFunc(foo: i32, bar: SomeVals) t#"
 
   auto* insertion = GetTmplExpression(somefunc, 0);
   REQUIRE(insertion);
-  REQUIRE(IsI32(insertion->tmplValueReferencePath()->leaf_type));
+  REQUIRE(IsI32(
+      insertion->tmplStringExpression()->tmplValueReferencePath()->leaf_annotation));
 }
 
 TEST_CASE("Template function params resolve when calling another function.",

@@ -4,9 +4,12 @@
 #include <antlr4/antlr4-runtime.h>
 
 #include <memory>
+#include <ostream>
 #include <string>
 #include <vector>
 
+#include "libtypedef/parser/base_listener.h"
+#include "libtypedef/parser/first_pass.h"
 #include "libtypedef/parser/grammar/TypedefLexer.h"
 #include "libtypedef/parser/grammar/TypedefParser.h"
 #include "libtypedef/parser/grammar/TypedefParserBaseListener.h"
@@ -14,44 +17,29 @@
 
 namespace td {
 
-class SecondPassListener : public TypedefParserBaseListener {
+class SecondPassListener : public BaseListener {
  public:
-  SecondPassListener(std::vector<ParserErrorInfo> &errors_list)
-      : errors_list_(errors_list) {}
-#if 0
-  virtual void enterCompilationUnit(
-      TypedefParser::CompilationUnitContext *ctx) override;
-
-  virtual void enterSymrefMemberDeclaration(
-      TypedefParser::SymrefMemberDeclarationContext *ctx) override;
-
-  virtual void enterStructDeclaration(
-      TypedefParser::StructDeclarationContext *ctx) override;
-  virtual void enterInlineStructDeclaration(
-      TypedefParser::InlineStructDeclarationContext *ctx) override;
-  virtual void enterVariantDeclaration(
-      TypedefParser::VariantDeclarationContext *ctx) override;
-  virtual void enterInlineVariantDeclaration(
-      TypedefParser::InlineVariantDeclarationContext *ctx) override;
-
-  virtual void enterMapDeclaration(
-      TypedefParser::MapDeclarationContext *ctx) override;
-
-  virtual void enterInlineMapDeclaration(
-      TypedefParser::InlineMapDeclarationContext *ctx) override;
-
-  virtual void enterTemplateDefinition(
-      TypedefParser::TemplateDefinitionContext *ctx) override;
-
-  virtual void enterTypeParameter(
-      TypedefParser::TypeParameterContext *ctx) override;
-#endif
+  SecondPassListener(std::vector<ParserErrorInfo>& errors_list)
+      : BaseListener(errors_list) {}
+  void enterTmplFunctionCall(
+      TypedefParser::TmplFunctionCallContext* ctx) override;
 
  private:
-  std::vector<ParserErrorInfo> &errors_list_;
+  void CheckMatch(TypedefParser::PrimitiveTypeIdentifierContext* expected,
+                  TypedefParser::PrimitiveTypeIdentifierContext* actual);
+  //   void CheckMatch(TypedefParser::TypeIdentifierContext* expected,
+  //                   TypedefParser::TypeIdentifierContext* actual);
+  //   void CheckMatch(std::vector<TypedefParser::TypeAnnotationContext*>
+  //   expected,
+  //                   std::vector<TypedefParser::TypeAnnotationContext*>
+  //                   actual);
+  //   void CheckMatch(TypedefParser::TypeAnnotationContext* expected,
+  //                   TypedefParser::TypeAnnotationContext* actual);
 
-//   std::shared_ptr<td::table::TypeDeclaration> FindSymbol(
-//       const std::string &identifier, antlr4::tree::ParseTree *ctx);
+  void PrintTypeAnnotation(std::ostream& os,
+                           TypedefParser::TypeAnnotationContext* ctx);
+  void PrintTypeDefinition(std::ostream& os,
+                           TypedefParser::TypeDefinitionContext* ctx);
 };
 
 }  // namespace td

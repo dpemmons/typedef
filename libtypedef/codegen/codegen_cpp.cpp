@@ -329,7 +329,8 @@ json GetTemplateFuncs(vector<TypedefParser::TmplDefinitionContext*> tmpl_defs) {
 }
 
 void CodegenCpp(OutPathBase* out_path,
-                TypedefParser::CompilationUnitContext* compilation_unit_ctx) {
+                TypedefParser::CompilationUnitContext* compilation_unit_ctx,
+                std::ostream* json_dump_os) {
   filesystem::path hdr_filename =
       ToPath(compilation_unit_ctx->moduleDeclaration());
   filesystem::path source_filename = hdr_filename;
@@ -354,7 +355,9 @@ void CodegenCpp(OutPathBase* out_path,
       GetUserTypeDecls(compilation_unit_ctx->typeDefinition());
   data["tmpl_funcs"] = GetTemplateFuncs(compilation_unit_ctx->tmplDefinition());
 
-  std::cout << data.dump(1) << std::endl;
+  if (json_dump_os) {
+    *json_dump_os << data.dump(1) << std::endl;
+  }
 
   Environment env;
   env.set_trim_blocks(true);

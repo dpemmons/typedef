@@ -8,6 +8,7 @@
 
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 #include "libtypedef/parser/grammar_functions.h"
 #include "libtypedef/parser/literals.h"
@@ -237,14 +238,14 @@ void FirstPassListener::enterTmplFunctionCall(
   if (search == identifiers_.end()) {
     AddError(ctx->tmplIdentifier(),
              ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
-  } else if (!holds_alternative<TypedefParser::TmplDefinitionContext*>(
-                 search->second)) {
+    return;
+  }
+  if (!holds_alternative<TypedefParser::TmplDefinitionContext*>(
+          search->second)) {
     AddError(ctx->tmplIdentifier(), ParserErrorInfo::NOT_A_TEMPLATE_FUNCTION);
   }
+  ctx->tmpl_def = get<TypedefParser::TmplDefinitionContext*>(search->second);
 }
-
-void FirstPassListener::exitTmplFunctionCall(
-    TypedefParser::TmplFunctionCallContext* ctx) {}
 
 void FirstPassListener::exitTmplStringExpression(
     TypedefParser::TmplStringExpressionContext* ctx) {
@@ -323,6 +324,12 @@ void FirstPassListener::enterTmplValueReferencePath(
   TypedefParser::TypeDefinitionContext* type_def_previous_field =
       GetReferencedUserType(base_annotation);
   for (size_t ii = 1; ii < path_parts.size(); ii++) {
+    if ((ii != path_parts.size() - 1) && !type_def_previous_field) {
+      AddError(path_parts[ii - 1], ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
+               "Must be a compisite type (vector or struct).");
+      return;
+    }
+
     TypedefParser::TmplValueReferenceContext* part = path_parts[ii];
     TypedefParser::FieldDefinitionContext* field =
         FindField(type_def_previous_field, part->tmplIdentifier()->id);
@@ -351,36 +358,6 @@ void FirstPassListener::enterTmplValueReferencePath(
       ctx->leaf_definition = type_def_previous_field;
     }
   }
-}
-
-void FirstPassListener::AddError(antlr4::ParserRuleContext* ctx,
-                                 ParserErrorInfo::Type type, string msg) {
-  errors_list_.push_back(PEIBuilder()
-                             .SetType(type)
-                             .SetMessage(msg)
-                             .SetCharOffset(ctx->start->getStartIndex())
-                             .SetLine(ctx->start->getLine())
-                             .SetLineOffset(ctx->start->getCharPositionInLine())
-                             .SetLength(ctx->stop->getStopIndex() -
-                                        ctx->start->getStartIndex() + 1)
-                             .build());
-}
-
-void FirstPassListener::AddError(TypedefParser::IdentifierContext* identifier,
-                                 ParserErrorInfo::Type type) {
-  AddError(identifier->nki, type);
-}
-
-void FirstPassListener::AddError(antlr4::Token* token,
-                                 ParserErrorInfo::Type type, string msg) {
-  errors_list_.push_back(PEIBuilder()
-                             .SetType(type)
-                             .SetMessage(msg)
-                             .SetCharOffset(token->getStartIndex())
-                             .SetLine(token->getLine())
-                             .SetLineOffset(token->getCharPositionInLine())
-                             .SetLength(token->getText().length())
-                             .build());
 }
 
 }  // namespace td

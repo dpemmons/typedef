@@ -69,9 +69,11 @@ tmplText
 	@after {$text = $ctx->txt->getText();}: txt = TMPL_TEXT;
 
 tmplExpression: tmplFunctionCall | tmplStringExpression;
-tmplFunctionCall:
+tmplFunctionCall
+	returns[TmplDefinitionContext* tmpl_def] //
+	@init {$tmpl_def = nullptr;}: //
 	tmplIdentifier TMPL_LPAREN tmplValueReferencePath? (
-		tmplValueReferencePath TMPL_COMMA
+		TMPL_COMMA tmplValueReferencePath
 	)* TMPL_RPAREN;
 tmplStringExpression: tmplValueReferencePath;
 
