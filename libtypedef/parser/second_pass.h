@@ -25,10 +25,11 @@ class SecondPassListener : public BaseListener {
       TypedefParser::TmplFunctionCallContext* ctx) override;
 
  private:
-  void CheckMatch(TypedefParser::PrimitiveTypeIdentifierContext* expected,
+  bool CheckMatch(TypedefParser::PrimitiveTypeIdentifierContext* expected,
                   TypedefParser::PrimitiveTypeIdentifierContext* actual);
-  //   void CheckMatch(TypedefParser::TypeIdentifierContext* expected,
-  //                   TypedefParser::TypeIdentifierContext* actual);
+  bool CheckMatch(TypedefParser::TypeAnnotationContext* expected,
+                  TypedefParser::TypeAnnotationContext* actual_a,
+                  TypedefParser::TypeDefinitionContext* actual_b);
   //   void CheckMatch(std::vector<TypedefParser::TypeAnnotationContext*>
   //   expected,
   //                   std::vector<TypedefParser::TypeAnnotationContext*>
@@ -38,6 +39,7 @@ class SecondPassListener : public BaseListener {
 
   void PrintTypeAnnotation(std::ostream& os,
                            TypedefParser::TypeAnnotationContext* ctx);
+
   void PrintTypeDefinition(std::ostream& os,
                            TypedefParser::TypeDefinitionContext* ctx);
 };
