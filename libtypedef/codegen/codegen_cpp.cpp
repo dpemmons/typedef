@@ -10,7 +10,6 @@
 #include "libtypedef/codegen/codegen_cpp_helpers.h"
 #include "libtypedef/parser/grammar/TypedefParser.h"
 #include "libtypedef/parser/grammar_functions.h"
-#include "libtypedef/parser/tmpl_str_table.h"
 
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>

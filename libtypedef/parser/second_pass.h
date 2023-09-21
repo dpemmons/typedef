@@ -30,12 +30,6 @@ class SecondPassListener : public BaseListener {
   bool CheckMatch(TypedefParser::TypeAnnotationContext* expected,
                   TypedefParser::TypeAnnotationContext* actual_a,
                   TypedefParser::TypeDefinitionContext* actual_b);
-  //   void CheckMatch(std::vector<TypedefParser::TypeAnnotationContext*>
-  //   expected,
-  //                   std::vector<TypedefParser::TypeAnnotationContext*>
-  //                   actual);
-  //   void CheckMatch(TypedefParser::TypeAnnotationContext* expected,
-  //                   TypedefParser::TypeAnnotationContext* actual);
 
   void PrintTypeAnnotation(std::ostream& os,
                            TypedefParser::TypeAnnotationContext* ctx);

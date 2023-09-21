@@ -12,15 +12,7 @@
 
 #include "libtypedef/parser/grammar_functions.h"
 #include "libtypedef/parser/literals.h"
-
-#define throw_logic_error(str) \
-  throw std::logic_error(      \
-      fmt::format("\"{}\" in {}:{}", str, __FILE__, __LINE__));
-
-#define bail_if_errors()     \
-  if (errors_list_.size()) { \
-    return;                  \
-  }
+#include "libtypedef/parser/macros.h"
 
 namespace td {
 
@@ -189,9 +181,6 @@ void FirstPassListener::enterTmplForBlock(
       AddError(bvctx->tmplIdentifier(), ParserErrorInfo::DUPLICATE_SYMBOL);
     }
   }
-  // TODO: NEXT UP!
-  // Ensure collection symbol points at a map or vector, and that
-  // the correct number of binding variables are used.
 
   // The tree walker hasn't gotten to the VRP yet, so do it ahead of time.
   // The alternative to calling this here would be a second pass over the

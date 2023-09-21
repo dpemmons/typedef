@@ -8,11 +8,9 @@
 #include <fmt/format.h>
 
 #include "libtypedef/parser/parser_common.h"
+#include "macros.h"
 #include "second_pass.h"
 
-#define throw_logic_error(str) \
-  throw std::logic_error(      \
-      fmt::format("\"{}\" in {}:{}", str, __FILE__, __LINE__));
 namespace td {
 
 using namespace std;

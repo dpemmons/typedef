@@ -8,10 +8,7 @@
 
 #include "libtypedef/parser/parser_error_info.h"
 #include "literals.h"
-
-#define throw_logic_error(str) \
-  throw std::logic_error(      \
-      fmt::format("\"{}\" in {}:{}", str, __FILE__, __LINE__));
+#include "macros.h"
 
 using namespace std;
 

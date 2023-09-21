@@ -6,10 +6,7 @@
 #include <fmt/core.h>
 
 #include "grammar_functions.h"
-
-#define throw_logic_error(str) \
-  throw std::logic_error(      \
-      fmt::format("\"{}\" in {}:{}", str, __FILE__, __LINE__));
+#include "macros.h"
 
 namespace td {
 
