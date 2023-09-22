@@ -2,3 +2,5 @@ src/.antlr/
 build/
 out
 examples/a.out
+.stignore
+typedef-debug
