@@ -99,11 +99,14 @@ tmplElseSubBlock:
 tmplForBlock:
 	(
 		TMPL_EXPR_OPEN TMPL_KW_FOR //
-		tmplBindingVariable (TMPL_COMMA tmplBindingVariable)? //
+		tmplBindingVariables //
 		TMPL_KW_IN collection = tmplValueReferencePath TMPL_EXPR_CLOSE
 	) //
 	tmplItem* //
 	(TMPL_EXPR_OPEN TMPL_KW_CLOSE_FOR TMPL_EXPR_CLOSE); //
+
+tmplBindingVariables:
+	tmplBindingVariable (TMPL_COMMA tmplBindingVariable)?;
 
 tmplValueReferencePath
 	returns[bool first_pass_visited, //

@@ -62,12 +62,13 @@ public:
     RuleTmplBlock = 10, RuleTmplItem = 11, RuleTmplText = 12, RuleTmplExpression = 13, 
     RuleTmplFunctionCall = 14, RuleTmplStringExpression = 15, RuleTmplIfBlock = 16, 
     RuleTmplIfSubBlock = 17, RuleTmplElIfSubBlock = 18, RuleTmplElseSubBlock = 19, 
-    RuleTmplForBlock = 20, RuleTmplValueReferencePath = 21, RuleTmplValueReference = 22, 
-    RuleTmplBindingVariable = 23, RuleTmplIdentifier = 24, RuleFunctionParameter = 25, 
-    RuleUseDeclaration = 26, RuleSymbolPath = 27, RulePrimitiveLiteral = 28, 
-    RuleBoolLiteral = 29, RuleCharLiteral = 30, RuleStringLiteral = 31, 
-    RuleFloatLiteral = 32, RuleIntegerLiteral = 33, RuleIntDigits = 34, 
-    RuleIdentifier = 35, RulePrimitiveTypeIdentifier = 36, RuleKeyword = 37
+    RuleTmplForBlock = 20, RuleTmplBindingVariables = 21, RuleTmplValueReferencePath = 22, 
+    RuleTmplValueReference = 23, RuleTmplBindingVariable = 24, RuleTmplIdentifier = 25, 
+    RuleFunctionParameter = 26, RuleUseDeclaration = 27, RuleSymbolPath = 28, 
+    RulePrimitiveLiteral = 29, RuleBoolLiteral = 30, RuleCharLiteral = 31, 
+    RuleStringLiteral = 32, RuleFloatLiteral = 33, RuleIntegerLiteral = 34, 
+    RuleIntDigits = 35, RuleIdentifier = 36, RulePrimitiveTypeIdentifier = 37, 
+    RuleKeyword = 38
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -101,6 +102,7 @@ public:
   class TmplElIfSubBlockContext;
   class TmplElseSubBlockContext;
   class TmplForBlockContext;
+  class TmplBindingVariablesContext;
   class TmplValueReferencePathContext;
   class TmplValueReferenceContext;
   class TmplBindingVariableContext;
@@ -520,8 +522,7 @@ public:
     std::vector<antlr4::tree::TerminalNode *> TMPL_EXPR_OPEN();
     antlr4::tree::TerminalNode* TMPL_EXPR_OPEN(size_t i);
     antlr4::tree::TerminalNode *TMPL_KW_FOR();
-    std::vector<TmplBindingVariableContext *> tmplBindingVariable();
-    TmplBindingVariableContext* tmplBindingVariable(size_t i);
+    TmplBindingVariablesContext *tmplBindingVariables();
     antlr4::tree::TerminalNode *TMPL_KW_IN();
     std::vector<antlr4::tree::TerminalNode *> TMPL_EXPR_CLOSE();
     antlr4::tree::TerminalNode* TMPL_EXPR_CLOSE(size_t i);
@@ -529,7 +530,6 @@ public:
     TmplValueReferencePathContext *tmplValueReferencePath();
     std::vector<TmplItemContext *> tmplItem();
     TmplItemContext* tmplItem(size_t i);
-    antlr4::tree::TerminalNode *TMPL_COMMA();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -539,6 +539,23 @@ public:
   };
 
   TmplForBlockContext* tmplForBlock();
+
+  class  TmplBindingVariablesContext : public antlr4::ParserRuleContext {
+  public:
+    TmplBindingVariablesContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<TmplBindingVariableContext *> tmplBindingVariable();
+    TmplBindingVariableContext* tmplBindingVariable(size_t i);
+    antlr4::tree::TerminalNode *TMPL_COMMA();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  TmplBindingVariablesContext* tmplBindingVariables();
 
   class  TmplValueReferencePathContext : public antlr4::ParserRuleContext {
   public:

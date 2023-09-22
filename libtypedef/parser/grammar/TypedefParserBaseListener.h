@@ -82,6 +82,9 @@ public:
   virtual void enterTmplForBlock(TypedefParser::TmplForBlockContext * /*ctx*/) override { }
   virtual void exitTmplForBlock(TypedefParser::TmplForBlockContext * /*ctx*/) override { }
 
+  virtual void enterTmplBindingVariables(TypedefParser::TmplBindingVariablesContext * /*ctx*/) override { }
+  virtual void exitTmplBindingVariables(TypedefParser::TmplBindingVariablesContext * /*ctx*/) override { }
+
   virtual void enterTmplValueReferencePath(TypedefParser::TmplValueReferencePathContext * /*ctx*/) override { }
   virtual void exitTmplValueReferencePath(TypedefParser::TmplValueReferencePathContext * /*ctx*/) override { }
 

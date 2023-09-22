@@ -260,7 +260,7 @@ json GetTemplateIfBlock(TypedefParser::TmplIfBlockContext* ctx) {
 
 json GetTemplateForBlock(TypedefParser::TmplForBlockContext* ctx) {
   json j;
-  auto binding_vars = ctx->tmplBindingVariable();
+  auto binding_vars = ctx->tmplBindingVariables()->tmplBindingVariable();
   if (binding_vars.size() == 1) {
     j["var"] = binding_vars[0]->tmplIdentifier()->id;
   } else if (binding_vars.size() == 2) {

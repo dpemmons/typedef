@@ -80,6 +80,9 @@ public:
   virtual void enterTmplForBlock(TypedefParser::TmplForBlockContext *ctx) = 0;
   virtual void exitTmplForBlock(TypedefParser::TmplForBlockContext *ctx) = 0;
 
+  virtual void enterTmplBindingVariables(TypedefParser::TmplBindingVariablesContext *ctx) = 0;
+  virtual void exitTmplBindingVariables(TypedefParser::TmplBindingVariablesContext *ctx) = 0;
+
   virtual void enterTmplValueReferencePath(TypedefParser::TmplValueReferencePathContext *ctx) = 0;
   virtual void exitTmplValueReferencePath(TypedefParser::TmplValueReferencePathContext *ctx) = 0;
 

@@ -102,6 +102,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitTmplBindingVariables(TypedefParser::TmplBindingVariablesContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitTmplValueReferencePath(TypedefParser::TmplValueReferencePathContext *ctx) override {
     return visitChildren(ctx);
   }

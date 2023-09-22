@@ -176,7 +176,7 @@ void FirstPassListener::exitTmplDefinition(
 
 void FirstPassListener::enterTmplForBlock(
     TypedefParser::TmplForBlockContext* ctx) {
-  for (auto* bvctx : ctx->tmplBindingVariable()) {
+  for (auto* bvctx : ctx->tmplBindingVariables()->tmplBindingVariable()) {
     if (!identifiers_.try_emplace(bvctx->tmplIdentifier()->id, bvctx).second) {
       AddError(bvctx->tmplIdentifier(), ParserErrorInfo::DUPLICATE_SYMBOL);
     }
@@ -190,19 +190,25 @@ void FirstPassListener::enterTmplForBlock(
     return;
   }
   std::vector<TypedefParser::TmplBindingVariableContext*> binding_vars =
-      ctx->tmplBindingVariable();
+      ctx->tmplBindingVariables()->tmplBindingVariable();
   if (ReferencesBuiltinVectorType(ctx->collection->leaf_annotation)) {
     if (binding_vars.size() != 1) {
-      AddError(ctx->collection, ParserErrorInfo::BINDING_VARIABLE_MISMATCH,
-               "Unexpected number of binding variables for 'vector'. Expected "
-               "1.");
+      AddError(ctx->tmplBindingVariables(),
+               ParserErrorInfo::BINDING_VARIABLE_MISMATCH,
+               fmt::format("Unexpected number of binding variables for "
+                           "'vector'. Got {}, expected 1.",
+                           binding_vars.size()));
+      return;
     }
     binding_vars[0]->type = GetTypeArgument(ctx->collection->leaf_annotation);
   } else if (ReferencesBuiltinMapType(ctx->collection->leaf_annotation)) {
     if (binding_vars.size() != 2) {
-      AddError(ctx->collection, ParserErrorInfo::BINDING_VARIABLE_MISMATCH,
-               "Unexpected number of binding variables for 'map'. Expected "
-               "2.");
+      AddError(ctx->tmplBindingVariables(),
+               ParserErrorInfo::BINDING_VARIABLE_MISMATCH,
+               fmt::format("Unexpected number of binding variables for "
+                           "'vector'. Got {}, expected 2.",
+                           binding_vars.size()));
+      return;
     }
     binding_vars[0]->type =
         GetTypeArgument(ctx->collection->leaf_annotation, 0);
@@ -216,7 +222,7 @@ void FirstPassListener::enterTmplForBlock(
 
 void FirstPassListener::exitTmplForBlock(
     TypedefParser::TmplForBlockContext* ctx) {
-  for (auto* bvctx : ctx->tmplBindingVariable()) {
+  for (auto* bvctx : ctx->tmplBindingVariables()->tmplBindingVariable()) {
     identifiers_.erase(bvctx->tmplIdentifier()->id);
   }
 }
