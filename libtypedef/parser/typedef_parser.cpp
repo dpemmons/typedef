@@ -56,8 +56,8 @@ void Parser::AttachListeners() {
 }
 
 size_t Parser::Parse() {
-  // TODO revisit this and how it's used below to make a null compilation
-  // unit?
+  // "Fast" mode is currently not used, but leaving it here as it may
+  // be useful for latency sensitive stuff like language servers.
   bool fast = false;
   parser_.setBuildParseTree(!fast);
 
