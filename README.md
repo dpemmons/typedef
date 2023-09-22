@@ -2,7 +2,7 @@
 
 Typedef is a statically typed data declaration language, intended for interface definition and generation, data serialization, and string templating. It compiles to C++ (with other languages planned).
 
-The language is ***in active development***; the gramamr is stabilizing but still incomplete and may change. Code generation is very incomplete.
+The language is ***in active development***; the gramamr is stabilizing but still incomplete and may change. Code generation is incomplete. Docs are very incomplete. As are tests. It may not compile. It will probably eat your homework.
 
 ## Documentation (Incomplete, In-Progress)
 
