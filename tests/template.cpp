@@ -78,7 +78,8 @@ template SomeOtherFunc(bar: i32) t#"
   REQUIRE(someotherfunc);
 }
 
-TEST_CASE("Normal cases.", "[template]") {
+TEST_CASE("Dereference all standard struct fields does not error.",
+          "[template]") {
   Parser parser(R"(
 typedef=alpha;
 module test;
@@ -151,7 +152,8 @@ template PrintMap(s: SomeStruct) t#"
   REQUIRE_NO_PARSE_ERROR(parser.Parse());
 }
 
-TEST_CASE("Missing val in map for loop.", "[template]") {
+TEST_CASE("Missing binding variable in map for loop should error.",
+          "[template]") {
   Parser parser(R"(
 typedef=alpha;
 module test;
@@ -162,10 +164,34 @@ struct SomeStruct {
 
 template PrintMap(s: SomeStruct) t#"
 <for n in s.inline_map>
-  <n>
 </for>
 "#
   )");
 
-  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type ==
+          ParserErrorInfo::BINDING_VARIABLE_MISMATCH);
+  REQUIRE(parser.GetError().line == 10);
+}
+
+TEST_CASE("Extraneous binding var in vector for loop should error.",
+          "[template]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  vec: vector<i32>;
+}
+
+template PrintMap(s: SomeStruct) t#"
+<for a, b in s.vec>
+</for>
+"#
+  )");
+
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type ==
+          ParserErrorInfo::BINDING_VARIABLE_MISMATCH);
+  REQUIRE(parser.GetError().line == 10);
 }
