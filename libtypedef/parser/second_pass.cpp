@@ -57,9 +57,12 @@ bool SecondPassListener::CheckMatch(
   auto* expected_identifier = expected->typeIdentifier();
   // If expected is a user type, then actual_b should contain a valid
   // pointer to it.
-  if (expected_identifier->userType()) {
-    return actual_b &&
-           expected_identifier->userType()->type_definition == actual_b;
+  if (expected_identifier->userType() && actual_b) {
+    return expected_identifier->userType()->type_definition == actual_b;
+  } else if (expected_identifier->userType() &&
+             actual_a->typeIdentifier()->userType()) {
+    return expected_identifier->userType()->type_definition ==
+           actual_a->typeIdentifier()->userType()->type_definition;
   }
 
   // If expected is some other type, then actual_a should be set.

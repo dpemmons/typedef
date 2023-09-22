@@ -229,6 +229,7 @@ struct SomeStruct {
   vec_i32: vector<i32>;
   vec_i64: vector<i64>;
   vec_SomeOtherStruct: vector<SomeOtherStruct>;
+  vec_YetSomeOtherStruct: vector<YetSomeOtherStruct>;
   map_i32_f64: map<i32, f64>;
   map_i16_f64: map<i16, f64>;
   map_i32_f32: map<i16, f32>;
@@ -237,6 +238,9 @@ struct SomeStruct {
 
 struct SomeOtherStruct {
   bar: i32;
+}
+struct YetSomeOtherStruct {
+  asdf: str;
 }
 
 template Print_bool(foo: bool) t#"<foo>"#
@@ -283,11 +287,18 @@ template Print_Vector_i32(vec: vector<i32>) t#"
 </for>
 "#
 
+template Print_Vector_SomeOtherStruct(vec: vector<SomeOtherStruct>) t#"
+<for foo in vec>
+  <foo.bar>
+</for>
+"#
+
 template Print_Map_i32_f64(m: map<i32, f64>) t#"
 <for key, val in m>
   <key>: <val>
 </for>
 "#
+
 )";
 size_t base_lines_offset(size_t i) {
   return i +
@@ -328,97 +339,97 @@ TEST_CASE("Call methods with expected types.", "[template]") {
 // primitive type. They should all fail.
 // -----------------------------------------------------------------------------
 
-TEST_CASE("Call bool with char should fail.", "[template]") {
+TEST_CASE("Call bool with char should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_bool(s.example_char)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call char with bool should fail.", "[template]") {
+TEST_CASE("Call char with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_char(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call str with bool should fail.", "[template]") {
+TEST_CASE("Call str with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_str(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call f32 with bool should fail.", "[template]") {
+TEST_CASE("Call f32 with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_f32(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call f64 with bool should fail.", "[template]") {
+TEST_CASE("Call f64 with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_f64(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u8 with bool should fail.", "[template]") {
+TEST_CASE("Call u8 with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u8(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u16 with bool should fail.", "[template]") {
+TEST_CASE("Call u16 with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u16(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u32 with bool should fail.", "[template]") {
+TEST_CASE("Call u32 with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u32(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u64 with bool should fail.", "[template]") {
+TEST_CASE("Call u64 with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u64(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i8 with bool should fail.", "[template]") {
+TEST_CASE("Call i8 with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i8(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i16 with bool should fail.", "[template]") {
+TEST_CASE("Call i16 with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i16(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i32 with bool should fail.", "[template]") {
+TEST_CASE("Call i32 with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i32(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i64 with bool should fail.", "[template]") {
+TEST_CASE("Call i64 with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i64(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call struct with bool should fail.", "[template]") {
+TEST_CASE("Call struct with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_Struct(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call vector with bool should fail.", "[template]") {
+TEST_CASE("Call vector with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_Vector_i32(s.example_bool)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call map with bool should fail.", "[template]") {
+TEST_CASE("Call map with bool should fail.", "[template][call_with:bool]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_Map_i32_f64(s.example_bool)>"#
   )");
@@ -430,97 +441,101 @@ TEST_CASE("Call map with bool should fail.", "[template]") {
 // struct type. They should all fail.
 // -----------------------------------------------------------------------------
 
-TEST_CASE("Call bool with struct should fail.", "[template]") {
+TEST_CASE("Call bool with struct should fail.",
+          "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_bool(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call char with struct should fail.", "[template]") {
+TEST_CASE("Call char with struct should fail.",
+          "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_char(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call str with struct should fail.", "[template]") {
+TEST_CASE("Call str with struct should fail.", "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_str(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call f32 with struct should fail.", "[template]") {
+TEST_CASE("Call f32 with struct should fail.", "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_f32(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call f64 with struct should fail.", "[template]") {
+TEST_CASE("Call f64 with struct should fail.", "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_f64(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u8 with struct should fail.", "[template]") {
+TEST_CASE("Call u8 with struct should fail.", "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u8(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u16 with struct should fail.", "[template]") {
+TEST_CASE("Call u16 with struct should fail.", "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u16(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u32 with struct should fail.", "[template]") {
+TEST_CASE("Call u32 with struct should fail.", "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u32(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u64 with struct should fail.", "[template]") {
+TEST_CASE("Call u64 with struct should fail.", "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u64(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i8 with struct should fail.", "[template]") {
+TEST_CASE("Call i8 with struct should fail.", "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i8(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i16 with struct should fail.", "[template]") {
+TEST_CASE("Call i16 with struct should fail.", "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i16(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i32 with struct should fail.", "[template]") {
+TEST_CASE("Call i32 with struct should fail.", "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i32(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i64 with struct should fail.", "[template]") {
+TEST_CASE("Call i64 with struct should fail.", "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i64(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call struct with wrong struct should fail.", "[template]") {
+TEST_CASE("Call struct with wrong struct should fail.",
+          "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeOtherStruct) t#"<Print_Struct(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call vector with struct should fail.", "[template]") {
+TEST_CASE("Call vector with struct should fail.",
+          "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_Vector_i32(s)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call map with struct should fail.", "[template]") {
+TEST_CASE("Call map with struct should fail.", "[template][call_with:struct]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_Map_i32_f64(s)>"#
   )");
@@ -531,97 +546,101 @@ TEST_CASE("Call map with struct should fail.", "[template]") {
 // A bunch of tests that call template functions from a template with a
 // vector type. They should all fail.
 // -----------------------------------------------------------------------------
-TEST_CASE("Call bool with vector should fail.", "[template]") {
+TEST_CASE("Call bool with vector should fail.",
+          "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_bool(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call char with vector should fail.", "[template]") {
+TEST_CASE("Call char with vector should fail.",
+          "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_char(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call str with vector should fail.", "[template]") {
+TEST_CASE("Call str with vector should fail.", "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_str(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call f32 with vector should fail.", "[template]") {
+TEST_CASE("Call f32 with vector should fail.", "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_f32(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call f64 with vector should fail.", "[template]") {
+TEST_CASE("Call f64 with vector should fail.", "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_f64(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u8 with vector should fail.", "[template]") {
+TEST_CASE("Call u8 with vector should fail.", "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u8(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u16 with vector should fail.", "[template]") {
+TEST_CASE("Call u16 with vector should fail.", "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u16(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u32 with vector should fail.", "[template]") {
+TEST_CASE("Call u32 with vector should fail.", "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u32(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u64 with vector should fail.", "[template]") {
+TEST_CASE("Call u64 with vector should fail.", "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u64(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i8 with vector should fail.", "[template]") {
+TEST_CASE("Call i8 with vector should fail.", "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i8(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i16 with vector should fail.", "[template]") {
+TEST_CASE("Call i16 with vector should fail.", "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i16(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i32 with vector should fail.", "[template]") {
+TEST_CASE("Call i32 with vector should fail.", "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i32(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i64 with vector should fail.", "[template]") {
+TEST_CASE("Call i64 with vector should fail.", "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i64(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call struct with vector should fail.", "[template]") {
+TEST_CASE("Call struct with vector should fail.",
+          "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_Struct(s.vec_i32)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call vector with wrong vector should fail.", "[template]") {
+TEST_CASE("Call vector with wrong vector should fail.",
+          "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_Vector_i32(s.vec_i64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call map with vector should fail.", "[template]") {
+TEST_CASE("Call map with vector should fail.", "[template][call_with:vector]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_Map_i32_f64(s.vec_i32)>"#
   )");
@@ -632,97 +651,98 @@ TEST_CASE("Call map with vector should fail.", "[template]") {
 // A bunch of tests that call template functions from a template with a
 // map type. They should all fail.
 // -----------------------------------------------------------------------------
-TEST_CASE("Call bool with map should fail.", "[template]") {
+TEST_CASE("Call bool with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_bool(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call char with map should fail.", "[template]") {
+TEST_CASE("Call char with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_char(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call str with map should fail.", "[template]") {
+TEST_CASE("Call str with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_str(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call f32 with map should fail.", "[template]") {
+TEST_CASE("Call f32 with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_f32(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call f64 with map should fail.", "[template]") {
+TEST_CASE("Call f64 with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_f64(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u8 with map should fail.", "[template]") {
+TEST_CASE("Call u8 with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u8(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u16 with map should fail.", "[template]") {
+TEST_CASE("Call u16 with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u16(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u32 with map should fail.", "[template]") {
+TEST_CASE("Call u32 with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u32(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call u64 with map should fail.", "[template]") {
+TEST_CASE("Call u64 with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_u64(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i8 with map should fail.", "[template]") {
+TEST_CASE("Call i8 with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i8(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i16 with map should fail.", "[template]") {
+TEST_CASE("Call i16 with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i16(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i32 with map should fail.", "[template]") {
+TEST_CASE("Call i32 with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i32(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call i64 with map should fail.", "[template]") {
+TEST_CASE("Call i64 with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_i64(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call struct with map should fail.", "[template]") {
+TEST_CASE("Call struct with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_Struct(s.map_i32_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call vector with map should fail.", "[template]") {
+TEST_CASE("Call vector with map should fail.", "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_Vector_i32(s.map_i16_f64)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
-TEST_CASE("Call map with another map should fail.", "[template]") {
+TEST_CASE("Call map with another map should fail.",
+          "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_Map_i32_f64(s.map_i16_f64)>"#
   )");
@@ -731,9 +751,34 @@ TEST_CASE("Call map with another map should fail.", "[template]") {
 
 TEST_CASE(
     "Call map with another map *using a struct type argument) should fail.",
-    "[template]") {
+    "[template][call_with:map]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"<Print_Map_i32_f64(s.map_i32_SomeOtherStruct)>"#
+  )");
+  REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
+}
+
+// -----------------------------------------------------------------------------
+// Other tests
+// -----------------------------------------------------------------------------
+TEST_CASE(
+    "Calling a template with a struct-valued vector argument should succeed.",
+    "[template][other]") {
+  Parser parser(base_test_template + R"(
+    template DoIt(s: SomeStruct) t#"<Print_Vector_SomeOtherStruct(s.vec_SomeOtherStruct)>"#
+  )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+}
+
+// -----------------------------------------------------------------------------
+// Other tests
+// -----------------------------------------------------------------------------
+TEST_CASE(
+    "Calling a template with a different struct-valued vector argument should "
+    "succeed.",
+    "[template][other]") {
+  Parser parser(base_test_template + R"(
+    template DoIt(s: SomeStruct) t#"<Print_Vector_SomeOtherStruct(s.vec_YetSomeOtherStruct)>"#
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
