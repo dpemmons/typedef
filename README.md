@@ -16,10 +16,8 @@ The language is ***in active development***; the gramamr is stabilizing but stil
 Items in ***bold*** are in-progress.
 
 * [ ] **string templates**
-  * [ ] type checking tests
   * [ ] configurable opening / closing strings
     * [ ] formatting
-  * [ ] subtemplates
   * [ ] comments
   * [ ] escape delimiters
   * [ ] prevent unbounded recursion
@@ -67,3 +65,5 @@ string templates
 * [x] simple replacement
 * [x] if/then, for (vector and map)
 * [x] type checking
+* [x] type checking tests
+* [x] subtemplates
