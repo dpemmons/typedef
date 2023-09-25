@@ -21,11 +21,15 @@ Items in ***bold*** are in-progress.
   * [ ] comments
   * [ ] escape delimiters
   * [ ] prevent unbounded recursion
-* [ ] tests...
-* [ ] code generation
-  * [ ] escape reserved words like protoc: <https://protobuf.dev/reference/cpp/cpp-generated/#generated-filenames>
+* [ ] tests
+  * [ ] literals... (clear out /old)
+* [ ] generated cpp features (probably after template engine)
+  * [ ] pretty print methods
+  * [ ] comparison operators
+  * [ ] prevent keyword collision (like protoc? <https://protobuf.dev/reference/cpp/cpp-generated/#generated-filenames>)
 * [ ] more types
   * [ ] optionals
+  * [ ] onordered set type? (does it make sense?)
   * [ ] Foundational
     * [ ] fixed length arrays
     * [ ] message
@@ -36,18 +40,11 @@ Items in ***bold*** are in-progress.
     * [ ] domain names
     * [ ] paths
     * [ ] TODO: look up postgres types for inspiration
-* [ ] meson build system
+* [ ] better build system (meson?)
 * [ ] more literals
   * [ ] byte literals
   * [ ] byte strings
   * [ ] raw byte strings
-* [ ] set type? (does it make sense?)
-* [ ] raw identifiers (do they just work?)
-* [ ] generated cpp features (probably after template engine)
-  * [ ] move semantics
-  * [ ] print methods
-  * [ ] comparison operators
-  * [ ] prevent keyword collisions
 
 Done moved here (and then eventually deleted):
 
