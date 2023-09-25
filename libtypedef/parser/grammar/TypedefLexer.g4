@@ -245,7 +245,7 @@ BIN_DIGITS: [01]+;
 BIN_DIGITS_UNDERSCORE: '_'* [01] [01_]*;
 
 FLOAT_LITERAL:
-	{this->floatLiteralPossible()}? (
+	{this->floatLiteralPossible()}? MINUS? (
 		(DEC_DIGITS | DEC_DIGITS_UNDERSCORE) '.' {this->floatDotPossible()}?
 		| (DEC_DIGITS | DEC_DIGITS_UNDERSCORE) (
 			'.' (DEC_DIGITS | DEC_DIGITS_UNDERSCORE)

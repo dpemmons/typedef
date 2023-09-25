@@ -304,10 +304,10 @@ string GetRawString(antlr4::Token* token, char leading_char,
 namespace td {
 
 void SetBoolLiteral(bool& literal, TypedefParser::BoolLiteralContext* ctx) {
-  if (ctx->KW_TRUE() != nullptr) {
+  if (ctx->KW_TRUE()) {
     literal = true;
-  } else if (ctx->KW_FALSE() != nullptr) {
-    literal = true;
+  } else if (ctx->KW_FALSE()) {
+    literal = false;
   } else {
     throw_logic_error("Invalid state.");
   }
@@ -333,9 +333,9 @@ void SetStringLiteral(std::string& literal,
 void SetFloatLiteral(FloatLiteral& literal,
                      TypedefParser::PrimitiveTypeIdentifierContext* type,
                      TypedefParser::FloatLiteralContext* ctx) {
-  if (type->KW_F32() != nullptr) {
+  if (type->KW_F32()) {
     literal = GetFloatValue<float>(ctx);
-  } else if (type->KW_F64() != nullptr) {
+  } else if (type->KW_F64()) {
     literal = GetFloatValue<double>(ctx);
   } else {
     literal = GetFloatValue<float>(ctx);
@@ -345,21 +345,21 @@ void SetFloatLiteral(FloatLiteral& literal,
 void SetIntegerLiteral(IntegerLiteral& literal,
                        TypedefParser::PrimitiveTypeIdentifierContext* type,
                        TypedefParser::IntegerLiteralContext* ctx) {
-  if (type->KW_U8() != nullptr) {
+  if (type->KW_U8()) {
     literal = GetIntValue<std::uint8_t>(ctx->intDigits());
-  } else if (type->KW_U16() != nullptr) {
+  } else if (type->KW_U16()) {
     literal = GetIntValue<std::uint16_t>(ctx->intDigits());
-  } else if (type->KW_U32() != nullptr) {
+  } else if (type->KW_U32()) {
     literal = GetIntValue<std::uint32_t>(ctx->intDigits());
-  } else if (type->KW_U64() != nullptr) {
+  } else if (type->KW_U64()) {
     literal = GetIntValue<std::uint64_t>(ctx->intDigits());
-  } else if (type->KW_I8() != nullptr) {
+  } else if (type->KW_I8()) {
     literal = GetIntValue<std::int8_t>(ctx->intDigits());
-  } else if (type->KW_I16() != nullptr) {
+  } else if (type->KW_I16()) {
     literal = GetIntValue<std::int16_t>(ctx->intDigits());
-  } else if (type->KW_I32() != nullptr) {
+  } else if (type->KW_I32()) {
     literal = GetIntValue<std::int32_t>(ctx->intDigits());
-  } else if (type->KW_I64() != nullptr) {
+  } else if (type->KW_I64()) {
     literal = GetIntValue<std::int64_t>(ctx->intDigits());
   } else {
     literal = GetIntValue<std::int32_t>(ctx->intDigits());
