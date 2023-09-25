@@ -8,7 +8,7 @@ The language is ***in active development***; the gramamr is stabilizing but stil
 
 * [Types](./docs/types.md)
   * [String Templates](./docs/template_strings.md)
-* [Typedef Coding Conventions](./docs/conventions.md)
+* [Coding Conventions](./docs/conventions.md)
 * [Architecture](./docs/architecture.md)
 
 ## TODO List
