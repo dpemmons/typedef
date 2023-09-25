@@ -15,7 +15,6 @@
 #include "libtypedef/parser/grammar/TypedefLexer.h"
 #include "libtypedef/parser/grammar/TypedefParser.h"
 #include "libtypedef/parser/grammar/TypedefParserBaseListener.h"
-#include "libtypedef/parser/parser_common.h"
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/second_pass.h"
 #include "typedef_parser.h"
@@ -88,7 +87,7 @@ size_t Parser::Parse() {
     }
   }
 
-  if (!compilation_unit_) {
+  if (!compilation_unit_ || errors_.size()) {
     // can we fail to have a compilation unit without errors?
     return errors_.size();
   }
@@ -111,6 +110,47 @@ ParserErrorInfo Parser::GetError(size_t ii) {
   } else {
     throw std::runtime_error("Invalid error index.");
   }
+}
+
+void Parser::LexerErrorListener::syntaxError(
+    antlr4::Recognizer *recognizer, antlr4::Token *offendingSymbol, size_t line,
+    size_t charPositionInLine, const std::string &, std::exception_ptr ep) {
+  std::string message;
+  try {
+    std::rethrow_exception(ep);
+  } catch (antlr4::LexerNoViableAltException &) {
+    antlr4::Lexer *lexer = dynamic_cast<antlr4::Lexer *>(recognizer);
+
+    size_t len =
+        lexer->getInputStream()->index() > lexer->tokenStartCharIndex
+            ? (lexer->getInputStream()->index() - lexer->tokenStartCharIndex)
+            : 1;
+
+    errors_list_.emplace_back(PEIBuilder()
+                                  .SetType(ParserErrorInfo::LEXER_ERROR)
+                                  .SetMessage("Lexer error")
+                                  .SetTokenType(0)
+                                  .SetCharOffset(lexer->tokenStartCharIndex)
+                                  .SetLine(line)
+                                  .SetLineOffset(charPositionInLine)
+                                  .SetLength(len)
+                                  .build());
+  }
+}
+
+void Parser::ParserErrorListener::syntaxError(
+    antlr4::Recognizer *recognizer, antlr4::Token *offendingSymbol, size_t line,
+    size_t charPositionInLine, const std::string &msg, std::exception_ptr ep) {
+  errors_list_.emplace_back(PEIBuilder()
+                                .SetType(ParserErrorInfo::PARSE_ERROR)
+                                .SetMessage(msg)
+                                .SetTokenType(offendingSymbol->getType())
+                                .SetCharOffset(offendingSymbol->getStartIndex())
+                                .SetLine(line)
+                                .SetLineOffset(charPositionInLine)
+                                .SetLength(offendingSymbol->getStopIndex() -
+                                           offendingSymbol->getStartIndex() + 1)
+                                .build());
 }
 
 }  // namespace td
