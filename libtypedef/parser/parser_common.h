@@ -39,17 +39,20 @@ class LexerErrorListener : public antlr4::BaseErrorListener {
     } catch (antlr4::LexerNoViableAltException &) {
       antlr4::Lexer *lexer = dynamic_cast<antlr4::Lexer *>(recognizer);
 
-      errors_list_.emplace_back(
-          PEIBuilder()
-              .SetType(ParserErrorInfo::LEXER_ERROR)
-              .SetMessage("Lexer error")
-              .SetTokenType(0)
-              .SetCharOffset(lexer->tokenStartCharIndex)
-              .SetLine(line)
-              .SetLineOffset(charPositionInLine)
-              .SetLength(lexer->getInputStream()->index() -
-                         lexer->tokenStartCharIndex)
-              .build());
+      size_t len =
+          lexer->getInputStream()->index() > lexer->tokenStartCharIndex
+              ? (lexer->getInputStream()->index() - lexer->tokenStartCharIndex)
+              : 1;
+
+      errors_list_.emplace_back(PEIBuilder()
+                                    .SetType(ParserErrorInfo::LEXER_ERROR)
+                                    .SetMessage("Lexer error")
+                                    .SetTokenType(0)
+                                    .SetCharOffset(lexer->tokenStartCharIndex)
+                                    .SetLine(line)
+                                    .SetLineOffset(charPositionInLine)
+                                    .SetLength(len)
+                                    .build());
     }
   }
 
