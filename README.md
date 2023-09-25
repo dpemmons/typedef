@@ -7,7 +7,7 @@ The language is ***in active development***; the gramamr is stabilizing but stil
 ## Documentation (Incomplete, In-Progress)
 
 * [Types](./docs/types.md)
-  * [Template String Templating Engine](./docs/template_strings.md)
+  * [String Templates](./docs/template_strings.md)
 * [Typedef Coding Conventions](./docs/conventions.md)
 * [Architecture](./docs/architecture.md)
 
