@@ -9,21 +9,6 @@
 
 namespace td {
 
-inline ParserErrorInfo ErrorFromContext(antlr4::ParserRuleContext *ctx,
-                                        ParserErrorInfo::Type type,
-                                        std::string message = "") {
-  return PEIBuilder()
-      .SetType(type)
-      .SetMessage(message)
-      .SetTokenType(ctx->getStart()->getType())
-      .SetCharOffset(ctx->getStart()->getStartIndex())
-      .SetLine(ctx->getStart()->getLine())
-      .SetLineOffset(ctx->getStart()->getCharPositionInLine())
-      .SetLength(ctx->getStop()->getStopIndex() -
-                 ctx->getStart()->getStartIndex() + 1)
-      .build();
-}
-
 class LexerErrorListener : public antlr4::BaseErrorListener {
  public:
   LexerErrorListener(std::vector<ParserErrorInfo> &errors_list)
