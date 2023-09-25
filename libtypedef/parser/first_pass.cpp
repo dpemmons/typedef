@@ -42,6 +42,14 @@ void FirstPassListener::exitCompilationUnit(
   }
 }
 
+void FirstPassListener::enterTypedefVersionDeclaration(
+    TypedefParser::TypedefVersionDeclarationContext* ctx) {
+  if (ctx->identifier()->id != "alpha") {
+    AddError(ctx->identifier(), ParserErrorInfo::INVALID_LANGUAGE_VERSION,
+             "Only 'alpha' supported.");
+  }
+}
+
 void FirstPassListener::enterFieldBlock(TypedefParser::FieldBlockContext* ctx) {
   for (auto* tctx : ctx->typeDefinition()) {
     if (!identifiers_.try_emplace(tctx->type_identifier->id, tctx).second) {

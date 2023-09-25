@@ -12,7 +12,29 @@ using Catch::Matchers::Equals;
 using Catch::Matchers::SizeIs;
 using namespace td;
 
-TEST_CASE("Module declaration throws an UNIMPLEMENTED error.", "[module]") {
+TEST_CASE("typedef declaration parses.", "[module]") {
+  Parser parser(R"(
+typedef=alpha;
+module someModule;
+    )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+  REQUIRE(parser.GetCompilationUnitContext()
+              ->typedefVersionDeclaration()
+              ->identifier()
+              ->id == "alpha");
+}
+
+TEST_CASE("Invalid typedef declaration fails.", "[module]") {
+  Parser parser(R"(
+typedef=asdf;
+module someModule;
+    )");
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type ==
+          ParserErrorInfo::INVALID_LANGUAGE_VERSION);
+}
+
+TEST_CASE("Module declaration parses.", "[module]") {
   Parser parser(R"(
 typedef=alpha;
 module someModule;

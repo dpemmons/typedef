@@ -26,6 +26,9 @@ class FirstPassListener : public BaseListener {
   virtual void exitCompilationUnit(
       TypedefParser::CompilationUnitContext *ctx) override;
 
+  virtual void enterTypedefVersionDeclaration(
+      TypedefParser::TypedefVersionDeclarationContext *ctx) override;
+
   virtual void enterFieldBlock(TypedefParser::FieldBlockContext *ctx) override;
   virtual void exitFieldBlock(TypedefParser::FieldBlockContext *ctx) override;
 
