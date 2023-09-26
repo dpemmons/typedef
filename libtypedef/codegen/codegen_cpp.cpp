@@ -166,8 +166,10 @@ json GetStruct(TypeDefinitionContext* type, optional<string> maybe_identifier) {
     }
   }
 
-  for (FieldDefinitionContext* field : type->fieldBlock()->fieldDefinition()) {
-    j["fields"].push_back(GetField(field));
+  for (int ii = 0; ii < type->fieldBlock()->fieldDefinition().size(); ii++) {
+    json f = GetField(type->fieldBlock()->fieldDefinition()[ii]);
+    f["index"] = ii + 1; // 1 indexed because std::variant monostate is 0
+    j["fields"].push_back(f);
   }
 
   return j;
@@ -274,6 +276,23 @@ json GetTemplateForBlock(TypedefParser::TmplForBlockContext* ctx) {
   return j;
 }
 
+json GetTemplateCaseBlock(TypedefParser::TmplCaseBlockContext* ctx) {
+  json j;
+  j["label"] = GetTemplateValueDereference(ctx->tmplValueReferencePath());
+  j["items"] = GetTemplateItems(ctx->tmplItem());
+  return j;
+}
+
+json GetTempalteSwitchBlock(TypedefParser::TmplSwitchBlockContext* ctx) {
+  json j;
+  j["case"] = json::array();
+  j["identifier"] = GetTemplateValueDereference(ctx->tmplValueReferencePath());
+  for (auto* c : ctx->tmplCaseBlock()) {
+    j["case"].push_back(GetTemplateCaseBlock(c));
+  }
+  return j;
+}
+
 json GetFunctionParameter(TypedefParser::FunctionParameterContext* func_param) {
   json j;
   j["identifier"] = escape_utf8_to_cpp_identifier(func_param->identifier()->id);
@@ -291,6 +310,8 @@ json GetTemplateItem(TypedefParser::TmplItemContext* ctx) {
     j["if"] = GetTemplateIfBlock(ctx->tmplIfBlock());
   } else if (ctx->tmplForBlock()) {
     j["for"] = GetTemplateForBlock(ctx->tmplForBlock());
+  } else if (ctx->tmplSwitchBlock()) {
+    j["switch"] = GetTempalteSwitchBlock(ctx->tmplSwitchBlock());
   } else {
     throw_logic_error("invalid state");
   }
@@ -561,8 +582,7 @@ class {{identifier}} {
 ## endif
   {{identifier}}() {}
   ~{{identifier}}() {
-    MaybeDeleteExistingMember();
-    tag = Tag::__TAGS_BEGIN;
+    tag = Tag::__TAG__UNSET;
   }
 
   {{identifier}}(const {{identifier}}&) = delete;
@@ -571,92 +591,84 @@ class {{identifier}} {
   {{identifier}}& operator=({{identifier}}&&) = default;
 
   enum class Tag {
-    __TAGS_BEGIN = 0,
+    __TAG__UNSET = 0,
 ## if exists("fields")
 ## for field in fields
-    TAG_{{field.identifier}},
+    TAG_{{field.identifier}} = {{field.index}},
 ## endfor
 ## endif
-    __TAGS_END
   };
   Tag Which() const { return tag; }
 
 ## if exists("fields")
 ## for field in fields
   bool is_{{field.identifier}}() const {
-    return (tag == Tag::TAG_{{field.identifier}});
+    return val_.index() == {{field.index}};
   }
 ## if field.access_by == "value" 
   {{cpp_type(field)}} get_{{field.identifier}}() const {
     if (!is_{{field.identifier}}()) {
       TD_THROW("Attempted invalid variant access");
     }
-    return {{field.identifier}}_;
+    return std::get<{{field.index}}>(val_);
   }
   void set_{{field.identifier}}({{cpp_type(field)}} val) {
-    MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
-    {{field.identifier}}_ = val;
+    val_.emplace<{{field.index}}>(val);
   }
   {{cpp_type(field)}}& {{field.identifier}}() {
     if (!is_{{field.identifier}}()) {
-      MaybeDeleteExistingMember();
       tag = Tag::TAG_{{field.identifier}};
     }
-    return {{field.identifier}}_;
+    return std::get<{{field.index}}>(val_);
   }
   const {{cpp_type(field)}}& {{field.identifier}}() const {
     if (!is_{{field.identifier}}()) {
       TD_THROW("Attempted invalid variant access");
     }
-    return {{field.identifier}}_;
+    return std::get<{{field.index}}>(val_);
   }
 ## else if field.access_by == "reference"
   {{cpp_type(field)}}& {{field.identifier}}() {
     if (!is_{{field.identifier}}()) {
-      MaybeDeleteExistingMember();
       tag = Tag::TAG_{{field.identifier}};
     }
-    return {{field.identifier}}_;
+    return std::get<{{field.index}}>(val_);
   }
   const {{cpp_type(field)}}& {{field.identifier}}() const {
     if (!is_{{field.identifier}}()) {
       TD_THROW("Attempted invalid variant access");
     }
-    return {{field.identifier}}_;
+    return std::get<{{field.index}}>(val_);
   }
   void set_{{field.identifier}}({{cpp_type(field)}}&& val) {
-    MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
-    {{field.identifier}}_ = std::move(val);
+    val_.emplace<{{field.index}}>(val);
   }
 ## else if field.access_by == "pointer" 
   bool has_{{field.identifier}}() const {
     if (!is_{{field.identifier}}()) {
       TD_THROW("Attempted invalid variant access");
     }
-    return {{field.identifier}}_.operator bool();
+    return std::get<{{field.index}}>(val_).operator bool();
   }
   void alloc_{{field.identifier}}() {
-    MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
-    {{field.identifier}}_ = std::make_unique<{{cpp_type(field)}}>();
+    val_.emplace<{{field.index}}>(std::make_unique<{{cpp_type(field)}}>());
   }
   void delete_{{field.identifier}}() {
     if (!is_{{field.identifier}}()) {
       TD_THROW("Attempted invalid variant access");
     }
-    return {{field.identifier}}_.reset(nullptr);
+    return std::get<{{field.index}}>(val_).reset(nullptr);
   }
   void set_{{field.identifier}}(std::unique_ptr<{{cpp_type(field)}}> val) {
-    MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
-    {{field.identifier}}_ = std::move(val);
+    val_.emplace<{{field.index}}>(std::move(val));
   }
   void set_{{field.identifier}}({{cpp_type(field)}}* val) {
-    MaybeDeleteExistingMember();
     tag = Tag::TAG_{{field.identifier}};
-    {{field.identifier}}_.reset(std::move(val));
+    std::get<{{field.index}}>(val_).reset(std::move(val));
   }
   {{cpp_type(field)}}* ptr_{{field.identifier}}() {
     #if TD_AUTO_ALLOC
@@ -669,11 +681,10 @@ class {{identifier}} {
       TD_THROW("Attempted null reference");
     }
     #endif
-    return {{field.identifier}}_.get();
+    return std::get<{{field.index}}>(val_).get();
   }
   {{cpp_type(field)}}& {{field.identifier}}() {
     if (!is_{{field.identifier}}()) {
-      MaybeDeleteExistingMember();
       tag = Tag::TAG_{{field.identifier}};
     }
     return *ptr_{{field.identifier}}();
@@ -684,42 +695,27 @@ class {{identifier}} {
       TD_THROW("Attempted null reference");
     }
     #endif
-    return *{{field.identifier}}_.get();
+    return *std::get<{{field.index}}>(val_).get();
   }
 ## endif
 
 ## endfor
 ## endif
  private:
-  Tag tag = Tag::__TAGS_BEGIN;
+  Tag tag = Tag::__TAG__UNSET;
 
-  union {
+  std::variant<
+    std::monostate
 ## if exists("fields")
 ## for field in fields
 ## if field.access_by == "pointer" 
-    std::unique_ptr<{{cpp_type(field)}}> {{field.identifier}}_;
+    , std::unique_ptr<{{cpp_type(field)}}>
 ## else
-    {{cpp_type(field)}} {{field.identifier}}_;
+    , {{cpp_type(field)}}
 ## endif
 ## endfor
 ## endif
-  };  // union
-
-  void MaybeDeleteExistingMember() {
-    switch (tag) {
-## if exists("fields")
-## for field in fields
-      case Tag::TAG_{{field.identifier}}:
-## if field.access_by == "pointer" 
-        {{field.identifier}}_.reset(nullptr);
-## else if field.cpp_type == "std::string" 
-        {{field.identifier}}_.~basic_string();
-## endif
-        break;
-## endfor
-## endif
-    }
-  }
+  > val_;
 
 };  // class {{identifier}}
   )");
@@ -788,6 +784,7 @@ void {{identifier}}(std::ostream& os{{params_list(params)}}) {
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <variant>
 #include <ostream>
 
 #include <typedef/builtin_types.h>
