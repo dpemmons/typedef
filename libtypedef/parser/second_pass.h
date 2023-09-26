@@ -29,7 +29,7 @@ class SecondPassListener : public BaseListener {
       TypedefParser::TmplElIfSubBlockContext* ctx) override;
 
  private:
-  void ExpectBoolean(TypedefParser::TmplExpressionContext* ctx);
+  void ExpectTruthy(TypedefParser::TmplExpressionContext* ctx);
 
   bool CheckMatch(TypedefParser::PrimitiveTypeIdentifierContext* expected,
                   TypedefParser::PrimitiveTypeIdentifierContext* actual);

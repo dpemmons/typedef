@@ -64,15 +64,15 @@ void SecondPassListener::enterTmplFunctionCall(
 
 void SecondPassListener::enterTmplIfSubBlock(
     TypedefParser::TmplIfSubBlockContext* ctx) {
-  ExpectBoolean(ctx->tmplExpression());
+  ExpectTruthy(ctx->tmplExpression());
 }
 
 void SecondPassListener::enterTmplElIfSubBlock(
     TypedefParser::TmplElIfSubBlockContext* ctx) {
-  ExpectBoolean(ctx->tmplExpression());
+  ExpectTruthy(ctx->tmplExpression());
 }
 
-void SecondPassListener::ExpectBoolean(
+void SecondPassListener::ExpectTruthy(
     TypedefParser::TmplExpressionContext* ctx) {
   if (ctx->tmplStringExpression()) {
     auto* vrp = ctx->tmplStringExpression()->tmplValueReferencePath();
