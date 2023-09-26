@@ -62,7 +62,8 @@ tmplItem:
 	tmplText
 	| (TMPL_EXPR_OPEN tmplExpression TMPL_EXPR_CLOSE)
 	| tmplIfBlock
-	| tmplForBlock;
+	| tmplForBlock
+	| tmplSwitchBlock;
 
 tmplText
 	returns[std::string text]
@@ -104,6 +105,27 @@ tmplForBlock:
 	) //
 	tmplItem* //
 	(TMPL_EXPR_OPEN TMPL_KW_CLOSE_FOR TMPL_EXPR_CLOSE); //
+
+tmplSwitchBlock:
+	(
+		TMPL_EXPR_OPEN TMPL_KW_SWITCH tmplValueReferencePath TMPL_EXPR_CLOSE
+	) //
+	(TMPL_TEXT? tmplCaseBlock TMPL_TEXT?)* //
+	(TMPL_TEXT? tmplDefaultBlock TMPL_TEXT?)? //
+	(TMPL_EXPR_OPEN TMPL_KW_CLOSE_SWITCH TMPL_EXPR_CLOSE); //
+
+tmplCaseBlock:
+	(
+		TMPL_TEXT? TMPL_EXPR_OPEN TMPL_KW_CASE tmplValueReferencePath TMPL_EXPR_CLOSE
+	) //
+	tmplItem* //
+	(TMPL_EXPR_OPEN TMPL_KW_CLOSE_CASE TMPL_EXPR_CLOSE); //
+tmplDefaultBlock:
+	(
+		TMPL_TEXT? TMPL_EXPR_OPEN TMPL_KW_DEFAULT TMPL_EXPR_CLOSE
+	) //
+	tmplItem* //
+	(TMPL_EXPR_OPEN TMPL_KW_CLOSE_DEFAULT TMPL_EXPR_CLOSE); //
 
 tmplBindingVariables:
 	tmplBindingVariable (TMPL_COMMA tmplBindingVariable)?;

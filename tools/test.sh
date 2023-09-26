@@ -10,6 +10,6 @@ set -xe
 
 make -j6
 
-./typedef-debug ./examples/basic-template.td --cpp_out=/tmp
+./build/debug/typedef ./examples/template.td --cpp_out=/tmp
 
-clang++ -o /tmp/test.o -I./include -c /tmp/test.cpp
+clang++ -o /tmp/test.o -I./include -c /tmp/template_example.cpp

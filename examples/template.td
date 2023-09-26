@@ -19,9 +19,9 @@ struct TemplateData {
 
 template PrintTemplateData(t: TemplateData) t#"
   here's an if:
-  <if t.name>
+  <if t.has_name>
     yo name: <t.name>
-  <elif t.name2>
+  <elif t.has_name2>
     hi name2: <t.name2>
   <else>
     neither name or name2.
@@ -41,8 +41,13 @@ template PrintTemplateData(t: TemplateData) t#"
 variant SomeVariant {
   a_string: str;
   b_int: i32;
+  c_char: char;
 }
 
 template DoSomeVariant(v: SomeVariant) t#"
-  <v.a_string>
+  <switch v>
+   <case v.a_string> </case>
+   <case v.b_int> </case>
+   <default> </default>
+  </switch>
 "#

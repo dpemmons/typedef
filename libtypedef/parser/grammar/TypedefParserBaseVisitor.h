@@ -102,6 +102,18 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitTmplSwitchBlock(TypedefParser::TmplSwitchBlockContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitTmplCaseBlock(TypedefParser::TmplCaseBlockContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitTmplDefaultBlock(TypedefParser::TmplDefaultBlockContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitTmplBindingVariables(TypedefParser::TmplBindingVariablesContext *ctx) override {
     return visitChildren(ctx);
   }

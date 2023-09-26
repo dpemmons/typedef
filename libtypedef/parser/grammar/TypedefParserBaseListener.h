@@ -82,6 +82,15 @@ public:
   virtual void enterTmplForBlock(TypedefParser::TmplForBlockContext * /*ctx*/) override { }
   virtual void exitTmplForBlock(TypedefParser::TmplForBlockContext * /*ctx*/) override { }
 
+  virtual void enterTmplSwitchBlock(TypedefParser::TmplSwitchBlockContext * /*ctx*/) override { }
+  virtual void exitTmplSwitchBlock(TypedefParser::TmplSwitchBlockContext * /*ctx*/) override { }
+
+  virtual void enterTmplCaseBlock(TypedefParser::TmplCaseBlockContext * /*ctx*/) override { }
+  virtual void exitTmplCaseBlock(TypedefParser::TmplCaseBlockContext * /*ctx*/) override { }
+
+  virtual void enterTmplDefaultBlock(TypedefParser::TmplDefaultBlockContext * /*ctx*/) override { }
+  virtual void exitTmplDefaultBlock(TypedefParser::TmplDefaultBlockContext * /*ctx*/) override { }
+
   virtual void enterTmplBindingVariables(TypedefParser::TmplBindingVariablesContext * /*ctx*/) override { }
   virtual void exitTmplBindingVariables(TypedefParser::TmplBindingVariablesContext * /*ctx*/) override { }
 

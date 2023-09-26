@@ -64,6 +64,12 @@ public:
 
     virtual antlrcpp::Any visitTmplForBlock(TypedefParser::TmplForBlockContext *context) = 0;
 
+    virtual antlrcpp::Any visitTmplSwitchBlock(TypedefParser::TmplSwitchBlockContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplCaseBlock(TypedefParser::TmplCaseBlockContext *context) = 0;
+
+    virtual antlrcpp::Any visitTmplDefaultBlock(TypedefParser::TmplDefaultBlockContext *context) = 0;
+
     virtual antlrcpp::Any visitTmplBindingVariables(TypedefParser::TmplBindingVariablesContext *context) = 0;
 
     virtual antlrcpp::Any visitTmplValueReferencePath(TypedefParser::TmplValueReferencePathContext *context) = 0;

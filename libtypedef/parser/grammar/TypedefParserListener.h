@@ -80,6 +80,15 @@ public:
   virtual void enterTmplForBlock(TypedefParser::TmplForBlockContext *ctx) = 0;
   virtual void exitTmplForBlock(TypedefParser::TmplForBlockContext *ctx) = 0;
 
+  virtual void enterTmplSwitchBlock(TypedefParser::TmplSwitchBlockContext *ctx) = 0;
+  virtual void exitTmplSwitchBlock(TypedefParser::TmplSwitchBlockContext *ctx) = 0;
+
+  virtual void enterTmplCaseBlock(TypedefParser::TmplCaseBlockContext *ctx) = 0;
+  virtual void exitTmplCaseBlock(TypedefParser::TmplCaseBlockContext *ctx) = 0;
+
+  virtual void enterTmplDefaultBlock(TypedefParser::TmplDefaultBlockContext *ctx) = 0;
+  virtual void exitTmplDefaultBlock(TypedefParser::TmplDefaultBlockContext *ctx) = 0;
+
   virtual void enterTmplBindingVariables(TypedefParser::TmplBindingVariablesContext *ctx) = 0;
   virtual void exitTmplBindingVariables(TypedefParser::TmplBindingVariablesContext *ctx) = 0;
 
