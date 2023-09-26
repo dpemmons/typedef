@@ -16,15 +16,14 @@ The language is ***in active development***; the gramamr is stabilizing but stil
 Items in ***bold*** are in-progress.
 
 * [ ] **string templates**
-  * [ ] variants
-  * [ ] built-in functions
+  * [ ] variants (switch statements?)
+  * [ ] built-in functions: first() last() etc.
   * [ ] configurable opening / closing strings
     * [ ] formatting
   * [ ] comments
   * [ ] escape delimiters
   * [ ] prevent unbounded recursion
 * [ ] tests
-  * [ ] literals... (clear out /old)
 * [ ] generated cpp features (probably after template engine)
   * [ ] pretty print methods
   * [ ] comparison operators
@@ -58,6 +57,8 @@ Done moved here (and then eventually deleted):
 * [x] pitchfork repo layout
 * [x] separate type declaration from field, value, etc. declaration
 * [x] make symbol references independent of declaration order
+* [x] tests: literals... (clear out /old)
+
 
 string templates
 
