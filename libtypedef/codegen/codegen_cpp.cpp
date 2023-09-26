@@ -354,8 +354,8 @@ void CodegenCpp(OutPathBase* out_path,
   filesystem::path hdr_filename =
       ToPath(compilation_unit_ctx->moduleDeclaration());
   filesystem::path source_filename = hdr_filename;
-  hdr_filename.replace_extension(".h");
-  source_filename.replace_extension(".cpp");
+  hdr_filename.replace_extension(".td.h");
+  source_filename.replace_extension(".td.cpp");
 
   auto hdr_file = out_path->OpenOutputFile(hdr_filename);
   hdr_file->Open();
@@ -763,10 +763,7 @@ void {{identifier}}(std::ostream& os{{params_list(params)}});
 {%if existsIn(for, "var")%}
   for (auto& {{for.var}} : {{tmpl_val_ref(for.collection)}}) {
 {%else%}
-  auto _typedef__it = {{tmpl_val_ref(for.collection)}}.begin();
-  while (_typedef__it != {{tmpl_val_ref(for.collection)}}.end()) {
-    auto& {{for.key}} = _typedef__it->first;
-    auto& {{for.val}} = _typedef__it->second;
+  for (auto const& [{{for.key}}, {{for.val}}] : {{tmpl_val_ref(for.collection)}}) {
 {%endif%}
     {%for item in for.items%}{{tmpl_item(item)}}{%endfor%}
   }
