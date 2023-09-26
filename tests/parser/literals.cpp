@@ -11,6 +11,7 @@
 
 using namespace std;
 using namespace td;
+using Catch::Matchers::Equals;
 
 TEST_CASE("Struct with true and false literal bools", "[literals]") {
   Parser parser(R"(
@@ -211,6 +212,77 @@ struct SomeStruct {
   REQUIRE(parser.GetError().error_type == ParserErrorInfo::PARSE_ERROR);
 }
 
+TEST_CASE("Struct with various valid string literals", "[literals]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  valid_str: str = "Hello world!";
+  valid_raw_str: str = r#"Hello world!"#;
+
+  valid_escaped_str: str = "Hello \nworld!";
+  valid_escaped_raw_str: str = r#"Hello \nworld!"#;
+
+  valid_unicode_str: str = "Hello \u{1F}!";
+  valid_unicode_str2: str = "Hello \u{260}!";
+
+  valid_unicode_mixed_sequences: str = "Hello, \n\u{01F600}!";
+}
+  )");
+
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct");
+  REQUIRE(ctx);
+  REQUIRE_THAT(*GetStr(FindField(ctx, "valid_str")), Equals("Hello world!"));
+  REQUIRE_THAT(*GetStr(FindField(ctx, "valid_raw_str")),
+               Equals("Hello world!"));
+  REQUIRE_THAT(*GetStr(FindField(ctx, "valid_escaped_str")),
+               Equals("Hello \nworld!"));
+  REQUIRE_THAT(*GetStr(FindField(ctx, "valid_escaped_raw_str")),
+               Equals("Hello \\nworld!"));
+
+  REQUIRE_THAT(*GetStr(FindField(ctx, "valid_unicode_str")),
+               Equals(u8"Hello \u001F!"));
+  REQUIRE_THAT(*GetStr(FindField(ctx, "valid_unicode_str2")),
+               Equals(u8"Hello \u0260!"));
+
+  REQUIRE_THAT(*GetStr(FindField(ctx, "valid_unicode_mixed_sequences")),
+               Equals("Hello, \n\U0001F600!"));
+}
+
+TEST_CASE("Struct with invalid unicode string literal", "[literals]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  bad_str: str = "\u{1234567}";
+}
+  )");
+
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type ==
+          ParserErrorInfo::INVALID_STRING_LITERAL);
+}
+
+TEST_CASE("Struct with empty string literals", "[literals]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  ok_str: str = "";
+  ok_str2: str = r#""#;
+}
+  )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct");
+  REQUIRE(ctx);
+  REQUIRE_THAT(*GetStr(FindField(ctx, "ok_str")), Equals(""));
+  REQUIRE_THAT(*GetStr(FindField(ctx, "ok_str2")), Equals(""));
+}
+
 TEST_CASE("Struct with various valid int literals", "[literals]") {
   Parser parser(R"(
 typedef=alpha;
@@ -310,50 +382,85 @@ struct SomeStruct {
   REQUIRE(GetI8(FindField(ctx, "valid_i8_oct_middle_underscore")) == 42);
   REQUIRE(GetI8(FindField(ctx, "valid_i8_bin_middle_underscore")) == 42);
 
-  REQUIRE(GetI8(FindField(ctx, "valid_i8_dec_max")) == std::numeric_limits<int8_t>::max());
-  REQUIRE(GetI8(FindField(ctx, "valid_i8_hex_max")) == std::numeric_limits<int8_t>::max());
-  REQUIRE(GetI8(FindField(ctx, "valid_i8_oct_max")) == std::numeric_limits<int8_t>::max());
-  REQUIRE(GetI8(FindField(ctx, "valid_i8_bin_max")) == std::numeric_limits<int8_t>::max());
-  REQUIRE(GetI8(FindField(ctx, "valid_i8_dec_min")) == std::numeric_limits<int8_t>::min());
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_dec_max")) ==
+          std::numeric_limits<int8_t>::max());
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_hex_max")) ==
+          std::numeric_limits<int8_t>::max());
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_oct_max")) ==
+          std::numeric_limits<int8_t>::max());
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_bin_max")) ==
+          std::numeric_limits<int8_t>::max());
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_dec_min")) ==
+          std::numeric_limits<int8_t>::min());
 
-  REQUIRE(GetU8(FindField(ctx, "valid_u8_dec_max")) == std::numeric_limits<uint8_t>::max());
-  REQUIRE(GetU8(FindField(ctx, "valid_u8_hex_max")) == std::numeric_limits<uint8_t>::max());
-  REQUIRE(GetU8(FindField(ctx, "valid_u8_oct_max")) == std::numeric_limits<uint8_t>::max());
-  REQUIRE(GetU8(FindField(ctx, "valid_u8_bin_max")) == std::numeric_limits<uint8_t>::max());
+  REQUIRE(GetU8(FindField(ctx, "valid_u8_dec_max")) ==
+          std::numeric_limits<uint8_t>::max());
+  REQUIRE(GetU8(FindField(ctx, "valid_u8_hex_max")) ==
+          std::numeric_limits<uint8_t>::max());
+  REQUIRE(GetU8(FindField(ctx, "valid_u8_oct_max")) ==
+          std::numeric_limits<uint8_t>::max());
+  REQUIRE(GetU8(FindField(ctx, "valid_u8_bin_max")) ==
+          std::numeric_limits<uint8_t>::max());
 
-  REQUIRE(GetI16(FindField(ctx, "valid_i16_dec_max")) == std::numeric_limits<int16_t>::max());
-  REQUIRE(GetI16(FindField(ctx, "valid_i16_hex_max")) == std::numeric_limits<int16_t>::max());
-  REQUIRE(GetI16(FindField(ctx, "valid_i16_oct_max")) == std::numeric_limits<int16_t>::max());
-  REQUIRE(GetI16(FindField(ctx, "valid_i16_bin_max")) == std::numeric_limits<int16_t>::max());
-  REQUIRE(GetI16(FindField(ctx, "valid_i16_dec_min")) == std::numeric_limits<int16_t>::min());
+  REQUIRE(GetI16(FindField(ctx, "valid_i16_dec_max")) ==
+          std::numeric_limits<int16_t>::max());
+  REQUIRE(GetI16(FindField(ctx, "valid_i16_hex_max")) ==
+          std::numeric_limits<int16_t>::max());
+  REQUIRE(GetI16(FindField(ctx, "valid_i16_oct_max")) ==
+          std::numeric_limits<int16_t>::max());
+  REQUIRE(GetI16(FindField(ctx, "valid_i16_bin_max")) ==
+          std::numeric_limits<int16_t>::max());
+  REQUIRE(GetI16(FindField(ctx, "valid_i16_dec_min")) ==
+          std::numeric_limits<int16_t>::min());
 
-  REQUIRE(GetU16(FindField(ctx, "valid_u16_dec_max")) == std::numeric_limits<uint16_t>::max());
-  REQUIRE(GetU16(FindField(ctx, "valid_u16_hex_max")) == std::numeric_limits<uint16_t>::max());
-  REQUIRE(GetU16(FindField(ctx, "valid_u16_oct_max")) == std::numeric_limits<uint16_t>::max());
-  REQUIRE(GetU16(FindField(ctx, "valid_u16_bin_max")) == std::numeric_limits<uint16_t>::max());
+  REQUIRE(GetU16(FindField(ctx, "valid_u16_dec_max")) ==
+          std::numeric_limits<uint16_t>::max());
+  REQUIRE(GetU16(FindField(ctx, "valid_u16_hex_max")) ==
+          std::numeric_limits<uint16_t>::max());
+  REQUIRE(GetU16(FindField(ctx, "valid_u16_oct_max")) ==
+          std::numeric_limits<uint16_t>::max());
+  REQUIRE(GetU16(FindField(ctx, "valid_u16_bin_max")) ==
+          std::numeric_limits<uint16_t>::max());
 
-  REQUIRE(GetI32(FindField(ctx, "valid_i32_dec_max")) == std::numeric_limits<int32_t>::max());
-  REQUIRE(GetI32(FindField(ctx, "valid_i32_hex_max")) == std::numeric_limits<int32_t>::max());
-  REQUIRE(GetI32(FindField(ctx, "valid_i32_oct_max")) == std::numeric_limits<int32_t>::max());
-  REQUIRE(GetI32(FindField(ctx, "valid_i32_bin_max")) == std::numeric_limits<int32_t>::max());
-  REQUIRE(GetI32(FindField(ctx, "valid_i32_dec_min")) == std::numeric_limits<int32_t>::min());
+  REQUIRE(GetI32(FindField(ctx, "valid_i32_dec_max")) ==
+          std::numeric_limits<int32_t>::max());
+  REQUIRE(GetI32(FindField(ctx, "valid_i32_hex_max")) ==
+          std::numeric_limits<int32_t>::max());
+  REQUIRE(GetI32(FindField(ctx, "valid_i32_oct_max")) ==
+          std::numeric_limits<int32_t>::max());
+  REQUIRE(GetI32(FindField(ctx, "valid_i32_bin_max")) ==
+          std::numeric_limits<int32_t>::max());
+  REQUIRE(GetI32(FindField(ctx, "valid_i32_dec_min")) ==
+          std::numeric_limits<int32_t>::min());
 
-  REQUIRE(GetU32(FindField(ctx, "valid_u32_dec_max")) == std::numeric_limits<uint32_t>::max());
-  REQUIRE(GetU32(FindField(ctx, "valid_u32_hex_max")) == std::numeric_limits<uint32_t>::max());
-  REQUIRE(GetU32(FindField(ctx, "valid_u32_oct_max")) == std::numeric_limits<uint32_t>::max());
-  REQUIRE(GetU32(FindField(ctx, "valid_u32_bin_max")) == std::numeric_limits<uint32_t>::max());
+  REQUIRE(GetU32(FindField(ctx, "valid_u32_dec_max")) ==
+          std::numeric_limits<uint32_t>::max());
+  REQUIRE(GetU32(FindField(ctx, "valid_u32_hex_max")) ==
+          std::numeric_limits<uint32_t>::max());
+  REQUIRE(GetU32(FindField(ctx, "valid_u32_oct_max")) ==
+          std::numeric_limits<uint32_t>::max());
+  REQUIRE(GetU32(FindField(ctx, "valid_u32_bin_max")) ==
+          std::numeric_limits<uint32_t>::max());
 
-  REQUIRE(GetI64(FindField(ctx, "valid_i64_dec_max")) == std::numeric_limits<int64_t>::max());
-  REQUIRE(GetI64(FindField(ctx, "valid_i64_hex_max")) == std::numeric_limits<int64_t>::max());
-  REQUIRE(GetI64(FindField(ctx, "valid_i64_oct_max")) == std::numeric_limits<int64_t>::max());
-  REQUIRE(GetI64(FindField(ctx, "valid_i64_bin_max")) == std::numeric_limits<int64_t>::max());
-  REQUIRE(GetI64(FindField(ctx, "valid_i64_dec_min")) == std::numeric_limits<int64_t>::min());
+  REQUIRE(GetI64(FindField(ctx, "valid_i64_dec_max")) ==
+          std::numeric_limits<int64_t>::max());
+  REQUIRE(GetI64(FindField(ctx, "valid_i64_hex_max")) ==
+          std::numeric_limits<int64_t>::max());
+  REQUIRE(GetI64(FindField(ctx, "valid_i64_oct_max")) ==
+          std::numeric_limits<int64_t>::max());
+  REQUIRE(GetI64(FindField(ctx, "valid_i64_bin_max")) ==
+          std::numeric_limits<int64_t>::max());
+  REQUIRE(GetI64(FindField(ctx, "valid_i64_dec_min")) ==
+          std::numeric_limits<int64_t>::min());
 
-  REQUIRE(GetU64(FindField(ctx, "valid_u64_dec_max")) == std::numeric_limits<uint64_t>::max());
-  REQUIRE(GetU64(FindField(ctx, "valid_u64_hex_max")) == std::numeric_limits<uint64_t>::max());
-  REQUIRE(GetU64(FindField(ctx, "valid_u64_oct_max")) == std::numeric_limits<uint64_t>::max());
-  REQUIRE(GetU64(FindField(ctx, "valid_u64_bin_max")) == std::numeric_limits<uint64_t>::max());
-
+  REQUIRE(GetU64(FindField(ctx, "valid_u64_dec_max")) ==
+          std::numeric_limits<uint64_t>::max());
+  REQUIRE(GetU64(FindField(ctx, "valid_u64_hex_max")) ==
+          std::numeric_limits<uint64_t>::max());
+  REQUIRE(GetU64(FindField(ctx, "valid_u64_oct_max")) ==
+          std::numeric_limits<uint64_t>::max());
+  REQUIRE(GetU64(FindField(ctx, "valid_u64_bin_max")) ==
+          std::numeric_limits<uint64_t>::max());
 }
 
 TEST_CASE("Struct with various valid f32 literals", "[literals]") {

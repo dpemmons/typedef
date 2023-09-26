@@ -83,8 +83,24 @@ size_t Parser::Parse() {
       parser_.setErrorHandler(make_shared<antlr4::DefaultErrorStrategy>());
       parser_.getInterpreter<antlr4::atn::ParserATNSimulator>()
           ->setPredictionMode(antlr4::atn::PredictionMode::LL);
-      compilation_unit_ = parser_.compilationUnit();
+      try {
+        compilation_unit_ = parser_.compilationUnit();
+      } catch (td::ParserErrorInfo &pei) {
+        errors_.emplace_back((pei));
+      } catch (...) {
+        errors_.emplace_back(PEIBuilder()
+                                 .SetType(ParserErrorInfo::UNKNOWN)
+                                 .SetMessage("Unhandled exception")
+                                 .build());
+      }
     }
+  } catch (td::ParserErrorInfo &pei) {
+    errors_.emplace_back((pei));
+  } catch (...) {
+    errors_.emplace_back(PEIBuilder()
+                             .SetType(ParserErrorInfo::UNKNOWN)
+                             .SetMessage("Unhandled exception")
+                             .build());
   }
 
   if (!compilation_unit_ || errors_.size()) {
