@@ -100,24 +100,34 @@ void FirstPassListener::enterFieldDefinition(
           AddError(ctx->primitiveLiteral(), ParserErrorInfo::TYPE_MISMATCH,
                    "float expected.");
         } else {
-          SetFloatLiteral(
-              ctx->primitiveLiteral()->floatLiteral()->float_literal,
-              ctx->typeAnnotation()
-                  ->typeIdentifier()
-                  ->primitiveTypeIdentifier(),
-              ctx->primitiveLiteral()->floatLiteral());
+          try {
+            SetFloatLiteral(
+                ctx->primitiveLiteral()->floatLiteral()->float_literal,
+                ctx->typeAnnotation()
+                    ->typeIdentifier()
+                    ->primitiveTypeIdentifier(),
+                ctx->primitiveLiteral()->floatLiteral());
+          } catch (td::ParserErrorInfo& pei) {
+            errors_list_.push_back((pei));
+            return;
+          }
         }
       } else if (ReferencesPrimitiveIntegerType(ctx->typeAnnotation())) {
         if (!ctx->primitiveLiteral()->integerLiteral()) {
           AddError(ctx->primitiveLiteral(), ParserErrorInfo::TYPE_MISMATCH,
                    "integer expected.");
         } else {
-          SetIntegerLiteral(
-              ctx->primitiveLiteral()->integerLiteral()->integer_literal,
-              ctx->typeAnnotation()
-                  ->typeIdentifier()
-                  ->primitiveTypeIdentifier(),
-              ctx->primitiveLiteral()->integerLiteral());
+          try {
+            SetIntegerLiteral(
+                ctx->primitiveLiteral()->integerLiteral()->integer_literal,
+                ctx->typeAnnotation()
+                    ->typeIdentifier()
+                    ->primitiveTypeIdentifier(),
+                ctx->primitiveLiteral()->integerLiteral());
+          } catch (td::ParserErrorInfo& pei) {
+            errors_list_.push_back((pei));
+            return;
+          }
         }
       } else {
         throw_logic_error("invalid state");

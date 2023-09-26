@@ -181,8 +181,7 @@ struct SomeStruct {
   REQUIRE(parser.GetError().error_type == ParserErrorInfo::PARSE_ERROR);
 }
 
-TEST_CASE("Struct with various invalid invalid char literal escape6",
-          "[literals]") {
+TEST_CASE("Struct with various invalid char literal escape6", "[literals]") {
   Parser parser(R"(
 typedef=alpha;
 module test;
@@ -210,6 +209,151 @@ struct SomeStruct {
 
   REQUIRE(parser.Parse() == 1);
   REQUIRE(parser.GetError().error_type == ParserErrorInfo::PARSE_ERROR);
+}
+
+TEST_CASE("Struct with various valid int literals", "[literals]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  valid_i8_dec: i8 = 42 i8;
+  valid_i8_neg: i8 = -42 i8;
+  valid_i8_hex: i8 = 0x2A i8;
+  valid_i8_oct: i8 = 0o52 i8;
+  valid_i8_bin: i8 = 0b101010 i8;
+
+  valid_i8_hex_leading_underscore: i8 = 0x_2A i8;
+  valid_i8_oct_leading_underscore: i8 = 0o_52 i8;
+  valid_i8_bin_leading_underscore: i8 = 0b_101010 i8;
+
+  valid_i8_dec_trailing_underscore: i8 = 42_ i8;
+  valid_i8_neg_trailing_underscore: i8 = -42_ i8;
+  valid_i8_hex_trailing_underscore: i8 = 0x2A_ i8;
+  valid_i8_oct_trailing_underscore: i8 = 0o52_ i8;
+  valid_i8_bin_trailing_underscore: i8 = 0b101010_ i8;
+
+  valid_i8_dec_middle_underscore: i8 = 4_2 i8;
+  valid_i8_neg_middle_underscore: i8 = -4_2 i8;
+  valid_i8_hex_middle_underscore: i8 = 0x2_A i8;
+  valid_i8_oct_middle_underscore: i8 = 0o5_2 i8;
+  valid_i8_bin_middle_underscore: i8 = 0b101_010 i8;
+
+  valid_i8_dec_max: i8 = 127i8;
+  valid_i8_hex_max: i8 = 0x7Fi8;
+  valid_i8_oct_max: i8 = 0o177i8;
+  valid_i8_bin_max: i8 = 0b1111111i8;
+  valid_i8_dec_min: i8 = -128i8;
+
+  valid_u8_dec_max: u8 = 255u8;
+  valid_u8_hex_max: u8 = 0xFFu8;
+  valid_u8_oct_max: u8 = 0o377u8;
+  valid_u8_bin_max: u8 = 0b11111111u8;
+
+  valid_i16_dec_max: i16 = 32767i16;
+  valid_i16_hex_max: i16 = 0x7FFFi16;
+  valid_i16_oct_max: i16 = 0o77777i16;
+  valid_i16_bin_max: i16 = 0b111111111111111i16;
+  valid_i16_dec_min: i16 = -32768i16;
+
+  valid_u16_dec_max: u16 = 65535u16;
+  valid_u16_hex_max: u16 = 0xFFFFu16;
+  valid_u16_oct_max: u16 = 0o177777u16;
+  valid_u16_bin_max: u16 = 0b1111111111111111u16;
+
+  valid_i32_dec_max: i32 = 2147483647i32;
+  valid_i32_hex_max: i32 = 0x7FFFFFFFi32;
+  valid_i32_oct_max: i32 = 0o17777777777i32;
+  valid_i32_bin_max: i32 = 0b1111111111111111111111111111111i32;
+  valid_i32_dec_min: i32 = -2147483648i32;
+
+  valid_u32_dec_max: u32 = 4294967295u32;
+  valid_u32_hex_max: u32 = 0xFFFFFFFFu32;
+  valid_u32_oct_max: u32 = 0o37777777777u32;
+  valid_u32_bin_max: u32 = 0b11111111111111111111111111111111u32;
+
+  valid_i64_dec_max: i64 = 9223372036854775807i64;
+  valid_i64_hex_max: i64 = 0x7FFFFFFFFFFFFFFFi64;
+  valid_i64_oct_max: i64 = 0o777777777777777777777i64;
+  valid_i64_bin_max: i64 = 0b111111111111111111111111111111111111111111111111111111111111111i64;
+  valid_i64_dec_min: i64 = -9223372036854775808;
+
+  valid_u64_dec_max: u64 = 18446744073709551615u64;
+  valid_u64_hex_max: u64 = 0xFFFFFFFFFFFFFFFFu64;
+  valid_u64_oct_max: u64 = 0o1777777777777777777777u64;
+  valid_u64_bin_max: u64 = 0b1111111111111111111111111111111111111111111111111111111111111111u64;
+}
+  )");
+
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct");
+  REQUIRE(ctx);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_dec")) == 42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_neg")) == -42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_hex")) == 42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_oct")) == 42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_bin")) == 42);
+
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_hex_leading_underscore")) == 42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_oct_leading_underscore")) == 42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_bin_leading_underscore")) == 42);
+
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_dec_trailing_underscore")) == 42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_neg_trailing_underscore")) == -42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_hex_trailing_underscore")) == 42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_oct_trailing_underscore")) == 42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_bin_trailing_underscore")) == 42);
+
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_dec_middle_underscore")) == 42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_neg_middle_underscore")) == -42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_hex_middle_underscore")) == 42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_oct_middle_underscore")) == 42);
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_bin_middle_underscore")) == 42);
+
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_dec_max")) == std::numeric_limits<int8_t>::max());
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_hex_max")) == std::numeric_limits<int8_t>::max());
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_oct_max")) == std::numeric_limits<int8_t>::max());
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_bin_max")) == std::numeric_limits<int8_t>::max());
+  REQUIRE(GetI8(FindField(ctx, "valid_i8_dec_min")) == std::numeric_limits<int8_t>::min());
+
+  REQUIRE(GetU8(FindField(ctx, "valid_u8_dec_max")) == std::numeric_limits<uint8_t>::max());
+  REQUIRE(GetU8(FindField(ctx, "valid_u8_hex_max")) == std::numeric_limits<uint8_t>::max());
+  REQUIRE(GetU8(FindField(ctx, "valid_u8_oct_max")) == std::numeric_limits<uint8_t>::max());
+  REQUIRE(GetU8(FindField(ctx, "valid_u8_bin_max")) == std::numeric_limits<uint8_t>::max());
+
+  REQUIRE(GetI16(FindField(ctx, "valid_i16_dec_max")) == std::numeric_limits<int16_t>::max());
+  REQUIRE(GetI16(FindField(ctx, "valid_i16_hex_max")) == std::numeric_limits<int16_t>::max());
+  REQUIRE(GetI16(FindField(ctx, "valid_i16_oct_max")) == std::numeric_limits<int16_t>::max());
+  REQUIRE(GetI16(FindField(ctx, "valid_i16_bin_max")) == std::numeric_limits<int16_t>::max());
+  REQUIRE(GetI16(FindField(ctx, "valid_i16_dec_min")) == std::numeric_limits<int16_t>::min());
+
+  REQUIRE(GetU16(FindField(ctx, "valid_u16_dec_max")) == std::numeric_limits<uint16_t>::max());
+  REQUIRE(GetU16(FindField(ctx, "valid_u16_hex_max")) == std::numeric_limits<uint16_t>::max());
+  REQUIRE(GetU16(FindField(ctx, "valid_u16_oct_max")) == std::numeric_limits<uint16_t>::max());
+  REQUIRE(GetU16(FindField(ctx, "valid_u16_bin_max")) == std::numeric_limits<uint16_t>::max());
+
+  REQUIRE(GetI32(FindField(ctx, "valid_i32_dec_max")) == std::numeric_limits<int32_t>::max());
+  REQUIRE(GetI32(FindField(ctx, "valid_i32_hex_max")) == std::numeric_limits<int32_t>::max());
+  REQUIRE(GetI32(FindField(ctx, "valid_i32_oct_max")) == std::numeric_limits<int32_t>::max());
+  REQUIRE(GetI32(FindField(ctx, "valid_i32_bin_max")) == std::numeric_limits<int32_t>::max());
+  REQUIRE(GetI32(FindField(ctx, "valid_i32_dec_min")) == std::numeric_limits<int32_t>::min());
+
+  REQUIRE(GetU32(FindField(ctx, "valid_u32_dec_max")) == std::numeric_limits<uint32_t>::max());
+  REQUIRE(GetU32(FindField(ctx, "valid_u32_hex_max")) == std::numeric_limits<uint32_t>::max());
+  REQUIRE(GetU32(FindField(ctx, "valid_u32_oct_max")) == std::numeric_limits<uint32_t>::max());
+  REQUIRE(GetU32(FindField(ctx, "valid_u32_bin_max")) == std::numeric_limits<uint32_t>::max());
+
+  REQUIRE(GetI64(FindField(ctx, "valid_i64_dec_max")) == std::numeric_limits<int64_t>::max());
+  REQUIRE(GetI64(FindField(ctx, "valid_i64_hex_max")) == std::numeric_limits<int64_t>::max());
+  REQUIRE(GetI64(FindField(ctx, "valid_i64_oct_max")) == std::numeric_limits<int64_t>::max());
+  REQUIRE(GetI64(FindField(ctx, "valid_i64_bin_max")) == std::numeric_limits<int64_t>::max());
+  REQUIRE(GetI64(FindField(ctx, "valid_i64_dec_min")) == std::numeric_limits<int64_t>::min());
+
+  REQUIRE(GetU64(FindField(ctx, "valid_u64_dec_max")) == std::numeric_limits<uint64_t>::max());
+  REQUIRE(GetU64(FindField(ctx, "valid_u64_hex_max")) == std::numeric_limits<uint64_t>::max());
+  REQUIRE(GetU64(FindField(ctx, "valid_u64_oct_max")) == std::numeric_limits<uint64_t>::max());
+  REQUIRE(GetU64(FindField(ctx, "valid_u64_bin_max")) == std::numeric_limits<uint64_t>::max());
+
 }
 
 TEST_CASE("Struct with various valid f32 literals", "[literals]") {

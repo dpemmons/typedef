@@ -185,8 +185,7 @@ SHEBANG:
 // : '\r' {_input.LA(1)!='\n'}// not followed with \n ;
 
 // whitespace https://doc.rust-lang.org/reference/whitespace.html WS: [\p{Zs}] -> channel(HIDDEN);
-// NEWLINE: ('\r\n' | [\r\n]) -> channel(HIDDEN);
-// WS: [\p{Zs}] | ('\r\n' | [\r\n]);
+// NEWLINE: ('\r\n' | [\r\n]) -> channel(HIDDEN); WS: [\p{Zs}] | ('\r\n' | [\r\n]);
 
 // tokens char and string
 CHAR_LITERAL:
@@ -212,11 +211,9 @@ fragment RAW_STRING_CONTENT:
 	'#' RAW_STRING_CONTENT '#'
 	| '"' .*? '"';
 
-// TODO(dpemmons) byte literals.
-// BYTE_LITERAL: 'b\'' (. | QUOTE_ESCAPE | BYTE_ESCAPE) '\'';
-// BYTE_STRING_LITERAL:
-// 	'b"' (~["] | QUOTE_ESCAPE | BYTE_ESCAPE)* '"';
-// RAW_BYTE_STRING_LITERAL: 'br' RAW_STRING_CONTENT;
+// TODO(dpemmons) byte literals. BYTE_LITERAL: 'b\'' (. | QUOTE_ESCAPE | BYTE_ESCAPE) '\'';
+// BYTE_STRING_LITERAL: 'b"' (~["] | QUOTE_ESCAPE | BYTE_ESCAPE)* '"'; RAW_BYTE_STRING_LITERAL: 'br'
+// RAW_STRING_CONTENT;
 
 fragment ASCII_ESCAPE:
 	'\\x' OCT_DIGIT HEX_DIGIT
@@ -234,6 +231,11 @@ fragment QUOTE_ESCAPE: '\\' ['"];
 fragment ESC_NEWLINE: '\\' '\n';
 
 // number
+
+DEC_LITERAL: MINUS? (DEC_DIGITS | DEC_DIGITS_UNDERSCORE);
+HEX_LITERAL: HEX_PREFIX (HEX_DIGITS | HEX_DIGITS_UNDERSCORE);
+OCT_LITERAL: OCT_PREFIX (OCT_DIGITS | OCT_DIGITS_UNDERSCORE);
+BIN_LITERAL: BIN_PREFIX (BIN_DIGITS | BIN_DIGITS_UNDERSCORE);
 
 DEC_DIGITS: DEC_DIGIT+;
 DEC_DIGITS_UNDERSCORE: DEC_DIGIT (DEC_DIGIT | '_')*;
@@ -255,9 +257,9 @@ FLOAT_LITERAL:
 fragment FLOAT_EXPONENT:
 	[eE] [+-]? '_'* (DEC_DIGITS | DEC_DIGITS_UNDERSCORE);
 
-OCT_DIGIT: [0-7];
-DEC_DIGIT: [0-9];
-HEX_DIGIT: [0-9a-fA-F];
+fragment OCT_DIGIT: [0-7];
+fragment DEC_DIGIT: [0-9];
+fragment HEX_DIGIT: [0-9a-fA-F];
 HEX_PREFIX: '0x';
 OCT_PREFIX: '0o';
 BIN_PREFIX: '0b';

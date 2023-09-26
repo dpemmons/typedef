@@ -86,63 +86,38 @@ char32_t GetCharValue(TypedefParser::CharLiteralContext* ctx) {
 
 template <typename T>
 T GetIntValue(TypedefParser::IntDigitsContext* ctx) {
+  std::string maybe_underscored_digits;
   std::string digits;
-  std::string underscored_digits;
   int base;
-  bool remove_underscores = false;
   T value;
 
-  if (ctx->DEC_DIGITS()) {
-    if (ctx->MINUS()) {
-      digits = ctx->MINUS()->getText() + ctx->DEC_DIGITS()->getText();
-    } else {
-      digits = ctx->DEC_DIGITS()->getText();
-    }
+  if (ctx->DEC_LITERAL()) {
+    maybe_underscored_digits = ctx->DEC_LITERAL()->getText();
     base = 10;
-  } else if (ctx->HEX_DIGITS()) {
-    digits = ctx->HEX_DIGITS()->getText();
+  } else if (ctx->HEX_LITERAL()) {
+    maybe_underscored_digits = ctx->HEX_LITERAL()->getText();
     base = 16;
-  } else if (ctx->OCT_DIGITS()) {
-    digits = ctx->OCT_DIGITS()->getText();
+  } else if (ctx->OCT_LITERAL()) {
+    maybe_underscored_digits = ctx->OCT_LITERAL()->getText();
     base = 8;
-  } else if (ctx->BIN_DIGITS()) {
-    digits = ctx->BIN_DIGITS()->getText();
+  } else if (ctx->BIN_LITERAL()) {
+    maybe_underscored_digits = ctx->BIN_LITERAL()->getText();
     base = 2;
-  } else if (ctx->DEC_DIGITS_UNDERSCORE()) {
-    if (ctx->MINUS()) {
-      underscored_digits =
-          ctx->MINUS()->getText() + ctx->DEC_DIGITS_UNDERSCORE()->getText();
-    } else {
-      underscored_digits = ctx->DEC_DIGITS_UNDERSCORE()->getText();
-    }
-    base = 10;
-    remove_underscores = true;
-  } else if (ctx->HEX_DIGITS_UNDERSCORE()) {
-    underscored_digits = ctx->HEX_DIGITS_UNDERSCORE()->getText();
-    base = 16;
-    remove_underscores = true;
-  } else if (ctx->OCT_DIGITS_UNDERSCORE()) {
-    underscored_digits = ctx->OCT_DIGITS_UNDERSCORE()->getText();
-    base = 8;
-    remove_underscores = true;
-  } else if (ctx->BIN_DIGITS_UNDERSCORE()) {
-    underscored_digits = ctx->BIN_DIGITS_UNDERSCORE()->getText();
-    base = 2;
-    remove_underscores = true;
   } else {
     // Grammar shouldn't let us get here...
-    assert(false);  // unreachable
+    throw_logic_error("invalid state");
   }
 
-  if (remove_underscores) {
-    digits.reserve(underscored_digits.size());
-    for (auto c : underscored_digits) {
-      if (c != '_') {
-        digits += c;
-      }
+  digits.reserve(maybe_underscored_digits.size());
+  for (auto c : maybe_underscored_digits) {
+    if (c != '_') {
+      digits += c;
     }
   }
   std::string_view digits_view(digits);
+  if (ctx->HEX_LITERAL() || ctx->OCT_LITERAL() || ctx->BIN_LITERAL()) {
+    digits_view.remove_prefix(2);
+  }
 
   auto result =
       std::from_chars(digits_view.begin(), digits_view.end(), value, base);
@@ -151,7 +126,7 @@ T GetIntValue(TypedefParser::IntDigitsContext* ctx) {
     return value;
   } else {
     throw MakeError(td::ParserErrorInfo::INVALID_INTEGER_LITERAL,
-                    "Invalid string integer", ctx->getStart());
+                    "Invalid integer literal", ctx->getStart());
   }
 }
 
