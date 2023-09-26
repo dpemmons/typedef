@@ -7,12 +7,82 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 
+#include "libtypedef/parser/grammar_functions.h"
 #include "macros.h"
 #include "second_pass.h"
 
 namespace td {
 
 using namespace std;
+
+void SecondPassListener::enterTmplFunctionCall(
+    TypedefParser::TmplFunctionCallContext* ctx) {
+  std::vector<TypedefParser::FunctionParameterContext*> expected_params =
+      ctx->tmpl_def->functionParameter();
+  std::vector<TypedefParser::TmplValueReferencePathContext*> actual_params =
+      ctx->tmplValueReferencePath();
+  if (expected_params.size() != actual_params.size()) {
+    AddError(ctx, ParserErrorInfo::INVALID_ARGUMENT,
+             fmt::format("Function '{}' expects {} arguments but {} provided.",
+                         ctx->tmplIdentifier()->id, expected_params.size(),
+                         actual_params.size()));
+    return;
+  }
+  for (size_t ii = 0; ii < expected_params.size(); ii++) {
+    TypedefParser::FunctionParameterContext* expected_param =
+        expected_params[ii];
+    TypedefParser::TmplValueReferencePathContext* called_with_param =
+        actual_params[ii];
+    if (!expected_param) {
+      throw_logic_error("invalid state: missing expected param");
+    } else if (!called_with_param) {
+      throw_logic_error("invalid state: missing param data");
+    }
+
+    std::stringstream ss_expected;
+    PrintTypeAnnotation(ss_expected, expected_param->parameter_type);
+    std::stringstream ss_actual;
+    if (called_with_param->leaf_annotation) {
+      if (!expected_param->parameter_type->typeIdentifier()) {
+        throw_logic_error("invalid state: missing expected param identifier");
+      }
+      PrintTypeAnnotation(ss_actual, called_with_param->leaf_annotation);
+    } else if (called_with_param->leaf_definition) {
+      PrintTypeDefinition(ss_actual, called_with_param->leaf_definition);
+    }
+
+    bool matches = CheckMatch(expected_param->parameter_type,
+                              called_with_param->leaf_annotation,
+                              called_with_param->leaf_definition);
+    if (!matches) {
+      AddError(called_with_param, ParserErrorInfo::INVALID_ARGUMENT,
+               fmt::format("Expected '{}' but got '{}'", ss_expected.str(),
+                           ss_actual.str()));
+    }
+  }
+}
+
+void SecondPassListener::enterTmplIfSubBlock(
+    TypedefParser::TmplIfSubBlockContext* ctx) {
+  ExpectBoolean(ctx->tmplExpression());
+}
+
+void SecondPassListener::enterTmplElIfSubBlock(
+    TypedefParser::TmplElIfSubBlockContext* ctx) {
+  ExpectBoolean(ctx->tmplExpression());
+}
+
+void SecondPassListener::ExpectBoolean(
+    TypedefParser::TmplExpressionContext* ctx) {
+  if (ctx->tmplStringExpression()) {
+    auto* vrp = ctx->tmplStringExpression()->tmplValueReferencePath();
+    if (vrp->leaf_annotation && ReferencesTruthyType(vrp->leaf_annotation)) {
+      return;
+    }
+  }
+  AddError(ctx, ParserErrorInfo::INVALID_ARGUMENT,
+           "Truthy expression expected.");
+}
 
 bool SecondPassListener::CheckMatch(
     TypedefParser::PrimitiveTypeIdentifierContext* expected,
@@ -156,53 +226,6 @@ void SecondPassListener::PrintTypeDefinition(
     os << ctx->type_identifier->id;
   } else {
     os << "[anonymous]";
-  }
-}
-
-void SecondPassListener::enterTmplFunctionCall(
-    TypedefParser::TmplFunctionCallContext* ctx) {
-  std::vector<TypedefParser::FunctionParameterContext*> expected_params =
-      ctx->tmpl_def->functionParameter();
-  std::vector<TypedefParser::TmplValueReferencePathContext*> actual_params =
-      ctx->tmplValueReferencePath();
-  if (expected_params.size() != actual_params.size()) {
-    AddError(ctx, ParserErrorInfo::INVALID_ARGUMENT,
-             fmt::format("Function '{}' expects {} arguments but {} provided.",
-                         ctx->tmplIdentifier()->id, expected_params.size(),
-                         actual_params.size()));
-    return;
-  }
-  for (size_t ii = 0; ii < expected_params.size(); ii++) {
-    TypedefParser::FunctionParameterContext* expected_param =
-        expected_params[ii];
-    TypedefParser::TmplValueReferencePathContext* called_with_param =
-        actual_params[ii];
-    if (!expected_param) {
-      throw_logic_error("invalid state: missing expected param");
-    } else if (!called_with_param) {
-      throw_logic_error("invalid state: missing param data");
-    }
-
-    std::stringstream ss_expected;
-    PrintTypeAnnotation(ss_expected, expected_param->parameter_type);
-    std::stringstream ss_actual;
-    if (called_with_param->leaf_annotation) {
-      if (!expected_param->parameter_type->typeIdentifier()) {
-        throw_logic_error("invalid state: missing expected param identifier");
-      }
-      PrintTypeAnnotation(ss_actual, called_with_param->leaf_annotation);
-    } else if (called_with_param->leaf_definition) {
-      PrintTypeDefinition(ss_actual, called_with_param->leaf_definition);
-    }
-
-    bool matches = CheckMatch(expected_param->parameter_type,
-                              called_with_param->leaf_annotation,
-                              called_with_param->leaf_definition);
-    if (!matches) {
-      AddError(called_with_param, ParserErrorInfo::INVALID_ARGUMENT,
-               fmt::format("Expected '{}' but got '{}'", ss_expected.str(),
-                           ss_actual.str()));
-    }
   }
 }
 

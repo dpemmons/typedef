@@ -9,7 +9,9 @@ struct StructC {
 
 struct TemplateData {
   name: str;
+  has_name: bool;
   name2: str;
+  has_name2: bool;
   someVec: vector<i32>;
   someMap: map<str, str>;
   structC: StructC;
@@ -42,5 +44,5 @@ variant SomeVariant {
 }
 
 template DoSomeVariant(v: SomeVariant) t#"
-
+  <v.a_string>
 "#

@@ -179,6 +179,15 @@ TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitiveIdentifier(
              : nullptr;
 }
 
+bool ReferencesTruthyType(TypedefParser::TypeAnnotationContext* ctx) {
+  if (!ReferencesPrimitiveType(ctx)) {
+    return false;
+  }
+  auto* prim = GetReferencedPrimitiveIdentifier(ctx);
+  return (ReferencesPrimitiveIntegerType(ctx) ||
+          ReferencesPrimitiveFloatType(ctx) || prim->KW_BOOL());
+}
+
 bool ReferencesPrimitiveType(TypedefParser::FieldDefinitionContext* ctx) {
   return ctx->typeAnnotation() && ctx->typeAnnotation()->typeIdentifier() &&
          ctx->typeAnnotation()->typeIdentifier()->primitiveTypeIdentifier();

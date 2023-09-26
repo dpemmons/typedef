@@ -58,6 +58,8 @@ bool ReferencesPrimitiveIntegerType(TypedefParser::TypeAnnotationContext* ctx);
 TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitiveIdentifier(
     TypedefParser::TypeAnnotationContext* ctx);
 
+bool ReferencesTruthyType(TypedefParser::TypeAnnotationContext* ctx);
+
 bool ReferencesPrimitiveType(TypedefParser::FieldDefinitionContext* ctx);
 TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitiveIdentifier(
     TypedefParser::FieldDefinitionContext* ctx);
