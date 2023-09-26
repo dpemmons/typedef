@@ -10,7 +10,7 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 
-#include "libtypedef/parser/grammar_functions.h"
+#include "libtypedef/parser/ast_functions.h"
 #include "libtypedef/parser/literals.h"
 #include "libtypedef/parser/macros.h"
 

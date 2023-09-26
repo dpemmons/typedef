@@ -1,12 +1,11 @@
-#include "libtypedef/parser/grammar_functions.h"
+#include "libtypedef/parser/ast_functions.h"
 
 #include <sstream>
 
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
 
-#include "grammar_functions.h"
-#include "macros.h"
+#include "libtypedef/parser/macros.h"
 
 namespace td {
 

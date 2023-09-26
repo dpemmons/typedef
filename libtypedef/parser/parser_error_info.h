@@ -63,27 +63,7 @@ struct ParserErrorInfo {
 
   size_t length;
 
-  friend bool operator==(const ParserErrorInfo &c1, const ParserErrorInfo &c2) {
-    return c1.error_type == c2.error_type &&
-           c1.message.compare(c2.message) == 0 &&
-           c1.token_type == c2.token_type && c1.char_offset == c2.char_offset &&
-           c1.line == c2.line && c1.line_offset == c2.line_offset &&
-           c1.length == c2.length;
-  }
-  friend bool operator!=(const ParserErrorInfo &c1, const ParserErrorInfo &c2) {
-    return c1.error_type != c2.error_type ||
-           c1.message.compare(c2.message) != 0 ||
-           c1.token_type != c2.token_type || c1.char_offset != c2.char_offset ||
-           c1.line != c2.line || c1.line_offset != c2.line_offset ||
-           c1.length != c2.length;
-  }
-
-  friend std::ostream &operator<<(std::ostream &os,
-                                  const ParserErrorInfo &value);
-
   const char *ErrorTypeToString() const;
-
- private:
 };
 
 class PEIBuilder {

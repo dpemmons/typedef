@@ -7,7 +7,7 @@
 
 #include "libtypedef/parser/grammar/TypedefLexer.h"
 #include "libtypedef/parser/grammar/TypedefParser.h"
-#include "parser_error_info.h"
+#include "libtypedef/parser/parser_error_info.h"
 
 namespace td {
 

@@ -8,8 +8,8 @@
 #include <string>
 
 #include "libtypedef/codegen/codegen_cpp_helpers.h"
+#include "libtypedef/parser/ast_functions.h"
 #include "libtypedef/parser/grammar/TypedefParser.h"
-#include "libtypedef/parser/grammar_functions.h"
 
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>

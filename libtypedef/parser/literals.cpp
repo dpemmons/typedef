@@ -6,9 +6,9 @@
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
 
+#include "libtypedef/parser/literals.h"
+#include "libtypedef/parser/macros.h"
 #include "libtypedef/parser/parser_error_info.h"
-#include "literals.h"
-#include "macros.h"
 
 using namespace std;
 

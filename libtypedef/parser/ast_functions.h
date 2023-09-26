@@ -1,5 +1,5 @@
-#ifndef PARSER_GRAMMAR_FUNCTIONS_H__
-#define PARSER_GRAMMAR_FUNCTIONS_H__
+#ifndef PARSER_AST_FUNCTIONS_H__
+#define PARSER_AST_FUNCTIONS_H__
 
 #include <antlr4/antlr4-runtime.h>
 
@@ -165,4 +165,4 @@ TypedefParser::TypeAnnotationContext* GetReferencedTypeAnnotation(
 
 }  // namespace td
 
-#endif  // PARSER_GRAMMAR_FUNCTIONS_H__
+#endif  // PARSER_AST_FUNCTIONS_H__

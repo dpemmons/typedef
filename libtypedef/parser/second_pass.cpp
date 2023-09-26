@@ -7,9 +7,9 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 
-#include "libtypedef/parser/grammar_functions.h"
-#include "macros.h"
-#include "second_pass.h"
+#include "libtypedef/parser/ast_functions.h"
+#include "libtypedef/parser/macros.h"
+#include "libtypedef/parser/second_pass.h"
 
 namespace td {
 

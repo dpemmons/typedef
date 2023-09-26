@@ -17,7 +17,7 @@
 #include "libtypedef/parser/grammar/TypedefParserBaseListener.h"
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/second_pass.h"
-#include "typedef_parser.h"
+#include "libtypedef/parser/typedef_parser.h"
 
 namespace td {
 
