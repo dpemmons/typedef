@@ -7,6 +7,12 @@ struct StructC {
   jkl: i32;
 };
 
+template PrintStructC(sc: StructC) t#"
+StructC contains:
+zxcv: <sc.zxcv>
+jkl: <sc.jkl>
+"#
+
 struct TemplateData {
   name: str;
   has_name: bool;
@@ -36,18 +42,22 @@ template PrintTemplateData(t: TemplateData) t#"
   <for key, val in t.someMap>
     <key> -> <val>
   </for>
+  Here's structC
+  <PrintStructC(t.structC)>
 "#
 
 variant SomeVariant {
   a_string: str;
   b_int: i32;
   c_char: char;
+  d_struct: StructC;
 }
 
 template DoSomeVariant(v: SomeVariant) t#"
   <switch v>
-   <case v.a_string> </case>
-   <case v.b_int> </case>
-   <default> </default>
+   <case v.a_string>It's a string: <v.a_string></case>
+   <case v.b_int>It's an int: <v.b_int></case>
+   <case v.d_struct>It's a struct: <PrintStructC(v.d_struct)></case>
+   <default>It's the default!</default>
   </switch>
 "#
