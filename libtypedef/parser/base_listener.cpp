@@ -4,6 +4,20 @@ namespace td {
 
 using namespace std;
 
+void BaseListener::AddError(antlr4::tree::TerminalNode* txt,
+                            ParserErrorInfo::Type type, std::string msg) {
+  errors_list_.push_back(
+      PEIBuilder()
+          .SetType(type)
+          .SetMessage(msg)
+          .SetCharOffset(txt->getSymbol()->getStartIndex())
+          .SetLine(txt->getSymbol()->getLine())
+          .SetLineOffset(txt->getSymbol()->getCharPositionInLine())
+          .SetLength(txt->getSymbol()->getStopIndex() -
+                     txt->getSymbol()->getStartIndex() + 1)
+          .build());
+}
+
 void BaseListener::AddError(antlr4::ParserRuleContext* ctx,
                             ParserErrorInfo::Type type, string msg) {
   errors_list_.push_back(PEIBuilder()

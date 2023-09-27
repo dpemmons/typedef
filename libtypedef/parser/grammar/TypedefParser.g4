@@ -110,6 +110,7 @@ tmplSwitchBlock:
 	(
 		TMPL_EXPR_OPEN TMPL_KW_SWITCH tmplValueReferencePath TMPL_EXPR_CLOSE
 	) //
+	TMPL_TEXT? 
 	(TMPL_TEXT? tmplCaseBlock TMPL_TEXT?)* //
 	(TMPL_TEXT? tmplDefaultBlock TMPL_TEXT?)? //
 	(TMPL_EXPR_OPEN TMPL_KW_CLOSE_SWITCH TMPL_EXPR_CLOSE); //

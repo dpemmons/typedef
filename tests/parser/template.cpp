@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "helpers.h"
-#include "libtypedef/parser/grammar_functions.h"
+#include "libtypedef/parser/ast_functions.h"
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/typedef_parser.h"
 
@@ -243,6 +243,14 @@ struct YetSomeOtherStruct {
   asdf: str;
 }
 
+variant SomeVariant {
+  example_char: char;
+  example_str: str;
+  another_struct: SomeOtherStruct;
+  vec_i32: vector<i32>;
+  map_i32_f64: map<i32, f64>;
+}
+
 template Print_bool(foo: bool) t#"<foo>"#
 template Print_char(foo: char) t#"<foo>"#
 template Print_str(foo: str) t#"<foo>"#
@@ -298,7 +306,6 @@ template Print_Map_i32_f64(m: map<i32, f64>) t#"
   <key>: <val>
 </for>
 "#
-
 )";
 size_t base_lines_offset(size_t i) {
   return i +
@@ -768,6 +775,65 @@ TEST_CASE(
     template DoIt(s: SomeStruct) t#"<Print_Vector_SomeOtherStruct(s.vec_SomeOtherStruct)>"#
   )");
   REQUIRE_NO_PARSE_ERROR(parser.Parse());
+}
+
+// -----------------------------------------------------------------------------
+// Variant tests
+// -----------------------------------------------------------------------------
+TEST_CASE("Calling a variant template should succeed.", "[template][variant]") {
+  Parser parser(base_test_template + R"(
+    template DoIt(v: SomeVariant) t#"
+      <switch v>
+      </switch>
+    "#
+  )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+}
+
+TEST_CASE("Switch statement with non-variant type should fail.",
+          "[template][variant]") {
+  Parser parser(base_test_template + R"(
+    template DoIt(s: SomeStruct) t#"
+      <switch s>
+      </switch>
+    "#
+  )");
+  REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 3);
+}
+
+TEST_CASE("Switch statement with non-whitespace inner text should fail.",
+          "[template][variant]") {
+  Parser parser(base_test_template + R"(
+    template DoIt(v: SomeVariant) t#"
+      <switch v>
+      asdf
+      </switch>
+    "#
+  )");
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::OTHER);
+}
+
+TEST_CASE(
+    "Case statements within a switch must belong to the switched variant.",
+    "[template][variant]") {
+  Parser parser(base_test_template + R"(
+    template DoIt(v: SomeVariant) t#"
+      <switch v>
+      </switch>
+    "#
+  )");
+  REQUIRE(false);
+}
+TEST_CASE("Case statements must either exhaust the switch or have a default.",
+          "[template][variant]") {
+  Parser parser(base_test_template + R"(
+    template DoIt(v: SomeVariant) t#"
+      <switch v>
+      </switch>
+    "#
+  )");
+  REQUIRE(false);
 }
 
 // -----------------------------------------------------------------------------

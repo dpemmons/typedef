@@ -558,11 +558,11 @@ public:
     std::vector<antlr4::tree::TerminalNode *> TMPL_EXPR_CLOSE();
     antlr4::tree::TerminalNode* TMPL_EXPR_CLOSE(size_t i);
     antlr4::tree::TerminalNode *TMPL_KW_CLOSE_SWITCH();
+    std::vector<antlr4::tree::TerminalNode *> TMPL_TEXT();
+    antlr4::tree::TerminalNode* TMPL_TEXT(size_t i);
     std::vector<TmplCaseBlockContext *> tmplCaseBlock();
     TmplCaseBlockContext* tmplCaseBlock(size_t i);
     TmplDefaultBlockContext *tmplDefaultBlock();
-    std::vector<antlr4::tree::TerminalNode *> TMPL_TEXT();
-    antlr4::tree::TerminalNode* TMPL_TEXT(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

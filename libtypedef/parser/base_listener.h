@@ -16,6 +16,8 @@ class BaseListener : public TypedefParserBaseListener {
       : errors_list_(errors_list) {}
 
  protected:
+  void AddError(antlr4::tree::TerminalNode *txt, ParserErrorInfo::Type type,
+                std::string msg = "");
   void AddError(antlr4::ParserRuleContext *ctx, ParserErrorInfo::Type type,
                 std::string msg = "");
   void AddError(TypedefParser::IdentifierContext *identifier,

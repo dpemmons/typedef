@@ -1,7 +1,11 @@
 #include "libtypedef/parser/second_pass.h"
 
+#include <algorithm>
+#include <cctype>
+#include <iostream>
 #include <set>
 #include <stdexcept>
+#include <string>
 
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
@@ -71,6 +75,35 @@ void SecondPassListener::enterTmplElIfSubBlock(
     TypedefParser::TmplElIfSubBlockContext* ctx) {
   ExpectTruthy(ctx->tmplExpression());
 }
+
+void SecondPassListener::enterTmplSwitchBlock(
+    TypedefParser::TmplSwitchBlockContext* ctx) {
+  if (!ctx->tmplValueReferencePath()->leaf_definition ||
+      !DefinesVariant(ctx->tmplValueReferencePath()->leaf_definition)) {
+    AddError(ctx->tmplValueReferencePath(), ParserErrorInfo::INVALID_ARGUMENT,
+             "Must be a variant.");
+  }
+  auto vec = ctx->TMPL_TEXT();
+  for (auto* txt : vec) {
+    string str = txt->getText();
+    bool has_non_whitespace =
+        std::any_of(str.begin(), str.end(),
+                    [](unsigned char ch) { return !std::isspace(ch); });
+    if (has_non_whitespace) {
+      AddError(txt, ParserErrorInfo::OTHER,
+               "Only whitespace or case blocks allowed inside a switch block.");
+    }
+  }
+  switch_case_label_stack.push_back(ctx->tmplValueReferencePath());
+}
+void SecondPassListener::exitTmplSwitchBlock(
+    TypedefParser::TmplSwitchBlockContext* ctx) {
+  switch_case_label_stack.pop_back();
+}
+void SecondPassListener::enterTmplCaseBlock(
+    TypedefParser::TmplCaseBlockContext* ctx) {}
+void SecondPassListener::exitTmplCaseBlock(
+    TypedefParser::TmplCaseBlockContext* ctx) {}
 
 void SecondPassListener::ExpectTruthy(
     TypedefParser::TmplExpressionContext* ctx) {

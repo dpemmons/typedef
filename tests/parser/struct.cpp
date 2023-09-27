@@ -6,7 +6,7 @@
 #include <variant>
 
 #include "helpers.h"
-#include "libtypedef/parser/grammar_functions.h"
+#include "libtypedef/parser/ast_functions.h"
 #include "libtypedef/parser/typedef_parser.h"
 
 using namespace std;

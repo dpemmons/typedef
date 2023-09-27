@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "helpers.h"
-#include "libtypedef/parser/grammar_functions.h"
+#include "libtypedef/parser/ast_functions.h"
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/typedef_parser.h"
 
@@ -43,6 +43,16 @@ module someModule;
   REQUIRE(parser.GetCompilationUnitContext()->moduleDeclaration());
   REQUIRE(ToString(parser.GetCompilationUnitContext()->moduleDeclaration()) ==
           "::someModule");
+}
+
+TEST_CASE("Use declarations", "[module]") {
+  // TODO use declarations don't actually have any effect at the moment.
+  Parser parser(R"(
+typedef=alpha;
+module test;
+use someModule;
+    )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
 }
 
 TEST_CASE("Duplicate structs should error", "[module]") {
