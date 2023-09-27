@@ -607,9 +607,6 @@ class {{identifier}} {
   }
 ## if field.access_by == "value" 
   {{cpp_type(field)}} get_{{field.identifier}}() const {
-    if (!is_{{field.identifier}}()) {
-      TD_THROW("Attempted invalid variant access");
-    }
     return std::get<{{field.index}}>(val_);
   }
   void set_{{field.identifier}}({{cpp_type(field)}} val) {
@@ -619,26 +616,22 @@ class {{identifier}} {
   {{cpp_type(field)}}& {{field.identifier}}() {
     if (!is_{{field.identifier}}()) {
       tag = Tag::TAG_{{field.identifier}};
+      val_.emplace<{{field.index}}>();
     }
     return std::get<{{field.index}}>(val_);
   }
   const {{cpp_type(field)}}& {{field.identifier}}() const {
-    if (!is_{{field.identifier}}()) {
-      TD_THROW("Attempted invalid variant access");
-    }
     return std::get<{{field.index}}>(val_);
   }
 ## else if field.access_by == "reference"
   {{cpp_type(field)}}& {{field.identifier}}() {
     if (!is_{{field.identifier}}()) {
       tag = Tag::TAG_{{field.identifier}};
+      val_.emplace<{{field.index}}>();
     }
     return std::get<{{field.index}}>(val_);
   }
   const {{cpp_type(field)}}& {{field.identifier}}() const {
-    if (!is_{{field.identifier}}()) {
-      TD_THROW("Attempted invalid variant access");
-    }
     return std::get<{{field.index}}>(val_);
   }
   void set_{{field.identifier}}({{cpp_type(field)}}&& val) {
@@ -647,19 +640,13 @@ class {{identifier}} {
   }
 ## else if field.access_by == "pointer" 
   bool has_{{field.identifier}}() const {
-    if (!is_{{field.identifier}}()) {
-      TD_THROW("Attempted invalid variant access");
-    }
-    return std::get<{{field.index}}>(val_).operator bool();
+    return is_{{field.identifier}}() && std::get<{{field.index}}>(val_).operator bool();
   }
   void alloc_{{field.identifier}}() {
     tag = Tag::TAG_{{field.identifier}};
     val_.emplace<{{field.index}}>(std::make_unique<{{cpp_type(field)}}>());
   }
   void delete_{{field.identifier}}() {
-    if (!is_{{field.identifier}}()) {
-      TD_THROW("Attempted invalid variant access");
-    }
     return std::get<{{field.index}}>(val_).reset(nullptr);
   }
   void set_{{field.identifier}}(std::unique_ptr<{{cpp_type(field)}}> val) {
@@ -676,25 +663,12 @@ class {{identifier}} {
       alloc_{{field.identifier}}();
     }
     #endif
-    #ifdef DEBUG
-    if (!has_{{field.identifier}}()) {
-      TD_THROW("Attempted null reference");
-    }
-    #endif
     return std::get<{{field.index}}>(val_).get();
   }
   {{cpp_type(field)}}& {{field.identifier}}() {
-    if (!is_{{field.identifier}}()) {
-      tag = Tag::TAG_{{field.identifier}};
-    }
     return *ptr_{{field.identifier}}();
   }
   const {{cpp_type(field)}}& {{field.identifier}}() const {
-    #ifdef DEBUG
-    if (!has_{{field.identifier}}()) {
-      TD_THROW("Attempted null reference");
-    }
-    #endif
     return *std::get<{{field.index}}>(val_).get();
   }
 ## endif
