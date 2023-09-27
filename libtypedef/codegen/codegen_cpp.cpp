@@ -168,7 +168,7 @@ json GetStruct(TypeDefinitionContext* type, optional<string> maybe_identifier) {
 
   for (int ii = 0; ii < type->fieldBlock()->fieldDefinition().size(); ii++) {
     json f = GetField(type->fieldBlock()->fieldDefinition()[ii]);
-    f["index"] = ii + 1; // 1 indexed because std::variant monostate is 0
+    f["index"] = ii + 1;  // 1 indexed because std::variant monostate is 0
     j["fields"].push_back(f);
   }
 
@@ -289,6 +289,12 @@ json GetTempalteSwitchBlock(TypedefParser::TmplSwitchBlockContext* ctx) {
   j["identifier"] = GetTemplateValueDereference(ctx->tmplValueReferencePath());
   for (auto* c : ctx->tmplCaseBlock()) {
     j["case"].push_back(GetTemplateCaseBlock(c));
+  }
+  if (ctx->tmplDefaultBlock()) {
+    j["default"]["items"] =
+        GetTemplateItems(ctx->tmplDefaultBlock()->tmplItem());
+  } else {
+    j["default"]["items"] = json::array();
   }
   return j;
 }
@@ -439,6 +445,12 @@ void CodegenCpp(OutPathBase* out_path,
   env.add_callback("tmpl_val_ref", 1, [&](Arguments& args) mutable {
     json arg = args.at(0)->get<json>();
     return env.render(tmpl_val_ref, arg);
+  });
+
+  Template tmpl_has_val_ref;
+  env.add_callback("tmpl_has_val_ref", 1, [&](Arguments& args) mutable {
+    json arg = args.at(0)->get<json>();
+    return env.render(tmpl_has_val_ref, arg);
   });
 
   struct_tmpl = env.parse(R"(
@@ -705,6 +717,9 @@ class {{identifier}} {
   tmpl_val_ref = env.parse(
       R"({%for val_ref in val_ref_path%}{{val_ref}}{%if not loop.is_first%}(){%endif%}{%if not loop.is_last%}.{%endif%}{%endfor%})");
 
+  tmpl_has_val_ref = env.parse(
+      R"({%for val_ref in val_ref_path%}{%if loop.is_last%}is_{%endif%}{{val_ref}}{%if not loop.is_first%}(){%endif%}{%if not loop.is_last%}.{%endif%}{%endfor%})");
+
   tmpl_func_declaration = env.parse(R"(
 void {{identifier}}(std::ostream& os{{params_list(params)}});
   )");
@@ -741,6 +756,16 @@ void {{identifier}}(std::ostream& os{{params_list(params)}});
 {%endif%}
     {%for item in for.items%}{{tmpl_item(item)}}{%endfor%}
   }
+## else if exists("switch")
+  // switch {{switch.identifier}}
+## for case in switch.case
+if ({{tmpl_has_val_ref(case.label)}}) {
+  {%for item in case.items%}{{tmpl_item(item)}}{%endfor%}
+} else 
+## endfor
+{
+  {%for item in switch.default.items%}{{tmpl_item(item)}}{%endfor%}
+}
 ## endif)");
 
   tmpl_func_definition = env.parse(R"(
