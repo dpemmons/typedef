@@ -6,10 +6,13 @@ The language is ***in active development***; the gramamr is stabilizing but stil
 
 ## Documentation (Incomplete, In-Progress)
 
-* [Types](./docs/types.md)
-  * [String Templates](./docs/template_strings.md)
-* [Coding Conventions](./docs/conventions.md)
-* [Architecture](./docs/ARCHITECTURE.md)
+* For Users:
+  * [Types](./docs/types.md)
+  * [String Templates](./docs/string_templates.md)
+* For Contributors:
+  * [Coding Conventions](./docs/CONVENTIONS.md)
+  * [Architecture](./docs/ARCHITECTURE.md)
+  * [Ideas / notes](./docs/ideas.md)
 
 ## TODO List
 
