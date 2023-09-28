@@ -277,7 +277,7 @@ class SomeVariant {
   }
   void set_a_string(std::string&& val) {
     tag = Tag::TAG_a_string;
-    val_.emplace<1>(val);
+    val_.emplace<1>(std::move(val));
   }
 
   bool is_b_int() const {

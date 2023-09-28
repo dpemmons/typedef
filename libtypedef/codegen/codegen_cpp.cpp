@@ -154,8 +154,8 @@ json GetStruct(TypeDefinitionContext* type, optional<string> maybe_identifier) {
       maybe_identifier ? *maybe_identifier : type->type_identifier->id;
 
   if (type->fieldBlock()->typeDefinition().size()) {
-    j["nested_type_decls"].push_back(
-        GetUserTypeDecls(type->fieldBlock()->typeDefinition()));
+    j["nested_type_decls"] =
+        GetUserTypeDecls(type->fieldBlock()->typeDefinition());
   }
 
   // Some field types require inline type declarations.
@@ -648,7 +648,7 @@ class {{identifier}} {
   }
   void set_{{field.identifier}}({{cpp_type(field)}}&& val) {
     tag = Tag::TAG_{{field.identifier}};
-    val_.emplace<{{field.index}}>(val);
+    val_.emplace<{{field.index}}>(std::move(val));
   }
 ## else if field.access_by == "pointer" 
   bool has_{{field.identifier}}() const {
