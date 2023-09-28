@@ -1,4 +1,4 @@
-# Typdedef Development Notes
+# Ideas / Notes / References
 
 Command line utility should, by default print out all the parts of the parsed file.
 Modes:
@@ -8,7 +8,7 @@ Modes:
 
 ## Language Design notes
 
-### Grammar notes and examples
+### Examples
 
 - FlatBuffers: https://google.github.io/flatbuffers/flatbuffers_guide_writing_schema.html
 
