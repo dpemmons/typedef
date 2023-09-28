@@ -4,7 +4,7 @@ Typedef is a statically typed data declaration language and code generator, inte
 
 The language is ***in active development***; the gramamr is stabilizing but still incomplete and may change. Code generation is incomplete. Docs are very incomplete. As are tests. It may not compile. It will probably eat your homework.
 
-## Documentation (Incomplete, In-Progress)
+## Documentation
 
 * For Users:
   * [Types](./docs/types.md)
