@@ -17,18 +17,17 @@ Items in ***bold*** are in-progress.
 
 * [ ] update examples
 * [ ] **string templates**
-  * [ ] variants (switch statements?)
   * [ ] built-in functions: first() last() etc.
   * [ ] configurable opening / closing strings
     * [ ] formatting
   * [ ] comments
   * [ ] escape delimiters
-  * [ ] prevent unbounded recursion
 * [ ] tests
 * [ ] generated cpp features (probably after template engine)
   * [ ] pretty print methods
   * [ ] comparison operators
   * [ ] prevent keyword collision (like protoc? <https://protobuf.dev/reference/cpp/cpp-generated/#generated-filenames>)
+  * [ ] prevent unbounded recursion of generated template functions?
 * [ ] more types
   * [ ] optionals
   * [ ] onordered set type? (does it make sense?)
@@ -60,7 +59,6 @@ Done moved here (and then eventually deleted):
 * [x] make symbol references independent of declaration order
 * [x] tests: literals... (clear out /old)
 
-
 string templates
 
 * [x] simple replacement
@@ -68,3 +66,4 @@ string templates
 * [x] type checking
 * [x] type checking tests
 * [x] subtemplates
+* [ ] variants: switch statements
