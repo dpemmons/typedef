@@ -14,7 +14,7 @@ The language is ***in active development***; the gramamr is stabilizing but stil
   * [Architecture](./docs/ARCHITECTURE.md)
   * [Ideas / notes](./docs/ideas.md)
 
-## TODO List
+## TODO
 
 Items in ***bold*** are in-progress.
 
