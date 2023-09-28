@@ -16,6 +16,7 @@ The language is ***in active development***; the gramamr is stabilizing but stil
 Items in ***bold*** are in-progress.
 
 * [ ] **string templates**
+  * [ ] inside-out mode?
   * [ ] built-in functions: first() last() etc.
   * [ ] configurable opening / closing strings
     * [ ] formatting
