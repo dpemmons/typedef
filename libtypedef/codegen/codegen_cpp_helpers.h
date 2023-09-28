@@ -6,8 +6,6 @@
 
 namespace td {
 
-std::string_view StructAlignmentMacro();
-
 /**
  * @brief Escapes a UTF-8 string to a valid C++ identifier.
  *
