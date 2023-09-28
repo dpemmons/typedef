@@ -49,7 +49,9 @@ struct ParserErrorInfo {
     NOT_A_TEMPLATE_FUNCTION = 28,
     FIELD_NOT_FOUND = 29,
     BINDING_VARIABLE_MISMATCH = 30,
-    INVALID_ARGUMENT = 31
+    INVALID_ARGUMENT = 31,
+    INVALID_CASE_LABEL = 32,
+    MISSING_CASE_LABEL = 33,
   };
   Type error_type;
 

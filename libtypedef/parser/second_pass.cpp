@@ -76,6 +76,25 @@ void SecondPassListener::enterTmplElIfSubBlock(
   ExpectTruthy(ctx->tmplExpression());
 }
 
+bool IsValidCaseLabel(
+    TypedefParser::TmplValueReferencePathContext* switch_expression,
+    TypedefParser::TmplValueReferencePathContext* case_label) {
+  std::vector<TypedefParser::TmplValueReferenceContext*> switch_parts =
+      switch_expression->tmplValueReference();
+  std::vector<TypedefParser::TmplValueReferenceContext*> case_parts =
+      case_label->tmplValueReference();
+  if (case_parts.size() != switch_parts.size() + 1) {
+    return false;
+  }
+  for (size_t ii = 0; ii < switch_parts.size(); ii++) {
+    if (switch_parts[ii]->tmplIdentifier()->id !=
+        case_parts[ii]->tmplIdentifier()->id) {
+      return false;
+    }
+  }
+  return true;
+}
+
 void SecondPassListener::enterTmplSwitchBlock(
     TypedefParser::TmplSwitchBlockContext* ctx) {
   if (!ctx->tmplValueReferencePath()->leaf_definition ||
@@ -94,6 +113,41 @@ void SecondPassListener::enterTmplSwitchBlock(
                "Only whitespace or case blocks allowed inside a switch block.");
     }
   }
+
+  bool has_default_block = ctx->tmplDefaultBlock();
+  set<string> case_lables;
+  for (auto* c : ctx->tmplCaseBlock()) {
+    if (!IsValidCaseLabel(ctx->tmplValueReferencePath(),
+                          c->tmplValueReferencePath())) {
+      AddError(c->tmplValueReferencePath(), ParserErrorInfo::INVALID_CASE_LABEL,
+               "Must be a variant member.");
+    }
+    if (!has_default_block) {
+      // Insert the referenced field name.
+      case_lables.insert(c->tmplValueReferencePath()
+                             ->tmplValueReference()
+                             .back()
+                             ->tmplIdentifier()
+                             ->id);
+    }
+  }
+
+  if (!has_default_block) {
+    // Ensure all fields are exhausted.
+    auto fields = ctx->tmplValueReferencePath()
+                      ->leaf_definition->fieldBlock()
+                      ->fieldDefinition();
+    for (auto* field : fields) {
+      if (!case_lables.count(field->field_identifier->id)) {
+        AddError(ctx->tmplValueReferencePath(),
+                 ParserErrorInfo::MISSING_CASE_LABEL,
+                 fmt::format("Missing case label for field '{}'. "
+                             "Alternatively, use a default block.",
+                             field->field_identifier->id));
+      }
+    }
+  }
+
   switch_case_label_stack.push_back(ctx->tmplValueReferencePath());
 }
 void SecondPassListener::exitTmplSwitchBlock(

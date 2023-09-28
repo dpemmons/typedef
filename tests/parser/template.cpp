@@ -239,8 +239,10 @@ struct SomeStruct {
 struct SomeOtherStruct {
   bar: i32;
 }
+
 struct YetSomeOtherStruct {
   asdf: str;
+  some_var: SomeVariant;
 }
 
 variant SomeVariant {
@@ -784,17 +786,19 @@ TEST_CASE("Calling a variant template should succeed.", "[template][variant]") {
   Parser parser(base_test_template + R"(
     template DoIt(v: SomeVariant) t#"
       <switch v>
+      <default></default>
       </switch>
     "#
   )");
   REQUIRE_NO_PARSE_ERROR(parser.Parse());
 }
 
-TEST_CASE("Switch statement with non-variant type should fail.",
+TEST_CASE("Switch statement requires a variant - other types should fail.",
           "[template][variant]") {
   Parser parser(base_test_template + R"(
     template DoIt(s: SomeStruct) t#"
       <switch s>
+      <default></default>
       </switch>
     "#
   )");
@@ -807,6 +811,7 @@ TEST_CASE("Switch statement with non-whitespace inner text should fail.",
     template DoIt(v: SomeVariant) t#"
       <switch v>
       asdf
+      <default></default>
       </switch>
     "#
   )");
@@ -818,22 +823,31 @@ TEST_CASE(
     "Case statements within a switch must belong to the switched variant.",
     "[template][variant]") {
   Parser parser(base_test_template + R"(
-    template DoIt(v: SomeVariant) t#"
-      <switch v>
+    template DoIt(s: YetSomeOtherStruct) t#"
+      <switch s.some_var>
+        <case s.asdf></case>
+        <default></default>
       </switch>
     "#
   )");
-  REQUIRE(false);
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::INVALID_CASE_LABEL);
 }
+
 TEST_CASE("Case statements must either exhaust the switch or have a default.",
           "[template][variant]") {
   Parser parser(base_test_template + R"(
     template DoIt(v: SomeVariant) t#"
       <switch v>
+        <case v.example_char></case>
+        <case v.example_str></case>
+        <case v.another_struct></case>
+        <case v.vec_i32></case>
       </switch>
     "#
   )");
-  REQUIRE(false);
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::MISSING_CASE_LABEL);
 }
 
 // -----------------------------------------------------------------------------

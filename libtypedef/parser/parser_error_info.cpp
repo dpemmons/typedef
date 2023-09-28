@@ -81,6 +81,10 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
       return "BINDING_VARIABLE_MISMATCH";
     case INVALID_ARGUMENT:
       return "INVALID_ARGUMENT";
+    case INVALID_CASE_LABEL:
+      return "INVALID_CASE_LABEL";
+    case MISSING_CASE_LABEL:
+      return "MISSING_CASE_LABEL";
     default:
       throw fmt::format("Unhandled error ID in ErrorTypeToString(): {}",
                         (int)error_type);
