@@ -147,17 +147,7 @@ void SecondPassListener::enterTmplSwitchBlock(
       }
     }
   }
-
-  switch_case_label_stack.push_back(ctx->tmplValueReferencePath());
 }
-void SecondPassListener::exitTmplSwitchBlock(
-    TypedefParser::TmplSwitchBlockContext* ctx) {
-  switch_case_label_stack.pop_back();
-}
-void SecondPassListener::enterTmplCaseBlock(
-    TypedefParser::TmplCaseBlockContext* ctx) {}
-void SecondPassListener::exitTmplCaseBlock(
-    TypedefParser::TmplCaseBlockContext* ctx) {}
 
 void SecondPassListener::ExpectTruthy(
     TypedefParser::TmplExpressionContext* ctx) {

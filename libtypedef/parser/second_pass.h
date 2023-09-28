@@ -30,17 +30,8 @@ class SecondPassListener : public BaseListener {
 
   virtual void enterTmplSwitchBlock(
       TypedefParser::TmplSwitchBlockContext* ctx) override;
-  virtual void exitTmplSwitchBlock(
-      TypedefParser::TmplSwitchBlockContext* ctx) override;
-  virtual void enterTmplCaseBlock(
-      TypedefParser::TmplCaseBlockContext* ctx) override;
-  virtual void exitTmplCaseBlock(
-      TypedefParser::TmplCaseBlockContext* ctx) override;
 
  private:
-  std::vector<TypedefParser::TmplValueReferencePathContext*>
-      switch_case_label_stack;
-
   void ExpectTruthy(TypedefParser::TmplExpressionContext* ctx);
 
   bool CheckMatch(TypedefParser::PrimitiveTypeIdentifierContext* expected,
