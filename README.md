@@ -19,14 +19,15 @@ The language is ***in active development***; the gramamr is stabilizing but stil
 Items in ***bold*** are in-progress.
 
 * [ ] **string templates**
-  * [ ] inside-out mode?
+  * [ ] escape sequences
   * [ ] built-in functions: first() last() etc.
+  * [ ] inside-out mode?
   * [ ] configurable opening / closing strings
     * [ ] formatting
   * [ ] comments
-  * [ ] escape delimiters
 * [ ] tests
 * [ ] generated cpp features (probably after template engine)
+  * [ ] self-hosting!
   * [ ] pretty print methods
   * [ ] comparison operators
   * [ ] prevent keyword collision (like protoc? <https://protobuf.dev/reference/cpp/cpp-generated/#generated-filenames>)
