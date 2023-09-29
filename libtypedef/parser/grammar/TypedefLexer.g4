@@ -264,7 +264,7 @@ HEX_PREFIX: '0x';
 OCT_PREFIX: '0o';
 BIN_PREFIX: '0b';
 
-START_TEMPLATE: 't#"' -> pushMode(TemplateIsland);
+START_TEMPLATE: 't"' -> pushMode(TemplateIsland);
 RAW_ESCAPE: 'r#';
 PLUS: '+';
 MINUS: '-';
@@ -319,9 +319,9 @@ RPAREN: ')';
 WS: ([\p{Zs}] | ('\r\n' | [\r\n]))+ -> skip;
 
 mode TemplateIsland;
-END_TEMPLATE: '"#' -> popMode;
+END_TEMPLATE: '"' -> popMode;
 TMPL_EXPR_OPEN: '<' -> pushMode(LogicExpressionIsland);
-TMPL_TEXT: ~["<]+;
+TMPL_TEXT: (~["<] | '\\"' | '\\<')+;
 
 mode LogicExpressionIsland;
 TMPL_EXPR_CLOSE: '>' -> popMode;

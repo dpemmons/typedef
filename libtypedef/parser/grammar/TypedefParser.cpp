@@ -1358,9 +1358,9 @@ TypedefParser::TmplTextContext* TypedefParser::tmplText() {
   try {
     enterOuterAlt(_localctx, 1);
     setState(206);
-    dynamic_cast<TmplTextContext *>(_localctx)->txt = match(TypedefParser::TMPL_TEXT);
+    match(TypedefParser::TMPL_TEXT);
    _ctx->stop = _input->LT(-1);
-    dynamic_cast<TmplTextContext *>(_localctx)->text =  _localctx->txt->getText();
+    td::SetTmplText(_localctx->text, _localctx);
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
@@ -4383,12 +4383,12 @@ std::vector<std::string> TypedefParser::_literalNames = {
   "'str'", "'f32'", "'f64'", "'u8'", "'u16'", "'u32'", "'u64'", "'i8'", 
   "'i16'", "'i32'", "'i64'", "", "", "", "", "", "", "", "", "", "", "", 
   "", "", "", "", "", "", "", "", "", "", "", "", "", "", "'0x'", "'0o'", 
-  "'0b'", "'t#\"'", "'r#'", "'+'", "'-'", "'*'", "", "'%'", "'^'", "'!'", 
+  "'0b'", "'t\"'", "'r#'", "'+'", "'-'", "'*'", "", "'%'", "'^'", "'!'", 
   "'&'", "'|'", "'&&'", "'||'", "'+='", "'-='", "'*='", "'/='", "'%='", 
   "'^='", "'&='", "'|='", "'<<='", "'>>='", "'='", "'=='", "'!='", "", "", 
   "'>='", "'<='", "'@'", "'_'", "", "'..'", "'...'", "", "';'", "':'", "", 
   "'->'", "'=>'", "'#'", "'$'", "'?'", "'{'", "'}'", "'['", "']'", "", "", 
-  "", "'\"#'", "", "", "", "", "", "", "", "", "", "", "'/for'", "", "'/switch'", 
+  "", "'\"'", "", "", "", "", "", "", "", "", "", "", "'/for'", "", "'/switch'", 
   "'case'", "'/case'", "", "'/default'", "", "", "'/if'", "", "'elif'"
 };
 

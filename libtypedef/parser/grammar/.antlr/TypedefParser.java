@@ -100,14 +100,14 @@ public class TypedefParser extends Parser {
 			"'char'", "'str'", "'f32'", "'f64'", "'u8'", "'u16'", "'u32'", "'u64'", 
 			"'i8'", "'i16'", "'i32'", "'i64'", null, null, null, null, null, null, 
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, "'0x'", "'0o'", "'0b'", "'t#\"'", 
+			null, null, null, null, null, null, null, "'0x'", "'0o'", "'0b'", "'t\"'", 
 			"'r#'", "'+'", "'-'", "'*'", null, "'%'", "'^'", "'!'", "'&'", "'|'", 
 			"'&&'", "'||'", "'+='", "'-='", "'*='", "'/='", "'%='", "'^='", "'&='", 
 			"'|='", "'<<='", "'>>='", "'='", "'=='", "'!='", null, null, "'>='", 
 			"'<='", "'@'", "'_'", null, "'..'", "'...'", null, "';'", "':'", null, 
 			"'->'", "'=>'", "'#'", "'$'", "'?'", "'{'", "'}'", "'['", "']'", null, 
-			null, null, "'\"#'", null, null, null, null, null, null, null, null, 
-			null, null, "'/for'", null, "'/switch'", "'case'", "'/case'", null, "'/default'", 
+			null, null, "'\"'", null, null, null, null, null, null, null, null, null, 
+			null, "'/for'", null, "'/switch'", "'case'", "'/case'", null, "'/default'", 
 			null, null, "'/if'", null, "'elif'"
 		};
 	}
@@ -1061,7 +1061,6 @@ public class TypedefParser extends Parser {
 
 	public static class TmplTextContext extends ParserRuleContext {
 		public std::string text;
-		public Token txt;
 		public TerminalNode TMPL_TEXT() { return getToken(TypedefParser.TMPL_TEXT, 0); }
 		public TmplTextContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1076,10 +1075,10 @@ public class TypedefParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(206);
-			((TmplTextContext)_localctx).txt = match(TMPL_TEXT);
+			match(TMPL_TEXT);
 			}
 			_ctx.stop = _input.LT(-1);
-			((TmplTextContext)_localctx).text =  _localctx->txt->getText();
+			td::SetTmplText(_localctx.text, _localctx);
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;

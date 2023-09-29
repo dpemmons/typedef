@@ -374,7 +374,6 @@ public:
   class  TmplTextContext : public antlr4::ParserRuleContext {
   public:
     std::string text;
-    antlr4::Token *txt = nullptr;;
     TmplTextContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *TMPL_TEXT();

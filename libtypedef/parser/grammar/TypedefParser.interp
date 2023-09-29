@@ -112,7 +112,7 @@ null
 '0x'
 '0o'
 '0b'
-'t#"'
+'t"'
 'r#'
 '+'
 '-'
@@ -163,7 +163,7 @@ null
 null
 null
 null
-'"#'
+'"'
 null
 null
 null

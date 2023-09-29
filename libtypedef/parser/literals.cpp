@@ -9,6 +9,7 @@
 #include "libtypedef/parser/literals.h"
 #include "libtypedef/parser/macros.h"
 #include "libtypedef/parser/parser_error_info.h"
+#include "literals.h"
 
 using namespace std;
 
@@ -162,20 +163,28 @@ T GetFloatValue(TypedefParser::FloatLiteralContext* ctx) {
 }
 
 string GetStringValue(antlr4::Token* token, char prefix_char,
-                      td::ParserErrorInfo::Type err_to_throw) {
+                      td::ParserErrorInfo::Type err_to_throw,
+                      bool remove_enclosing_quotes) {
   string text = token->getText();
   string_view literal(text);
-  if ((literal.size() < 2) || (prefix_char && literal.size() < 3)) {
-    throw MakeError(err_to_throw, "Invalid string literal", token);
+
+  size_t expected_min_length = remove_enclosing_quotes ? 2 : 0;
+  expected_min_length += prefix_char ? 1 : 0;
+  if (literal.size() < expected_min_length) {
+    throw MakeError(err_to_throw, "Invalid string literal: too short.", token);
   }
   if (prefix_char && literal.front() == prefix_char) {
     literal.remove_prefix(1);
   }
-  if (literal.front() == '"' && literal.back() == '"') {
-    literal.remove_prefix(1);
-    literal.remove_suffix(1);
-  } else {
-    throw MakeError(err_to_throw, "Invalid string literal", token);
+  if (remove_enclosing_quotes) {
+    if (literal.front() == '"' && literal.back() == '"') {
+      literal.remove_prefix(1);
+      literal.remove_suffix(1);
+    } else {
+      throw MakeError(err_to_throw,
+                      "Unexpected string literal format: no enclosing quotes",
+                      token);
+    }
   }
   ostringstream result;
   wstring_convert<codecvt_utf8<char32_t>, char32_t> converter;
@@ -203,6 +212,12 @@ string GetStringValue(antlr4::Token* token, char prefix_char,
           break;
         case '\'':
           result << '\'';
+          break;
+        case '<':
+          result << '<';
+          break;
+        case '>':
+          result << '>';
           break;
         case 'x': {
           if (i + 2 >= literal.size()) {
@@ -296,13 +311,18 @@ void SetStringLiteral(std::string& literal,
                       TypedefParser::StringLiteralContext* ctx) {
   if (ctx->STRING_LITERAL()) {
     literal = GetStringValue(ctx->STRING_LITERAL()->getSymbol(), 0,
-                             td::ParserErrorInfo::INVALID_STRING_LITERAL);
+                             td::ParserErrorInfo::INVALID_STRING_LITERAL, true);
   } else if (ctx->RAW_STRING_LITERAL()) {
     literal = GetRawString(ctx->RAW_STRING_LITERAL()->getSymbol(), 'r',
                            td::ParserErrorInfo::INVALID_RAW_STRING_LITERAL);
   } else {
     throw_logic_error("Invalid state.");
   }
+}
+
+void SetTmplText(std::string& text, TypedefParser::TmplTextContext* ctx) {
+  text = GetStringValue(ctx->TMPL_TEXT()->getSymbol(), 0,
+                        td::ParserErrorInfo::INVALID_STRING_LITERAL, false);
 }
 
 void SetFloatLiteral(FloatLiteral& literal,
