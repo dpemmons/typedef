@@ -43,7 +43,7 @@ CXXFLAGS.clang := -pthread \
                   -Wno-defaulted-function-deleted \
                   ${CXXFLAGS.clang.${BUILD}}
 
-CXXFLAGS := ${CXXFLAGS.${COMPILER}}
+CXXFLAGS := ${CXXFLAGS} ${CXXFLAGS.${COMPILER}}
 CFLAGS := ${CFLAGS.${COMPILER}}
 
 LDFLAGS.debug := -O0 -gdwarf-4

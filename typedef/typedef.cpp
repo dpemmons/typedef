@@ -13,6 +13,7 @@
 #include <fmt/ostream.h>
 
 #include "libtypedef/codegen/codegen_cpp.h"
+#include "libtypedef/codegen/codegen_cpp_inja.h"
 #include "libtypedef/codegen/file_printer.h"
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/typedef_parser.h"
@@ -71,7 +72,12 @@ int main(int argc, const char** argv) {
   }
   if (!args.GetCppOut().empty()) {
     auto outpath = std::make_unique<td::OutPath>(args.GetCppOut());
-    td::CodegenCpp(outpath.get(), parser.GetCompilationUnitContext(), nullptr);
+    if (args.UseSelfHostedCodegen()) {
+      td::CodegenCpp(outpath.get(), parser.GetCompilationUnitContext());
+    } else {
+      td::CodegenCppInja(outpath.get(), parser.GetCompilationUnitContext(),
+                         nullptr);
+    }
   }
 
   return 0;

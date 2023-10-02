@@ -17,6 +17,7 @@ std::variant<Args, int> Args::ParseArgs(int argc, const char* argv[]) {
   app.add_flag("-p,--print", args.print_,
                "Print a summary of the file to stdout");
   app.add_flag("-v,--verbose", args.verbose_, "Verbose.");
+  app.add_flag("--self_hosted_codegen", args.self_host_codegen_, "Use typedef string templates for codegen.");
   app.add_option("--cpp_out", args.cpp_out_, "Generate C++ header and source and output them to this path.");
 
   try {

@@ -11,8 +11,7 @@
 namespace td {
 
 void CodegenCpp(OutPathBase* out_path,
-                TypedefParser::CompilationUnitContext* compilation_unit_ctx,
-                std::ostream* json_dump_os = nullptr);
+                TypedefParser::CompilationUnitContext* compilation_unit_ctx);
 
 }  // namespace td
 
