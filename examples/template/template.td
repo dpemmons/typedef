@@ -7,11 +7,11 @@ struct StructC {
   jkl: i32;
 };
 
-template PrintStructC(sc: StructC) t#"
+template PrintStructC(sc: StructC) t"
 StructC contains:
 zxcv: <sc.zxcv>
 jkl: <sc.jkl>
-"#
+"
 
 struct TemplateData {
   name: str;
@@ -23,7 +23,7 @@ struct TemplateData {
   structC: StructC;
 };
 
-template PrintTemplateData(t: TemplateData) t#"
+template PrintTemplateData(t: TemplateData) t"
   here's an if:
   <if t.has_name>
     yo name: <t.name>
@@ -44,7 +44,7 @@ template PrintTemplateData(t: TemplateData) t#"
   </for>
   Here's structC
   <PrintStructC(t.structC)>
-"#
+"
 
 variant SomeVariant {
   a_string: str;
@@ -53,11 +53,11 @@ variant SomeVariant {
   d_struct: StructC;
 }
 
-template DoSomeVariant(v: SomeVariant) t#"
+template DoSomeVariant(v: SomeVariant) t"
   <switch v>
    <case v.a_string>It's a string: <v.a_string></case>
    <case v.b_int>It's an int: <v.b_int></case>
    <case v.d_struct>It's a struct: <PrintStructC(v.d_struct)></case>
    <default>It's the default!</default>
   </switch>
-"#
+"
