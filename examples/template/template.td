@@ -61,3 +61,15 @@ template DoSomeVariant(v: SomeVariant) t"
    <default>It's the default!</default>
   </switch>
 "
+
+template LoopLogic(v: vector<str>) t"
+  <for i in v>
+  <if IsFirst()>
+  This is the first one: <i>
+  <elif IsLast()>
+  This is the last one: <i>
+  <else>
+  This is the middle: <i>
+  </if>
+  </for>
+"

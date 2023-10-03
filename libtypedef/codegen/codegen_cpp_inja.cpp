@@ -237,26 +237,19 @@ json GetTemplateExpression(TypedefParser::TmplExpressionContext* ctx) {
 
 json GetTemplateIfBlock(TypedefParser::TmplIfBlockContext* ctx) {
   json j;
-  j["stmt"] = GetTemplateValueDereference(ctx->tmplIfSubBlock()
-                                              ->tmplExpression()
-                                              ->tmplStringExpression()
-                                              ->tmplValueReferencePath());
+  j["expression"] =
+      GetTemplateExpression(ctx->tmplIfSubBlock()->tmplExpression());
   j["items"] = GetTemplateItems(ctx->tmplIfSubBlock()->tmplItem());
-
   j["elifs"] = json::array();
   for (auto* elif : ctx->tmplElIfSubBlock()) {
     json e;
-    e["stmt"] = GetTemplateValueDereference(elif->tmplExpression()
-                                                ->tmplStringExpression()
-                                                ->tmplValueReferencePath());
+    e["expression"] = GetTemplateExpression(elif->tmplExpression());
     e["items"] = GetTemplateItems(elif->tmplItem());
     j["elifs"].push_back(e);
   }
-
   if (ctx->tmplElseSubBlock()) {
     j["else"]["items"] = GetTemplateItems(ctx->tmplElseSubBlock()->tmplItem());
   }
-
   return j;
 }
 
@@ -428,10 +421,16 @@ void CodegenCppInja(OutPathBase* out_path,
     return env.render(tmpl_func_definition, arg);
   });
 
-  Template tmpl_expression;
-  env.add_callback("tmpl_expression", 1, [&](Arguments& args) mutable {
+  Template tmpl_str_expression;
+  env.add_callback("tmpl_str_expression", 1, [&](Arguments& args) mutable {
     json arg = args.at(0)->get<json>();
-    return env.render(tmpl_expression, arg);
+    return env.render(tmpl_str_expression, arg);
+  });
+
+  Template tmpl_bool_expression;
+  env.add_callback("tmpl_bool_expression", 1, [&](Arguments& args) mutable {
+    json arg = args.at(0)->get<json>();
+    return env.render(tmpl_bool_expression, arg);
   });
 
   Template tmpl_item;
@@ -726,24 +725,33 @@ class {{identifier}} {
 void {{identifier}}(std::ostream& os{{params_list(params)}});
   )");
 
-  tmpl_expression = env.parse(R"(
+  tmpl_str_expression = env.parse(R"(
 ## if exists("value_ref")
   os << {{ tmpl_val_ref(value_ref) }};
 ## else if exists("call")
-  {{call.func}}(os, {%for arg in call.args%}{{tmpl_val_ref(arg)}} {% if not loop.is_last %}, {%endif%}{%endfor%});
+  {{call.func}}(os{%for arg in call.args%}, {{tmpl_val_ref(arg)}}{%endfor%});
 ## endif
   )");
 
+  tmpl_bool_expression = env.parse(R"(
+## if exists("value_ref")
+  {{ tmpl_val_ref(value_ref) }}
+## else if exists("call")
+  {{call.func}}()
+## endif
+  )");
+
+  // TODO change tmpl_val_ref to match "expression" logic in GetTemplateIfBlock
   tmpl_item = env.parse(
       R"(## if exists("text")
   os << R"{{escape}}({{text}}){{escape}}";
 ## else if exists("expression")
-  {{ tmpl_expression(expression) }}
+  {{ tmpl_str_expression(expression) }}
 ## else if exists("if")
-  if ({{tmpl_val_ref(if.stmt)}}) {
+  if ({{tmpl_bool_expression(if.expression)}}) {
     {%for item in if.items%}{{tmpl_item(item)}}{%endfor%}
   {% for elif in if.elifs %}
-  } else if ({{tmpl_val_ref(elif.stmt)}}) {
+  } else if ({{tmpl_bool_expression(elif.expression)}}) {
     {%for item in elif.items%}{{tmpl_item(item)}}{%endfor%}
   {%endfor%}
   } {% if existsIn(if, "else") %} else {
@@ -752,7 +760,12 @@ void {{identifier}}(std::ostream& os{{params_list(params)}});
 
 ## else if exists("for")
 {%if existsIn(for, "var")%}
-  for (auto& {{for.var}} : {{tmpl_val_ref(for.collection)}}) {
+  for (size_t ii = 0; ii < {{tmpl_val_ref(for.collection)}}.size(); ii++) {
+    auto& {{for.var}} = {{tmpl_val_ref(for.collection)}}[ii];
+    auto IsFirst = [&]() { return ii == 0; };
+    auto IsLast = [&]() {
+      return ii == {{tmpl_val_ref(for.collection)}}.size() - 1;
+    };
 {%else%}
   for (auto const& [{{for.key}}, {{for.val}}] : {{tmpl_val_ref(for.collection)}}) {
 {%endif%}

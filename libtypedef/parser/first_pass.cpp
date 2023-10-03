@@ -18,6 +18,12 @@ namespace td {
 
 using namespace std;
 
+FirstPassListener::FirstPassListener(std::vector<ParserErrorInfo>& errors_list)
+    : BaseListener(errors_list) {
+  identifiers_.emplace("IsFirst", &is_first_func_);
+  identifiers_.emplace("IsLast", &is_last_func_);
+}
+
 void FirstPassListener::enterCompilationUnit(
     TypedefParser::CompilationUnitContext* ctx) {
   for (auto* tctx : ctx->typeDefinition()) {
@@ -253,11 +259,14 @@ void FirstPassListener::enterTmplFunctionCall(
              ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
     return;
   }
-  if (!holds_alternative<TypedefParser::TmplDefinitionContext*>(
-          search->second)) {
+  if (holds_alternative<BuiltinFunction*>(search->second)) {
+    ctx->built_in = true;
+  } else if (!holds_alternative<TypedefParser::TmplDefinitionContext*>(
+                 search->second)) {
     AddError(ctx->tmplIdentifier(), ParserErrorInfo::NOT_A_TEMPLATE_FUNCTION);
+  } else {
+    ctx->tmpl_def = get<TypedefParser::TmplDefinitionContext*>(search->second);
   }
-  ctx->tmpl_def = get<TypedefParser::TmplDefinitionContext*>(search->second);
 }
 
 void FirstPassListener::exitTmplStringExpression(

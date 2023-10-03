@@ -21,10 +21,17 @@ using namespace std;
 
 void SecondPassListener::enterTmplFunctionCall(
     TypedefParser::TmplFunctionCallContext* ctx) {
-  std::vector<TypedefParser::FunctionParameterContext*> expected_params =
-      ctx->tmpl_def->functionParameter();
   std::vector<TypedefParser::TmplValueReferencePathContext*> actual_params =
       ctx->tmplValueReferencePath();
+  if (ctx->built_in) {
+    if (actual_params.size()) {
+      AddError(ctx, ParserErrorInfo::INVALID_ARGUMENT,
+               "Builtin functions don't take params");
+    }
+    return;
+  }
+  std::vector<TypedefParser::FunctionParameterContext*> expected_params =
+      ctx->tmpl_def->functionParameter();
   if (expected_params.size() != actual_params.size()) {
     AddError(ctx, ParserErrorInfo::INVALID_ARGUMENT,
              fmt::format("Function '{}' expects {} arguments but {} provided.",
@@ -154,6 +161,11 @@ void SecondPassListener::ExpectTruthy(
   if (ctx->tmplStringExpression()) {
     auto* vrp = ctx->tmplStringExpression()->tmplValueReferencePath();
     if (vrp->leaf_annotation && ReferencesTruthyType(vrp->leaf_annotation)) {
+      return;
+    }
+  } else if (ctx->tmplFunctionCall()) {
+    if (ctx->tmplFunctionCall()->tmplIdentifier()->id == "IsFirst" ||
+        ctx->tmplFunctionCall()->tmplIdentifier()->id == "IsLast") {
       return;
     }
   }

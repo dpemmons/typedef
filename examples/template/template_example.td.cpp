@@ -26,7 +26,9 @@ void PrintTemplateData(std::ostream& os, const TemplateData& t) {
   os << R"(
   here's an if:
   )";
-  if (t.has_name()) {
+  if (
+  t.has_name()
+  ) {
   os << R"(
     yo name: )";
   
@@ -34,7 +36,9 @@ void PrintTemplateData(std::ostream& os, const TemplateData& t) {
   
   os << R"(
   )";
-  } else if (t.has_name2()) {
+  } else if (
+  t.has_name2()
+  ) {
   os << R"(
     hi name2: )";
   
@@ -51,7 +55,12 @@ void PrintTemplateData(std::ostream& os, const TemplateData& t) {
 
   here's a for statement over a vector:
   )";
-  for (auto& i : t.someVec()) {
+  for (size_t ii = 0; ii < t.someVec().size(); ii++) {
+    auto& i = t.someVec()[ii];
+    auto IsFirst = [&]() { return ii == 0; };
+    auto IsLast = [&]() {
+      return ii == t.someVec().size() - 1;
+    };
   os << R"(
     for value number: )";
   
@@ -112,6 +121,53 @@ if (v.is_d_struct()) {
 {
   os << R"(It's the default!)";
 }
+  os << R"(
+)";
+}
+
+void LoopLogic(std::ostream& os, const td::Vector<std::string>& v) {
+  os << R"(
+  )";
+  for (size_t ii = 0; ii < v.size(); ii++) {
+    auto& i = v[ii];
+    auto IsFirst = [&]() { return ii == 0; };
+    auto IsLast = [&]() {
+      return ii == v.size() - 1;
+    };
+  os << R"(
+  )";
+  if (
+  IsFirst()
+  ) {
+  os << R"(
+  This is the first one: )";
+  
+  os << i;
+  
+  os << R"(
+  )";
+  } else if (
+  IsLast()
+  ) {
+  os << R"(
+  This is the last one: )";
+  
+  os << i;
+  
+  os << R"(
+  )";
+  } else {
+  os << R"(
+  This is the middle: )";
+  
+  os << i;
+  
+  os << R"(
+  )";
+  }
+  os << R"(
+  )";
+  }
   os << R"(
 )";
 }

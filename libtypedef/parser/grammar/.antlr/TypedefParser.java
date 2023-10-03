@@ -1140,6 +1140,7 @@ public class TypedefParser extends Parser {
 
 	public static class TmplFunctionCallContext extends ParserRuleContext {
 		public TmplDefinitionContext* tmpl_def;
+		public bool built_in;
 		public TmplIdentifierContext tmplIdentifier() {
 			return getRuleContext(TmplIdentifierContext.class,0);
 		}
@@ -1164,7 +1165,7 @@ public class TypedefParser extends Parser {
 	public final TmplFunctionCallContext tmplFunctionCall() throws RecognitionException {
 		TmplFunctionCallContext _localctx = new TmplFunctionCallContext(_ctx, getState());
 		enterRule(_localctx, 28, RULE_tmplFunctionCall);
-		((TmplFunctionCallContext)_localctx).tmpl_def =  nullptr;
+		((TmplFunctionCallContext)_localctx).tmpl_def =  nullptr; ((TmplFunctionCallContext)_localctx).built_in =  false;
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);

@@ -36,5 +36,11 @@ int main(int argc, char *argv[]) {
   sv.d_struct().jkl() = 6;
   DoSomeVariant(std::cout, sv);
 
+  td::Vector<std::string> v;
+  v.push_back("one");
+  v.push_back("two");
+  v.push_back("three");
+  LoopLogic(std::cout, v);
+
   return 0;
 }

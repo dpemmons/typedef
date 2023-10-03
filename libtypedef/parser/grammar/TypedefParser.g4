@@ -71,8 +71,8 @@ tmplText
 
 tmplExpression: tmplFunctionCall | tmplStringExpression;
 tmplFunctionCall
-	returns[TmplDefinitionContext* tmpl_def] //
-	@init {$tmpl_def = nullptr;}: //
+	returns[TmplDefinitionContext* tmpl_def, bool built_in] //
+	@init {$tmpl_def = nullptr; $built_in = false;}: //
 	tmplIdentifier TMPL_LPAREN tmplValueReferencePath? (
 		TMPL_COMMA tmplValueReferencePath
 	)* TMPL_RPAREN;

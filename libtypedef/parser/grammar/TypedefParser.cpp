@@ -1509,7 +1509,7 @@ antlrcpp::Any TypedefParser::TmplFunctionCallContext::accept(tree::ParseTreeVisi
 TypedefParser::TmplFunctionCallContext* TypedefParser::tmplFunctionCall() {
   TmplFunctionCallContext *_localctx = _tracker.createInstance<TmplFunctionCallContext>(_ctx, getState());
   enterRule(_localctx, 28, TypedefParser::RuleTmplFunctionCall);
-  dynamic_cast<TmplFunctionCallContext *>(_localctx)->tmpl_def =  nullptr;
+  dynamic_cast<TmplFunctionCallContext *>(_localctx)->tmpl_def =  nullptr; dynamic_cast<TmplFunctionCallContext *>(_localctx)->built_in =  false;
   size_t _la = 0;
 
   auto onExit = finally([=] {

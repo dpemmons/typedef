@@ -1,8 +1,6 @@
 #ifndef PARSER_FIRST_PASS_H__
 #define PARSER_FIRST_PASS_H__
 
-#include <antlr4/antlr4-runtime.h>
-
 #include <memory>
 #include <string>
 #include <variant>
@@ -18,8 +16,7 @@ namespace td {
 
 class FirstPassListener : public BaseListener {
  public:
-  FirstPassListener(std::vector<ParserErrorInfo> &errors_list)
-      : BaseListener(errors_list) {}
+  FirstPassListener(std::vector<ParserErrorInfo> &errors_list);
 
   virtual void enterCompilationUnit(
       TypedefParser::CompilationUnitContext *ctx) override;
@@ -60,14 +57,23 @@ class FirstPassListener : public BaseListener {
       TypedefParser::TmplValueReferencePathContext *ctx) override;
 
  private:
+  struct BuiltinFunction {
+    bool hi;
+  };
   using IdentifierCtx =
       std::variant<std::monostate,                               //
                    TypedefParser::TypeDefinitionContext *,       //
                    TypedefParser::TmplDefinitionContext *,       //
                    TypedefParser::FieldDefinitionContext *,      //
                    TypedefParser::TmplBindingVariableContext *,  //
-                   TypedefParser::FunctionParameterContext *>;   //
+                   TypedefParser::FunctionParameterContext *,
+                   BuiltinFunction *>;  //
   std::unordered_map<std::string, IdentifierCtx> identifiers_;
+
+  // TODO these really should be stored in the AST so they can be hold data
+  // (like return type) for the second_pass
+  BuiltinFunction is_first_func_;
+  BuiltinFunction is_last_func_;
 };
 
 }  // namespace td

@@ -881,3 +881,22 @@ TEST_CASE(
   )");
   REQUIRE_SINGLE_INVALID_ARGUMENT_AT(parser, 2);
 }
+
+TEST_CASE("Template IsFirst IsLast functions.", "[template][loop]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+    template DoIt(v: vector<str>) t"
+      <for i in v>
+      <if IsFirst()>
+      This is the first one: <i>
+      <elif IsLast()>
+      This is the last one: <i>
+      <else>
+      This is the middle: <i>
+      </if>
+      </for>
+    "
+  )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+}
