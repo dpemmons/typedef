@@ -345,6 +345,10 @@ void FirstPassListener::enterTmplValueReferencePath(
       base_annotation;
   TypedefParser::TypeDefinitionContext* type_def_previous_field =
       GetReferencedUserType(base_annotation);
+  if (!type_def_previous_field) {
+    // Should have already triggered UNRESOLVED_SYMBOL_REFERENCE.
+    return;
+  }
   for (size_t ii = 1; ii < path_parts.size(); ii++) {
     if ((ii != path_parts.size() - 1) && !type_def_previous_field) {
       AddError(path_parts[ii - 1], ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
