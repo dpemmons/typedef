@@ -127,6 +127,7 @@ if (v.is_d_struct()) {
 
 void LoopLogic(std::ostream& os, const td::Vector<std::string>& v) {
   os << R"(
+  LoopLogic:
   )";
   for (size_t ii = 0; ii < v.size(); ii++) {
     auto& i = v[ii];
@@ -165,6 +166,46 @@ void LoopLogic(std::ostream& os, const td::Vector<std::string>& v) {
   os << R"(
   )";
   }
+  os << R"(
+  )";
+  }
+  os << R"(
+)";
+}
+
+void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v) {
+  os << R"(
+  BooleanLogic:
+  )";
+  for (size_t ii = 0; ii < v.size(); ii++) {
+    auto& i = v[ii];
+    auto IsFirst = [&]() { return ii == 0; };
+    auto IsLast = [&]() {
+      return ii == v.size() - 1;
+    };
+  os << R"(
+  )";
+  
+  os << i;
+  
+  os << R"(
+  )";
+  if (
+  (! 
+  IsFirst()
+  )
+  ) {
+  os << R"(This is not the first one.)";
+  } 
+  os << R"(
+  )";
+  if (
+  (! 
+  IsLast()
+  )
+  ) {
+  os << R"(This is not the last one.)";
+  } 
   os << R"(
   )";
   }

@@ -50,11 +50,11 @@ public:
     LBRACK = 159, RBRACK = 160, LPAREN = 161, RPAREN = 162, WS = 163, END_TEMPLATE = 164, 
     TMPL_EXPR_OPEN = 165, TMPL_TEXT = 166, TMPL_EXPR_CLOSE = 167, TMPL_SLASH = 168, 
     TMPL_COMMA = 169, TMPL_DOT = 170, TMPL_LPAREN = 171, TMPL_RPAREN = 172, 
-    TMPL_PATHSEP = 173, TMPL_KW_FOR = 174, TMPL_KW_CLOSE_FOR = 175, TMPL_KW_SWITCH = 176, 
-    TMPL_KW_CLOSE_SWITCH = 177, TMPL_KW_CASE = 178, TMPL_KW_CLOSE_CASE = 179, 
-    TMPL_KW_DEFAULT = 180, TMPL_KW_CLOSE_DEFAULT = 181, TMPL_KW_IN = 182, 
-    TMPL_KW_IF = 183, TMPL_KW_CLOSEIF = 184, TMPL_KW_ELSE = 185, TMPL_KW_ELIF = 186, 
-    TMPL_NON_KEYWORD_IDENTIFIER = 187, TMPL_WS = 188
+    TMPL_PATHSEP = 173, TMPL_NOT = 174, TMPL_KW_FOR = 175, TMPL_KW_CLOSE_FOR = 176, 
+    TMPL_KW_SWITCH = 177, TMPL_KW_CLOSE_SWITCH = 178, TMPL_KW_CASE = 179, 
+    TMPL_KW_CLOSE_CASE = 180, TMPL_KW_DEFAULT = 181, TMPL_KW_CLOSE_DEFAULT = 182, 
+    TMPL_KW_IN = 183, TMPL_KW_IF = 184, TMPL_KW_CLOSEIF = 185, TMPL_KW_ELSE = 186, 
+    TMPL_KW_ELIF = 187, TMPL_NON_KEYWORD_IDENTIFIER = 188, TMPL_WS = 189
   };
 
   enum {
@@ -62,16 +62,15 @@ public:
     RuleTypeDefinition = 3, RuleFieldBlock = 4, RuleFieldDefinition = 5, 
     RuleTypeAnnotation = 6, RuleTypeIdentifier = 7, RuleUserType = 8, RuleTmplDefinition = 9, 
     RuleTmplBlock = 10, RuleTmplItem = 11, RuleTmplText = 12, RuleTmplExpression = 13, 
-    RuleTmplFunctionCall = 14, RuleTmplStringExpression = 15, RuleTmplIfBlock = 16, 
-    RuleTmplIfSubBlock = 17, RuleTmplElIfSubBlock = 18, RuleTmplElseSubBlock = 19, 
-    RuleTmplForBlock = 20, RuleTmplSwitchBlock = 21, RuleTmplCaseBlock = 22, 
-    RuleTmplDefaultBlock = 23, RuleTmplBindingVariables = 24, RuleTmplValueReferencePath = 25, 
-    RuleTmplValueReference = 26, RuleTmplBindingVariable = 27, RuleTmplIdentifier = 28, 
-    RuleFunctionParameter = 29, RuleUseDeclaration = 30, RuleSymbolPath = 31, 
-    RulePrimitiveLiteral = 32, RuleBoolLiteral = 33, RuleCharLiteral = 34, 
-    RuleStringLiteral = 35, RuleFloatLiteral = 36, RuleIntegerLiteral = 37, 
-    RuleIntDigits = 38, RuleIdentifier = 39, RulePrimitiveTypeIdentifier = 40, 
-    RuleKeyword = 41
+    RuleTmplFunctionCall = 14, RuleTmplIfBlock = 15, RuleTmplIfSubBlock = 16, 
+    RuleTmplElIfSubBlock = 17, RuleTmplElseSubBlock = 18, RuleTmplForBlock = 19, 
+    RuleTmplSwitchBlock = 20, RuleTmplCaseBlock = 21, RuleTmplDefaultBlock = 22, 
+    RuleTmplBindingVariables = 23, RuleTmplValueReferencePath = 24, RuleTmplValueReference = 25, 
+    RuleTmplBindingVariable = 26, RuleTmplIdentifier = 27, RuleFunctionParameter = 28, 
+    RuleUseDeclaration = 29, RuleSymbolPath = 30, RulePrimitiveLiteral = 31, 
+    RuleBoolLiteral = 32, RuleCharLiteral = 33, RuleStringLiteral = 34, 
+    RuleFloatLiteral = 35, RuleIntegerLiteral = 36, RuleIntDigits = 37, 
+    RuleIdentifier = 38, RulePrimitiveTypeIdentifier = 39, RuleKeyword = 40
   };
 
   TypedefParser(antlr4::TokenStream *input);
@@ -99,7 +98,6 @@ public:
   class TmplTextContext;
   class TmplExpressionContext;
   class TmplFunctionCallContext;
-  class TmplStringExpressionContext;
   class TmplIfBlockContext;
   class TmplIfSubBlockContext;
   class TmplElIfSubBlockContext;
@@ -391,8 +389,12 @@ public:
   public:
     TmplExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *TMPL_LPAREN();
+    TmplExpressionContext *tmplExpression();
+    antlr4::tree::TerminalNode *TMPL_RPAREN();
+    antlr4::tree::TerminalNode *TMPL_NOT();
+    TmplValueReferencePathContext *tmplValueReferencePath();
     TmplFunctionCallContext *tmplFunctionCall();
-    TmplStringExpressionContext *tmplStringExpression();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -425,21 +427,6 @@ public:
   };
 
   TmplFunctionCallContext* tmplFunctionCall();
-
-  class  TmplStringExpressionContext : public antlr4::ParserRuleContext {
-  public:
-    TmplStringExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    TmplValueReferencePathContext *tmplValueReferencePath();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  TmplStringExpressionContext* tmplStringExpression();
 
   class  TmplIfBlockContext : public antlr4::ParserRuleContext {
   public:

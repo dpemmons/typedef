@@ -67,9 +67,7 @@ template SomeFunc(foo: i32, bar: SomeVals) t"
 
   auto* insertion = GetTmplExpression(somefunc, 0);
   REQUIRE(insertion);
-  REQUIRE(IsI32(insertion->tmplStringExpression()
-                    ->tmplValueReferencePath()
-                    ->leaf_annotation));
+  REQUIRE(IsI32(insertion->tmplValueReferencePath()->leaf_annotation));
 }
 
 TEST_CASE("Template function params resolve when calling another function.",
@@ -895,6 +893,84 @@ TEST_CASE("Template IsFirst IsLast functions.", "[template][loop]") {
       <else>
       This is the middle: <i>
       </if>
+      </for>
+    "
+  )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+}
+
+TEST_CASE("Template IsFirst should not work in a string context.",
+          "[template][expressions]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+    template DoIt(v: vector<str>) t"
+      <IsFirst()>
+    "
+  )");
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::INVALID_ARGUMENT);
+}
+
+TEST_CASE("Calling another function that has no arguments should succeed.",
+          "[template][expressions]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+    template DoOther() t"
+      hi.
+    "
+    template DoIt(v: vector<str>) t"
+      <DoOther()>
+    "
+  )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+}
+
+TEST_CASE("Calling another function with parens should succeed.",
+          "[template][expressions]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+    template DoOther() t"
+      hi.
+    "
+    template DoIt(v: vector<str>) t"
+      <(DoOther())>
+    "
+  )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+}
+
+TEST_CASE(
+    "Calling another function in a stringy context with a boolean operator "
+    "should fail.",
+    "[template][expressions]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+    template DoOther() t"
+      hi.
+    "
+    template DoIt(v: vector<str>) t"
+      <!DoOther()>
+    "
+  )");
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::INVALID_ARGUMENT);
+}
+
+TEST_CASE("Logic operator should be ok in a truthy context",
+          "[template][expressions]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+
+    template DoIt(v: vector<str>) t"
+      <for i in v>
+      <i>
+      <if !IsFirst()>This is not the first one.</if>
+      <if !IsLast()>This is not the last one.</if>
       </for>
     "
   )");

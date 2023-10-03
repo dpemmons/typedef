@@ -54,7 +54,7 @@ userType
 // template DoIt(a: i32, b: str) "{a} {b}";
 tmplDefinition:
 	KW_TEMPLATE identifier LPAREN (
-		functionParameter (COMMA functionParameter)*
+		(functionParameter (COMMA functionParameter)*)?
 	) RPAREN tmplBlock;
 
 tmplBlock: START_TEMPLATE tmplItem* END_TEMPLATE;
@@ -69,14 +69,18 @@ tmplText
 	returns[std::string text]
 	@after {td::SetTmplText($text, $ctx);}: TMPL_TEXT;
 
-tmplExpression: tmplFunctionCall | tmplStringExpression;
+tmplExpression:
+	(TMPL_LPAREN tmplExpression TMPL_RPAREN)
+	| (TMPL_NOT tmplExpression)
+	| tmplValueReferencePath
+	| tmplFunctionCall;
+
 tmplFunctionCall
 	returns[TmplDefinitionContext* tmpl_def, bool built_in] //
 	@init {$tmpl_def = nullptr; $built_in = false;}: //
 	tmplIdentifier TMPL_LPAREN tmplValueReferencePath? (
 		TMPL_COMMA tmplValueReferencePath
 	)* TMPL_RPAREN;
-tmplStringExpression: tmplValueReferencePath;
 
 tmplIfBlock:
 	tmplIfSubBlock //

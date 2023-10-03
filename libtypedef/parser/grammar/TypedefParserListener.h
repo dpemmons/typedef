@@ -62,9 +62,6 @@ public:
   virtual void enterTmplFunctionCall(TypedefParser::TmplFunctionCallContext *ctx) = 0;
   virtual void exitTmplFunctionCall(TypedefParser::TmplFunctionCallContext *ctx) = 0;
 
-  virtual void enterTmplStringExpression(TypedefParser::TmplStringExpressionContext *ctx) = 0;
-  virtual void exitTmplStringExpression(TypedefParser::TmplStringExpressionContext *ctx) = 0;
-
   virtual void enterTmplIfBlock(TypedefParser::TmplIfBlockContext *ctx) = 0;
   virtual void exitTmplIfBlock(TypedefParser::TmplIfBlockContext *ctx) = 0;
 

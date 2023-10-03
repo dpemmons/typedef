@@ -21,6 +21,9 @@ class SecondPassListener : public BaseListener {
  public:
   SecondPassListener(std::vector<ParserErrorInfo>& errors_list)
       : BaseListener(errors_list) {}
+
+  virtual void exitTmplItem(TypedefParser::TmplItemContext* ctx) override;
+
   virtual void enterTmplFunctionCall(
       TypedefParser::TmplFunctionCallContext* ctx) override;
   virtual void enterTmplIfSubBlock(
@@ -33,6 +36,7 @@ class SecondPassListener : public BaseListener {
 
  private:
   void ExpectTruthy(TypedefParser::TmplExpressionContext* ctx);
+  void ExpectStringy(TypedefParser::TmplExpressionContext* ctx);
 
   bool CheckMatch(TypedefParser::PrimitiveTypeIdentifierContext* expected,
                   TypedefParser::PrimitiveTypeIdentifierContext* actual);

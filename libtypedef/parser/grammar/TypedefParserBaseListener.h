@@ -64,9 +64,6 @@ public:
   virtual void enterTmplFunctionCall(TypedefParser::TmplFunctionCallContext * /*ctx*/) override { }
   virtual void exitTmplFunctionCall(TypedefParser::TmplFunctionCallContext * /*ctx*/) override { }
 
-  virtual void enterTmplStringExpression(TypedefParser::TmplStringExpressionContext * /*ctx*/) override { }
-  virtual void exitTmplStringExpression(TypedefParser::TmplStringExpressionContext * /*ctx*/) override { }
-
   virtual void enterTmplIfBlock(TypedefParser::TmplIfBlockContext * /*ctx*/) override { }
   virtual void exitTmplIfBlock(TypedefParser::TmplIfBlockContext * /*ctx*/) override { }
 

@@ -385,6 +385,9 @@ void DoSomeVariant(std::ostream& os, const SomeVariant& v);
 void LoopLogic(std::ostream& os, const td::Vector<std::string>& v);
   
 
+void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v);
+  
+
 }  // namespace template_example
 
 #endif  // TEMPLATE_EXAMPLE_TD_CPP_H__

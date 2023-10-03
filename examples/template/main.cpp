@@ -42,5 +42,7 @@ int main(int argc, char *argv[]) {
   v.push_back("three");
   LoopLogic(std::cout, v);
 
+  BooleanLogic(std::cout, v);
+
   return 0;
 }

@@ -63,6 +63,7 @@ template DoSomeVariant(v: SomeVariant) t"
 "
 
 template LoopLogic(v: vector<str>) t"
+  LoopLogic:
   <for i in v>
   <if IsFirst()>
   This is the first one: <i>
@@ -71,5 +72,14 @@ template LoopLogic(v: vector<str>) t"
   <else>
   This is the middle: <i>
   </if>
+  </for>
+"
+
+template BooleanLogic(v: vector<str>) t"
+  BooleanLogic:
+  <for i in v>
+  <i>
+  <if !IsFirst()>This is not the first one.</if>
+  <if !IsLast()>This is not the last one.</if>
   </for>
 "

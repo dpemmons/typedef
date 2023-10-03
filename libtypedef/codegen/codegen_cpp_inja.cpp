@@ -224,11 +224,13 @@ json GetTemplateExpression(TypedefParser::TmplExpressionContext* ctx) {
   json j;
   if (ctx->tmplFunctionCall()) {
     j["call"] = GetTemplateFunctionCall(ctx->tmplFunctionCall());
-  } else if (ctx->tmplStringExpression()) {
-    j["value_ref"] = GetTemplateValueDereference(
-        ctx->tmplStringExpression()->tmplValueReferencePath());
-  } else if (ctx->tmplStringExpression()) {
-    throw_logic_error("string expressions not currently supported");
+  } else if (ctx->tmplValueReferencePath()) {
+    j["value_ref"] = GetTemplateValueDereference(ctx->tmplValueReferencePath());
+  } else if (ctx->tmplExpression()) {
+    j["expression"] = GetTemplateExpression(ctx->tmplExpression());
+    if (ctx->TMPL_NOT()) {
+      j["not"] = true;
+    }
   } else {
     throw_logic_error("invalid state");
   }
@@ -730,6 +732,8 @@ void {{identifier}}(std::ostream& os{{params_list(params)}});
   os << {{ tmpl_val_ref(value_ref) }};
 ## else if exists("call")
   {{call.func}}(os{%for arg in call.args%}, {{tmpl_val_ref(arg)}}{%endfor%});
+## else if exists("expression")
+  {{ tmpl_str_expression(expression) }}
 ## endif
   )");
 
@@ -738,6 +742,8 @@ void {{identifier}}(std::ostream& os{{params_list(params)}});
   {{ tmpl_val_ref(value_ref) }}
 ## else if exists("call")
   {{call.func}}()
+## else if exists("expression")
+  ({%if exists("not")%} ! {%endif%}{{tmpl_bool_expression(expression)}})
 ## endif
   )");
 

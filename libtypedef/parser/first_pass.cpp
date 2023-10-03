@@ -269,26 +269,6 @@ void FirstPassListener::enterTmplFunctionCall(
   }
 }
 
-void FirstPassListener::exitTmplStringExpression(
-    TypedefParser::TmplStringExpressionContext* ctx) {
-  if (ctx->tmplValueReferencePath()->leaf_definition) {
-    AddError(ctx->tmplValueReferencePath()->tmplValueReference().back(),
-             ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
-             "Primitive (stringable) type expected.");
-    return;
-  }
-
-  if (!ctx->tmplValueReferencePath()->leaf_annotation) {
-    return;
-  }
-  if (!ReferencesPrimitiveType(
-          ctx->tmplValueReferencePath()->leaf_annotation)) {
-    AddError(ctx->tmplValueReferencePath()->tmplValueReference().back(),
-             ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
-             "Primitive (stringable) type expected.");
-  }
-}
-
 void FirstPassListener::enterTmplValueReferencePath(
     TypedefParser::TmplValueReferencePathContext* ctx) {
   // In some contexts (eg. for blocks) VRP's are pre-computed

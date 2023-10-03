@@ -52,8 +52,6 @@ public:
 
     virtual antlrcpp::Any visitTmplFunctionCall(TypedefParser::TmplFunctionCallContext *context) = 0;
 
-    virtual antlrcpp::Any visitTmplStringExpression(TypedefParser::TmplStringExpressionContext *context) = 0;
-
     virtual antlrcpp::Any visitTmplIfBlock(TypedefParser::TmplIfBlockContext *context) = 0;
 
     virtual antlrcpp::Any visitTmplIfSubBlock(TypedefParser::TmplIfSubBlockContext *context) = 0;

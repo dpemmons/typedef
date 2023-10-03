@@ -331,6 +331,7 @@ TMPL_DOT: '.';
 TMPL_LPAREN: '(';
 TMPL_RPAREN: ')';
 TMPL_PATHSEP: '::';
+TMPL_NOT: '!';
 TMPL_KW_FOR: 'for';
 TMPL_KW_CLOSE_FOR: '/for';
 TMPL_KW_SWITCH: 'switch';

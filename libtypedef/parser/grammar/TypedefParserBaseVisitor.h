@@ -78,10 +78,6 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTmplStringExpression(TypedefParser::TmplStringExpressionContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual antlrcpp::Any visitTmplIfBlock(TypedefParser::TmplIfBlockContext *ctx) override {
     return visitChildren(ctx);
   }

@@ -19,6 +19,12 @@ namespace td {
 
 using namespace std;
 
+void SecondPassListener::exitTmplItem(TypedefParser::TmplItemContext* ctx) {
+  if (ctx->tmplExpression()) {
+    ExpectStringy(ctx->tmplExpression());
+  }
+}
+
 void SecondPassListener::enterTmplFunctionCall(
     TypedefParser::TmplFunctionCallContext* ctx) {
   std::vector<TypedefParser::TmplValueReferencePathContext*> actual_params =
@@ -158,8 +164,10 @@ void SecondPassListener::enterTmplSwitchBlock(
 
 void SecondPassListener::ExpectTruthy(
     TypedefParser::TmplExpressionContext* ctx) {
-  if (ctx->tmplStringExpression()) {
-    auto* vrp = ctx->tmplStringExpression()->tmplValueReferencePath();
+  if (ctx->tmplExpression()) {
+    return ExpectTruthy(ctx->tmplExpression());
+  } else if (ctx->tmplValueReferencePath()) {
+    auto* vrp = ctx->tmplValueReferencePath();
     if (vrp->leaf_annotation && ReferencesTruthyType(vrp->leaf_annotation)) {
       return;
     }
@@ -171,6 +179,41 @@ void SecondPassListener::ExpectTruthy(
   }
   AddError(ctx, ParserErrorInfo::INVALID_ARGUMENT,
            "Truthy expression expected.");
+}
+
+void SecondPassListener::ExpectStringy(
+    TypedefParser::TmplExpressionContext* ctx) {
+  if (ctx->tmplExpression()) {
+    if (ctx->TMPL_NOT()) {
+      return AddError(ctx->TMPL_NOT(), ParserErrorInfo::INVALID_ARGUMENT,
+                      "Boolean operator in stringy context.");
+    }
+    return ExpectStringy(ctx->tmplExpression());
+  } else if (ctx->tmplValueReferencePath()) {
+    if (ctx->tmplValueReferencePath()->leaf_definition) {
+      return AddError(
+          ctx->tmplValueReferencePath()->tmplValueReference().back(),
+          ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
+          "Primitive (stringy) type expected.");
+    } else if (ctx->tmplValueReferencePath()->leaf_annotation) {
+      if (!ReferencesPrimitiveType(
+              ctx->tmplValueReferencePath()->leaf_annotation)) {
+        return AddError(
+            ctx->tmplValueReferencePath()->tmplValueReference().back(),
+            ParserErrorInfo::INVALID_TYPE_ARGUMENTS,
+            "Primitive (stringy) type expected.");
+      }
+    } else {
+      // else there was a parse error somewhere else; do nothing.
+    }
+  } else if (ctx->tmplFunctionCall()) {
+    if (ctx->tmplFunctionCall()->tmplIdentifier()->id == "IsFirst" ||
+        ctx->tmplFunctionCall()->tmplIdentifier()->id == "IsLast") {
+      return AddError(ctx->tmplFunctionCall(),
+                      ParserErrorInfo::INVALID_ARGUMENT,
+                      "Builtin functions are not (yet) stringy.");
+    }
+  }
 }
 
 bool SecondPassListener::CheckMatch(
