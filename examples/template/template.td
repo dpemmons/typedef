@@ -85,3 +85,9 @@ template BooleanLogic(v: vector<str>) t"
 "
 
 template TestIsEmpty(v: vector<str>) t"v is <if !IsEmpty(v)> not </if> empty."
+
+template PrintIndices(v: vector<str>) t"
+  <for i in v>
+  i0: <Index0()> i1: <Index1()> \"<i>\"
+  </for>
+"

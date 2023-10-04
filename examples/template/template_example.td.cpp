@@ -61,6 +61,12 @@ void PrintTemplateData(std::ostream& os, const TemplateData& t) {
     auto IsLast = [&]() {
       return ii == t.someVec().size() - 1;
     };
+    auto Index0 = [&](std::ostream& os) {
+      os << std::to_string(ii);
+    };
+    auto Index1 = [&](std::ostream& os) {
+      os << std::to_string(ii + 1);
+    };
   os << R"(
     for value number: )";
   
@@ -135,6 +141,12 @@ void LoopLogic(std::ostream& os, const td::Vector<std::string>& v) {
     auto IsLast = [&]() {
       return ii == v.size() - 1;
     };
+    auto Index0 = [&](std::ostream& os) {
+      os << std::to_string(ii);
+    };
+    auto Index1 = [&](std::ostream& os) {
+      os << std::to_string(ii + 1);
+    };
   os << R"(
   )";
   if (
@@ -183,6 +195,12 @@ void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v) {
     auto IsLast = [&]() {
       return ii == v.size() - 1;
     };
+    auto Index0 = [&](std::ostream& os) {
+      os << std::to_string(ii);
+    };
+    auto Index1 = [&](std::ostream& os) {
+      os << std::to_string(ii + 1);
+    };
   os << R"(
   )";
   
@@ -223,6 +241,41 @@ void TestIsEmpty(std::ostream& os, const td::Vector<std::string>& v) {
   os << R"( not )";
   } 
   os << R"( empty.)";
+}
+
+void PrintIndices(std::ostream& os, const td::Vector<std::string>& v) {
+  os << R"(
+  )";
+  for (size_t ii = 0; ii < v.size(); ii++) {
+    auto& i = v[ii];
+    auto IsFirst = [&]() { return ii == 0; };
+    auto IsLast = [&]() {
+      return ii == v.size() - 1;
+    };
+    auto Index0 = [&](std::ostream& os) {
+      os << std::to_string(ii);
+    };
+    auto Index1 = [&](std::ostream& os) {
+      os << std::to_string(ii + 1);
+    };
+  os << R"(
+  i0: )";
+  
+  Index0(os);
+  
+  os << R"( i1: )";
+  
+  Index1(os);
+  
+  os << R"( ")";
+  
+  os << i;
+  
+  os << R"("
+  )";
+  }
+  os << R"(
+)";
 }
 
 }  // namespace template_example

@@ -23,6 +23,8 @@ FirstPassListener::FirstPassListener(std::vector<ParserErrorInfo>& errors_list)
   identifiers_.emplace("IsFirst", &is_first_func_);
   identifiers_.emplace("IsLast", &is_last_func_);
   identifiers_.emplace("IsEmpty", &is_empty_func_);
+  identifiers_.emplace("Index0", &index0_func_);
+  identifiers_.emplace("Index1", &index1_func_);
 }
 
 void FirstPassListener::enterCompilationUnit(

@@ -391,6 +391,9 @@ void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v);
 void TestIsEmpty(std::ostream& os, const td::Vector<std::string>& v);
   
 
+void PrintIndices(std::ostream& os, const td::Vector<std::string>& v);
+  
+
 }  // namespace template_example
 
 #endif  // TEMPLATE_EXAMPLE_TD_CPP_H__

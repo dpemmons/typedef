@@ -231,6 +231,7 @@ void SecondPassListener::ExpectStringy(
                       ParserErrorInfo::INVALID_ARGUMENT,
                       "Builtin functions are not (yet) stringy.");
     }
+    // Index0 and Index1 are stringy and therefore ok.
   }
 }
 

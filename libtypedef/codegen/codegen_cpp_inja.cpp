@@ -772,6 +772,12 @@ void {{identifier}}(std::ostream& os{{params_list(params)}});
     auto IsLast = [&]() {
       return ii == {{tmpl_val_ref(for.collection)}}.size() - 1;
     };
+    auto Index0 = [&](std::ostream& os) {
+      os << std::to_string(ii);
+    };
+    auto Index1 = [&](std::ostream& os) {
+      os << std::to_string(ii + 1);
+    };
 {%else%}
   for (auto const& [{{for.key}}, {{for.val}}] : {{tmpl_val_ref(for.collection)}}) {
 {%endif%}

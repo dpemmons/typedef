@@ -1016,3 +1016,34 @@ TEST_CASE("IsEmpty should be ok with a vector argument.",
   )");
   REQUIRE_NO_PARSE_ERROR(parser.Parse());
 }
+
+TEST_CASE("Index0 and Index1 are stringy", "[template][expressions]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+
+    template DoIt(v: vector<str>) t"
+      <for i in v>
+      <Index0()><Index1()>
+      </for>
+    "
+  )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+}
+
+TEST_CASE("Index0 and Index1 are not truthy", "[template][expressions]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+
+    template DoIt(v: vector<str>) t"
+      <for i in v>
+      <if Index0()>Index0</if>
+      <if Index1()>Index1</if>
+      </for>
+    "
+  )");
+  REQUIRE(parser.Parse() == 2);
+  REQUIRE(parser.GetError(0).error_type == ParserErrorInfo::INVALID_ARGUMENT);
+  REQUIRE(parser.GetError(1).error_type == ParserErrorInfo::INVALID_ARGUMENT);
+}

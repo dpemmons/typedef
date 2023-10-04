@@ -49,5 +49,7 @@ int main(int argc, char *argv[]) {
   td::Vector<std::string> emptyvec;
   TestIsEmpty(std::cout, emptyvec);
 
+  PrintIndices(std::cout, v);
+
   return 0;
 }
