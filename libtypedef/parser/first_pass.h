@@ -71,6 +71,7 @@ class FirstPassListener : public BaseListener {
   // (like return type) for the second_pass
   BuiltinFunction is_first_func_;
   BuiltinFunction is_last_func_;
+  BuiltinFunction is_empty_func_;
 };
 
 }  // namespace td

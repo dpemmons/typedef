@@ -30,9 +30,25 @@ void SecondPassListener::enterTmplFunctionCall(
   std::vector<TypedefParser::TmplValueReferencePathContext*> actual_params =
       ctx->tmplValueReferencePath();
   if (ctx->built_in) {
-    if (actual_params.size()) {
-      AddError(ctx, ParserErrorInfo::INVALID_ARGUMENT,
-               "Builtin functions don't take params");
+    size_t expected_count = 0;
+    if (ctx->tmplIdentifier()->id == "IsEmpty") {
+      expected_count = 1;
+    }
+    if (expected_count != actual_params.size()) {
+      return AddError(
+          ctx, ParserErrorInfo::INVALID_ARGUMENT,
+          fmt::format("Function '{}' expects {} arguments but {} provided.",
+                      ctx->tmplIdentifier()->id, expected_count,
+                      actual_params.size()));
+    }
+    if (ctx->tmplIdentifier()->id == "IsEmpty") {
+      if (actual_params[0]->leaf_annotation &&
+          ReferencesBuiltinVectorType(actual_params[0]->leaf_annotation)) {
+        return;
+      } else {
+        return AddError(actual_params[0], ParserErrorInfo::INVALID_ARGUMENT,
+                        fmt::format("Vector type expected."));
+      }
     }
     return;
   }
@@ -173,7 +189,8 @@ void SecondPassListener::ExpectTruthy(
     }
   } else if (ctx->tmplFunctionCall()) {
     if (ctx->tmplFunctionCall()->tmplIdentifier()->id == "IsFirst" ||
-        ctx->tmplFunctionCall()->tmplIdentifier()->id == "IsLast") {
+        ctx->tmplFunctionCall()->tmplIdentifier()->id == "IsLast" ||
+        ctx->tmplFunctionCall()->tmplIdentifier()->id == "IsEmpty") {
       return;
     }
   }
@@ -208,7 +225,8 @@ void SecondPassListener::ExpectStringy(
     }
   } else if (ctx->tmplFunctionCall()) {
     if (ctx->tmplFunctionCall()->tmplIdentifier()->id == "IsFirst" ||
-        ctx->tmplFunctionCall()->tmplIdentifier()->id == "IsLast") {
+        ctx->tmplFunctionCall()->tmplIdentifier()->id == "IsLast" ||
+        ctx->tmplFunctionCall()->tmplIdentifier()->id == "IsEmpty") {
       return AddError(ctx->tmplFunctionCall(),
                       ParserErrorInfo::INVALID_ARGUMENT,
                       "Builtin functions are not (yet) stringy.");

@@ -83,3 +83,5 @@ template BooleanLogic(v: vector<str>) t"
   <if !IsLast()>This is not the last one.</if>
   </for>
 "
+
+template TestIsEmpty(v: vector<str>) t"v is <if !IsEmpty(v)> not </if> empty."

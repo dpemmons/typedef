@@ -976,3 +976,43 @@ TEST_CASE("Logic operator should be ok in a truthy context",
   )");
   REQUIRE_NO_PARSE_ERROR(parser.Parse());
 }
+
+TEST_CASE("IsEmpty requires an argument", "[template][expressions]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+
+    template DoIt(v: vector<str>) t"
+      <if !IsEmpty()>It isn't empty.</if>
+    "
+  )");
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::INVALID_ARGUMENT);
+}
+
+TEST_CASE("IsEmpty requires a vector argument and should fail for other types",
+          "[template][expressions]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+
+    template DoIt(v: vector<str>, s: str) t"
+      <if !IsEmpty(s)>It isn't empty.</if>
+    "
+  )");
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::INVALID_ARGUMENT);
+}
+
+TEST_CASE("IsEmpty should be ok with a vector argument.",
+          "[template][expressions]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+
+    template DoIt(v: vector<str>, s: str) t"
+      <if !IsEmpty(v)>It isn't empty.</if>
+    "
+  )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+}

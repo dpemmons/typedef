@@ -32,4 +32,11 @@ class Map : public std::map<K, V> {
 
 }  // namespace td
 
+// TODO this is a pretty terrible place to put this!!
+// it should either be generated inline or at least namespaced.
+template <typename T>
+bool IsEmpty(const td::Vector<T>& v) {
+  return v.size() == 0;
+}
+
 #endif  // TYPEDEF_BUILTIN_TYPES_H__

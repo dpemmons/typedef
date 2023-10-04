@@ -44,5 +44,10 @@ int main(int argc, char *argv[]) {
 
   BooleanLogic(std::cout, v);
 
+  TestIsEmpty(std::cout, v);
+
+  td::Vector<std::string> emptyvec;
+  TestIsEmpty(std::cout, emptyvec);
+
   return 0;
 }

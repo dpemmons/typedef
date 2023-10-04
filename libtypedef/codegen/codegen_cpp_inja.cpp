@@ -741,7 +741,7 @@ void {{identifier}}(std::ostream& os{{params_list(params)}});
 ## if exists("value_ref")
   {{ tmpl_val_ref(value_ref) }}
 ## else if exists("call")
-  {{call.func}}()
+  {{call.func}}({%for arg in call.args%}{{tmpl_val_ref(arg)}}{%if not loop.is_last%}, {%endif%}{%endfor%})
 ## else if exists("expression")
   ({%if exists("not")%} ! {%endif%}{{tmpl_bool_expression(expression)}})
 ## endif

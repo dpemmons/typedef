@@ -213,5 +213,17 @@ void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v) {
 )";
 }
 
+void TestIsEmpty(std::ostream& os, const td::Vector<std::string>& v) {
+  os << R"(v is )";
+  if (
+  (! 
+  IsEmpty(v)
+  )
+  ) {
+  os << R"( not )";
+  } 
+  os << R"( empty.)";
+}
+
 }  // namespace template_example
   
