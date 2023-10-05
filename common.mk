@@ -56,4 +56,3 @@ CLI_LIB_HEADERS := ${CURDIR}/external/CLI-2.3.2
 FMT_LIB_HEADERS := ${CURDIR}/external/fmtlib-9.1.0
 ANTLR4_LIB_HEADERS := ${CURDIR}/external/antlr4-runtime-4.7.2 ${CURDIR}/external/antlr4-runtime-4.7.2/antlr4
 JSON_LIB_HEADERS := ${CURDIR}/external/nlohmann-json-3.11.2/json/include
-INJA_LIB_HEADERS := ${CURDIR}/external/inja-3.4.0/inja/include

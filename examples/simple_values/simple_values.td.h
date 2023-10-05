@@ -2224,7 +2224,7 @@ class VariantFT {
 
 
 
-} // namesapce simple_values
+} // namespace simple_values
 
 
 #endif  // SIMPLE_VALUES_TD_CPP_H__

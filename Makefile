@@ -19,8 +19,6 @@ LIBTYPEDEF_INC_DIRS := $(shell find $(LIBTYPEDEF_SRC_DIRS) -type d) \
 											. \
 											 $(ANTLR4_LIB_HEADERS) \
 											 $(FMT_LIB_HEADERS) \
-											 $(JSON_LIB_HEADERS) \
-											 $(INJA_LIB_HEADERS) \
 											 ./include
 LIBTYPEDEF_INC_FLAGS := $(addprefix -I,$(LIBTYPEDEF_INC_DIRS))
 LIBTYPEDEF_CPPFLAGS := $(GLOBAL_CPPFLAGS) $(LIBTYPEDEF_INC_FLAGS) -Werror -Wno-error=attributes # -Wall -Wextra 

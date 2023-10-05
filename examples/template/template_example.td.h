@@ -433,7 +433,7 @@ class SomeVariant {
 
 void PrintStructC(std::ostream& os, const StructC& sc);void PrintTemplateData(std::ostream& os, const TemplateData& t);void DoSomeVariant(std::ostream& os, const SomeVariant& v);void LoopLogic(std::ostream& os, const td::Vector<std::string>& v);void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v);void TestIsEmpty(std::ostream& os, const td::Vector<std::string>& v);void PrintIndices(std::ostream& os, const td::Vector<std::string>& v);
 
-} // namesapce template_example
+} // namespace template_example
 
 
 #endif  // TEMPLATE_EXAMPLE_TD_CPP_H__

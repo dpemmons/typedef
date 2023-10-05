@@ -13,7 +13,7 @@
 #include <fmt/ostream.h>
 
 #include "libtypedef/codegen/codegen_cpp.h"
-#include "libtypedef/codegen/codegen_cpp_inja.h"
+#include "libtypedef/codegen/experimental_codegen_cpp.h"
 #include "libtypedef/codegen/file_printer.h"
 #include "libtypedef/parser/parser_error_info.h"
 #include "libtypedef/parser/typedef_parser.h"
@@ -65,19 +65,14 @@ int main(int argc, const char** argv) {
     return 1;  // error.
   }
 
-  if (args.getPrint()) {
-    // fmt::print("File contains {} symbols:\n",
-    // parser->symbols2_.table_.size()); fmt::print("{}\n",
-    // fmt::streamed(parser->symbols2_));
-  }
   if (!args.GetCppOut().empty()) {
     auto outpath = std::make_unique<td::OutPath>(args.GetCppOut());
-    if (args.UseSelfHostedCodegen()) {
-      td::CodegenCpp(outpath.get(), parser.GetCompilationUnitContext());
-    } else {
-      td::CodegenCppInja(outpath.get(), parser.GetCompilationUnitContext(),
-                         nullptr);
-    }
+    td::CodegenCpp(outpath.get(), parser.GetCompilationUnitContext());
+  }
+  if (!args.GetExperimentalCppOut().empty()) {
+    auto outpath = std::make_unique<td::OutPath>(args.GetExperimentalCppOut());
+    td::ExperimentalCodegenCpp(outpath.get(),
+                               parser.GetCompilationUnitContext());
   }
 
   return 0;

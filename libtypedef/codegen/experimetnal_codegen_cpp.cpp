@@ -1,21 +1,27 @@
-#include "libtypedef/codegen/codegen_cpp.h"
-
 #include <filesystem>
 #include <optional>
 #include <stdexcept>
 #include <string>
 
+#define FMT_HEADER_ONLY
+#include <fmt/core.h>
+#include <fmt/ostream.h>
+
+#include "libtypedef/codegen/codegen_cpp.h"
 #include "libtypedef/codegen/codegen_cpp_helpers.h"
-#include "libtypedef/codegen/td/codegen/cpp.td.h"
 #include "libtypedef/parser/ast_functions.h"
 #include "libtypedef/parser/grammar/TypedefParser.h"
 #include "libtypedef/parser/macros.h"
+#if USE_EXPERIMENTAL_CPP_CODEGEN
+#include "libtypedef/codegen/td/codegen/experimental/cpp.td.h"
+#endif
 
 namespace td {
+#if USE_EXPERIMENTAL_CPP_CODEGEN
 namespace {
 
 using namespace std;
-using namespace td::codegen::cpp;
+using namespace td::codegen::experimental::cpp;
 
 // Forward declarations
 Vector<TmplItem> GetTemplateItems(
@@ -355,8 +361,9 @@ Vector<TmplFunction> GetTemplateFuncs(
 
 }  // namespace
 
-void CodegenCpp(OutPathBase* out_path,
-                TypedefParser::CompilationUnitContext* compilation_unit_ctx) {
+void ExperimentalCodegenCpp(
+    OutPathBase* out_path,
+    TypedefParser::CompilationUnitContext* compilation_unit_ctx) {
   filesystem::path hdr_filename =
       ToPath(compilation_unit_ctx->moduleDeclaration());
   filesystem::path source_filename = hdr_filename;
@@ -383,5 +390,15 @@ void CodegenCpp(OutPathBase* out_path,
   CppHeader(hdr_file->OStream(), cppData);
   CppSource(src_file->OStream(), cppData);
 }
+#else
+void ExperimentalCodegenCpp(
+    OutPathBase* out_path,
+    TypedefParser::CompilationUnitContext* compilation_unit_ctx) {
+  fmt::print(
+      std::cerr,
+      "Trying to use experimental C++ code generation but this binary was "
+      "compiled without the USE_EXPERIMENTAL_CPP_CODEGEN=1 preprocessor flag.");
+}
+#endif
 
 }  // namespace td

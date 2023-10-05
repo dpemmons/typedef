@@ -11,7 +11,7 @@ TYPEDEF_BIN := ${CURDIR}/../build/${BUILD}/typedef
 EXAMPLE_CPPFLAGS := $(GLOBAL_CPPFLAGS) -I${CURDIR}/../include -I${CURDIR}/../
 
 template/template_example.td.cpp:
-	$(TYPEDEF_BIN) -f template/template.td --self_hosted_codegen --cpp_out=${CURDIR}/template
+	$(TYPEDEF_BIN) -f template/template.td --cpp_out=${CURDIR}/template
 $(BASE_BUILD_DIR)/template: template/template_example.td.cpp template/main.cpp
 	mkdir -p $(dir $@)
 	$(CXX) -o $@ $(EXAMPLE_CPPFLAGS) $(CXXFLAGS) \
@@ -21,7 +21,7 @@ example-template: template/template_example.td.cpp $(BASE_BUILD_DIR)/template
 
 
 simple_values/simple_values.td.cpp:
-	$(TYPEDEF_BIN) -f simple_values/simple_values.td --self_hosted_codegen --cpp_out=${CURDIR}/simple_values
+	$(TYPEDEF_BIN) -f simple_values/simple_values.td --cpp_out=${CURDIR}/simple_values
 $(BASE_BUILD_DIR)/simple_values: simple_values/simple_values.td.cpp simple_values/main.cpp
 	mkdir -p $(dir $@)
 	$(CXX) -o $@ $(EXAMPLE_CPPFLAGS) $(CXXFLAGS) \

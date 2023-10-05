@@ -1,10 +1,9 @@
 #include "typedef/args.h"
 
-#include <stdexcept>
-
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>
 #include <CLI/Formatter.hpp>
+#include <stdexcept>
 
 std::variant<Args, int> Args::ParseArgs(int argc, const char* argv[]) {
   Args args;
@@ -14,11 +13,13 @@ std::variant<Args, int> Args::ParseArgs(int argc, const char* argv[]) {
       "language."};
   args.filename_ = "input.td";
   app.add_option("1, -f,--file", args.filename_, "The input file.");
-  app.add_flag("-p,--print", args.print_,
-               "Print a summary of the file to stdout");
-  app.add_flag("-v,--verbose", args.verbose_, "Verbose.");
-  app.add_flag("--self_hosted_codegen", args.self_host_codegen_, "Use typedef string templates for codegen.");
-  app.add_option("--cpp_out", args.cpp_out_, "Generate C++ header and source and output them to this path.");
+  app.add_option(
+      "--cpp_out", args.cpp_out_,
+      "Generate C++ header and source and output them to this path.");
+  app.add_option("--experimental_cpp_out", args.experimental_cpp_out_,
+                 "Using experimental code, Generate C++ header and source and "
+                 "output them to this path. Requires the binary was compiled "
+                 "with USE_EXPERIMENTAL_CPP_CODEGEN");
 
   try {
     app.parse(argc, argv);

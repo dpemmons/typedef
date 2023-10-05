@@ -171,5 +171,5 @@ os << "\n";
 
 }
 
-} // namesapce template_example
+} // namespace template_example
 
