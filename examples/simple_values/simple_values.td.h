@@ -10,9 +10,13 @@
 
 #include <typedef/builtin_types.h>
 
+// PRODUCED BY SELF-HOSTED TYPEDEF CODEGEN
+
+#ifndef TD_THROW
 #define TD_STRINGIZE_DETAIL(x) #x
 #define TD_STRINGIZE(x) TD_STRINGIZE_DETAIL(x)
 #define TD_THROW(msg) (throw msg __FILE__ ":" TD_STRINGIZE(__LINE__))
+#endif
 
 #ifndef TD_AUTO_ALLOC
 #define TD_AUTO_ALLOC 1
@@ -20,19 +24,35 @@
 
 namespace simple_values {
 
+
 // Forward declarations.
+
 class StructA;
+
 class StructB;
+
 class StructC;
+
 class VariantA;
+
 class VariantB;
+
 class StructD;
+
 class StructE;
+
 class VariantC;
 
-  
+
+
+
+// StructA struct declaration.
 class StructA {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   StructA() {}
   ~StructA() {}
@@ -42,6 +62,8 @@ class StructA {
   StructA(StructA&&) = default;
   StructA& operator=(StructA&&) = default;
 
+  
+  
   bool get_example_bool() const {
     return example_bool_;
   }
@@ -54,7 +76,9 @@ class StructA {
   const bool& example_bool() const {
     return example_bool_;
   }
-
+  
+  
+  
   char32_t get_example_char() const {
     return example_char_;
   }
@@ -67,7 +91,9 @@ class StructA {
   const char32_t& example_char() const {
     return example_char_;
   }
-
+  
+  
+  
   void set_example_str(std::string&& val) {
     example_str_ = std::move(val);
   }
@@ -77,7 +103,9 @@ class StructA {
   const std::string& example_str() const {
     return example_str_;
   }
-
+  
+  
+  
   float get_example_f32() const {
     return example_f32_;
   }
@@ -90,7 +118,9 @@ class StructA {
   const float& example_f32() const {
     return example_f32_;
   }
-
+  
+  
+  
   double get_example_f64() const {
     return example_f64_;
   }
@@ -103,7 +133,9 @@ class StructA {
   const double& example_f64() const {
     return example_f64_;
   }
-
+  
+  
+  
   std::uint8_t get_example_u8() const {
     return example_u8_;
   }
@@ -116,7 +148,9 @@ class StructA {
   const std::uint8_t& example_u8() const {
     return example_u8_;
   }
-
+  
+  
+  
   std::uint16_t get_example_u16() const {
     return example_u16_;
   }
@@ -129,7 +163,9 @@ class StructA {
   const std::uint16_t& example_u16() const {
     return example_u16_;
   }
-
+  
+  
+  
   std::uint32_t get_example_u32() const {
     return example_u32_;
   }
@@ -142,7 +178,9 @@ class StructA {
   const std::uint32_t& example_u32() const {
     return example_u32_;
   }
-
+  
+  
+  
   std::uint64_t get_example_u64() const {
     return example_u64_;
   }
@@ -155,7 +193,9 @@ class StructA {
   const std::uint64_t& example_u64() const {
     return example_u64_;
   }
-
+  
+  
+  
   std::int8_t get_example_i8() const {
     return example_i8_;
   }
@@ -168,7 +208,9 @@ class StructA {
   const std::int8_t& example_i8() const {
     return example_i8_;
   }
-
+  
+  
+  
   std::int16_t get_example_i16() const {
     return example_i16_;
   }
@@ -181,7 +223,9 @@ class StructA {
   const std::int16_t& example_i16() const {
     return example_i16_;
   }
-
+  
+  
+  
   std::int32_t get_example_i32() const {
     return example_i32_;
   }
@@ -194,7 +238,9 @@ class StructA {
   const std::int32_t& example_i32() const {
     return example_i32_;
   }
-
+  
+  
+  
   std::int64_t get_example_i64() const {
     return example_i64_;
   }
@@ -207,7 +253,8 @@ class StructA {
   const std::int64_t& example_i64() const {
     return example_i64_;
   }
-
+  
+  
 
  private:
   bool example_bool_;
@@ -223,11 +270,18 @@ class StructA {
   std::int16_t example_i16_;
   std::int32_t example_i32_;
   std::int64_t example_i64_;
-};  // class StructA
   
-  
+}; // class StructA
+
+
+
+// StructB struct declaration.
 class StructB {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   StructB() {}
   ~StructB() {}
@@ -237,6 +291,8 @@ class StructB {
   StructB(StructB&&) = default;
   StructB& operator=(StructB&&) = default;
 
+  
+  
   bool get_example_bool() const {
     return example_bool_;
   }
@@ -249,7 +305,9 @@ class StructB {
   const bool& example_bool() const {
     return example_bool_;
   }
-
+  
+  
+  
   char32_t get_example_char() const {
     return example_char_;
   }
@@ -262,7 +320,9 @@ class StructB {
   const char32_t& example_char() const {
     return example_char_;
   }
-
+  
+  
+  
   void set_example_str(std::string&& val) {
     example_str_ = std::move(val);
   }
@@ -272,7 +332,9 @@ class StructB {
   const std::string& example_str() const {
     return example_str_;
   }
-
+  
+  
+  
   float get_example_f32() const {
     return example_f32_;
   }
@@ -285,7 +347,9 @@ class StructB {
   const float& example_f32() const {
     return example_f32_;
   }
-
+  
+  
+  
   double get_example_f64() const {
     return example_f64_;
   }
@@ -298,7 +362,9 @@ class StructB {
   const double& example_f64() const {
     return example_f64_;
   }
-
+  
+  
+  
   std::uint8_t get_example_u8() const {
     return example_u8_;
   }
@@ -311,7 +377,9 @@ class StructB {
   const std::uint8_t& example_u8() const {
     return example_u8_;
   }
-
+  
+  
+  
   std::uint16_t get_example_u16() const {
     return example_u16_;
   }
@@ -324,7 +392,9 @@ class StructB {
   const std::uint16_t& example_u16() const {
     return example_u16_;
   }
-
+  
+  
+  
   std::uint32_t get_example_u32() const {
     return example_u32_;
   }
@@ -337,7 +407,9 @@ class StructB {
   const std::uint32_t& example_u32() const {
     return example_u32_;
   }
-
+  
+  
+  
   std::uint64_t get_example_u64() const {
     return example_u64_;
   }
@@ -350,7 +422,9 @@ class StructB {
   const std::uint64_t& example_u64() const {
     return example_u64_;
   }
-
+  
+  
+  
   std::int8_t get_example_i8() const {
     return example_i8_;
   }
@@ -363,7 +437,9 @@ class StructB {
   const std::int8_t& example_i8() const {
     return example_i8_;
   }
-
+  
+  
+  
   std::int16_t get_example_i16() const {
     return example_i16_;
   }
@@ -376,7 +452,9 @@ class StructB {
   const std::int16_t& example_i16() const {
     return example_i16_;
   }
-
+  
+  
+  
   std::int32_t get_example_i32() const {
     return example_i32_;
   }
@@ -389,7 +467,9 @@ class StructB {
   const std::int32_t& example_i32() const {
     return example_i32_;
   }
-
+  
+  
+  
   std::int64_t get_example_i64() const {
     return example_i64_;
   }
@@ -402,7 +482,8 @@ class StructB {
   const std::int64_t& example_i64() const {
     return example_i64_;
   }
-
+  
+  
 
  private:
   bool example_bool_;
@@ -418,11 +499,18 @@ class StructB {
   std::int16_t example_i16_;
   std::int32_t example_i32_;
   std::int64_t example_i64_;
-};  // class StructB
   
-  
+}; // class StructB
+
+
+
+// StructC struct declaration.
 class StructC {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   StructC() {}
   ~StructC() {}
@@ -432,6 +520,8 @@ class StructC {
   StructC(StructC&&) = default;
   StructC& operator=(StructC&&) = default;
 
+  
+  
   bool has_asdf() const {
     return asdf_.operator bool();
   }
@@ -471,7 +561,9 @@ class StructC {
     #endif
     return *asdf_.get();
   }
-
+  
+  
+  
   std::int32_t get_zxcv() const {
     return zxcv_;
   }
@@ -484,7 +576,9 @@ class StructC {
   const std::int32_t& zxcv() const {
     return zxcv_;
   }
-
+  
+  
+  
   std::int32_t get_jkl() const {
     return jkl_;
   }
@@ -497,17 +591,24 @@ class StructC {
   const std::int32_t& jkl() const {
     return jkl_;
   }
-
+  
+  
 
  private:
   std::unique_ptr<StructA> asdf_;
   std::int32_t zxcv_;
   std::int32_t jkl_;
-};  // class StructC
   
-  
+}; // class StructC
+
+
+
 class VariantA {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   VariantA() {}
   ~VariantA() {
@@ -523,12 +624,15 @@ class VariantA {
     __TAG__UNSET = 0,
     TAG_a = 1,
     TAG_b = 2,
+    
   };
   Tag Which() const { return tag; }
 
+  
   bool is_a() const {
     return val_.index() == 1;
   }
+  
   bool get_a() const {
     return std::get<1>(val_);
   }
@@ -546,10 +650,11 @@ class VariantA {
   const bool& a() const {
     return std::get<1>(val_);
   }
-
+  
   bool is_b() const {
     return val_.index() == 2;
   }
+  
   std::int8_t get_b() const {
     return std::get<2>(val_);
   }
@@ -567,21 +672,28 @@ class VariantA {
   const std::int8_t& b() const {
     return std::get<2>(val_);
   }
+  
 
  private:
   Tag tag = Tag::__TAG__UNSET;
 
   std::variant<
     std::monostate
-    , bool
-    , std::int8_t
+  , bool
+  , std::int8_t
+  
   > val_;
 
 };  // class VariantA
-  
-  
+
+
+
 class VariantB {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   VariantB() {}
   ~VariantB() {
@@ -612,12 +724,15 @@ class VariantB {
     TAG_va = 15,
     TAG_vara = 16,
     TAG_mapa = 17,
+    
   };
   Tag Which() const { return tag; }
 
+  
   bool is_a() const {
     return val_.index() == 1;
   }
+  
   bool get_a() const {
     return std::get<1>(val_);
   }
@@ -635,10 +750,11 @@ class VariantB {
   const bool& a() const {
     return std::get<1>(val_);
   }
-
+  
   bool is_b() const {
     return val_.index() == 2;
   }
+  
   char32_t get_b() const {
     return std::get<2>(val_);
   }
@@ -656,10 +772,11 @@ class VariantB {
   const char32_t& b() const {
     return std::get<2>(val_);
   }
-
+  
   bool is_c() const {
     return val_.index() == 3;
   }
+  
   std::string& c() {
     if (!is_c()) {
       tag = Tag::TAG_c;
@@ -674,10 +791,11 @@ class VariantB {
     tag = Tag::TAG_c;
     val_.emplace<3>(std::move(val));
   }
-
+  
   bool is_d() const {
     return val_.index() == 4;
   }
+  
   std::uint8_t get_d() const {
     return std::get<4>(val_);
   }
@@ -695,10 +813,11 @@ class VariantB {
   const std::uint8_t& d() const {
     return std::get<4>(val_);
   }
-
+  
   bool is_e() const {
     return val_.index() == 5;
   }
+  
   std::uint16_t get_e() const {
     return std::get<5>(val_);
   }
@@ -716,10 +835,11 @@ class VariantB {
   const std::uint16_t& e() const {
     return std::get<5>(val_);
   }
-
+  
   bool is_f() const {
     return val_.index() == 6;
   }
+  
   std::uint32_t get_f() const {
     return std::get<6>(val_);
   }
@@ -737,10 +857,11 @@ class VariantB {
   const std::uint32_t& f() const {
     return std::get<6>(val_);
   }
-
+  
   bool is_g() const {
     return val_.index() == 7;
   }
+  
   std::uint64_t get_g() const {
     return std::get<7>(val_);
   }
@@ -758,10 +879,11 @@ class VariantB {
   const std::uint64_t& g() const {
     return std::get<7>(val_);
   }
-
+  
   bool is_h() const {
     return val_.index() == 8;
   }
+  
   std::int8_t get_h() const {
     return std::get<8>(val_);
   }
@@ -779,10 +901,11 @@ class VariantB {
   const std::int8_t& h() const {
     return std::get<8>(val_);
   }
-
+  
   bool is_i() const {
     return val_.index() == 9;
   }
+  
   std::int16_t get_i() const {
     return std::get<9>(val_);
   }
@@ -800,10 +923,11 @@ class VariantB {
   const std::int16_t& i() const {
     return std::get<9>(val_);
   }
-
+  
   bool is_j() const {
     return val_.index() == 10;
   }
+  
   std::int32_t get_j() const {
     return std::get<10>(val_);
   }
@@ -821,10 +945,11 @@ class VariantB {
   const std::int32_t& j() const {
     return std::get<10>(val_);
   }
-
+  
   bool is_k() const {
     return val_.index() == 11;
   }
+  
   std::int64_t get_k() const {
     return std::get<11>(val_);
   }
@@ -842,10 +967,11 @@ class VariantB {
   const std::int64_t& k() const {
     return std::get<11>(val_);
   }
-
+  
   bool is_sa() const {
     return val_.index() == 12;
   }
+  
   bool has_sa() const {
     return is_sa() && std::get<12>(val_).operator bool();
   }
@@ -878,10 +1004,11 @@ class VariantB {
   const StructA& sa() const {
     return *std::get<12>(val_).get();
   }
-
+  
   bool is_sb() const {
     return val_.index() == 13;
   }
+  
   bool has_sb() const {
     return is_sb() && std::get<13>(val_).operator bool();
   }
@@ -914,10 +1041,11 @@ class VariantB {
   const StructB& sb() const {
     return *std::get<13>(val_).get();
   }
-
+  
   bool is_sc() const {
     return val_.index() == 14;
   }
+  
   bool has_sc() const {
     return is_sc() && std::get<14>(val_).operator bool();
   }
@@ -950,10 +1078,11 @@ class VariantB {
   const StructC& sc() const {
     return *std::get<14>(val_).get();
   }
-
+  
   bool is_va() const {
     return val_.index() == 15;
   }
+  
   td::Vector<std::uint8_t>& va() {
     if (!is_va()) {
       tag = Tag::TAG_va;
@@ -968,10 +1097,11 @@ class VariantB {
     tag = Tag::TAG_va;
     val_.emplace<15>(std::move(val));
   }
-
+  
   bool is_vara() const {
     return val_.index() == 16;
   }
+  
   bool has_vara() const {
     return is_vara() && std::get<16>(val_).operator bool();
   }
@@ -1004,10 +1134,11 @@ class VariantB {
   const VariantA& vara() const {
     return *std::get<16>(val_).get();
   }
-
+  
   bool is_mapa() const {
     return val_.index() == 17;
   }
+  
   td::Map<std::int32_t, VariantB>& mapa() {
     if (!is_mapa()) {
       tag = Tag::TAG_mapa;
@@ -1022,36 +1153,44 @@ class VariantB {
     tag = Tag::TAG_mapa;
     val_.emplace<17>(std::move(val));
   }
+  
 
  private:
   Tag tag = Tag::__TAG__UNSET;
 
   std::variant<
     std::monostate
-    , bool
-    , char32_t
-    , std::string
-    , std::uint8_t
-    , std::uint16_t
-    , std::uint32_t
-    , std::uint64_t
-    , std::int8_t
-    , std::int16_t
-    , std::int32_t
-    , std::int64_t
-    , std::unique_ptr<StructA>
-    , std::unique_ptr<StructB>
-    , std::unique_ptr<StructC>
-    , td::Vector<std::uint8_t>
-    , std::unique_ptr<VariantA>
-    , td::Map<std::int32_t, VariantB>
+  , bool
+  , char32_t
+  , std::string
+  , std::uint8_t
+  , std::uint16_t
+  , std::uint32_t
+  , std::uint64_t
+  , std::int8_t
+  , std::int16_t
+  , std::int32_t
+  , std::int64_t
+  , std::unique_ptr<StructA>
+  , std::unique_ptr<StructB>
+  , std::unique_ptr<StructC>
+  , td::Vector<std::uint8_t>
+  , std::unique_ptr<VariantA>
+  , td::Map<std::int32_t, VariantB>
+  
   > val_;
 
 };  // class VariantB
-  
-  
+
+
+
+// StructD struct declaration.
 class StructD {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   StructD() {}
   ~StructD() {}
@@ -1061,6 +1200,8 @@ class StructD {
   StructD(StructD&&) = default;
   StructD& operator=(StructD&&) = default;
 
+  
+  
   bool has_a_struct() const {
     return a_struct_.operator bool();
   }
@@ -1100,7 +1241,9 @@ class StructD {
     #endif
     return *a_struct_.get();
   }
-
+  
+  
+  
   bool has_b_variant() const {
     return b_variant_.operator bool();
   }
@@ -1140,7 +1283,9 @@ class StructD {
     #endif
     return *b_variant_.get();
   }
-
+  
+  
+  
   void set_c_vec(td::Vector<std::uint8_t>&& val) {
     c_vec_ = std::move(val);
   }
@@ -1150,7 +1295,9 @@ class StructD {
   const td::Vector<std::uint8_t>& c_vec() const {
     return c_vec_;
   }
-
+  
+  
+  
   void set_d_map(td::Map<std::int32_t, VariantB>&& val) {
     d_map_ = std::move(val);
   }
@@ -1160,22 +1307,31 @@ class StructD {
   const td::Map<std::int32_t, VariantB>& d_map() const {
     return d_map_;
   }
-
+  
+  
 
  private:
   std::unique_ptr<StructA> a_struct_;
   std::unique_ptr<VariantA> b_variant_;
   td::Vector<std::uint8_t> c_vec_;
   td::Map<std::int32_t, VariantB> d_map_;
-};  // class StructD
   
-  
+}; // class StructD
+
+
+
+// StructE struct declaration.
 class StructE {
  public:
-  // Nested type declarations.
+  // Nested type declarations
   
+
 class VariantE {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   VariantE() {}
   ~VariantE() {
@@ -1191,12 +1347,15 @@ class VariantE {
     __TAG__UNSET = 0,
     TAG_va = 1,
     TAG_vb = 2,
+    
   };
   Tag Which() const { return tag; }
 
+  
   bool is_va() const {
     return val_.index() == 1;
   }
+  
   std::int32_t get_va() const {
     return std::get<1>(val_);
   }
@@ -1214,10 +1373,11 @@ class VariantE {
   const std::int32_t& va() const {
     return std::get<1>(val_);
   }
-
+  
   bool is_vb() const {
     return val_.index() == 2;
   }
+  
   std::string& vb() {
     if (!is_vb()) {
       tag = Tag::TAG_vb;
@@ -1232,21 +1392,29 @@ class VariantE {
     tag = Tag::TAG_vb;
     val_.emplace<2>(std::move(val));
   }
+  
 
  private:
   Tag tag = Tag::__TAG__UNSET;
 
   std::variant<
     std::monostate
-    , std::int32_t
-    , std::string
+  , std::int32_t
+  , std::string
+  
   > val_;
 
 };  // class VariantE
-  
-  
+
+
+
+// NestedStruct struct declaration.
 class NestedStruct {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   NestedStruct() {}
   ~NestedStruct() {}
@@ -1256,6 +1424,8 @@ class NestedStruct {
   NestedStruct(NestedStruct&&) = default;
   NestedStruct& operator=(NestedStruct&&) = default;
 
+  
+  
   std::int32_t get_a() const {
     return a_;
   }
@@ -1268,15 +1438,22 @@ class NestedStruct {
   const std::int32_t& a() const {
     return a_;
   }
-
+  
+  
 
  private:
   std::int32_t a_;
-};  // class NestedStruct
   
-  
+}; // class NestedStruct
+
+
+
 class NestedVariant {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   NestedVariant() {}
   ~NestedVariant() {
@@ -1291,12 +1468,15 @@ class NestedVariant {
   enum class Tag {
     __TAG__UNSET = 0,
     TAG_a = 1,
+    
   };
   Tag Which() const { return tag; }
 
+  
   bool is_a() const {
     return val_.index() == 1;
   }
+  
   std::int64_t get_a() const {
     return std::get<1>(val_);
   }
@@ -1314,22 +1494,30 @@ class NestedVariant {
   const std::int64_t& a() const {
     return std::get<1>(val_);
   }
+  
 
  private:
   Tag tag = Tag::__TAG__UNSET;
 
   std::variant<
     std::monostate
-    , std::int64_t
+  , std::int64_t
+  
   > val_;
 
 };  // class NestedVariant
+
+
+  // Inline type declarations
   
 
-  // Inline type declarations.
-  
+// inlineStructT struct declaration.
 class inlineStructT {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   inlineStructT() {}
   ~inlineStructT() {}
@@ -1339,6 +1527,8 @@ class inlineStructT {
   inlineStructT(inlineStructT&&) = default;
   inlineStructT& operator=(inlineStructT&&) = default;
 
+  
+  
   std::int32_t get_a() const {
     return a_;
   }
@@ -1351,12 +1541,16 @@ class inlineStructT {
   const std::int32_t& a() const {
     return a_;
   }
-
+  
+  
 
  private:
   std::int32_t a_;
-};  // class inlineStructT
   
+}; // class inlineStructT
+
+
+
   StructE() {}
   ~StructE() {}
 
@@ -1365,6 +1559,8 @@ class inlineStructT {
   StructE(StructE&&) = default;
   StructE& operator=(StructE&&) = default;
 
+  
+  
   bool has_inlineStruct() const {
     return inlineStruct_.operator bool();
   }
@@ -1404,7 +1600,9 @@ class inlineStructT {
     #endif
     return *inlineStruct_.get();
   }
-
+  
+  
+  
   void set_vec_a(td::Vector<std::int32_t>&& val) {
     vec_a_ = std::move(val);
   }
@@ -1414,7 +1612,9 @@ class inlineStructT {
   const td::Vector<std::int32_t>& vec_a() const {
     return vec_a_;
   }
-
+  
+  
+  
   void set_map_a(td::Map<std::string, StructD>&& val) {
     map_a_ = std::move(val);
   }
@@ -1424,7 +1624,9 @@ class inlineStructT {
   const td::Map<std::string, StructD>& map_a() const {
     return map_a_;
   }
-
+  
+  
+  
   bool has_nestedStructField() const {
     return nestedStructField_.operator bool();
   }
@@ -1464,7 +1666,9 @@ class inlineStructT {
     #endif
     return *nestedStructField_.get();
   }
-
+  
+  
+  
   bool has_nestedVariantField() const {
     return nestedVariantField_.operator bool();
   }
@@ -1504,7 +1708,8 @@ class inlineStructT {
     #endif
     return *nestedVariantField_.get();
   }
-
+  
+  
 
  private:
   std::unique_ptr<inlineStructT> inlineStruct_;
@@ -1512,15 +1717,23 @@ class inlineStructT {
   td::Map<std::string, StructD> map_a_;
   std::unique_ptr<NestedStruct> nestedStructField_;
   std::unique_ptr<NestedVariant> nestedVariantField_;
-};  // class StructE
   
-  
+}; // class StructE
+
+
+
 class VariantC {
  public:
-  // Nested type declarations.
+  // Nested type declarations
   
+
+// NestedStruct struct declaration.
 class NestedStruct {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   NestedStruct() {}
   ~NestedStruct() {}
@@ -1530,6 +1743,8 @@ class NestedStruct {
   NestedStruct(NestedStruct&&) = default;
   NestedStruct& operator=(NestedStruct&&) = default;
 
+  
+  
   std::int32_t get_a() const {
     return a_;
   }
@@ -1542,15 +1757,22 @@ class NestedStruct {
   const std::int32_t& a() const {
     return a_;
   }
-
+  
+  
 
  private:
   std::int32_t a_;
-};  // class NestedStruct
   
-  
+}; // class NestedStruct
+
+
+
 class NestedVariant {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   NestedVariant() {}
   ~NestedVariant() {
@@ -1565,12 +1787,15 @@ class NestedVariant {
   enum class Tag {
     __TAG__UNSET = 0,
     TAG_a = 1,
+    
   };
   Tag Which() const { return tag; }
 
+  
   bool is_a() const {
     return val_.index() == 1;
   }
+  
   std::int64_t get_a() const {
     return std::get<1>(val_);
   }
@@ -1588,22 +1813,30 @@ class NestedVariant {
   const std::int64_t& a() const {
     return std::get<1>(val_);
   }
+  
 
  private:
   Tag tag = Tag::__TAG__UNSET;
 
   std::variant<
     std::monostate
-    , std::int64_t
+  , std::int64_t
+  
   > val_;
 
 };  // class NestedVariant
+
+
+  // Inline type declarations
   
 
-  // Inline type declarations.
-  
+// inlineStructT struct declaration.
 class inlineStructT {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   inlineStructT() {}
   ~inlineStructT() {}
@@ -1613,6 +1846,8 @@ class inlineStructT {
   inlineStructT(inlineStructT&&) = default;
   inlineStructT& operator=(inlineStructT&&) = default;
 
+  
+  
   std::int32_t get_a() const {
     return a_;
   }
@@ -1625,15 +1860,22 @@ class inlineStructT {
   const std::int32_t& a() const {
     return a_;
   }
-
+  
+  
 
  private:
   std::int32_t a_;
-};  // class inlineStructT
   
-  
+}; // class inlineStructT
+
+
+
 class VariantFT {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   VariantFT() {}
   ~VariantFT() {
@@ -1649,12 +1891,15 @@ class VariantFT {
     __TAG__UNSET = 0,
     TAG_va = 1,
     TAG_vb = 2,
+    
   };
   Tag Which() const { return tag; }
 
+  
   bool is_va() const {
     return val_.index() == 1;
   }
+  
   std::int32_t get_va() const {
     return std::get<1>(val_);
   }
@@ -1672,10 +1917,11 @@ class VariantFT {
   const std::int32_t& va() const {
     return std::get<1>(val_);
   }
-
+  
   bool is_vb() const {
     return val_.index() == 2;
   }
+  
   std::string& vb() {
     if (!is_vb()) {
       tag = Tag::TAG_vb;
@@ -1690,18 +1936,22 @@ class VariantFT {
     tag = Tag::TAG_vb;
     val_.emplace<2>(std::move(val));
   }
+  
 
  private:
   Tag tag = Tag::__TAG__UNSET;
 
   std::variant<
     std::monostate
-    , std::int32_t
-    , std::string
+  , std::int32_t
+  , std::string
+  
   > val_;
 
 };  // class VariantFT
-  
+
+
+
   VariantC() {}
   ~VariantC() {
     tag = Tag::__TAG__UNSET;
@@ -1722,12 +1972,15 @@ class VariantFT {
     TAG_nestedVariantField = 6,
     TAG_map_b = 7,
     TAG_vec_b = 8,
+    
   };
   Tag Which() const { return tag; }
 
+  
   bool is_inlineStruct() const {
     return val_.index() == 1;
   }
+  
   bool has_inlineStruct() const {
     return is_inlineStruct() && std::get<1>(val_).operator bool();
   }
@@ -1760,10 +2013,11 @@ class VariantFT {
   const inlineStructT& inlineStruct() const {
     return *std::get<1>(val_).get();
   }
-
+  
   bool is_VariantF() const {
     return val_.index() == 2;
   }
+  
   bool has_VariantF() const {
     return is_VariantF() && std::get<2>(val_).operator bool();
   }
@@ -1796,10 +2050,11 @@ class VariantFT {
   const VariantFT& VariantF() const {
     return *std::get<2>(val_).get();
   }
-
+  
   bool is_vec_a() const {
     return val_.index() == 3;
   }
+  
   td::Vector<std::int32_t>& vec_a() {
     if (!is_vec_a()) {
       tag = Tag::TAG_vec_a;
@@ -1814,10 +2069,11 @@ class VariantFT {
     tag = Tag::TAG_vec_a;
     val_.emplace<3>(std::move(val));
   }
-
+  
   bool is_map_a() const {
     return val_.index() == 4;
   }
+  
   td::Map<std::string, StructD>& map_a() {
     if (!is_map_a()) {
       tag = Tag::TAG_map_a;
@@ -1832,10 +2088,11 @@ class VariantFT {
     tag = Tag::TAG_map_a;
     val_.emplace<4>(std::move(val));
   }
-
+  
   bool is_nestedStructField() const {
     return val_.index() == 5;
   }
+  
   bool has_nestedStructField() const {
     return is_nestedStructField() && std::get<5>(val_).operator bool();
   }
@@ -1868,10 +2125,11 @@ class VariantFT {
   const NestedStruct& nestedStructField() const {
     return *std::get<5>(val_).get();
   }
-
+  
   bool is_nestedVariantField() const {
     return val_.index() == 6;
   }
+  
   bool has_nestedVariantField() const {
     return is_nestedVariantField() && std::get<6>(val_).operator bool();
   }
@@ -1904,10 +2162,11 @@ class VariantFT {
   const NestedVariant& nestedVariantField() const {
     return *std::get<6>(val_).get();
   }
-
+  
   bool is_map_b() const {
     return val_.index() == 7;
   }
+  
   td::Map<std::int32_t, NestedVariant>& map_b() {
     if (!is_map_b()) {
       tag = Tag::TAG_map_b;
@@ -1922,10 +2181,11 @@ class VariantFT {
     tag = Tag::TAG_map_b;
     val_.emplace<7>(std::move(val));
   }
-
+  
   bool is_vec_b() const {
     return val_.index() == 8;
   }
+  
   td::Vector<std::int32_t>& vec_b() {
     if (!is_vec_b()) {
       tag = Tag::TAG_vec_b;
@@ -1940,27 +2200,31 @@ class VariantFT {
     tag = Tag::TAG_vec_b;
     val_.emplace<8>(std::move(val));
   }
+  
 
  private:
   Tag tag = Tag::__TAG__UNSET;
 
   std::variant<
     std::monostate
-    , std::unique_ptr<inlineStructT>
-    , std::unique_ptr<VariantFT>
-    , td::Vector<std::int32_t>
-    , td::Map<std::string, StructD>
-    , std::unique_ptr<NestedStruct>
-    , std::unique_ptr<NestedVariant>
-    , td::Map<std::int32_t, NestedVariant>
-    , td::Vector<std::int32_t>
+  , std::unique_ptr<inlineStructT>
+  , std::unique_ptr<VariantFT>
+  , td::Vector<std::int32_t>
+  , td::Map<std::string, StructD>
+  , std::unique_ptr<NestedStruct>
+  , std::unique_ptr<NestedVariant>
+  , td::Map<std::int32_t, NestedVariant>
+  , td::Vector<std::int32_t>
+  
   > val_;
 
 };  // class VariantC
-  
 
 
-}  // namespace simple_values
+
+
+
+} // namesapce simple_values
+
 
 #endif  // SIMPLE_VALUES_TD_CPP_H__
-  

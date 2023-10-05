@@ -3,8 +3,12 @@
 
 #include <string>
 
+// PRODUCED BY SELF-HOSTED TYPEDEF CODEGEN
+
 namespace simple_values {
 
 
-}  // namespace simple_values
-  
+
+
+} // namesapce simple_values
+

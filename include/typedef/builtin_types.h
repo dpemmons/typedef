@@ -2,6 +2,8 @@
 #define TYPEDEF_BUILTIN_TYPES_H__
 
 #include <map>
+#include <sstream>
+#include <string>
 #include <vector>
 
 namespace td {
@@ -33,9 +35,9 @@ class Map : public std::map<K, V> {
 }  // namespace td
 
 // TODO this is a pretty terrible place to put this!!
-// it should either be generated inline or at least namespaced.
+// it should be generated inline... or at least namespaced.
 template <typename T>
-bool IsEmpty(const td::Vector<T>& v) {
+inline bool IsEmpty(const td::Vector<T>& v) {
   return v.size() == 0;
 }
 

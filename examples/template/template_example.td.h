@@ -10,9 +10,13 @@
 
 #include <typedef/builtin_types.h>
 
+// PRODUCED BY SELF-HOSTED TYPEDEF CODEGEN
+
+#ifndef TD_THROW
 #define TD_STRINGIZE_DETAIL(x) #x
 #define TD_STRINGIZE(x) TD_STRINGIZE_DETAIL(x)
 #define TD_THROW(msg) (throw msg __FILE__ ":" TD_STRINGIZE(__LINE__))
+#endif
 
 #ifndef TD_AUTO_ALLOC
 #define TD_AUTO_ALLOC 1
@@ -20,14 +24,25 @@
 
 namespace template_example {
 
+
 // Forward declarations.
+
 class StructC;
+
 class TemplateData;
+
 class SomeVariant;
 
-  
+
+
+
+// StructC struct declaration.
 class StructC {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   StructC() {}
   ~StructC() {}
@@ -37,6 +52,8 @@ class StructC {
   StructC(StructC&&) = default;
   StructC& operator=(StructC&&) = default;
 
+  
+  
   bool has_asdf() const {
     return asdf_.operator bool();
   }
@@ -76,7 +93,9 @@ class StructC {
     #endif
     return *asdf_.get();
   }
-
+  
+  
+  
   std::int32_t get_zxcv() const {
     return zxcv_;
   }
@@ -89,7 +108,9 @@ class StructC {
   const std::int32_t& zxcv() const {
     return zxcv_;
   }
-
+  
+  
+  
   std::int32_t get_jkl() const {
     return jkl_;
   }
@@ -102,17 +123,25 @@ class StructC {
   const std::int32_t& jkl() const {
     return jkl_;
   }
-
+  
+  
 
  private:
   std::unique_ptr<TemplateData> asdf_;
   std::int32_t zxcv_;
   std::int32_t jkl_;
-};  // class StructC
   
-  
+}; // class StructC
+
+
+
+// TemplateData struct declaration.
 class TemplateData {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   TemplateData() {}
   ~TemplateData() {}
@@ -122,6 +151,8 @@ class TemplateData {
   TemplateData(TemplateData&&) = default;
   TemplateData& operator=(TemplateData&&) = default;
 
+  
+  
   void set_name(std::string&& val) {
     name_ = std::move(val);
   }
@@ -131,7 +162,9 @@ class TemplateData {
   const std::string& name() const {
     return name_;
   }
-
+  
+  
+  
   bool get_has_name() const {
     return has_name_;
   }
@@ -144,7 +177,9 @@ class TemplateData {
   const bool& has_name() const {
     return has_name_;
   }
-
+  
+  
+  
   void set_name2(std::string&& val) {
     name2_ = std::move(val);
   }
@@ -154,7 +189,9 @@ class TemplateData {
   const std::string& name2() const {
     return name2_;
   }
-
+  
+  
+  
   bool get_has_name2() const {
     return has_name2_;
   }
@@ -167,7 +204,9 @@ class TemplateData {
   const bool& has_name2() const {
     return has_name2_;
   }
-
+  
+  
+  
   void set_someVec(td::Vector<std::int32_t>&& val) {
     someVec_ = std::move(val);
   }
@@ -177,7 +216,9 @@ class TemplateData {
   const td::Vector<std::int32_t>& someVec() const {
     return someVec_;
   }
-
+  
+  
+  
   void set_someMap(td::Map<std::string, std::string>&& val) {
     someMap_ = std::move(val);
   }
@@ -187,7 +228,9 @@ class TemplateData {
   const td::Map<std::string, std::string>& someMap() const {
     return someMap_;
   }
-
+  
+  
+  
   bool has_structC() const {
     return structC_.operator bool();
   }
@@ -227,7 +270,8 @@ class TemplateData {
     #endif
     return *structC_.get();
   }
-
+  
+  
 
  private:
   std::string name_;
@@ -237,11 +281,17 @@ class TemplateData {
   td::Vector<std::int32_t> someVec_;
   td::Map<std::string, std::string> someMap_;
   std::unique_ptr<StructC> structC_;
-};  // class TemplateData
   
-  
+}; // class TemplateData
+
+
+
 class SomeVariant {
  public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
 
   SomeVariant() {}
   ~SomeVariant() {
@@ -259,12 +309,15 @@ class SomeVariant {
     TAG_b_int = 2,
     TAG_c_char = 3,
     TAG_d_struct = 4,
+    
   };
   Tag Which() const { return tag; }
 
+  
   bool is_a_string() const {
     return val_.index() == 1;
   }
+  
   std::string& a_string() {
     if (!is_a_string()) {
       tag = Tag::TAG_a_string;
@@ -279,10 +332,11 @@ class SomeVariant {
     tag = Tag::TAG_a_string;
     val_.emplace<1>(std::move(val));
   }
-
+  
   bool is_b_int() const {
     return val_.index() == 2;
   }
+  
   std::int32_t get_b_int() const {
     return std::get<2>(val_);
   }
@@ -300,10 +354,11 @@ class SomeVariant {
   const std::int32_t& b_int() const {
     return std::get<2>(val_);
   }
-
+  
   bool is_c_char() const {
     return val_.index() == 3;
   }
+  
   char32_t get_c_char() const {
     return std::get<3>(val_);
   }
@@ -321,10 +376,11 @@ class SomeVariant {
   const char32_t& c_char() const {
     return std::get<3>(val_);
   }
-
+  
   bool is_d_struct() const {
     return val_.index() == 4;
   }
+  
   bool has_d_struct() const {
     return is_d_struct() && std::get<4>(val_).operator bool();
   }
@@ -357,44 +413,27 @@ class SomeVariant {
   const StructC& d_struct() const {
     return *std::get<4>(val_).get();
   }
+  
 
  private:
   Tag tag = Tag::__TAG__UNSET;
 
   std::variant<
     std::monostate
-    , std::string
-    , std::int32_t
-    , char32_t
-    , std::unique_ptr<StructC>
+  , std::string
+  , std::int32_t
+  , char32_t
+  , std::unique_ptr<StructC>
+  
   > val_;
 
 };  // class SomeVariant
-  
 
 
-void PrintStructC(std::ostream& os, const StructC& sc);
-  
 
-void PrintTemplateData(std::ostream& os, const TemplateData& t);
-  
+void PrintStructC(std::ostream& os, const StructC& sc);void PrintTemplateData(std::ostream& os, const TemplateData& t);void DoSomeVariant(std::ostream& os, const SomeVariant& v);void LoopLogic(std::ostream& os, const td::Vector<std::string>& v);void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v);void TestIsEmpty(std::ostream& os, const td::Vector<std::string>& v);void PrintIndices(std::ostream& os, const td::Vector<std::string>& v);
 
-void DoSomeVariant(std::ostream& os, const SomeVariant& v);
-  
+} // namesapce template_example
 
-void LoopLogic(std::ostream& os, const td::Vector<std::string>& v);
-  
-
-void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v);
-  
-
-void TestIsEmpty(std::ostream& os, const td::Vector<std::string>& v);
-  
-
-void PrintIndices(std::ostream& os, const td::Vector<std::string>& v);
-  
-
-}  // namespace template_example
 
 #endif  // TEMPLATE_EXAMPLE_TD_CPP_H__
-  

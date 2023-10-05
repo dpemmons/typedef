@@ -21,15 +21,12 @@ The language is ***in active development***; the gramamr is stabilizing but stil
 Items in ***bold*** are in-progress.
 
 * [ ] **string templates**
-  * [ ] escape sequences
-  * [ ] built-in functions: first() last() etc.
   * [ ] inside-out mode?
   * [ ] configurable opening / closing strings
     * [ ] formatting
   * [ ] comments
 * [ ] tests
 * [ ] generated cpp features (probably after template engine)
-  * [ ] self-hosting!
   * [ ] pretty print methods
   * [ ] comparison operators
   * [ ] prevent keyword collision (like protoc? <https://protobuf.dev/reference/cpp/cpp-generated/#generated-filenames>)
@@ -72,4 +69,9 @@ string templates
 * [x] type checking
 * [x] type checking tests
 * [x] subtemplates
-* [ ] variants: switch statements
+* [x] escape sequences
+* [x] variants: switch statements
+* [x] built-in functions: first() last() etc.
+
+code generation
+* [x] self-hosting!

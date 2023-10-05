@@ -9,9 +9,7 @@
       "type": "lldb",
       "request": "launch",
       "program": "${workspaceRoot}/build/debug/tests",
-      "args": [
-        "Struct with various valid int literals"
-      ],
+      "args": [ ],
       "cwd": "${workspaceFolder}",
     },
     {
@@ -26,7 +24,30 @@
       "cwd": "${workspaceFolder}",
     },
     {
-      "name": "(lldb) Example: template",
+      "name": "(lldb) Self-codegen",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceRoot}/build/debug/typedef",
+      "args": [
+        "${workspaceRoot}/libtypedef/codegen/codegen_cpp.td",
+        "--cpp_out=libtypedef/codegen"
+      ],
+      "cwd": "${workspaceFolder}",
+    },
+    {
+      "name": "(lldb) typedef: examples/template",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceRoot}/build/debug/typedef",
+      "args": [
+        "${workspaceRoot}/examples/template/template.td",
+        "--self_hosted_codegen",
+        "--cpp_out=/home/dpemmons/src/typedef/examples/template"
+      ],
+      "cwd": "${workspaceFolder}",
+    },
+    {
+      "name": "(lldb) examples/template",
       "type": "lldb",
       "request": "launch",
       "program": "${workspaceRoot}/build/debug/examples/template",
