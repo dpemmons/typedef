@@ -25,6 +25,7 @@ Items in ***bold*** are in-progress.
   * [ ] configurable opening / closing strings
     * [ ] formatting
   * [ ] comments
+  * [ ] boolean logic expressions (ie "and" and "or" expressions)
 * [ ] tests
 * [ ] generated cpp features (probably after template engine)
   * [ ] pretty print methods
