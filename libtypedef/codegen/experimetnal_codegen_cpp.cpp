@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <string>
 
+#define USE_EXPERIMENTAL_CPP_CODEGEN 1
+
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
 #include <fmt/ostream.h>
@@ -363,7 +365,8 @@ Vector<TmplFunction> GetTemplateFuncs(
 
 void ExperimentalCodegenCpp(
     OutPathBase* out_path,
-    TypedefParser::CompilationUnitContext* compilation_unit_ctx) {
+    TypedefParser::CompilationUnitContext* compilation_unit_ctx,
+    bool cpp_json_parser, bool cpp_json_writer) {
   filesystem::path hdr_filename =
       ToPath(compilation_unit_ctx->moduleDeclaration());
   filesystem::path source_filename = hdr_filename;
@@ -374,6 +377,10 @@ void ExperimentalCodegenCpp(
   hdr_file->Open();
   auto src_file = out_path->OpenOutputFile(source_filename);
   src_file->Open();
+
+  Options options;
+  options.generate_json_parser() = cpp_json_parser;
+  options.generate_json_writer() = cpp_json_writer;
 
   CppData cppData;
   cppData.header_guard() = HeaderGuard(source_filename);
@@ -387,13 +394,14 @@ void ExperimentalCodegenCpp(
   cppData.tmpl_funcs() =
       GetTemplateFuncs(compilation_unit_ctx->tmplDefinition());
 
-  CppHeader(hdr_file->OStream(), cppData);
-  CppSource(src_file->OStream(), cppData);
+  CppHeader(hdr_file->OStream(), cppData, options);
+  CppSource(src_file->OStream(), cppData, options);
 }
 #else
 void ExperimentalCodegenCpp(
     OutPathBase* out_path,
-    TypedefParser::CompilationUnitContext* compilation_unit_ctx) {
+    TypedefParser::CompilationUnitContext* compilation_unit_ctx,
+    bool cpp_json_parser, bool cpp_json_writer) {
   fmt::print(
       std::cerr,
       "Trying to use experimental C++ code generation but this binary was "

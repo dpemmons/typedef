@@ -27,9 +27,9 @@ int main(int argc, const char** argv) {
   }
   Args args = std::get<Args>(maybeArgs);
 
-  std::ifstream inputStream(args.getInpuFilename());
+  std::ifstream inputStream(args.filename);
   if (!inputStream.is_open()) {
-    fmt::print("Unable to open input file: {}\n", args.getInpuFilename());
+    fmt::print("Unable to open input file: {}\n", args.filename);
     return 1;
   }
 
@@ -42,9 +42,8 @@ int main(int argc, const char** argv) {
       inputStream.seekg(std::ios::beg);
       std::string line;
 
-      std::cerr << fmt::format(fmt::emphasis::bold,
-                               "{}:{}:{}: ", args.getInpuFilename(), err.line,
-                               err.line_offset);
+      std::cerr << fmt::format(fmt::emphasis::bold, "{}:{}:{}: ", args.filename,
+                               err.line, err.line_offset);
       std::cerr << fmt::format(fmt::emphasis::bold | fg(fmt::color::orange_red),
                                "error: ");
       std::cerr << fmt::format(fmt::emphasis::bold, "{} {}",
@@ -65,14 +64,15 @@ int main(int argc, const char** argv) {
     return 1;  // error.
   }
 
-  if (!args.GetCppOut().empty()) {
-    auto outpath = std::make_unique<td::OutPath>(args.GetCppOut());
+  if (!args.cpp_out.empty()) {
+    auto outpath = std::make_unique<td::OutPath>(args.cpp_out);
     td::CodegenCpp(outpath.get(), parser.GetCompilationUnitContext());
   }
-  if (!args.GetExperimentalCppOut().empty()) {
-    auto outpath = std::make_unique<td::OutPath>(args.GetExperimentalCppOut());
+  if (!args.experimental_cpp_out.empty()) {
+    auto outpath = std::make_unique<td::OutPath>(args.experimental_cpp_out);
     td::ExperimentalCodegenCpp(outpath.get(),
-                               parser.GetCompilationUnitContext());
+                               parser.GetCompilationUnitContext(),
+                               args.cpp_json_parser, args.cpp_json_writer);
   }
 
   return 0;

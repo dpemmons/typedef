@@ -724,7 +724,7 @@ TmplItemsT(os, t.items());
 os << "\n}";
 
 }
-void CppHeader(std::ostream& os, const CppData& d) {
+void CppHeader(std::ostream& os, const CppData& d, const Options& opt) {
 os << "\n#ifndef ";
 os << d.header_guard();
 os << "\n#define ";
@@ -822,7 +822,7 @@ os << d.header_guard();
 os << "\n";
 
 }
-void CppSource(std::ostream& os, const CppData& d) {
+void CppSource(std::ostream& os, const CppData& d, const Options& opt) {
 os << "\n#include \"";
 os << d.header_filename();
 os << "\"\n\n#include <string>\n\n// PRODUCED BY SELF-HOSTED TYPEDEF CODEGEN\n\n";
@@ -869,8 +869,8 @@ os << "\n";
 
 }
 
-} // namespace td
-} // namespace codegen
-} // namespace experimental
-} // namespace cpp
+} // namesapce td
+} // namesapce codegen
+} // namesapce experimental
+} // namesapce cpp
 

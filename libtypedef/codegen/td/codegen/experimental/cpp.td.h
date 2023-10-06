@@ -54,6 +54,8 @@ class TmplItem;
 
 class TmplFunction;
 
+class Options;
+
 class CppData;
 
 
@@ -252,6 +254,21 @@ class access_byT {
   
   
   
+  bool get_is_required() const {
+    return is_required_;
+  }
+  void set_is_required(bool val) {
+    is_required_ = val;
+  }
+  bool& is_required() {
+    return is_required_;
+  }
+  const bool& is_required() const {
+    return is_required_;
+  }
+  
+  
+  
   void set_type_arguments(td::Vector<AccessInfo>&& val) {
     type_arguments_ = std::move(val);
   }
@@ -268,6 +285,7 @@ class access_byT {
   std::string identifier_;
   std::string cpp_type_;
   std::unique_ptr<access_byT> access_by_;
+  bool is_required_;
   td::Vector<AccessInfo> type_arguments_;
   
 }; // class AccessInfo
@@ -1638,6 +1656,62 @@ class TmplFunction {
 
 
 
+// Options struct declaration.
+class Options {
+ public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
+
+  Options() {}
+  ~Options() {}
+
+  Options(const Options&) = delete;
+  Options& operator=(const Options&) = delete;
+  Options(Options&&) = default;
+  Options& operator=(Options&&) = default;
+
+  
+  
+  bool get_generate_json_writer() const {
+    return generate_json_writer_;
+  }
+  void set_generate_json_writer(bool val) {
+    generate_json_writer_ = val;
+  }
+  bool& generate_json_writer() {
+    return generate_json_writer_;
+  }
+  const bool& generate_json_writer() const {
+    return generate_json_writer_;
+  }
+  
+  
+  
+  bool get_generate_json_parser() const {
+    return generate_json_parser_;
+  }
+  void set_generate_json_parser(bool val) {
+    generate_json_parser_ = val;
+  }
+  bool& generate_json_parser() {
+    return generate_json_parser_;
+  }
+  const bool& generate_json_parser() const {
+    return generate_json_parser_;
+  }
+  
+  
+
+ private:
+  bool generate_json_writer_;
+  bool generate_json_parser_;
+  
+}; // class Options
+
+
+
 // CppData struct declaration.
 class CppData {
  public:
@@ -1727,12 +1801,12 @@ class CppData {
 
 
 
-void VecUserTypeDeclarationT(std::ostream& os, const td::Vector<UserTypeDeclaration>& ut);void TmplStructDeclaration(std::ostream& os, const StructDecl& s);void TmplVariantDeclaration(std::ostream& os, const StructDecl& v);void TmplFuncDeclaration(std::ostream& os, const TmplFunction& t);void CppType(std::ostream& os, const AccessInfo& a);void ParamsList(std::ostream& os, const td::Vector<AccessInfo>& params);void TmplValueDereferenceT(std::ostream& os, const TmplValueDereference& v);void TmplStringExpression(std::ostream& os, const TmplExpression& i);void TmplBoolExpression(std::ostream& os, const TmplExpression& i);void TmplIfT(std::ostream& os, const TmplIf& i);void TmplIfBlockT(std::ostream& os, const TmplIfBlock& i);void TmplForT(std::ostream& os, const TmplForBlock& f);void TmplHasValRef(std::ostream& os, const TmplValueDereference& val);void TmplSwitchT(std::ostream& os, const SwitchBlock& s);void TmplItemsT(std::ostream& os, const td::Vector<TmplItem>& v);void TmplItemT(std::ostream& os, const TmplItem& i);void TmplFuncDefinition(std::ostream& os, const TmplFunction& t);void CppHeader(std::ostream& os, const CppData& d);void CppSource(std::ostream& os, const CppData& d);
+void VecUserTypeDeclarationT(std::ostream& os, const td::Vector<UserTypeDeclaration>& ut);void TmplStructDeclaration(std::ostream& os, const StructDecl& s);void TmplVariantDeclaration(std::ostream& os, const StructDecl& v);void TmplFuncDeclaration(std::ostream& os, const TmplFunction& t);void CppType(std::ostream& os, const AccessInfo& a);void ParamsList(std::ostream& os, const td::Vector<AccessInfo>& params);void TmplValueDereferenceT(std::ostream& os, const TmplValueDereference& v);void TmplStringExpression(std::ostream& os, const TmplExpression& i);void TmplBoolExpression(std::ostream& os, const TmplExpression& i);void TmplIfT(std::ostream& os, const TmplIf& i);void TmplIfBlockT(std::ostream& os, const TmplIfBlock& i);void TmplForT(std::ostream& os, const TmplForBlock& f);void TmplHasValRef(std::ostream& os, const TmplValueDereference& val);void TmplSwitchT(std::ostream& os, const SwitchBlock& s);void TmplItemsT(std::ostream& os, const td::Vector<TmplItem>& v);void TmplItemT(std::ostream& os, const TmplItem& i);void TmplFuncDefinition(std::ostream& os, const TmplFunction& t);void CppHeader(std::ostream& os, const CppData& d, const Options& opt);void CppSource(std::ostream& os, const CppData& d, const Options& opt);
 
-} // namespace td
-} // namespace codegen
-} // namespace experimental
-} // namespace cpp
+} // namesapce td
+} // namesapce codegen
+} // namesapce experimental
+} // namesapce cpp
 
 
 #endif  // TD_CODEGEN_EXPERIMENTAL_CPP_TD_CPP_H__

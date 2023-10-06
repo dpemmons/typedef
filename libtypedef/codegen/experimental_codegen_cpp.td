@@ -9,6 +9,7 @@ struct AccessInfo {
     reference: bool;
     pointer: bool;
   };
+  is_required: bool;
   type_arguments: vector<AccessInfo>;
 }
 
@@ -86,6 +87,11 @@ struct TmplFunction {
   identifier: str;
   params: vector<AccessInfo>;
   items: vector<TmplItem>;
+}
+
+struct Options {
+  generate_json_writer: bool;
+  generate_json_parser: bool;
 }
 
 struct CppData {
@@ -390,7 +396,7 @@ void <t.identifier>(std::ostream& os<ParamsList(t.params)>) {
 <TmplItemsT(t.items)>
 }"
 
-template CppHeader(d: CppData) t"
+template CppHeader(d: CppData, opt: Options) t"
 #ifndef <d.header_guard>
 #define <d.header_guard>
 
@@ -440,7 +446,7 @@ template CppHeader(d: CppData) t"
 #endif  // <d.header_guard>
 "
 
-template CppSource(d: CppData) t"
+template CppSource(d: CppData, opt: Options) t"
 #include \"<d.header_filename>\"
 
 #include \<string\>
