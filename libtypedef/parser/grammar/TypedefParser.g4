@@ -34,7 +34,7 @@ typeDefinition: (KW_STRUCT | KW_VARIANT) type_identifier = identifier? (
 fieldBlock: ( typeDefinition | (fieldDefinition ';'))*;
 
 fieldDefinition:
-	field_identifier = identifier ':' (
+	field_identifier = identifier is_required = EXCL? ':' (
 		typeAnnotation
 		| typeDefinition
 	) ('=' primitiveLiteral)?;
@@ -155,8 +155,8 @@ functionParameter:
 
 useDeclaration: 'use' symbolPath ';';
 
-symbolPath: (leading_pathsep = PATHSEP)? identifier (
-		PATHSEP identifier
+symbolPath: (leading_pathsep = COLONCOLON)? identifier (
+		COLONCOLON identifier
 	)*;
 
 primitiveLiteral:

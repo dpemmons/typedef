@@ -52,6 +52,7 @@ struct ParserErrorInfo {
     INVALID_ARGUMENT = 31,
     INVALID_CASE_LABEL = 32,
     MISSING_CASE_LABEL = 33,
+    INVALID_ANNOTATION = 34,
   };
   Type error_type;
 

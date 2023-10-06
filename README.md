@@ -32,7 +32,6 @@ Items in ***bold*** are in-progress.
   * [ ] prevent keyword collision (like protoc? <https://protobuf.dev/reference/cpp/cpp-generated/#generated-filenames>)
   * [ ] prevent unbounded recursion of generated template functions?
 * [ ] more types
-  * [ ] optionals
   * [ ] onordered set type? (does it make sense?)
   * [ ] Foundational
     * [ ] fixed length arrays
@@ -61,6 +60,7 @@ Done moved here (and then eventually deleted):
 * [x] separate type declaration from field, value, etc. declaration
 * [x] make symbol references independent of declaration order
 * [x] tests: literals... (clear out /old)
+* [x] required fields (grammar)
 
 string templates
 

@@ -527,3 +527,33 @@ struct SomeStruct {
   REQUIRE(parser.Parse() == 1);
   REQUIRE(parser.GetError().error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
 };
+
+TEST_CASE("Struct with a required field", "[struct]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  a_field!: i32;
+  inline_struct!: struct {
+    b_field!: i32;
+  };
+};
+    )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+};
+
+TEST_CASE("Struct within a variant that has a required field", "[struct]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
+
+variant SomeVariant {
+  a_field: i32;
+  inline_struct: struct {
+    b_field!: i32;
+  };
+};
+    )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+};

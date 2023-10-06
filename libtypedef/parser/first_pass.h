@@ -26,6 +26,11 @@ class FirstPassListener : public BaseListener {
   virtual void enterTypedefVersionDeclaration(
       TypedefParser::TypedefVersionDeclarationContext *ctx) override;
 
+  virtual void enterTypeDefinition(
+      TypedefParser::TypeDefinitionContext *ctx) override;
+  virtual void exitTypeDefinition(
+      TypedefParser::TypeDefinitionContext *ctx) override;
+
   virtual void enterFieldBlock(TypedefParser::FieldBlockContext *ctx) override;
   virtual void exitFieldBlock(TypedefParser::FieldBlockContext *ctx) override;
 
@@ -54,9 +59,7 @@ class FirstPassListener : public BaseListener {
       TypedefParser::TmplValueReferencePathContext *ctx) override;
 
  private:
-  struct BuiltinFunction {
-    bool hi;
-  };
+  struct BuiltinFunction {};
   using IdentifierCtx =
       std::variant<std::monostate,                               //
                    TypedefParser::TypeDefinitionContext *,       //
@@ -66,6 +69,10 @@ class FirstPassListener : public BaseListener {
                    TypedefParser::FunctionParameterContext *,
                    BuiltinFunction *>;  //
   std::unordered_map<std::string, IdentifierCtx> identifiers_;
+
+  using Context = std::variant<TypedefParser::TypeDefinitionContext *,    //
+                               TypedefParser::CompilationUnitContext *>;  //
+  std::vector<Context> current_context_;
 
   // TODO these really should be stored in the AST so they can be hold data
   // (like return type) for the second_pass

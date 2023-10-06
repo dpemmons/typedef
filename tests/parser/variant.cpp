@@ -527,3 +527,39 @@ variant SomeVariant {
   REQUIRE(parser.Parse() == 1);
   REQUIRE(parser.GetError().error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
 };
+
+TEST_CASE("Variant with a required field should fail", "[variant]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
+
+variant SomeVariant {
+  a_field!: i32;
+  inline_variant!: variant {
+    b_field!: i32;
+  };
+};
+    )");
+  REQUIRE(parser.Parse() == 3);
+  REQUIRE(parser.GetError(0).error_type == ParserErrorInfo::INVALID_ANNOTATION);
+  REQUIRE(parser.GetError(1).error_type == ParserErrorInfo::INVALID_ANNOTATION);
+  REQUIRE(parser.GetError(2).error_type == ParserErrorInfo::INVALID_ANNOTATION);
+};
+
+TEST_CASE("Variant with a required field within a struct should fail", "[variant]") {
+  Parser parser(R"(
+typedef=alpha;
+module test;
+
+struct SomeStruct {
+  a_field!: i32;
+  inline_variant!: variant {
+    b_field!: i32;
+  };
+};
+    )");
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError().error_type == ParserErrorInfo::INVALID_ANNOTATION);
+  REQUIRE(parser.GetError().line == 8);
+  REQUIRE(parser.GetError().line_offset == 11);
+};

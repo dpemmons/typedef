@@ -85,6 +85,8 @@ const char *ParserErrorInfo::ErrorTypeToString() const {
       return "INVALID_CASE_LABEL";
     case MISSING_CASE_LABEL:
       return "MISSING_CASE_LABEL";
+    case INVALID_ANNOTATION:
+      return "INVALID_ANNOTATION";
     default:
       throw fmt::format("Unhandled error ID in ErrorTypeToString(): {}",
                         (int)error_type);

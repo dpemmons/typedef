@@ -39,22 +39,22 @@ public:
     HEX_DIGITS = 103, HEX_DIGITS_UNDERSCORE = 104, OCT_DIGITS = 105, OCT_DIGITS_UNDERSCORE = 106, 
     BIN_DIGITS = 107, BIN_DIGITS_UNDERSCORE = 108, FLOAT_LITERAL = 109, 
     HEX_PREFIX = 110, OCT_PREFIX = 111, BIN_PREFIX = 112, START_TEMPLATE = 113, 
-    RAW_ESCAPE = 114, PLUS = 115, MINUS = 116, STAR = 117, SLASH = 118, 
-    PERCENT = 119, CARET = 120, NOT = 121, AND = 122, OR = 123, ANDAND = 124, 
-    OROR = 125, PLUSEQ = 126, MINUSEQ = 127, STAREQ = 128, SLASHEQ = 129, 
-    PERCENTEQ = 130, CARETEQ = 131, ANDEQ = 132, OREQ = 133, SHLEQ = 134, 
-    SHREQ = 135, EQ = 136, EQEQ = 137, NE = 138, GT = 139, LT = 140, GE = 141, 
-    LE = 142, AT = 143, UNDERSCORE = 144, DOT = 145, DOTDOT = 146, DOTDOTDOT = 147, 
-    COMMA = 148, SEMI = 149, COLON = 150, PATHSEP = 151, RARROW = 152, FATARROW = 153, 
-    POUND = 154, DOLLAR = 155, QUESTION = 156, LBRACE = 157, RBRACE = 158, 
-    LBRACK = 159, RBRACK = 160, LPAREN = 161, RPAREN = 162, WS = 163, END_TEMPLATE = 164, 
-    TMPL_EXPR_OPEN = 165, TMPL_TEXT = 166, TMPL_EXPR_CLOSE = 167, TMPL_SLASH = 168, 
-    TMPL_COMMA = 169, TMPL_DOT = 170, TMPL_LPAREN = 171, TMPL_RPAREN = 172, 
-    TMPL_PATHSEP = 173, TMPL_NOT = 174, TMPL_KW_FOR = 175, TMPL_KW_CLOSE_FOR = 176, 
-    TMPL_KW_SWITCH = 177, TMPL_KW_CLOSE_SWITCH = 178, TMPL_KW_CASE = 179, 
-    TMPL_KW_CLOSE_CASE = 180, TMPL_KW_DEFAULT = 181, TMPL_KW_CLOSE_DEFAULT = 182, 
-    TMPL_KW_IN = 183, TMPL_KW_IF = 184, TMPL_KW_CLOSEIF = 185, TMPL_KW_ELSE = 186, 
-    TMPL_KW_ELIF = 187, TMPL_NON_KEYWORD_IDENTIFIER = 188, TMPL_WS = 189
+    RAW_ESCAPE = 114, PLUS = 115, MINUS = 116, AST = 117, SLASH = 118, PERCENT = 119, 
+    HAT = 120, EXCL = 121, AMP = 122, VERT = 123, AMPAMP = 124, VERTVERT = 125, 
+    PLUSEQ = 126, MINUSEQ = 127, STAREQ = 128, SOLEQ = 129, PERCENTEQ = 130, 
+    HATEQ = 131, AMPEQ = 132, LTLTEQ = 133, GTGTEQ = 134, EQ = 135, EQEQ = 136, 
+    EXCLEQ = 137, GT = 138, LT = 139, GE = 140, LE = 141, AT = 142, LOWBAR = 143, 
+    DOT = 144, DOTDOT = 145, DOTDOTDOT = 146, COMMA = 147, SEMI = 148, COLON = 149, 
+    COLONCOLON = 150, MINUSGT = 151, EQGT = 152, NUM = 153, DOLLAR = 154, 
+    QUEST = 155, LBRACE = 156, RBRACE = 157, LBRACK = 158, RBRACK = 159, 
+    LPAREN = 160, RPAREN = 161, WS = 162, END_TEMPLATE = 163, TMPL_EXPR_OPEN = 164, 
+    TMPL_TEXT = 165, TMPL_EXPR_CLOSE = 166, TMPL_SLASH = 167, TMPL_COMMA = 168, 
+    TMPL_DOT = 169, TMPL_LPAREN = 170, TMPL_RPAREN = 171, TMPL_PATHSEP = 172, 
+    TMPL_NOT = 173, TMPL_KW_FOR = 174, TMPL_KW_CLOSE_FOR = 175, TMPL_KW_SWITCH = 176, 
+    TMPL_KW_CLOSE_SWITCH = 177, TMPL_KW_CASE = 178, TMPL_KW_CLOSE_CASE = 179, 
+    TMPL_KW_DEFAULT = 180, TMPL_KW_CLOSE_DEFAULT = 181, TMPL_KW_IN = 182, 
+    TMPL_KW_IF = 183, TMPL_KW_CLOSEIF = 184, TMPL_KW_ELSE = 185, TMPL_KW_ELIF = 186, 
+    TMPL_NON_KEYWORD_IDENTIFIER = 187, TMPL_WS = 188
   };
 
   enum {
@@ -234,6 +234,7 @@ public:
   class  FieldDefinitionContext : public antlr4::ParserRuleContext {
   public:
     TypedefParser::IdentifierContext *field_identifier = nullptr;;
+    antlr4::Token *is_required = nullptr;;
     FieldDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *COLON();
@@ -242,6 +243,7 @@ public:
     TypeDefinitionContext *typeDefinition();
     antlr4::tree::TerminalNode *EQ();
     PrimitiveLiteralContext *primitiveLiteral();
+    antlr4::tree::TerminalNode *EXCL();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -735,8 +737,8 @@ public:
     virtual size_t getRuleIndex() const override;
     std::vector<IdentifierContext *> identifier();
     IdentifierContext* identifier(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> PATHSEP();
-    antlr4::tree::TerminalNode* PATHSEP(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> COLONCOLON();
+    antlr4::tree::TerminalNode* COLONCOLON(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
