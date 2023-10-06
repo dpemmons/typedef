@@ -43,6 +43,7 @@ TypedefParser::TypeAnnotationContext* GetTypeAnnotation(
 bool HasTypeDefinition(TypedefParser::FieldDefinitionContext* ctx);
 TypedefParser::TypeDefinitionContext* GetTypeDefinition(
     TypedefParser::FieldDefinitionContext* ctx);
+bool IsRequired(TypedefParser::FieldDefinitionContext* ctx);
 
 size_t HasTypeArguments(TypedefParser::TypeAnnotationContext* ctx);
 TypedefParser::TypeAnnotationContext* GetTypeArgument(

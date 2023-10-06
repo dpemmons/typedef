@@ -5,6 +5,7 @@
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
 
+#include "ast_functions.h"
 #include "libtypedef/parser/macros.h"
 
 namespace td {
@@ -118,6 +119,10 @@ bool HasTypeDefinition(TypedefParser::FieldDefinitionContext* ctx) {
 TypedefParser::TypeDefinitionContext* GetTypeDefinition(
     TypedefParser::FieldDefinitionContext* ctx) {
   return ctx->typeDefinition();
+}
+
+bool IsRequired(TypedefParser::FieldDefinitionContext* ctx) {
+  return ctx->is_required;
 }
 
 size_t HasTypeArguments(TypedefParser::TypeAnnotationContext* ctx) {

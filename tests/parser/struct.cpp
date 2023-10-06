@@ -534,13 +534,23 @@ typedef=alpha;
 module test;
 
 struct SomeStruct {
-  a_field!: i32;
-  inline_struct!: struct {
-    b_field!: i32;
+  required_field!: i32;
+  required_inline_struct!: struct {
+    another_required_field!: i32;
   };
+  not_required: i32;
 };
     )");
   REQUIRE_NO_PARSE_ERROR(parser.Parse());
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct");
+  REQUIRE(ctx);
+  REQUIRE(IsRequired(FindField(ctx, "required_field")));
+  REQUIRE(IsRequired(FindField(ctx, "required_inline_struct")));
+  REQUIRE(!IsRequired(FindField(ctx, "not_required")));
+  auto* another_required_field =
+      FindField(GetTypeDefinition(FindField(ctx, "required_inline_struct")),
+                "another_required_field");
+  REQUIRE(IsRequired(another_required_field));
 };
 
 TEST_CASE("Struct within a variant that has a required field", "[struct]") {
