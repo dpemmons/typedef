@@ -96,9 +96,16 @@ struct SomeStruct {
   REQUIRE(GetFQN(sns) ==
           std::vector<std::optional<std::string>>(
               {"ModA", "ModB", "SomeStruct", "SomeNestedStruct"}));
+  REQUIRE(HasIdentifier(sns));
+  REQUIRE(GetIdentifier(sns) == "SomeNestedStruct");
+  REQUIRE(!HasFieldIdentifier(sns));
 
   auto* isf = FindField(ss, "an_inline_struct");
-  REQUIRE(GetFQN(GetTypeDefinition(isf)) ==
+  auto* an_inline_struct_type = GetTypeDefinition(isf);
+  REQUIRE(GetFQN(an_inline_struct_type) ==
           std::vector<std::optional<std::string>>(
               {"ModA", "ModB", "SomeStruct", "an_inline_struct", std::nullopt}));
+  REQUIRE(HasFieldIdentifier(an_inline_struct_type));
+  REQUIRE(!HasIdentifier(an_inline_struct_type));
+  REQUIRE(GetFieldIdentifier(an_inline_struct_type) == "an_inline_struct");
 }

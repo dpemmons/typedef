@@ -155,6 +155,23 @@ std::vector<std::optional<std::string>> GetFQN(
   return ret;
 }
 
+bool HasIdentifier(TypedefParser::TypeDefinitionContext* type) {
+  return type->type_identifier;
+}
+
+const std::string& GetIdentifier(TypedefParser::TypeDefinitionContext* type) {
+  return type->type_identifier->id;
+}
+
+bool HasFieldIdentifier(TypedefParser::TypeDefinitionContext* type) {
+  return type->field;
+}
+
+const std::string& GetFieldIdentifier(
+    TypedefParser::TypeDefinitionContext* type) {
+  return type->field->identifier()->id;
+}
+
 TypedefParser::CompilationUnitContext* GetCompilationUnitContext(
     TypedefParser::IdentifierCtx& idctx) {
   if (std::holds_alternative<TypedefParser::CompilationUnitContext*>(idctx)) {

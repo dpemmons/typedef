@@ -403,6 +403,7 @@ antlrcpp::Any TypedefParser::TypeDefinitionContext::accept(tree::ParseTreeVisito
 TypedefParser::TypeDefinitionContext* TypedefParser::typeDefinition() {
   TypeDefinitionContext *_localctx = _tracker.createInstance<TypeDefinitionContext>(_ctx, getState());
   enterRule(_localctx, 6, TypedefParser::RuleTypeDefinition);
+  dynamic_cast<TypeDefinitionContext *>(_localctx)->field =  nullptr;
   size_t _la = 0;
 
   auto onExit = finally([=] {

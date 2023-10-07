@@ -63,6 +63,9 @@ void FirstPassListener::enterTypedefVersionDeclaration(
 
 void FirstPassListener::enterTypeDefinition(
     TypedefParser::TypeDefinitionContext* ctx) {
+  if (auto* field = GetFieldDefinition(current_namespace_context_.back())) {
+    ctx->field = field;
+  }
   ctx->ns_ctx = current_namespace_context_;  // make a copy
   current_namespace_context_.push_back(ctx);
 }

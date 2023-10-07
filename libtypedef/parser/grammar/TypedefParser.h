@@ -209,6 +209,7 @@ public:
 
   class  TypeDefinitionContext : public antlr4::ParserRuleContext {
   public:
+    FieldDefinitionContext* field;
     std::vector<IdentifierCtx> ns_ctx;
     TypedefParser::IdentifierContext *type_identifier = nullptr;;
     TypedefParser::IdentifierContext *type_parameter = nullptr;;

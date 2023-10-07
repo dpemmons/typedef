@@ -49,6 +49,12 @@ bool IsRequired(TypedefParser::FieldDefinitionContext* ctx);
 // nullopt values indicate anonymous namespaces.
 std::vector<std::optional<std::string>> GetFQN(
     TypedefParser::TypeDefinitionContext* type);
+bool HasIdentifier(TypedefParser::TypeDefinitionContext* type);
+const std::string& GetIdentifier(TypedefParser::TypeDefinitionContext* type);
+// If it's anonymous, but we can retrieve the field's identifier
+bool HasFieldIdentifier(TypedefParser::TypeDefinitionContext* type);
+const std::string& GetFieldIdentifier(
+    TypedefParser::TypeDefinitionContext* type);
 
 // Returns nullptr if the IdentifierCtx doesn't contain a
 // CompilationUnitContext*

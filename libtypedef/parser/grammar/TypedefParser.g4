@@ -58,10 +58,10 @@ moduleDeclaration: 'module' symbolPath ';';
 
 // struct|variant SomeVariant { optionA: i32; optionB: str; }
 typeDefinition
-	returns[std::vector<IdentifierCtx> ns_ctx]: (
-		KW_STRUCT
-		| KW_VARIANT
-	) type_identifier = identifier? (
+	returns[
+		FieldDefinitionContext* field,
+		std::vector<IdentifierCtx> ns_ctx]
+	@init {$field = nullptr;}: (KW_STRUCT | KW_VARIANT) type_identifier = identifier? (
 		LT (type_parameter = identifier COMMA)+ GT
 	)? '{' fieldBlock '}' ';'?;
 
