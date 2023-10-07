@@ -131,18 +131,18 @@ std::vector<std::optional<std::string>> GetFQN(
   std::vector<std::optional<std::string>> ret;
   for (TypedefParser::IdentifierCtx& id_ctx : type->ns_ctx) {
     // First resolve the module namespaces
-    if (auto c = std::get_if<TypedefParser::CompilationUnitContext*>(&id_ctx)) {
-      for (auto* id : (*c)->moduleDeclaration()->symbolPath()->identifier()) {
+    if (auto* c = GetCompilationUnitContext(id_ctx)) {
+      for (auto* id : c->moduleDeclaration()->symbolPath()->identifier()) {
         ret.push_back(id->id);
       }
-    } else if (auto t = std::get_if<TypedefParser::TypeDefinitionContext*>(
-                   &id_ctx)) {
-      TypedefParser::TypeDefinitionContext* tdc = *t;
-      if (tdc->type_identifier) {
-        ret.push_back(tdc->type_identifier->id);
+    } else if (auto* t = GetTypeDefinition(id_ctx)) {
+      if (t->type_identifier) {
+        ret.push_back(t->type_identifier->id);
       } else {
         ret.push_back(std::nullopt);
       }
+    } else if (auto* f = GetFieldDefinition(id_ctx)) {
+      ret.push_back(f->identifier()->id);
     }
   }
 
@@ -153,6 +153,30 @@ std::vector<std::optional<std::string>> GetFQN(
   }
 
   return ret;
+}
+
+TypedefParser::CompilationUnitContext* GetCompilationUnitContext(
+    TypedefParser::IdentifierCtx& idctx) {
+  if (std::holds_alternative<TypedefParser::CompilationUnitContext*>(idctx)) {
+    return std::get<TypedefParser::CompilationUnitContext*>(idctx);
+  }
+  return nullptr;
+}
+
+TypedefParser::TypeDefinitionContext* GetTypeDefinition(
+    TypedefParser::IdentifierCtx& idctx) {
+  if (std::holds_alternative<TypedefParser::TypeDefinitionContext*>(idctx)) {
+    return std::get<TypedefParser::TypeDefinitionContext*>(idctx);
+  }
+  return nullptr;
+}
+
+TypedefParser::FieldDefinitionContext* GetFieldDefinition(
+    TypedefParser::IdentifierCtx& idctx) {
+  if (std::holds_alternative<TypedefParser::FieldDefinitionContext*>(idctx)) {
+    return std::get<TypedefParser::FieldDefinitionContext*>(idctx);
+  }
+  return nullptr;
 }
 
 size_t HasTypeArguments(TypedefParser::TypeAnnotationContext* ctx) {

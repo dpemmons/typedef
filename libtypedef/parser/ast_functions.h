@@ -50,6 +50,15 @@ bool IsRequired(TypedefParser::FieldDefinitionContext* ctx);
 std::vector<std::optional<std::string>> GetFQN(
     TypedefParser::TypeDefinitionContext* type);
 
+// Returns nullptr if the IdentifierCtx doesn't contain a
+// CompilationUnitContext*
+TypedefParser::CompilationUnitContext* GetCompilationUnitContext(
+    TypedefParser::IdentifierCtx& idctx);
+TypedefParser::TypeDefinitionContext* GetTypeDefinition(
+    TypedefParser::IdentifierCtx& idctx);
+TypedefParser::FieldDefinitionContext* GetFieldDefinition(
+    TypedefParser::IdentifierCtx& idctx);
+
 size_t HasTypeArguments(TypedefParser::TypeAnnotationContext* ctx);
 TypedefParser::TypeAnnotationContext* GetTypeArgument(
     TypedefParser::TypeAnnotationContext* ctx, size_t ii = 0);

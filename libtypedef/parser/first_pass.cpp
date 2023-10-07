@@ -103,6 +103,7 @@ void FirstPassListener::exitFieldBlock(TypedefParser::FieldBlockContext* ctx) {
 
 void FirstPassListener::enterFieldDefinition(
     TypedefParser::FieldDefinitionContext* ctx) {
+  current_namespace_context_.push_back(ctx);
   if (ctx->typeAnnotation() &&
       ctx->typeAnnotation()->typeIdentifier()->primitiveTypeIdentifier()) {
     auto* primitive_type_annotation =
@@ -163,6 +164,11 @@ void FirstPassListener::enterFieldDefinition(
       }
     }
   }
+}
+
+void FirstPassListener::exitFieldDefinition(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  current_namespace_context_.pop_back();
 }
 
 void FirstPassListener::enterTypeAnnotation(

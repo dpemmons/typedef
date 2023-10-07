@@ -36,6 +36,8 @@ class FirstPassListener : public BaseListener {
 
   virtual void enterFieldDefinition(
       TypedefParser::FieldDefinitionContext *ctx) override;
+  virtual void exitFieldDefinition(
+      TypedefParser::FieldDefinitionContext *ctx) override;
 
   virtual void enterTypeAnnotation(
       TypedefParser::TypeAnnotationContext *ctx) override;

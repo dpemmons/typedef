@@ -100,5 +100,5 @@ struct SomeStruct {
   auto* isf = FindField(ss, "an_inline_struct");
   REQUIRE(GetFQN(GetTypeDefinition(isf)) ==
           std::vector<std::optional<std::string>>(
-              {"ModA", "ModB", "SomeStruct", std::nullopt}));
+              {"ModA", "ModB", "SomeStruct", "an_inline_struct", std::nullopt}));
 }
