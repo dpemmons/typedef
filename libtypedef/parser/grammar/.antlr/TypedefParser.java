@@ -193,12 +193,41 @@ public class TypedefParser extends Parser {
 	@Override
 	public ATN getATN() { return _ATN; }
 
+
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wredeclared-class-member"
+	class CompilationUnitContext;
+	class TypeDefinitionContext;
+	class TmplDefinitionContext;
+	class FieldDefinitionContext;
+	class TmplBindingVariableContext;
+	class FunctionParameterContext;
+	struct BuiltinFunction {};
+	using IdentifierCtx =
+			std::variant<CompilationUnitContext *,      //
+										TypeDefinitionContext *,      //
+										TmplDefinitionContext *,      //
+										FieldDefinitionContext *,     //
+										TmplBindingVariableContext *, //
+										FunctionParameterContext *,   //
+										BuiltinFunction *>;           //
+	BuiltinFunction is_first_func;
+	BuiltinFunction is_last_func;
+	BuiltinFunction is_empty_func;
+	BuiltinFunction index0_func;
+	BuiltinFunction index1_func;
+
 	public TypedefParser(TokenStream input) {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
 	public static class CompilationUnitContext extends ParserRuleContext {
+		public BuiltinFunction is_first_func;
+		public BuiltinFunction is_last_func;
+		public BuiltinFunction is_empty_func;
+		public BuiltinFunction index0_func;
+		public BuiltinFunction index1_func;
 		public TypedefVersionDeclarationContext typedefVersionDeclaration() {
 			return getRuleContext(TypedefVersionDeclarationContext.class,0);
 		}
@@ -377,6 +406,7 @@ public class TypedefParser extends Parser {
 	}
 
 	public static class TypeDefinitionContext extends ParserRuleContext {
+		public std::vector<IdentifierCtx> ns_ctx;
 		public IdentifierContext type_identifier;
 		public IdentifierContext type_parameter;
 		public TerminalNode LBRACE() { return getToken(TypedefParser.LBRACE, 0); }

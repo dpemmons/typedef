@@ -83,6 +83,30 @@ public:
   virtual antlr4::dfa::Vocabulary& getVocabulary() const override;
 
 
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wredeclared-class-member"
+  class CompilationUnitContext;
+  class TypeDefinitionContext;
+  class TmplDefinitionContext;
+  class FieldDefinitionContext;
+  class TmplBindingVariableContext;
+  class FunctionParameterContext;
+  struct BuiltinFunction {};
+  using IdentifierCtx =
+  		std::variant<CompilationUnitContext *,      //
+  									TypeDefinitionContext *,      //
+  									TmplDefinitionContext *,      //
+  									FieldDefinitionContext *,     //
+  									TmplBindingVariableContext *, //
+  									FunctionParameterContext *,   //
+  									BuiltinFunction *>;           //
+  BuiltinFunction is_first_func;
+  BuiltinFunction is_last_func;
+  BuiltinFunction is_empty_func;
+  BuiltinFunction index0_func;
+  BuiltinFunction index1_func;
+
+
   class CompilationUnitContext;
   class TypedefVersionDeclarationContext;
   class ModuleDeclarationContext;
@@ -127,6 +151,11 @@ public:
 
   class  CompilationUnitContext : public antlr4::ParserRuleContext {
   public:
+    BuiltinFunction is_first_func;
+    BuiltinFunction is_last_func;
+    BuiltinFunction is_empty_func;
+    BuiltinFunction index0_func;
+    BuiltinFunction index1_func;
     CompilationUnitContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     TypedefVersionDeclarationContext *typedefVersionDeclaration();
@@ -185,6 +214,7 @@ public:
 
   class  TypeDefinitionContext : public antlr4::ParserRuleContext {
   public:
+    std::vector<IdentifierCtx> ns_ctx;
     TypedefParser::IdentifierContext *type_identifier = nullptr;;
     TypedefParser::IdentifierContext *type_parameter = nullptr;;
     TypeDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -1017,6 +1047,9 @@ private:
   static antlr4::dfa::Vocabulary _vocabulary;
   static antlr4::atn::ATN _atn;
   static std::vector<uint16_t> _serializedATN;
+
+
+  #pragma GCC diagnostic pop // end ignored "-Wredeclared-class-member"
 
 
   struct Initializer {

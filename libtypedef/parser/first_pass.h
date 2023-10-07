@@ -59,28 +59,8 @@ class FirstPassListener : public BaseListener {
       TypedefParser::TmplValueReferencePathContext *ctx) override;
 
  private:
-  struct BuiltinFunction {};
-  using IdentifierCtx =
-      std::variant<std::monostate,                               //
-                   TypedefParser::TypeDefinitionContext *,       //
-                   TypedefParser::TmplDefinitionContext *,       //
-                   TypedefParser::FieldDefinitionContext *,      //
-                   TypedefParser::TmplBindingVariableContext *,  //
-                   TypedefParser::FunctionParameterContext *,
-                   BuiltinFunction *>;  //
-  std::unordered_map<std::string, IdentifierCtx> identifiers_;
-
-  using Context = std::variant<TypedefParser::TypeDefinitionContext *,    //
-                               TypedefParser::CompilationUnitContext *>;  //
-  std::vector<Context> current_context_;
-
-  // TODO these really should be stored in the AST so they can be hold data
-  // (like return type) for the second_pass
-  BuiltinFunction is_first_func_;
-  BuiltinFunction is_last_func_;
-  BuiltinFunction is_empty_func_;
-  BuiltinFunction index0_func_;
-  BuiltinFunction index1_func_;
+  std::unordered_map<std::string, TypedefParser::IdentifierCtx> identifiers_;
+  std::vector<TypedefParser::IdentifierCtx> current_namespace_context_;
 };
 
 }  // namespace td

@@ -17,7 +17,42 @@ options {
 #include "libtypedef/parser/literals.h"
 }
 
-compilationUnit:
+@parser::members {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wredeclared-class-member"
+class CompilationUnitContext;
+class TypeDefinitionContext;
+class TmplDefinitionContext;
+class FieldDefinitionContext;
+class TmplBindingVariableContext;
+class FunctionParameterContext;
+struct BuiltinFunction {};
+using IdentifierCtx =
+		std::variant<CompilationUnitContext *,      //
+									TypeDefinitionContext *,      //
+									TmplDefinitionContext *,      //
+									FieldDefinitionContext *,     //
+									TmplBindingVariableContext *, //
+									FunctionParameterContext *,   //
+									BuiltinFunction *>;           //
+BuiltinFunction is_first_func;
+BuiltinFunction is_last_func;
+BuiltinFunction is_empty_func;
+BuiltinFunction index0_func;
+BuiltinFunction index1_func;
+}
+
+@parser::declarations {
+#pragma GCC diagnostic pop // end ignored "-Wredeclared-class-member"
+}
+
+compilationUnit
+	returns[ BuiltinFunction is_first_func,
+  	BuiltinFunction is_last_func,
+  	BuiltinFunction is_empty_func,
+  	BuiltinFunction index0_func,
+  	BuiltinFunction index1_func
+]:
 	typedefVersionDeclaration moduleDeclaration (useDeclaration)* (
 		typeDefinition
 		| tmplDefinition
@@ -27,7 +62,11 @@ typedefVersionDeclaration: 'typedef' EQ identifier ';';
 moduleDeclaration: 'module' symbolPath ';';
 
 // struct|variant SomeVariant { optionA: i32; optionB: str; }
-typeDefinition: (KW_STRUCT | KW_VARIANT) type_identifier = identifier? (
+typeDefinition
+	returns[std::vector<IdentifierCtx> ns_ctx]: (
+		KW_STRUCT
+		| KW_VARIANT
+	) type_identifier = identifier? (
 		LT (type_parameter = identifier COMMA)+ GT
 	)? '{' fieldBlock '}' ';'?;
 

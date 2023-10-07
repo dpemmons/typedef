@@ -19,17 +19,17 @@ namespace td {
 using namespace std;
 
 FirstPassListener::FirstPassListener(std::vector<ParserErrorInfo>& errors_list)
-    : BaseListener(errors_list) {
-  identifiers_.emplace("IsFirst", &is_first_func_);
-  identifiers_.emplace("IsLast", &is_last_func_);
-  identifiers_.emplace("IsEmpty", &is_empty_func_);
-  identifiers_.emplace("Index0", &index0_func_);
-  identifiers_.emplace("Index1", &index1_func_);
-}
+    : BaseListener(errors_list) {}
 
 void FirstPassListener::enterCompilationUnit(
     TypedefParser::CompilationUnitContext* ctx) {
-  current_context_.push_back(ctx);
+  identifiers_.emplace("IsFirst", &ctx->is_first_func);
+  identifiers_.emplace("IsLast", &ctx->is_last_func);
+  identifiers_.emplace("IsEmpty", &ctx->is_empty_func);
+  identifiers_.emplace("Index0", &ctx->index0_func);
+  identifiers_.emplace("Index1", &ctx->index1_func);
+
+  current_namespace_context_.push_back(ctx);
   for (auto* tctx : ctx->typeDefinition()) {
     if (!identifiers_.try_emplace(tctx->type_identifier->id, tctx).second) {
       AddError(tctx->type_identifier, ParserErrorInfo::DUPLICATE_SYMBOL);
@@ -44,7 +44,7 @@ void FirstPassListener::enterCompilationUnit(
 
 void FirstPassListener::exitCompilationUnit(
     TypedefParser::CompilationUnitContext* ctx) {
-  current_context_.pop_back();
+  current_namespace_context_.pop_back();
   for (auto* tctx : ctx->typeDefinition()) {
     identifiers_.erase(tctx->type_identifier->id);
   }
@@ -63,12 +63,13 @@ void FirstPassListener::enterTypedefVersionDeclaration(
 
 void FirstPassListener::enterTypeDefinition(
     TypedefParser::TypeDefinitionContext* ctx) {
-  current_context_.push_back(ctx);
+  ctx->ns_ctx = current_namespace_context_;  // make a copy
+  current_namespace_context_.push_back(ctx);
 }
 
 void FirstPassListener::exitTypeDefinition(
     TypedefParser::TypeDefinitionContext* ctx) {
-  current_context_.pop_back();
+  current_namespace_context_.pop_back();
 }
 
 void FirstPassListener::enterFieldBlock(TypedefParser::FieldBlockContext* ctx) {
@@ -77,8 +78,8 @@ void FirstPassListener::enterFieldBlock(TypedefParser::FieldBlockContext* ctx) {
       AddError(tctx->type_identifier, ParserErrorInfo::DUPLICATE_SYMBOL);
     }
   }
-  auto* td_ctx =
-      get<TypedefParser::TypeDefinitionContext*>(current_context_.back());
+  auto* td_ctx = get<TypedefParser::TypeDefinitionContext*>(
+      current_namespace_context_.back());
   bool is_struct_context = (td_ctx && td_ctx->KW_STRUCT());
   for (auto* fctx : ctx->fieldDefinition()) {
     if (!identifiers_.try_emplace(fctx->field_identifier->id, fctx).second) {
@@ -281,7 +282,7 @@ void FirstPassListener::enterTmplFunctionCall(
              ParserErrorInfo::UNRESOLVED_SYMBOL_REFERENCE);
     return;
   }
-  if (holds_alternative<BuiltinFunction*>(search->second)) {
+  if (holds_alternative<TypedefParser::BuiltinFunction*>(search->second)) {
     ctx->built_in = true;
   } else if (!holds_alternative<TypedefParser::TmplDefinitionContext*>(
                  search->second)) {
@@ -305,7 +306,7 @@ void FirstPassListener::enterTmplValueReferencePath(
       ctx->tmplValueReference();
 
   // Find the symbol of the base.
-  td::FirstPassListener::IdentifierCtx base_identifier_ctx;
+  TypedefParser::IdentifierCtx base_identifier_ctx;
   {
     auto search = identifiers_.find(path_parts[0]->tmplIdentifier()->id);
     if (search == identifiers_.end()) {
