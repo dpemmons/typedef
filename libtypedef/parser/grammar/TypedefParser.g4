@@ -26,7 +26,7 @@ class TmplDefinitionContext;
 class FieldDefinitionContext;
 class TmplBindingVariableContext;
 class FunctionParameterContext;
-struct BuiltinFunction {};
+struct BuiltinFunction { bool whatever; };
 using IdentifierCtx =
 		std::variant<CompilationUnitContext *,      //
 									TypeDefinitionContext *,      //
@@ -35,11 +35,6 @@ using IdentifierCtx =
 									TmplBindingVariableContext *, //
 									FunctionParameterContext *,   //
 									BuiltinFunction *>;           //
-BuiltinFunction is_first_func;
-BuiltinFunction is_last_func;
-BuiltinFunction is_empty_func;
-BuiltinFunction index0_func;
-BuiltinFunction index1_func;
 }
 
 @parser::declarations {

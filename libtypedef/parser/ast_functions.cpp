@@ -1,6 +1,7 @@
 #include "libtypedef/parser/ast_functions.h"
 
 #include <sstream>
+#include <variant>
 
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
@@ -123,6 +124,35 @@ TypedefParser::TypeDefinitionContext* GetTypeDefinition(
 
 bool IsRequired(TypedefParser::FieldDefinitionContext* ctx) {
   return ctx->is_required;
+}
+
+std::vector<std::optional<std::string>> GetFQN(
+    TypedefParser::TypeDefinitionContext* type) {
+  std::vector<std::optional<std::string>> ret;
+  for (TypedefParser::IdentifierCtx& id_ctx : type->ns_ctx) {
+    // First resolve the module namespaces
+    if (auto c = std::get_if<TypedefParser::CompilationUnitContext*>(&id_ctx)) {
+      for (auto* id : (*c)->moduleDeclaration()->symbolPath()->identifier()) {
+        ret.push_back(id->id);
+      }
+    } else if (auto t = std::get_if<TypedefParser::TypeDefinitionContext*>(
+                   &id_ctx)) {
+      TypedefParser::TypeDefinitionContext* tdc = *t;
+      if (tdc->type_identifier) {
+        ret.push_back(tdc->type_identifier->id);
+      } else {
+        ret.push_back(std::nullopt);
+      }
+    }
+  }
+
+  if (type->type_identifier) {
+    ret.push_back(type->type_identifier->id);
+  } else {
+    ret.push_back(std::nullopt);
+  }
+
+  return ret;
 }
 
 size_t HasTypeArguments(TypedefParser::TypeAnnotationContext* ctx) {

@@ -71,3 +71,34 @@ struct SomeStruct {
   REQUIRE(parser.Parse() == 1);
   REQUIRE(parser.Errors()[0].error_type == ParserErrorInfo::DUPLICATE_SYMBOL);
 }
+
+TEST_CASE("FQNs should resolve", "[module]") {
+  Parser parser(R"(
+typedef=alpha;
+module ModA::ModB;
+
+struct SomeStruct {
+  some_val: i32;
+  struct SomeNestedStruct {
+    some_other_val: i32;
+  };
+  an_inline_struct: struct {
+    a: i32;
+  };
+};
+    )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+  auto* ss = FindType(parser.GetCompilationUnitContext(), "SomeStruct");
+  REQUIRE(GetFQN(ss) == std::vector<std::optional<std::string>>(
+                            {"ModA", "ModB", "SomeStruct"}));
+
+  auto* sns = FindType(ss, "SomeNestedStruct");
+  REQUIRE(GetFQN(sns) ==
+          std::vector<std::optional<std::string>>(
+              {"ModA", "ModB", "SomeStruct", "SomeNestedStruct"}));
+
+  auto* isf = FindField(ss, "an_inline_struct");
+  REQUIRE(GetFQN(GetTypeDefinition(isf)) ==
+          std::vector<std::optional<std::string>>(
+              {"ModA", "ModB", "SomeStruct", std::nullopt}));
+}

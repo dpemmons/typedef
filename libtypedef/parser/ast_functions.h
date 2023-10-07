@@ -4,6 +4,7 @@
 #include <antlr4/antlr4-runtime.h>
 
 #include <filesystem>
+#include <optional>
 #include <string>
 
 #include "libtypedef/parser/grammar/TypedefParser.h"
@@ -44,6 +45,10 @@ bool HasTypeDefinition(TypedefParser::FieldDefinitionContext* ctx);
 TypedefParser::TypeDefinitionContext* GetTypeDefinition(
     TypedefParser::FieldDefinitionContext* ctx);
 bool IsRequired(TypedefParser::FieldDefinitionContext* ctx);
+
+// nullopt values indicate anonymous namespaces.
+std::vector<std::optional<std::string>> GetFQN(
+    TypedefParser::TypeDefinitionContext* type);
 
 size_t HasTypeArguments(TypedefParser::TypeAnnotationContext* ctx);
 TypedefParser::TypeAnnotationContext* GetTypeArgument(
