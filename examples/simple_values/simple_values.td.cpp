@@ -3,9 +3,36 @@
 
 #include <string>
 
+
 // PRODUCED BY SELF-HOSTED TYPEDEF CODEGEN
 
 namespace simple_values {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

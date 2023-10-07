@@ -12,7 +12,7 @@ namespace cpp {
 
 
 
-void VecUserTypeDeclarationT(std::ostream& os, const td::Vector<UserTypeDeclaration>& ut) {
+void VecUserTypeDeclarationT(std::ostream& os, const td::Vector<UserTypeDeclaration>& ut, const Options& opt) {
 
 
 for (size_t td_iter_ = 0; td_iter_ < ut.size(); td_iter_++) {
@@ -25,10 +25,10 @@ os << "\n";
 // Switch n
 
 if (n.is_struct_decl()) {
-TmplStructDeclaration(os, n.struct_decl());
+TmplStructDeclaration(os, n.struct_decl(), opt);
 } else 
 if (n.is_variant_decl()) {
-TmplVariantDeclaration(os, n.variant_decl());
+TmplVariantDeclaration(os, n.variant_decl(), opt);
 } else  {
 }
 os << "\n";
@@ -36,15 +36,33 @@ os << "\n";
 
 
 }
-void TmplStructDeclaration(std::ostream& os, const StructDecl& s) {
+void FQN(std::ostream& os, const td::Vector<std::string>& fqn) {
+
+
+for (size_t td_iter_ = 0; td_iter_ < fqn.size(); td_iter_++) {
+  auto& n = fqn[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == fqn.size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+os << n;
+if (!IsLast()) {
+os << "::";
+} else {
+}
+}
+
+
+}
+void TmplStructDeclaration(std::ostream& os, const StructDecl& s, const Options& opt) {
 os << "\n// ";
-os << s.identifier();
+FQN(os, s.fqn());
 os << " struct declaration.\nclass ";
 os << s.identifier();
 os << " {\n public:\n  // Nested type declarations\n  ";
-VecUserTypeDeclarationT(os, s.nested_type_decls());
+VecUserTypeDeclarationT(os, s.nested_type_decls(), opt);
 os << "\n  // Inline type declarations\n  ";
-VecUserTypeDeclarationT(os, s.inline_type_decls());
+VecUserTypeDeclarationT(os, s.inline_type_decls(), opt);
 os << "\n\n  ";
 os << s.identifier();
 os << "() {}\n  ~";
@@ -66,6 +84,18 @@ os << s.identifier();
 os << "& operator=(";
 os << s.identifier();
 os << "&&) = default;\n\n  ";
+if (opt.generate_json_writer()) {
+os << "\n  std::string ToJson();\n  void ToJson(std::ostream& os);\n  void ToJson(rapidjson::Writer* writer);\n  void ToJson(rapidjson::PrettyWriter* writer);\n  ";
+} else {
+}
+os << "\n  ";
+if (opt.generate_json_parser()) {
+os << "\n  static void FromJson(";
+os << s.identifier();
+os << "* target, const std::string& str);\n  ";
+} else {
+}
+os << "\n\n  ";
 
 
 for (size_t td_iter_ = 0; td_iter_ < s.fields().size(); td_iter_++) {
@@ -215,13 +245,23 @@ os << s.identifier();
 os << "\n";
 
 }
-void TmplVariantDeclaration(std::ostream& os, const StructDecl& v) {
-os << "\nclass ";
+void TmplStructDefinition(std::ostream& os, const StructDecl& s, const Options& opt) {
+os << "\n";
+
+}
+void TmplVariantDefinition(std::ostream& os, const StructDecl& v, const Options& opt) {
+os << "\n";
+
+}
+void TmplVariantDeclaration(std::ostream& os, const StructDecl& v, const Options& opt) {
+os << "\n// ";
+FQN(os, v.fqn());
+os << " variant declaration.\nclass ";
 os << v.identifier();
 os << " {\n public:\n  // Nested type declarations\n  ";
-VecUserTypeDeclarationT(os, v.nested_type_decls());
+VecUserTypeDeclarationT(os, v.nested_type_decls(), opt);
 os << "\n  // Inline type declarations\n  ";
-VecUserTypeDeclarationT(os, v.inline_type_decls());
+VecUserTypeDeclarationT(os, v.inline_type_decls(), opt);
 os << "\n\n  ";
 os << v.identifier();
 os << "() {}\n  ~";
@@ -769,6 +809,13 @@ os << ";";
 os << "\n";
 }
 
+os << "\n";
+if (opt.generate_json_parser()) {
+os << "\nnamespace rapidjson {\n}\n";
+} else if (opt.generate_json_writer()) {
+os << "\nnamespace rapidjson {\nclass Writer;\nclass PrettyWriter;\n}\n";
+} else {
+}
 os << "\n\n";
 
 
@@ -782,10 +829,10 @@ os << "\n";
 // Switch type_decl
 
 if (type_decl.is_struct_decl()) {
-TmplStructDeclaration(os, type_decl.struct_decl());
+TmplStructDeclaration(os, type_decl.struct_decl(), opt);
 } else 
 if (type_decl.is_variant_decl()) {
-TmplVariantDeclaration(os, type_decl.variant_decl());
+TmplVariantDeclaration(os, type_decl.variant_decl(), opt);
 } else  {
 }
 os << "\n";
@@ -825,7 +872,14 @@ os << "\n";
 void CppSource(std::ostream& os, const CppData& d, const Options& opt) {
 os << "\n#include \"";
 os << d.header_filename();
-os << "\"\n\n#include <string>\n\n// PRODUCED BY SELF-HOSTED TYPEDEF CODEGEN\n\n";
+os << "\"\n\n#include <string>\n";
+if (opt.generate_json_parser()) {
+os << "\n#include \"rapidjson/document.h\"\n";
+} else if (opt.generate_json_writer()) {
+os << "\n#include \"rapidjson/document.h\"\n#include \"rapidjson/writer.h\"\n#include \"rapidjson/stringbuffer.h\"\n";
+} else {
+}
+os << "\n\n// PRODUCED BY SELF-HOSTED TYPEDEF CODEGEN\n\n";
 
 
 for (size_t td_iter_ = 0; td_iter_ < d.namespaces().size(); td_iter_++) {
@@ -849,6 +903,28 @@ for (size_t td_iter_ = 0; td_iter_ < d.tmpl_funcs().size(); td_iter_++) {
   auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
   auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
 TmplFuncDefinition(os, tmpl_func);
+}
+
+os << "\n\n";
+
+
+for (size_t td_iter_ = 0; td_iter_ < d.user_type_decls().size(); td_iter_++) {
+  auto& type_decl = d.user_type_decls()[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == d.user_type_decls().size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+os << "\n";
+// Switch type_decl
+
+if (type_decl.is_struct_decl()) {
+TmplStructDefinition(os, type_decl.struct_decl(), opt);
+} else 
+if (type_decl.is_variant_decl()) {
+TmplVariantDefinition(os, type_decl.variant_decl(), opt);
+} else  {
+}
+os << "\n";
 }
 
 os << "\n\n";

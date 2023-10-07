@@ -15,6 +15,7 @@ struct AccessInfo {
 
 struct StructDecl {
   identifier: str;
+  fqn: vector<str>; // Fully qualified name
   nested_type_decls: vector<UserTypeDeclaration>;
   inline_type_decls: vector<UserTypeDeclaration>;
   fields: vector<AccessInfo>;
@@ -102,22 +103,24 @@ struct CppData {
   tmpl_funcs: vector<TmplFunction>;
 }
 
-template VecUserTypeDeclarationT(ut: vector<UserTypeDeclaration>)
+template VecUserTypeDeclarationT(ut: vector<UserTypeDeclaration>, opt: Options)
 t"<for n in ut>
 <switch n>
-<case n.struct_decl><TmplStructDeclaration(n.struct_decl)></case>
-<case n.variant_decl><TmplVariantDeclaration(n.variant_decl)></case>
+<case n.struct_decl><TmplStructDeclaration(n.struct_decl, opt)></case>
+<case n.variant_decl><TmplVariantDeclaration(n.variant_decl, opt)></case>
 </switch>
 </for>"
 
-template TmplStructDeclaration(s: StructDecl) t"
-// <s.identifier> struct declaration.
+template FQN(fqn: vector<str>) t"<for n in fqn><n><if !IsLast()>::</if></for>"
+
+template TmplStructDeclaration(s: StructDecl, opt: Options) t"
+// <FQN(s.fqn)> struct declaration.
 class <s.identifier> {
  public:
   // Nested type declarations
-  <VecUserTypeDeclarationT(s.nested_type_decls)>
+  <VecUserTypeDeclarationT(s.nested_type_decls, opt)>
   // Inline type declarations
-  <VecUserTypeDeclarationT(s.inline_type_decls)>
+  <VecUserTypeDeclarationT(s.inline_type_decls, opt)>
 
   <s.identifier>() {}
   ~<s.identifier>() {}
@@ -126,6 +129,16 @@ class <s.identifier> {
   <s.identifier>& operator=(const <s.identifier>&) = delete;
   <s.identifier>(<s.identifier>&&) = default;
   <s.identifier>& operator=(<s.identifier>&&) = default;
+
+  <if opt.generate_json_writer>
+  std::string ToJson();
+  void ToJson(std::ostream& os);
+  void ToJson(rapidjson::Writer* writer);
+  void ToJson(rapidjson::PrettyWriter* writer);
+  </if>
+  <if opt.generate_json_parser>
+  static void FromJson(<s.identifier>* target, const std::string& str);
+  </if>
 
   <for field in s.fields>
   <switch field.access_by>
@@ -207,13 +220,20 @@ class <s.identifier> {
 }; // class <s.identifier>
 "
 
-template TmplVariantDeclaration(v: StructDecl) t"
+template TmplStructDefinition(s: StructDecl, opt: Options) t"
+"
+
+template TmplVariantDefinition(v: StructDecl, opt: Options) t"
+"
+
+template TmplVariantDeclaration(v: StructDecl, opt: Options) t"
+// <FQN(v.fqn)> variant declaration.
 class <v.identifier> {
  public:
   // Nested type declarations
-  <VecUserTypeDeclarationT(v.nested_type_decls)>
+  <VecUserTypeDeclarationT(v.nested_type_decls, opt)>
   // Inline type declarations
-  <VecUserTypeDeclarationT(v.inline_type_decls)>
+  <VecUserTypeDeclarationT(v.inline_type_decls, opt)>
 
   <v.identifier>() {}
   ~<v.identifier>() {
@@ -430,11 +450,20 @@ template CppHeader(d: CppData, opt: Options) t"
 <case type_decl.variant_decl>class <type_decl.variant_decl.identifier>;</case>
 </switch>
 </for>
+<if opt.generate_json_parser>
+namespace rapidjson {
+}
+<elif opt.generate_json_writer>
+namespace rapidjson {
+class Writer;
+class PrettyWriter;
+}
+</if>
 
 <for type_decl in d.user_type_decls>
 <switch type_decl>
-<case type_decl.struct_decl><TmplStructDeclaration(type_decl.struct_decl)></case>
-<case type_decl.variant_decl><TmplVariantDeclaration(type_decl.variant_decl)></case>
+<case type_decl.struct_decl><TmplStructDeclaration(type_decl.struct_decl, opt)></case>
+<case type_decl.variant_decl><TmplVariantDeclaration(type_decl.variant_decl, opt)></case>
 </switch>
 </for>
 
@@ -450,6 +479,13 @@ template CppSource(d: CppData, opt: Options) t"
 #include \"<d.header_filename>\"
 
 #include \<string\>
+<if opt.generate_json_parser>
+#include \"rapidjson/document.h\"
+<elif opt.generate_json_writer>
+#include \"rapidjson/document.h\"
+#include \"rapidjson/writer.h\"
+#include \"rapidjson/stringbuffer.h\"
+</if>
 
 // PRODUCED BY SELF-HOSTED TYPEDEF CODEGEN
 
@@ -457,6 +493,13 @@ template CppSource(d: CppData, opt: Options) t"
 </for>
 
 <for tmpl_func in d.tmpl_funcs><TmplFuncDefinition(tmpl_func)></for>
+
+<for type_decl in d.user_type_decls>
+<switch type_decl>
+<case type_decl.struct_decl><TmplStructDefinition(type_decl.struct_decl, opt)></case>
+<case type_decl.variant_decl><TmplVariantDefinition(type_decl.variant_decl, opt)></case>
+</switch>
+</for>
 
 <for ns in d.namespaces>} // namespace <ns>
 </for>

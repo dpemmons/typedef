@@ -46,7 +46,8 @@ class VariantC;
 
 
 
-// StructA struct declaration.
+
+// simple_values::StructA struct declaration.
 class StructA {
  public:
   // Nested type declarations
@@ -61,6 +62,9 @@ class StructA {
   StructA& operator=(const StructA&) = delete;
   StructA(StructA&&) = default;
   StructA& operator=(StructA&&) = default;
+
+  
+  
 
   
   
@@ -275,7 +279,7 @@ class StructA {
 
 
 
-// StructB struct declaration.
+// simple_values::StructB struct declaration.
 class StructB {
  public:
   // Nested type declarations
@@ -290,6 +294,9 @@ class StructB {
   StructB& operator=(const StructB&) = delete;
   StructB(StructB&&) = default;
   StructB& operator=(StructB&&) = default;
+
+  
+  
 
   
   
@@ -504,7 +511,7 @@ class StructB {
 
 
 
-// StructC struct declaration.
+// simple_values::StructC struct declaration.
 class StructC {
  public:
   // Nested type declarations
@@ -519,6 +526,9 @@ class StructC {
   StructC& operator=(const StructC&) = delete;
   StructC(StructC&&) = default;
   StructC& operator=(StructC&&) = default;
+
+  
+  
 
   
   
@@ -603,6 +613,7 @@ class StructC {
 
 
 
+// simple_values::VariantA variant declaration.
 class VariantA {
  public:
   // Nested type declarations
@@ -688,6 +699,7 @@ class VariantA {
 
 
 
+// simple_values::VariantB variant declaration.
 class VariantB {
  public:
   // Nested type declarations
@@ -1184,7 +1196,7 @@ class VariantB {
 
 
 
-// StructD struct declaration.
+// simple_values::StructD struct declaration.
 class StructD {
  public:
   // Nested type declarations
@@ -1199,6 +1211,9 @@ class StructD {
   StructD& operator=(const StructD&) = delete;
   StructD(StructD&&) = default;
   StructD& operator=(StructD&&) = default;
+
+  
+  
 
   
   
@@ -1320,12 +1335,13 @@ class StructD {
 
 
 
-// StructE struct declaration.
+// simple_values::StructE struct declaration.
 class StructE {
  public:
   // Nested type declarations
   
 
+// simple_values::StructE::VariantE variant declaration.
 class VariantE {
  public:
   // Nested type declarations
@@ -1408,7 +1424,7 @@ class VariantE {
 
 
 
-// NestedStruct struct declaration.
+// simple_values::StructE::NestedStruct struct declaration.
 class NestedStruct {
  public:
   // Nested type declarations
@@ -1423,6 +1439,9 @@ class NestedStruct {
   NestedStruct& operator=(const NestedStruct&) = delete;
   NestedStruct(NestedStruct&&) = default;
   NestedStruct& operator=(NestedStruct&&) = default;
+
+  
+  
 
   
   
@@ -1448,6 +1467,7 @@ class NestedStruct {
 
 
 
+// simple_values::StructE::NestedVariant variant declaration.
 class NestedVariant {
  public:
   // Nested type declarations
@@ -1511,7 +1531,7 @@ class NestedVariant {
   // Inline type declarations
   
 
-// inlineStructT struct declaration.
+// simple_values::StructE::inlineStructT struct declaration.
 class inlineStructT {
  public:
   // Nested type declarations
@@ -1526,6 +1546,9 @@ class inlineStructT {
   inlineStructT& operator=(const inlineStructT&) = delete;
   inlineStructT(inlineStructT&&) = default;
   inlineStructT& operator=(inlineStructT&&) = default;
+
+  
+  
 
   
   
@@ -1558,6 +1581,9 @@ class inlineStructT {
   StructE& operator=(const StructE&) = delete;
   StructE(StructE&&) = default;
   StructE& operator=(StructE&&) = default;
+
+  
+  
 
   
   
@@ -1722,12 +1748,13 @@ class inlineStructT {
 
 
 
+// simple_values::VariantC variant declaration.
 class VariantC {
  public:
   // Nested type declarations
   
 
-// NestedStruct struct declaration.
+// simple_values::VariantC::NestedStruct struct declaration.
 class NestedStruct {
  public:
   // Nested type declarations
@@ -1742,6 +1769,9 @@ class NestedStruct {
   NestedStruct& operator=(const NestedStruct&) = delete;
   NestedStruct(NestedStruct&&) = default;
   NestedStruct& operator=(NestedStruct&&) = default;
+
+  
+  
 
   
   
@@ -1767,6 +1797,7 @@ class NestedStruct {
 
 
 
+// simple_values::VariantC::NestedVariant variant declaration.
 class NestedVariant {
  public:
   // Nested type declarations
@@ -1830,7 +1861,7 @@ class NestedVariant {
   // Inline type declarations
   
 
-// inlineStructT struct declaration.
+// simple_values::VariantC::inlineStructT struct declaration.
 class inlineStructT {
  public:
   // Nested type declarations
@@ -1845,6 +1876,9 @@ class inlineStructT {
   inlineStructT& operator=(const inlineStructT&) = delete;
   inlineStructT(inlineStructT&&) = default;
   inlineStructT& operator=(inlineStructT&&) = default;
+
+  
+  
 
   
   
@@ -1870,6 +1904,7 @@ class inlineStructT {
 
 
 
+// simple_values::VariantC::VariantFT variant declaration.
 class VariantFT {
  public:
   // Nested type declarations

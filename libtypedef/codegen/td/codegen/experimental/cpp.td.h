@@ -322,6 +322,18 @@ class StructDecl {
   
   
   
+  void set_fqn(td::Vector<std::string>&& val) {
+    fqn_ = std::move(val);
+  }
+  td::Vector<std::string>& fqn() {
+    return fqn_;
+  }
+  const td::Vector<std::string>& fqn() const {
+    return fqn_;
+  }
+  
+  
+  
   void set_nested_type_decls(td::Vector<UserTypeDeclaration>&& val) {
     nested_type_decls_ = std::move(val);
   }
@@ -360,6 +372,7 @@ class StructDecl {
 
  private:
   std::string identifier_;
+  td::Vector<std::string> fqn_;
   td::Vector<UserTypeDeclaration> nested_type_decls_;
   td::Vector<UserTypeDeclaration> inline_type_decls_;
   td::Vector<AccessInfo> fields_;
@@ -1801,7 +1814,7 @@ class CppData {
 
 
 
-void VecUserTypeDeclarationT(std::ostream& os, const td::Vector<UserTypeDeclaration>& ut);void TmplStructDeclaration(std::ostream& os, const StructDecl& s);void TmplVariantDeclaration(std::ostream& os, const StructDecl& v);void TmplFuncDeclaration(std::ostream& os, const TmplFunction& t);void CppType(std::ostream& os, const AccessInfo& a);void ParamsList(std::ostream& os, const td::Vector<AccessInfo>& params);void TmplValueDereferenceT(std::ostream& os, const TmplValueDereference& v);void TmplStringExpression(std::ostream& os, const TmplExpression& i);void TmplBoolExpression(std::ostream& os, const TmplExpression& i);void TmplIfT(std::ostream& os, const TmplIf& i);void TmplIfBlockT(std::ostream& os, const TmplIfBlock& i);void TmplForT(std::ostream& os, const TmplForBlock& f);void TmplHasValRef(std::ostream& os, const TmplValueDereference& val);void TmplSwitchT(std::ostream& os, const SwitchBlock& s);void TmplItemsT(std::ostream& os, const td::Vector<TmplItem>& v);void TmplItemT(std::ostream& os, const TmplItem& i);void TmplFuncDefinition(std::ostream& os, const TmplFunction& t);void CppHeader(std::ostream& os, const CppData& d, const Options& opt);void CppSource(std::ostream& os, const CppData& d, const Options& opt);
+void VecUserTypeDeclarationT(std::ostream& os, const td::Vector<UserTypeDeclaration>& ut, const Options& opt);void FQN(std::ostream& os, const td::Vector<std::string>& fqn);void TmplStructDeclaration(std::ostream& os, const StructDecl& s, const Options& opt);void TmplStructDefinition(std::ostream& os, const StructDecl& s, const Options& opt);void TmplVariantDefinition(std::ostream& os, const StructDecl& v, const Options& opt);void TmplVariantDeclaration(std::ostream& os, const StructDecl& v, const Options& opt);void TmplFuncDeclaration(std::ostream& os, const TmplFunction& t);void CppType(std::ostream& os, const AccessInfo& a);void ParamsList(std::ostream& os, const td::Vector<AccessInfo>& params);void TmplValueDereferenceT(std::ostream& os, const TmplValueDereference& v);void TmplStringExpression(std::ostream& os, const TmplExpression& i);void TmplBoolExpression(std::ostream& os, const TmplExpression& i);void TmplIfT(std::ostream& os, const TmplIf& i);void TmplIfBlockT(std::ostream& os, const TmplIfBlock& i);void TmplForT(std::ostream& os, const TmplForBlock& f);void TmplHasValRef(std::ostream& os, const TmplValueDereference& val);void TmplSwitchT(std::ostream& os, const SwitchBlock& s);void TmplItemsT(std::ostream& os, const td::Vector<TmplItem>& v);void TmplItemT(std::ostream& os, const TmplItem& i);void TmplFuncDefinition(std::ostream& os, const TmplFunction& t);void CppHeader(std::ostream& os, const CppData& d, const Options& opt);void CppSource(std::ostream& os, const CppData& d, const Options& opt);
 
 } // namesapce td
 } // namesapce codegen

@@ -36,7 +36,8 @@ class SomeVariant;
 
 
 
-// StructC struct declaration.
+
+// template_example::StructC struct declaration.
 class StructC {
  public:
   // Nested type declarations
@@ -51,6 +52,9 @@ class StructC {
   StructC& operator=(const StructC&) = delete;
   StructC(StructC&&) = default;
   StructC& operator=(StructC&&) = default;
+
+  
+  
 
   
   
@@ -135,7 +139,7 @@ class StructC {
 
 
 
-// TemplateData struct declaration.
+// template_example::TemplateData struct declaration.
 class TemplateData {
  public:
   // Nested type declarations
@@ -150,6 +154,9 @@ class TemplateData {
   TemplateData& operator=(const TemplateData&) = delete;
   TemplateData(TemplateData&&) = default;
   TemplateData& operator=(TemplateData&&) = default;
+
+  
+  
 
   
   
@@ -286,6 +293,7 @@ class TemplateData {
 
 
 
+// template_example::SomeVariant variant declaration.
 class SomeVariant {
  public:
   // Nested type declarations

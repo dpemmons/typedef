@@ -29,8 +29,7 @@ using namespace td::codegen::experimental::cpp;
 Vector<TmplItem> GetTemplateItems(
     vector<TypedefParser::TmplItemContext*> itm_ctxs);
 UserTypeDeclaration GetTypeDeclaration(
-    TypedefParser::TypeDefinitionContext* type,
-    optional<string> maybe_identifier);
+    TypedefParser::TypeDefinitionContext* type);
 Vector<UserTypeDeclaration> GetUserTypeDecls(
     vector<TypedefParser::TypeDefinitionContext*> types);
 
@@ -43,6 +42,9 @@ string HeaderGuard(const filesystem::path& source_filename) {
   return hdr_guard;
 }
 
+std::string GetNestedTypeIdentifier(const std::string& str) {
+  return escape_utf8_to_cpp_identifier(str + "T");
+}
 std::string GetNestedTypeIdentifier(
     TypedefParser::FieldDefinitionContext* field) {
   return escape_utf8_to_cpp_identifier(field->field_identifier->id + "T");
@@ -131,13 +133,36 @@ AccessInfo GetField(TypedefParser::FieldDefinitionContext* field) {
   return a;
 }
 
-StructDecl GetStruct(TypedefParser::TypeDefinitionContext* type,
-                     optional<string> maybe_identifier) {
+Vector<std::string> GetFQN(TypedefParser::TypeDefinitionContext* type) {
+  Vector<std::string> fqn;
+  for (TypedefParser::IdentifierCtx& id_ctx : type->ns_ctx) {
+    // First resolve the module namespaces
+    if (auto* c = GetCompilationUnitContext(id_ctx)) {
+      for (auto* id : c->moduleDeclaration()->symbolPath()->identifier()) {
+        fqn.push_back(id->id);
+      }
+    } else if (auto* t = GetTypeDefinition(id_ctx)) {
+      if (HasIdentifier(t)) {
+        fqn.push_back(GetIdentifier(t));
+      } else {
+        fqn.push_back(GetNestedTypeIdentifier(GetFieldIdentifier(t)));
+      }
+    }
+  }
+  if (HasIdentifier(type)) {
+    fqn.push_back(GetIdentifier(type));
+  } else {
+    fqn.push_back(GetNestedTypeIdentifier(GetFieldIdentifier(type)));
+  }
+  return fqn;
+}
+
+StructDecl GetStruct(TypedefParser::TypeDefinitionContext* type) {
   StructDecl s;
   // If it's an inline type, the identifier is the field name which has
   // to be passed in separately.
-  s.identifier() =
-      maybe_identifier ? *maybe_identifier : type->type_identifier->id;
+  s.fqn() = GetFQN(type);
+  s.identifier() = s.fqn().back();
 
   if (type->fieldBlock()->typeDefinition().size()) {
     s.nested_type_decls() =
@@ -147,8 +172,8 @@ StructDecl GetStruct(TypedefParser::TypeDefinitionContext* type,
   // Some field types require inline type declarations.
   for (auto* field : type->fieldBlock()->fieldDefinition()) {
     if (DefinesAndUsesInlineUserType(field)) {
-      s.inline_type_decls().emplace_back(GetTypeDeclaration(
-          field->typeDefinition(), GetNestedTypeIdentifier(field)));
+      s.inline_type_decls().emplace_back(
+          GetTypeDeclaration(field->typeDefinition()));
     }
   }
 
@@ -162,14 +187,13 @@ StructDecl GetStruct(TypedefParser::TypeDefinitionContext* type,
 }
 
 UserTypeDeclaration GetTypeDeclaration(
-    TypedefParser::TypeDefinitionContext* type,
-    optional<string> maybe_identifier) {
+    TypedefParser::TypeDefinitionContext* type) {
   UserTypeDeclaration decl;
   if (DefinesStruct(type)) {
-    decl.struct_decl() = GetStruct(type, maybe_identifier);
+    decl.struct_decl() = GetStruct(type);
   } else if (DefinesVariant(type)) {
     // The data fed to the template is the same as for struct.
-    decl.variant_decl() = GetStruct(type, maybe_identifier);
+    decl.variant_decl() = GetStruct(type);
   } else {
     throw_logic_error("invalid state");
   }
@@ -180,7 +204,7 @@ Vector<UserTypeDeclaration> GetUserTypeDecls(
     vector<TypedefParser::TypeDefinitionContext*> types) {
   Vector<UserTypeDeclaration> utds;
   for (auto* type : types) {
-    utds.emplace_back(GetTypeDeclaration(type, nullopt));
+    utds.emplace_back(GetTypeDeclaration(type));
   }
   return utds;
 }

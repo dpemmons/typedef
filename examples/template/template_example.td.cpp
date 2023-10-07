@@ -3,6 +3,7 @@
 
 #include <string>
 
+
 // PRODUCED BY SELF-HOSTED TYPEDEF CODEGEN
 
 namespace template_example {
@@ -170,6 +171,17 @@ os << "\"\n  ";
 os << "\n";
 
 }
+
+
+
+
+
+
+
+
+
+
+
 
 } // namespace template_example
 
