@@ -27,10 +27,6 @@ bool DefinesAndUsesInlineUserType(TypedefParser::FieldDefinitionContext* field);
 TypedefParser::TypeDefinitionContext* GetInlineUserType(
     TypedefParser::FieldDefinitionContext* ctx);
 
-bool ReferencesUserType(TypedefParser::TypeAnnotationContext* ctx);
-TypedefParser::TypeDefinitionContext* GetReferencedUserType(
-    TypedefParser::TypeAnnotationContext* ctx);
-
 bool ReferencesUserType(TypedefParser::FieldDefinitionContext* ctx);
 bool ReferencesUserType(TypedefParser::TypeAnnotationContext* ctx);
 TypedefParser::TypeDefinitionContext* GetReferencedUserType(
