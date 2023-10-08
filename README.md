@@ -26,6 +26,7 @@ Items in ***bold*** are in-progress.
     * [ ] formatting
   * [ ] comments
   * [ ] boolean logic expressions (ie "and" and "or" expressions)
+  * [ ] call template functions from others with literal arguments
 * [ ] tests
 * [ ] generated cpp features (probably after template engine)
   * [ ] pretty print methods
