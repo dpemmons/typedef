@@ -407,7 +407,15 @@ TmplFunction GetTemplateFunc(TypedefParser::TmplDefinitionContext* tmpl_def) {
        tmpl_def->functionParameter()) {
     t.params().emplace_back(GetFunctionParameter(func_param));
   }
-  t.items() = GetTemplateItems(tmpl_def->tmplBlock()->tmplItem());
+  if (tmpl_def->tmplBlock()) {
+    t.items() = GetTemplateItems(tmpl_def->tmplBlock()->tmplItem());
+  } else if (tmpl_def->RAW_STRING_LITERAL()) {
+    TmplItem ti;
+    ti.text() = escapeStringForCpp(tmpl_def->literal);
+    t.items().emplace_back(std::move(ti));
+  } else {
+    throw_logic_error("invalid state");
+  }
   return t;
 }
 

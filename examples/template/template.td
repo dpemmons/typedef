@@ -90,4 +90,7 @@ template PrintIndices(v: vector<str>) t"
   <for i in v>
   i0: <Index0()> i1: <Index1()> \"<i>\"
   </for>
+  <Literal()>
 "
+
+template Literal() t"literal template function."

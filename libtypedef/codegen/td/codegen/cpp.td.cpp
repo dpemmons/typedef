@@ -811,7 +811,7 @@ for (size_t td_iter_ = 0; td_iter_ < d.namespaces().size(); td_iter_++) {
   auto IsLast = [&]() { return td_iter_ == d.namespaces().size() - 1; };
   auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
   auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
-os << "} // namesapce ";
+os << "} // namespace ";
 os << ns;
 os << "\n";
 }
@@ -859,7 +859,7 @@ for (size_t td_iter_ = 0; td_iter_ < d.namespaces().size(); td_iter_++) {
   auto IsLast = [&]() { return td_iter_ == d.namespaces().size() - 1; };
   auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
   auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
-os << "} // namesapce ";
+os << "} // namespace ";
 os << ns;
 os << "\n";
 }

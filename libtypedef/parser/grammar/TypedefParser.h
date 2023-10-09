@@ -337,6 +337,7 @@ public:
 
   class  TmplDefinitionContext : public antlr4::ParserRuleContext {
   public:
+    std::string literal;
     TmplDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *KW_TEMPLATE();
@@ -344,6 +345,7 @@ public:
     antlr4::tree::TerminalNode *LPAREN();
     antlr4::tree::TerminalNode *RPAREN();
     TmplBlockContext *tmplBlock();
+    antlr4::tree::TerminalNode *RAW_STRING_LITERAL();
     std::vector<FunctionParameterContext *> functionParameter();
     FunctionParameterContext* functionParameter(size_t i);
     std::vector<antlr4::tree::TerminalNode *> COMMA();

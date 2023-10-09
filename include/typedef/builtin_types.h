@@ -35,6 +35,15 @@ class Map : public std::map<K, V> {
  private:
 };
 
+}  // namespace td
+
+// TODO this is a pretty terrible place to put this!!
+// it should be generated inline... or at least namespaced.
+template <typename T>
+inline bool IsEmpty(const td::Vector<T>& v) {
+  return v.size() == 0;
+}
+
 inline std::string escape_json(const std::string& s) {
   std::ostringstream o;
   for (auto c = s.cbegin(); c != s.cend(); c++) {
@@ -76,15 +85,6 @@ inline std::string char32ToJsonString(char32_t c) {
   std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
   std::string utf8 = converter.to_bytes(&c, &c + 1);
   return escape_json(utf8);
-}
-
-}  // namespace td
-
-// TODO this is a pretty terrible place to put this!!
-// it should be generated inline... or at least namespaced.
-template <typename T>
-inline bool IsEmpty(const td::Vector<T>& v) {
-  return v.size() == 0;
 }
 
 #endif  // TYPEDEF_BUILTIN_TYPES_H__

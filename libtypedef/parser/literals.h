@@ -15,6 +15,8 @@ namespace td {
 
 void SetBoolLiteral(bool& literal, TypedefParser::BoolLiteralContext* ctx);
 void SetCharLiteral(char32_t& literal, TypedefParser::CharLiteralContext* ctx);
+void MaybeSetTemplateLiteral(std::string& literal,
+                             TypedefParser::TmplDefinitionContext* ctx);
 void SetStringLiteral(std::string& literal,
                       TypedefParser::StringLiteralContext* ctx);
 void SetTmplText(std::string& text, TypedefParser::TmplTextContext* ctx);

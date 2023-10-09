@@ -686,6 +686,9 @@ TypedefParser::FieldDefinitionContext* FindField(
 TypedefParser::TmplExpressionContext* GetTmplExpression(
     TypedefParser::TmplDefinitionContext* ctx, size_t idx) {
   size_t count = 0;
+  if (!ctx->tmplBlock()) {
+    return nullptr;
+  }
   for (auto* item : ctx->tmplBlock()->tmplItem()) {
     if (item->tmplExpression()) {
       if (count == idx) {

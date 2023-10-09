@@ -464,7 +464,7 @@ void ToJson(std::ostream& os, const SomeVariant& from);
 
 
 // Tmplate function declarations
-void PrintStructC(std::ostream& os, const StructC& sc);void PrintTemplateData(std::ostream& os, const TemplateData& t);void DoSomeVariant(std::ostream& os, const SomeVariant& v);void LoopLogic(std::ostream& os, const td::Vector<std::string>& v);void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v);void TestIsEmpty(std::ostream& os, const td::Vector<std::string>& v);void PrintIndices(std::ostream& os, const td::Vector<std::string>& v);
+void PrintStructC(std::ostream& os, const StructC& sc);void PrintTemplateData(std::ostream& os, const TemplateData& t);void DoSomeVariant(std::ostream& os, const SomeVariant& v);void LoopLogic(std::ostream& os, const td::Vector<std::string>& v);void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v);void TestIsEmpty(std::ostream& os, const td::Vector<std::string>& v);void PrintIndices(std::ostream& os, const td::Vector<std::string>& v);void Literal(std::ostream& os);
 
 } // namespace template_example
 

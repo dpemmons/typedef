@@ -214,6 +214,12 @@ void FirstPassListener::enterUserType(TypedefParser::UserTypeContext* ctx) {
 
 void FirstPassListener::enterTmplDefinition(
     TypedefParser::TmplDefinitionContext* ctx) {
+  if (ctx->RAW_STRING_LITERAL()) {
+    for (auto* arg : ctx->functionParameter()) {
+      AddError(arg, ParserErrorInfo::INVALID_ARGUMENT,
+               "No arguments allowed for template literals.");
+    }
+  }
   for (TypedefParser::FunctionParameterContext* fctx :
        ctx->functionParameter()) {
     if (!identifiers_.emplace(fctx->identifier()->id, fctx).second) {

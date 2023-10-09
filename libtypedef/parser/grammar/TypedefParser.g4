@@ -86,10 +86,12 @@ userType
 	@init {$type_definition = nullptr;}: identifier;
 
 // template DoIt(a: i32, b: str) "{a} {b}";
-tmplDefinition:
+tmplDefinition
+	returns[std::string literal]
+	@after {td::MaybeSetTemplateLiteral($literal, $ctx);}:
 	KW_TEMPLATE identifier LPAREN (
 		(functionParameter (COMMA functionParameter)*)?
-	) RPAREN tmplBlock;
+	) RPAREN (tmplBlock | RAW_STRING_LITERAL);
 
 tmplBlock: START_TEMPLATE tmplItem* END_TEMPLATE;
 tmplItem:

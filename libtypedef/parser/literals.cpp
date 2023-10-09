@@ -307,6 +307,14 @@ void SetCharLiteral(char32_t& literal, TypedefParser::CharLiteralContext* ctx) {
   literal = GetCharValue(ctx);
 }
 
+void MaybeSetTemplateLiteral(std::string& literal,
+                             TypedefParser::TmplDefinitionContext* ctx) {
+  if (ctx->RAW_STRING_LITERAL()) {
+    literal = GetRawString(ctx->RAW_STRING_LITERAL()->getSymbol(), 'r',
+                           td::ParserErrorInfo::INVALID_RAW_STRING_LITERAL);
+  }
+}
+
 void SetStringLiteral(std::string& literal,
                       TypedefParser::StringLiteralContext* ctx) {
   if (ctx->STRING_LITERAL()) {

@@ -1047,3 +1047,28 @@ TEST_CASE("Index0 and Index1 are not truthy", "[template][expressions]") {
   REQUIRE(parser.GetError(0).error_type == ParserErrorInfo::INVALID_ARGUMENT);
   REQUIRE(parser.GetError(1).error_type == ParserErrorInfo::INVALID_ARGUMENT);
 }
+
+TEST_CASE("Template literal", "[template][literal]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+
+    template Literal() r#" <hello> "world" "#
+  )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+
+  auto* lfunc = FindTempalteFunc(parser.GetCompilationUnitContext(), "Literal");
+  REQUIRE(lfunc);
+  REQUIRE(lfunc->literal == " <hello> \"world\" ");
+}
+
+TEST_CASE("Template literal cannot have arguments.", "[template][literal]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+
+    template Literal(a: str) r#"asdf"#
+  )");
+  REQUIRE(parser.Parse() == 1);
+  REQUIRE(parser.GetError(0).error_type == ParserErrorInfo::INVALID_ARGUMENT);
+}
