@@ -66,7 +66,8 @@ int main(int argc, const char** argv) {
 
   if (!args.cpp_out.empty()) {
     auto outpath = std::make_unique<td::OutPath>(args.cpp_out);
-    td::CodegenCpp(outpath.get(), parser.GetCompilationUnitContext());
+    td::CodegenCpp(outpath.get(), parser.GetCompilationUnitContext(),
+                   args.cpp_json_parser, args.cpp_json_writer);
   }
   if (!args.experimental_cpp_out.empty()) {
     auto outpath = std::make_unique<td::OutPath>(args.experimental_cpp_out);

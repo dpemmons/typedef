@@ -21,8 +21,7 @@ using namespace td::codegen::cpp;
 Vector<TmplItem> GetTemplateItems(
     vector<TypedefParser::TmplItemContext*> itm_ctxs);
 UserTypeDeclaration GetTypeDeclaration(
-    TypedefParser::TypeDefinitionContext* type,
-    optional<string> maybe_identifier);
+    TypedefParser::TypeDefinitionContext* type);
 Vector<UserTypeDeclaration> GetUserTypeDecls(
     vector<TypedefParser::TypeDefinitionContext*> types);
 
@@ -35,6 +34,9 @@ string HeaderGuard(const filesystem::path& source_filename) {
   return hdr_guard;
 }
 
+std::string GetNestedTypeIdentifier(const std::string& str) {
+  return escape_utf8_to_cpp_identifier(str + "T");
+}
 std::string GetNestedTypeIdentifier(
     TypedefParser::FieldDefinitionContext* field) {
   return escape_utf8_to_cpp_identifier(field->field_identifier->id + "T");
@@ -50,42 +52,55 @@ AccessInfo GetAccessInfoForType(TypedefParser::TypeAnnotationContext* ctx) {
     if (IsBool(ctx)) {
       ai.cpp_type() = "bool";
       ai.access_by().value() = true;
+      ai.td_type().bool_t() = true;
     } else if (IsChar(ctx)) {
       ai.cpp_type() = "char32_t";
       ai.access_by().value() = true;
+      ai.td_type().char_t() = true;
     } else if (IsStr(ctx)) {
       ai.cpp_type() = "std::string";
       ai.access_by().reference() = true;
+      ai.td_type().string_t() = true;
     } else if (IsF32(ctx)) {
       ai.cpp_type() = "float";
       ai.access_by().value() = true;
+      ai.td_type().f32_t() = true;
     } else if (IsF64(ctx)) {
       ai.cpp_type() = "double";
       ai.access_by().value() = true;
+      ai.td_type().f64_t() = true;
     } else if (IsU8(ctx)) {
       ai.cpp_type() = "std::uint8_t";
       ai.access_by().value() = true;
+      ai.td_type().u8_t() = true;
     } else if (IsU16(ctx)) {
       ai.cpp_type() = "std::uint16_t";
       ai.access_by().value() = true;
+      ai.td_type().u16_t() = true;
     } else if (IsU32(ctx)) {
       ai.cpp_type() = "std::uint32_t";
       ai.access_by().value() = true;
+      ai.td_type().u32_t() = true;
     } else if (IsU64(ctx)) {
       ai.cpp_type() = "std::uint64_t";
       ai.access_by().value() = true;
+      ai.td_type().u64_t() = true;
     } else if (IsI8(ctx)) {
       ai.cpp_type() = "std::int8_t";
       ai.access_by().value() = true;
+      ai.td_type().i8_t() = true;
     } else if (IsI16(ctx)) {
       ai.cpp_type() = "std::int16_t";
       ai.access_by().value() = true;
+      ai.td_type().i16_t() = true;
     } else if (IsI32(ctx)) {
       ai.cpp_type() = "std::int32_t";
       ai.access_by().value() = true;
+      ai.td_type().i32_t() = true;
     } else if (IsI64(ctx)) {
       ai.cpp_type() = "std::int64_t";
       ai.access_by().value() = true;
+      ai.td_type().i64_t() = true;
     } else {
       throw_logic_error("invalid state");
     }
@@ -94,6 +109,8 @@ AccessInfo GetAccessInfoForType(TypedefParser::TypeAnnotationContext* ctx) {
     ai.access_by().reference() = true;
     ai.type_arguments().emplace_back(
         GetAccessInfoForType(GetTypeArgument(ctx, 0)));
+    ai.td_type().vector_t().val() =
+        GetAccessInfoForType(GetTypeArgument(ctx, 0));
   } else if (ReferencesBuiltinMapType(ctx)) {
     ai.cpp_type() = "td::Map";
     ai.access_by().reference() = true;
@@ -101,10 +118,19 @@ AccessInfo GetAccessInfoForType(TypedefParser::TypeAnnotationContext* ctx) {
         GetAccessInfoForType(GetTypeArgument(ctx, 0)));
     ai.type_arguments().emplace_back(
         GetAccessInfoForType(GetTypeArgument(ctx, 1)));
+    ai.td_type().map_t().key() = GetAccessInfoForType(GetTypeArgument(ctx, 0));
+    ai.td_type().map_t().val() = GetAccessInfoForType(GetTypeArgument(ctx, 1));
   } else if (ReferencesUserType(ctx)) {
     ai.cpp_type() = escape_utf8_to_cpp_identifier(
         GetReferencedUserType(ctx)->type_identifier->id);
     ai.access_by().pointer() = true;
+    if (DefinesStruct(GetReferencedUserType(ctx))) {
+      ai.td_type().struct_t() = true;
+    } else if (DefinesVariant(GetReferencedUserType(ctx))) {
+      ai.td_type().variant_t() = true;
+    } else {
+      throw_logic_error("invalid state");
+    }
   } else {
     throw_logic_error("invalid state");
   }
@@ -116,6 +142,13 @@ AccessInfo GetField(TypedefParser::FieldDefinitionContext* field) {
   if (DefinesAndUsesInlineUserType(field)) {
     a.cpp_type() = GetNestedTypeIdentifier(field);
     a.access_by().pointer() = true;
+    if (DefinesStruct(GetInlineUserType(field))) {
+      a.td_type().struct_t() = true;
+    } else if (DefinesVariant(GetInlineUserType(field))) {
+      a.td_type().variant_t() = true;
+    } else {
+      throw_logic_error("invalid state");
+    }
   } else {
     a = GetAccessInfoForType(field->typeAnnotation());
   }
@@ -123,13 +156,40 @@ AccessInfo GetField(TypedefParser::FieldDefinitionContext* field) {
   return a;
 }
 
-StructDecl GetStruct(TypedefParser::TypeDefinitionContext* type,
-                     optional<string> maybe_identifier) {
+Vector<std::string> GetQN(TypedefParser::TypeDefinitionContext* type,
+                          bool include_namespace) {
+  Vector<std::string> fqn;
+  for (TypedefParser::IdentifierCtx& id_ctx : type->ns_ctx) {
+    // First resolve the module namespaces
+    if (auto* c = GetCompilationUnitContext(id_ctx)) {
+      if (include_namespace) {
+        for (auto* id : c->moduleDeclaration()->symbolPath()->identifier()) {
+          fqn.push_back(id->id);
+        }
+      }
+    } else if (auto* t = GetTypeDefinition(id_ctx)) {
+      if (HasIdentifier(t)) {
+        fqn.push_back(GetIdentifier(t));
+      } else {
+        fqn.push_back(GetNestedTypeIdentifier(GetFieldIdentifier(t)));
+      }
+    }
+  }
+  if (HasIdentifier(type)) {
+    fqn.push_back(GetIdentifier(type));
+  } else {
+    fqn.push_back(GetNestedTypeIdentifier(GetFieldIdentifier(type)));
+  }
+  return fqn;
+}
+
+StructDecl GetStruct(TypedefParser::TypeDefinitionContext* type) {
   StructDecl s;
   // If it's an inline type, the identifier is the field name which has
   // to be passed in separately.
-  s.identifier() =
-      maybe_identifier ? *maybe_identifier : type->type_identifier->id;
+  s.fqn() = GetQN(type, true);
+  s.nqn() = GetQN(type, false);
+  s.identifier() = s.fqn().back();
 
   if (type->fieldBlock()->typeDefinition().size()) {
     s.nested_type_decls() =
@@ -139,8 +199,8 @@ StructDecl GetStruct(TypedefParser::TypeDefinitionContext* type,
   // Some field types require inline type declarations.
   for (auto* field : type->fieldBlock()->fieldDefinition()) {
     if (DefinesAndUsesInlineUserType(field)) {
-      s.inline_type_decls().emplace_back(GetTypeDeclaration(
-          field->typeDefinition(), GetNestedTypeIdentifier(field)));
+      s.inline_type_decls().emplace_back(
+          GetTypeDeclaration(field->typeDefinition()));
     }
   }
 
@@ -154,14 +214,13 @@ StructDecl GetStruct(TypedefParser::TypeDefinitionContext* type,
 }
 
 UserTypeDeclaration GetTypeDeclaration(
-    TypedefParser::TypeDefinitionContext* type,
-    optional<string> maybe_identifier) {
+    TypedefParser::TypeDefinitionContext* type) {
   UserTypeDeclaration decl;
   if (DefinesStruct(type)) {
-    decl.struct_decl() = GetStruct(type, maybe_identifier);
+    decl.struct_decl() = GetStruct(type);
   } else if (DefinesVariant(type)) {
     // The data fed to the template is the same as for struct.
-    decl.variant_decl() = GetStruct(type, maybe_identifier);
+    decl.variant_decl() = GetStruct(type);
   } else {
     throw_logic_error("invalid state");
   }
@@ -172,7 +231,7 @@ Vector<UserTypeDeclaration> GetUserTypeDecls(
     vector<TypedefParser::TypeDefinitionContext*> types) {
   Vector<UserTypeDeclaration> utds;
   for (auto* type : types) {
-    utds.emplace_back(GetTypeDeclaration(type, nullopt));
+    utds.emplace_back(GetTypeDeclaration(type));
   }
   return utds;
 }
@@ -340,7 +399,15 @@ TmplFunction GetTemplateFunc(TypedefParser::TmplDefinitionContext* tmpl_def) {
        tmpl_def->functionParameter()) {
     t.params().emplace_back(GetFunctionParameter(func_param));
   }
-  t.items() = GetTemplateItems(tmpl_def->tmplBlock()->tmplItem());
+  if (tmpl_def->tmplBlock()) {
+    t.items() = GetTemplateItems(tmpl_def->tmplBlock()->tmplItem());
+  } else if (tmpl_def->RAW_STRING_LITERAL()) {
+    TmplItem ti;
+    ti.text() = escapeStringForCpp(tmpl_def->literal);
+    t.items().emplace_back(std::move(ti));
+  } else {
+    throw_logic_error("invalid state");
+  }
   return t;
 }
 
@@ -356,7 +423,8 @@ Vector<TmplFunction> GetTemplateFuncs(
 }  // namespace
 
 void CodegenCpp(OutPathBase* out_path,
-                TypedefParser::CompilationUnitContext* compilation_unit_ctx) {
+                TypedefParser::CompilationUnitContext* compilation_unit_ctx,
+                bool cpp_json_parser, bool cpp_json_writer) {
   filesystem::path hdr_filename =
       ToPath(compilation_unit_ctx->moduleDeclaration());
   filesystem::path source_filename = hdr_filename;
@@ -367,6 +435,10 @@ void CodegenCpp(OutPathBase* out_path,
   hdr_file->Open();
   auto src_file = out_path->OpenOutputFile(source_filename);
   src_file->Open();
+
+  Options options;
+  options.generate_json_parser() = cpp_json_parser;
+  options.generate_json_writer() = cpp_json_writer;
 
   CppData cppData;
   cppData.header_guard() = HeaderGuard(source_filename);
@@ -380,8 +452,8 @@ void CodegenCpp(OutPathBase* out_path,
   cppData.tmpl_funcs() =
       GetTemplateFuncs(compilation_unit_ctx->tmplDefinition());
 
-  CppHeader(hdr_file->OStream(), cppData);
-  CppSource(src_file->OStream(), cppData);
+  CppHeader(hdr_file->OStream(), cppData, options);
+  CppSource(src_file->OStream(), cppData, options);
 }
 
 }  // namespace td
