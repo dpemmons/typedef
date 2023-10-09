@@ -30,6 +30,8 @@ namespace cpp {
 
 // Forward declarations.
 
+class TdType;
+
 class AccessInfo;
 
 class StructDecl;
@@ -58,6 +60,658 @@ class Options;
 
 class CppData;
 
+
+
+
+class TdType {
+ public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
+
+// vector_tT struct declaration.
+class vector_tT {
+ public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
+
+  vector_tT() {}
+  ~vector_tT() {}
+
+  vector_tT(const vector_tT&) = delete;
+  vector_tT& operator=(const vector_tT&) = delete;
+  vector_tT(vector_tT&&) = default;
+  vector_tT& operator=(vector_tT&&) = default;
+
+  
+  
+  bool has_val() const {
+    return val_.operator bool();
+  }
+  void alloc_val() {
+    val_ = std::make_unique<AccessInfo>();
+  }
+  void delete_val() {
+    return val_.reset(nullptr);
+  }
+  void set_val(std::unique_ptr<AccessInfo> val) {
+    val_ = std::move(val);
+  }
+  void set_val(AccessInfo* val) {
+    val_.reset(std::move(val));
+  }
+  AccessInfo* ptr_val() {
+    #if TD_AUTO_ALLOC
+    if (!has_val()) {
+      alloc_val();
+    }
+    #endif
+    #ifdef DEBUG
+    if (!has_val()) {
+      TD_THROW("Attempted null reference");
+    }
+    #endif
+    return val_.get();
+  }
+  AccessInfo& val() {
+    return *ptr_val();
+  }
+  const AccessInfo& val() const {
+    #ifdef DEBUG
+    if (!has_val()) {
+      TD_THROW("Attempted null reference");
+    }
+    #endif
+    return *val_.get();
+  }
+  
+  
+
+ private:
+  std::unique_ptr<AccessInfo> val_;
+  
+}; // class vector_tT
+
+
+
+// map_tT struct declaration.
+class map_tT {
+ public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
+
+  map_tT() {}
+  ~map_tT() {}
+
+  map_tT(const map_tT&) = delete;
+  map_tT& operator=(const map_tT&) = delete;
+  map_tT(map_tT&&) = default;
+  map_tT& operator=(map_tT&&) = default;
+
+  
+  
+  bool has_key() const {
+    return key_.operator bool();
+  }
+  void alloc_key() {
+    key_ = std::make_unique<AccessInfo>();
+  }
+  void delete_key() {
+    return key_.reset(nullptr);
+  }
+  void set_key(std::unique_ptr<AccessInfo> val) {
+    key_ = std::move(val);
+  }
+  void set_key(AccessInfo* val) {
+    key_.reset(std::move(val));
+  }
+  AccessInfo* ptr_key() {
+    #if TD_AUTO_ALLOC
+    if (!has_key()) {
+      alloc_key();
+    }
+    #endif
+    #ifdef DEBUG
+    if (!has_key()) {
+      TD_THROW("Attempted null reference");
+    }
+    #endif
+    return key_.get();
+  }
+  AccessInfo& key() {
+    return *ptr_key();
+  }
+  const AccessInfo& key() const {
+    #ifdef DEBUG
+    if (!has_key()) {
+      TD_THROW("Attempted null reference");
+    }
+    #endif
+    return *key_.get();
+  }
+  
+  
+  
+  bool has_val() const {
+    return val_.operator bool();
+  }
+  void alloc_val() {
+    val_ = std::make_unique<AccessInfo>();
+  }
+  void delete_val() {
+    return val_.reset(nullptr);
+  }
+  void set_val(std::unique_ptr<AccessInfo> val) {
+    val_ = std::move(val);
+  }
+  void set_val(AccessInfo* val) {
+    val_.reset(std::move(val));
+  }
+  AccessInfo* ptr_val() {
+    #if TD_AUTO_ALLOC
+    if (!has_val()) {
+      alloc_val();
+    }
+    #endif
+    #ifdef DEBUG
+    if (!has_val()) {
+      TD_THROW("Attempted null reference");
+    }
+    #endif
+    return val_.get();
+  }
+  AccessInfo& val() {
+    return *ptr_val();
+  }
+  const AccessInfo& val() const {
+    #ifdef DEBUG
+    if (!has_val()) {
+      TD_THROW("Attempted null reference");
+    }
+    #endif
+    return *val_.get();
+  }
+  
+  
+
+ private:
+  std::unique_ptr<AccessInfo> key_;
+  std::unique_ptr<AccessInfo> val_;
+  
+}; // class map_tT
+
+
+
+  TdType() {}
+  ~TdType() {
+    tag = Tag::__TAG__UNSET;
+  }
+
+  TdType(const TdType&) = delete;
+  TdType& operator=(const TdType&) = delete;
+  TdType(TdType&&) = default;
+  TdType& operator=(TdType&&) = default;
+
+  enum class Tag {
+    __TAG__UNSET = 0,
+    TAG_bool_t = 1,
+    TAG_char_t = 2,
+    TAG_string_t = 3,
+    TAG_f32_t = 4,
+    TAG_f64_t = 5,
+    TAG_u8_t = 6,
+    TAG_u16_t = 7,
+    TAG_u32_t = 8,
+    TAG_u64_t = 9,
+    TAG_i8_t = 10,
+    TAG_i16_t = 11,
+    TAG_i32_t = 12,
+    TAG_i64_t = 13,
+    TAG_vector_t = 14,
+    TAG_map_t = 15,
+    TAG_struct_t = 16,
+    TAG_variant_t = 17,
+    
+  };
+  Tag Which() const { return tag; }
+
+  
+  bool is_bool_t() const {
+    return val_.index() == 1;
+  }
+  
+  bool get_bool_t() const {
+    return std::get<1>(val_);
+  }
+  void set_bool_t(bool val) {
+    tag = Tag::TAG_bool_t;
+    val_.emplace<1>(val);
+  }
+  bool& bool_t() {
+    if (!is_bool_t()) {
+      tag = Tag::TAG_bool_t;
+      val_.emplace<1>();
+    }
+    return std::get<1>(val_);
+  }
+  const bool& bool_t() const {
+    return std::get<1>(val_);
+  }
+  
+  bool is_char_t() const {
+    return val_.index() == 2;
+  }
+  
+  bool get_char_t() const {
+    return std::get<2>(val_);
+  }
+  void set_char_t(bool val) {
+    tag = Tag::TAG_char_t;
+    val_.emplace<2>(val);
+  }
+  bool& char_t() {
+    if (!is_char_t()) {
+      tag = Tag::TAG_char_t;
+      val_.emplace<2>();
+    }
+    return std::get<2>(val_);
+  }
+  const bool& char_t() const {
+    return std::get<2>(val_);
+  }
+  
+  bool is_string_t() const {
+    return val_.index() == 3;
+  }
+  
+  bool get_string_t() const {
+    return std::get<3>(val_);
+  }
+  void set_string_t(bool val) {
+    tag = Tag::TAG_string_t;
+    val_.emplace<3>(val);
+  }
+  bool& string_t() {
+    if (!is_string_t()) {
+      tag = Tag::TAG_string_t;
+      val_.emplace<3>();
+    }
+    return std::get<3>(val_);
+  }
+  const bool& string_t() const {
+    return std::get<3>(val_);
+  }
+  
+  bool is_f32_t() const {
+    return val_.index() == 4;
+  }
+  
+  bool get_f32_t() const {
+    return std::get<4>(val_);
+  }
+  void set_f32_t(bool val) {
+    tag = Tag::TAG_f32_t;
+    val_.emplace<4>(val);
+  }
+  bool& f32_t() {
+    if (!is_f32_t()) {
+      tag = Tag::TAG_f32_t;
+      val_.emplace<4>();
+    }
+    return std::get<4>(val_);
+  }
+  const bool& f32_t() const {
+    return std::get<4>(val_);
+  }
+  
+  bool is_f64_t() const {
+    return val_.index() == 5;
+  }
+  
+  bool get_f64_t() const {
+    return std::get<5>(val_);
+  }
+  void set_f64_t(bool val) {
+    tag = Tag::TAG_f64_t;
+    val_.emplace<5>(val);
+  }
+  bool& f64_t() {
+    if (!is_f64_t()) {
+      tag = Tag::TAG_f64_t;
+      val_.emplace<5>();
+    }
+    return std::get<5>(val_);
+  }
+  const bool& f64_t() const {
+    return std::get<5>(val_);
+  }
+  
+  bool is_u8_t() const {
+    return val_.index() == 6;
+  }
+  
+  bool get_u8_t() const {
+    return std::get<6>(val_);
+  }
+  void set_u8_t(bool val) {
+    tag = Tag::TAG_u8_t;
+    val_.emplace<6>(val);
+  }
+  bool& u8_t() {
+    if (!is_u8_t()) {
+      tag = Tag::TAG_u8_t;
+      val_.emplace<6>();
+    }
+    return std::get<6>(val_);
+  }
+  const bool& u8_t() const {
+    return std::get<6>(val_);
+  }
+  
+  bool is_u16_t() const {
+    return val_.index() == 7;
+  }
+  
+  bool get_u16_t() const {
+    return std::get<7>(val_);
+  }
+  void set_u16_t(bool val) {
+    tag = Tag::TAG_u16_t;
+    val_.emplace<7>(val);
+  }
+  bool& u16_t() {
+    if (!is_u16_t()) {
+      tag = Tag::TAG_u16_t;
+      val_.emplace<7>();
+    }
+    return std::get<7>(val_);
+  }
+  const bool& u16_t() const {
+    return std::get<7>(val_);
+  }
+  
+  bool is_u32_t() const {
+    return val_.index() == 8;
+  }
+  
+  bool get_u32_t() const {
+    return std::get<8>(val_);
+  }
+  void set_u32_t(bool val) {
+    tag = Tag::TAG_u32_t;
+    val_.emplace<8>(val);
+  }
+  bool& u32_t() {
+    if (!is_u32_t()) {
+      tag = Tag::TAG_u32_t;
+      val_.emplace<8>();
+    }
+    return std::get<8>(val_);
+  }
+  const bool& u32_t() const {
+    return std::get<8>(val_);
+  }
+  
+  bool is_u64_t() const {
+    return val_.index() == 9;
+  }
+  
+  bool get_u64_t() const {
+    return std::get<9>(val_);
+  }
+  void set_u64_t(bool val) {
+    tag = Tag::TAG_u64_t;
+    val_.emplace<9>(val);
+  }
+  bool& u64_t() {
+    if (!is_u64_t()) {
+      tag = Tag::TAG_u64_t;
+      val_.emplace<9>();
+    }
+    return std::get<9>(val_);
+  }
+  const bool& u64_t() const {
+    return std::get<9>(val_);
+  }
+  
+  bool is_i8_t() const {
+    return val_.index() == 10;
+  }
+  
+  bool get_i8_t() const {
+    return std::get<10>(val_);
+  }
+  void set_i8_t(bool val) {
+    tag = Tag::TAG_i8_t;
+    val_.emplace<10>(val);
+  }
+  bool& i8_t() {
+    if (!is_i8_t()) {
+      tag = Tag::TAG_i8_t;
+      val_.emplace<10>();
+    }
+    return std::get<10>(val_);
+  }
+  const bool& i8_t() const {
+    return std::get<10>(val_);
+  }
+  
+  bool is_i16_t() const {
+    return val_.index() == 11;
+  }
+  
+  bool get_i16_t() const {
+    return std::get<11>(val_);
+  }
+  void set_i16_t(bool val) {
+    tag = Tag::TAG_i16_t;
+    val_.emplace<11>(val);
+  }
+  bool& i16_t() {
+    if (!is_i16_t()) {
+      tag = Tag::TAG_i16_t;
+      val_.emplace<11>();
+    }
+    return std::get<11>(val_);
+  }
+  const bool& i16_t() const {
+    return std::get<11>(val_);
+  }
+  
+  bool is_i32_t() const {
+    return val_.index() == 12;
+  }
+  
+  bool get_i32_t() const {
+    return std::get<12>(val_);
+  }
+  void set_i32_t(bool val) {
+    tag = Tag::TAG_i32_t;
+    val_.emplace<12>(val);
+  }
+  bool& i32_t() {
+    if (!is_i32_t()) {
+      tag = Tag::TAG_i32_t;
+      val_.emplace<12>();
+    }
+    return std::get<12>(val_);
+  }
+  const bool& i32_t() const {
+    return std::get<12>(val_);
+  }
+  
+  bool is_i64_t() const {
+    return val_.index() == 13;
+  }
+  
+  bool get_i64_t() const {
+    return std::get<13>(val_);
+  }
+  void set_i64_t(bool val) {
+    tag = Tag::TAG_i64_t;
+    val_.emplace<13>(val);
+  }
+  bool& i64_t() {
+    if (!is_i64_t()) {
+      tag = Tag::TAG_i64_t;
+      val_.emplace<13>();
+    }
+    return std::get<13>(val_);
+  }
+  const bool& i64_t() const {
+    return std::get<13>(val_);
+  }
+  
+  bool is_vector_t() const {
+    return val_.index() == 14;
+  }
+  
+  bool has_vector_t() const {
+    return is_vector_t() && std::get<14>(val_).operator bool();
+  }
+  void alloc_vector_t() {
+    tag = Tag::TAG_vector_t;
+    val_.emplace<14>(std::make_unique<vector_tT>());
+  }
+  void delete_vector_t() {
+    return std::get<14>(val_).reset(nullptr);
+  }
+  void set_vector_t(std::unique_ptr<vector_tT> val) {
+    tag = Tag::TAG_vector_t;
+    val_.emplace<14>(std::move(val));
+  }
+  void set_vector_t(vector_tT* val) {
+    tag = Tag::TAG_vector_t;
+    std::get<14>(val_).reset(std::move(val));
+  }
+  vector_tT* ptr_vector_t() {
+    #if TD_AUTO_ALLOC
+    if (!has_vector_t()) {
+      alloc_vector_t();
+    }
+    #endif
+    return std::get<14>(val_).get();
+  }
+  vector_tT& vector_t() {
+    return *ptr_vector_t();
+  }
+  const vector_tT& vector_t() const {
+    return *std::get<14>(val_).get();
+  }
+  
+  bool is_map_t() const {
+    return val_.index() == 15;
+  }
+  
+  bool has_map_t() const {
+    return is_map_t() && std::get<15>(val_).operator bool();
+  }
+  void alloc_map_t() {
+    tag = Tag::TAG_map_t;
+    val_.emplace<15>(std::make_unique<map_tT>());
+  }
+  void delete_map_t() {
+    return std::get<15>(val_).reset(nullptr);
+  }
+  void set_map_t(std::unique_ptr<map_tT> val) {
+    tag = Tag::TAG_map_t;
+    val_.emplace<15>(std::move(val));
+  }
+  void set_map_t(map_tT* val) {
+    tag = Tag::TAG_map_t;
+    std::get<15>(val_).reset(std::move(val));
+  }
+  map_tT* ptr_map_t() {
+    #if TD_AUTO_ALLOC
+    if (!has_map_t()) {
+      alloc_map_t();
+    }
+    #endif
+    return std::get<15>(val_).get();
+  }
+  map_tT& map_t() {
+    return *ptr_map_t();
+  }
+  const map_tT& map_t() const {
+    return *std::get<15>(val_).get();
+  }
+  
+  bool is_struct_t() const {
+    return val_.index() == 16;
+  }
+  
+  bool get_struct_t() const {
+    return std::get<16>(val_);
+  }
+  void set_struct_t(bool val) {
+    tag = Tag::TAG_struct_t;
+    val_.emplace<16>(val);
+  }
+  bool& struct_t() {
+    if (!is_struct_t()) {
+      tag = Tag::TAG_struct_t;
+      val_.emplace<16>();
+    }
+    return std::get<16>(val_);
+  }
+  const bool& struct_t() const {
+    return std::get<16>(val_);
+  }
+  
+  bool is_variant_t() const {
+    return val_.index() == 17;
+  }
+  
+  bool get_variant_t() const {
+    return std::get<17>(val_);
+  }
+  void set_variant_t(bool val) {
+    tag = Tag::TAG_variant_t;
+    val_.emplace<17>(val);
+  }
+  bool& variant_t() {
+    if (!is_variant_t()) {
+      tag = Tag::TAG_variant_t;
+      val_.emplace<17>();
+    }
+    return std::get<17>(val_);
+  }
+  const bool& variant_t() const {
+    return std::get<17>(val_);
+  }
+  
+
+ private:
+  Tag tag = Tag::__TAG__UNSET;
+
+  std::variant<
+    std::monostate
+  , bool
+  , bool
+  , bool
+  , bool
+  , bool
+  , bool
+  , bool
+  , bool
+  , bool
+  , bool
+  , bool
+  , bool
+  , bool
+  , std::unique_ptr<vector_tT>
+  , std::unique_ptr<map_tT>
+  , bool
+  , bool
+  
+  > val_;
+
+};  // class TdType
 
 
 
@@ -200,6 +854,48 @@ class access_byT {
   
   
   
+  bool has_td_type() const {
+    return td_type_.operator bool();
+  }
+  void alloc_td_type() {
+    td_type_ = std::make_unique<TdType>();
+  }
+  void delete_td_type() {
+    return td_type_.reset(nullptr);
+  }
+  void set_td_type(std::unique_ptr<TdType> val) {
+    td_type_ = std::move(val);
+  }
+  void set_td_type(TdType* val) {
+    td_type_.reset(std::move(val));
+  }
+  TdType* ptr_td_type() {
+    #if TD_AUTO_ALLOC
+    if (!has_td_type()) {
+      alloc_td_type();
+    }
+    #endif
+    #ifdef DEBUG
+    if (!has_td_type()) {
+      TD_THROW("Attempted null reference");
+    }
+    #endif
+    return td_type_.get();
+  }
+  TdType& td_type() {
+    return *ptr_td_type();
+  }
+  const TdType& td_type() const {
+    #ifdef DEBUG
+    if (!has_td_type()) {
+      TD_THROW("Attempted null reference");
+    }
+    #endif
+    return *td_type_.get();
+  }
+  
+  
+  
   void set_cpp_type(std::string&& val) {
     cpp_type_ = std::move(val);
   }
@@ -283,6 +979,7 @@ class access_byT {
 
  private:
   std::string identifier_;
+  std::unique_ptr<TdType> td_type_;
   std::string cpp_type_;
   std::unique_ptr<access_byT> access_by_;
   bool is_required_;
@@ -334,6 +1031,18 @@ class StructDecl {
   
   
   
+  void set_nqn(td::Vector<std::string>&& val) {
+    nqn_ = std::move(val);
+  }
+  td::Vector<std::string>& nqn() {
+    return nqn_;
+  }
+  const td::Vector<std::string>& nqn() const {
+    return nqn_;
+  }
+  
+  
+  
   void set_nested_type_decls(td::Vector<UserTypeDeclaration>&& val) {
     nested_type_decls_ = std::move(val);
   }
@@ -373,6 +1082,7 @@ class StructDecl {
  private:
   std::string identifier_;
   td::Vector<std::string> fqn_;
+  td::Vector<std::string> nqn_;
   td::Vector<UserTypeDeclaration> nested_type_decls_;
   td::Vector<UserTypeDeclaration> inline_type_decls_;
   td::Vector<AccessInfo> fields_;
@@ -1814,7 +2524,7 @@ class CppData {
 
 
 
-void VecUserTypeDeclarationT(std::ostream& os, const td::Vector<UserTypeDeclaration>& ut, const Options& opt);void FQN(std::ostream& os, const td::Vector<std::string>& fqn);void TmplStructDeclaration(std::ostream& os, const StructDecl& s, const Options& opt);void TmplStructDefinition(std::ostream& os, const StructDecl& s, const Options& opt);void TmplVariantDefinition(std::ostream& os, const StructDecl& v, const Options& opt);void TmplVariantDeclaration(std::ostream& os, const StructDecl& v, const Options& opt);void TmplFuncDeclaration(std::ostream& os, const TmplFunction& t);void CppType(std::ostream& os, const AccessInfo& a);void ParamsList(std::ostream& os, const td::Vector<AccessInfo>& params);void TmplValueDereferenceT(std::ostream& os, const TmplValueDereference& v);void TmplStringExpression(std::ostream& os, const TmplExpression& i);void TmplBoolExpression(std::ostream& os, const TmplExpression& i);void TmplIfT(std::ostream& os, const TmplIf& i);void TmplIfBlockT(std::ostream& os, const TmplIfBlock& i);void TmplForT(std::ostream& os, const TmplForBlock& f);void TmplHasValRef(std::ostream& os, const TmplValueDereference& val);void TmplSwitchT(std::ostream& os, const SwitchBlock& s);void TmplItemsT(std::ostream& os, const td::Vector<TmplItem>& v);void TmplItemT(std::ostream& os, const TmplItem& i);void TmplFuncDefinition(std::ostream& os, const TmplFunction& t);void CppHeader(std::ostream& os, const CppData& d, const Options& opt);void CppSource(std::ostream& os, const CppData& d, const Options& opt);
+void TmplStructDeclaration(std::ostream& os, const StructDecl& s, const Options& opt);void TmplStructDefinition(std::ostream& os, const StructDecl& s, const Options& opt);void TmplVariantDeclaration(std::ostream& os, const StructDecl& v, const Options& opt);void TmplVariantDefinition(std::ostream& os, const StructDecl& v, const Options& opt);void CppHeader(std::ostream& os, const CppData& d, const Options& opt);void CppSource(std::ostream& os, const CppData& d, const Options& opt);void VecUserTypeDeclarationT(std::ostream& os, const td::Vector<UserTypeDeclaration>& ut, const Options& opt);void QualifiedName(std::ostream& os, const td::Vector<std::string>& fqn);void JsonPrintKey(std::ostream& os, const AccessInfo& field);void JsonPrintArray(std::ostream& os, const AccessInfo& value_type);void JsonPrintMap(std::ostream& os, const AccessInfo& key_type, const AccessInfo& val_type);void JsonPrintValue(std::ostream& os, const AccessInfo& t);void JsonStructDefinitions(std::ostream& os, const StructDecl& s, const Options& opt);void JsonVariantDefinitions(std::ostream& os, const StructDecl& s, const Options& opt);void JsonDeclarations(std::ostream& os, const StructDecl& s, const Options& opt);void TmplFuncDeclaration(std::ostream& os, const TmplFunction& t);void CppType(std::ostream& os, const AccessInfo& a);void ParamsList(std::ostream& os, const td::Vector<AccessInfo>& params);void TmplValueDereferenceT(std::ostream& os, const TmplValueDereference& v);void TmplStringExpression(std::ostream& os, const TmplExpression& i);void TmplBoolExpression(std::ostream& os, const TmplExpression& i);void TmplIfT(std::ostream& os, const TmplIf& i);void TmplIfBlockT(std::ostream& os, const TmplIfBlock& i);void TmplForT(std::ostream& os, const TmplForBlock& f);void TmplHasValRef(std::ostream& os, const TmplValueDereference& val);void TmplSwitchT(std::ostream& os, const SwitchBlock& s);void TmplItemsT(std::ostream& os, const td::Vector<TmplItem>& v);void TmplItemT(std::ostream& os, const TmplItem& i);void TmplFuncDefinition(std::ostream& os, const TmplFunction& t);
 
 } // namesapce td
 } // namesapce codegen

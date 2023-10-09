@@ -9,7 +9,9 @@
       "type": "lldb",
       "request": "launch",
       "program": "${workspaceRoot}/build/debug/tests",
-      "args": ["[module]"],
+      "args": [
+        "[module]"
+      ],
       "cwd": "${workspaceFolder}",
     },
     {
@@ -18,8 +20,9 @@
       "request": "launch",
       "program": "${workspaceRoot}/build/debug/typedef",
       "args": [
-        "${workspaceRoot}/examples/template/template.td",
-        "--cpp_out=/tmp"
+        "examples/simple_values/simple_values.td",
+        "--cpp_json_writer",
+        "--experimental_cpp_out=/home/dpemmons/src/typedef/examples/simple_values",
       ],
       "cwd": "${workspaceFolder}",
     },
@@ -51,6 +54,14 @@
       "type": "lldb",
       "request": "launch",
       "program": "${workspaceRoot}/build/debug/examples/template",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+    },
+    {
+      "name": "(lldb) examples/json",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceRoot}/build/debug/examples/json",
       "args": [],
       "cwd": "${workspaceFolder}",
     },

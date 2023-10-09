@@ -60,42 +60,55 @@ AccessInfo GetAccessInfoForType(TypedefParser::TypeAnnotationContext* ctx) {
     if (IsBool(ctx)) {
       ai.cpp_type() = "bool";
       ai.access_by().value() = true;
+      ai.td_type().bool_t() = true;
     } else if (IsChar(ctx)) {
       ai.cpp_type() = "char32_t";
       ai.access_by().value() = true;
+      ai.td_type().char_t() = true;
     } else if (IsStr(ctx)) {
       ai.cpp_type() = "std::string";
       ai.access_by().reference() = true;
+      ai.td_type().string_t() = true;
     } else if (IsF32(ctx)) {
       ai.cpp_type() = "float";
       ai.access_by().value() = true;
+      ai.td_type().f32_t() = true;
     } else if (IsF64(ctx)) {
       ai.cpp_type() = "double";
       ai.access_by().value() = true;
+      ai.td_type().f64_t() = true;
     } else if (IsU8(ctx)) {
       ai.cpp_type() = "std::uint8_t";
       ai.access_by().value() = true;
+      ai.td_type().u8_t() = true;
     } else if (IsU16(ctx)) {
       ai.cpp_type() = "std::uint16_t";
       ai.access_by().value() = true;
+      ai.td_type().u16_t() = true;
     } else if (IsU32(ctx)) {
       ai.cpp_type() = "std::uint32_t";
       ai.access_by().value() = true;
+      ai.td_type().u32_t() = true;
     } else if (IsU64(ctx)) {
       ai.cpp_type() = "std::uint64_t";
       ai.access_by().value() = true;
+      ai.td_type().u64_t() = true;
     } else if (IsI8(ctx)) {
       ai.cpp_type() = "std::int8_t";
       ai.access_by().value() = true;
+      ai.td_type().i8_t() = true;
     } else if (IsI16(ctx)) {
       ai.cpp_type() = "std::int16_t";
       ai.access_by().value() = true;
+      ai.td_type().i16_t() = true;
     } else if (IsI32(ctx)) {
       ai.cpp_type() = "std::int32_t";
       ai.access_by().value() = true;
+      ai.td_type().i32_t() = true;
     } else if (IsI64(ctx)) {
       ai.cpp_type() = "std::int64_t";
       ai.access_by().value() = true;
+      ai.td_type().i64_t() = true;
     } else {
       throw_logic_error("invalid state");
     }
@@ -104,6 +117,8 @@ AccessInfo GetAccessInfoForType(TypedefParser::TypeAnnotationContext* ctx) {
     ai.access_by().reference() = true;
     ai.type_arguments().emplace_back(
         GetAccessInfoForType(GetTypeArgument(ctx, 0)));
+    ai.td_type().vector_t().val() =
+        GetAccessInfoForType(GetTypeArgument(ctx, 0));
   } else if (ReferencesBuiltinMapType(ctx)) {
     ai.cpp_type() = "td::Map";
     ai.access_by().reference() = true;
@@ -111,10 +126,19 @@ AccessInfo GetAccessInfoForType(TypedefParser::TypeAnnotationContext* ctx) {
         GetAccessInfoForType(GetTypeArgument(ctx, 0)));
     ai.type_arguments().emplace_back(
         GetAccessInfoForType(GetTypeArgument(ctx, 1)));
+    ai.td_type().map_t().key() = GetAccessInfoForType(GetTypeArgument(ctx, 0));
+    ai.td_type().map_t().val() = GetAccessInfoForType(GetTypeArgument(ctx, 1));
   } else if (ReferencesUserType(ctx)) {
     ai.cpp_type() = escape_utf8_to_cpp_identifier(
         GetReferencedUserType(ctx)->type_identifier->id);
     ai.access_by().pointer() = true;
+    if (DefinesStruct(GetReferencedUserType(ctx))) {
+      ai.td_type().struct_t() = true;
+    } else if (DefinesVariant(GetReferencedUserType(ctx))) {
+      ai.td_type().variant_t() = true;
+    } else {
+      throw_logic_error("invalid state");
+    }
   } else {
     throw_logic_error("invalid state");
   }
@@ -126,6 +150,13 @@ AccessInfo GetField(TypedefParser::FieldDefinitionContext* field) {
   if (DefinesAndUsesInlineUserType(field)) {
     a.cpp_type() = GetNestedTypeIdentifier(field);
     a.access_by().pointer() = true;
+    if (DefinesStruct(GetInlineUserType(field))) {
+      a.td_type().struct_t() = true;
+    } else if (DefinesVariant(GetInlineUserType(field))) {
+      a.td_type().variant_t() = true;
+    } else {
+      throw_logic_error("invalid state");
+    }
   } else {
     a = GetAccessInfoForType(field->typeAnnotation());
   }
@@ -133,13 +164,16 @@ AccessInfo GetField(TypedefParser::FieldDefinitionContext* field) {
   return a;
 }
 
-Vector<std::string> GetFQN(TypedefParser::TypeDefinitionContext* type) {
+Vector<std::string> GetQN(TypedefParser::TypeDefinitionContext* type,
+                          bool include_namespace) {
   Vector<std::string> fqn;
   for (TypedefParser::IdentifierCtx& id_ctx : type->ns_ctx) {
     // First resolve the module namespaces
     if (auto* c = GetCompilationUnitContext(id_ctx)) {
-      for (auto* id : c->moduleDeclaration()->symbolPath()->identifier()) {
-        fqn.push_back(id->id);
+      if (include_namespace) {
+        for (auto* id : c->moduleDeclaration()->symbolPath()->identifier()) {
+          fqn.push_back(id->id);
+        }
       }
     } else if (auto* t = GetTypeDefinition(id_ctx)) {
       if (HasIdentifier(t)) {
@@ -161,7 +195,8 @@ StructDecl GetStruct(TypedefParser::TypeDefinitionContext* type) {
   StructDecl s;
   // If it's an inline type, the identifier is the field name which has
   // to be passed in separately.
-  s.fqn() = GetFQN(type);
+  s.fqn() = GetQN(type, true);
+  s.nqn() = GetQN(type, false);
   s.identifier() = s.fqn().back();
 
   if (type->fieldBlock()->typeDefinition().size()) {

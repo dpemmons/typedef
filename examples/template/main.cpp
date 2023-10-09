@@ -51,5 +51,7 @@ int main(int argc, char *argv[]) {
 
   PrintIndices(std::cout, v);
 
+  ToJson(std::cout, td);
+
   return 0;
 }
