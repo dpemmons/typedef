@@ -433,9 +433,41 @@ template CppHeader(d: CppData, opt: Options) t"
 #endif  // <d.header_guard>
 "
 
-template JsonHelpers() t"
-// Literal.
-"
+template JsonHelpers() r#"
+inline std::string escape_json(const std::string& s) {
+  std::ostringstream o;
+  for (auto c = s.cbegin(); c != s.cend(); c++) {
+    switch (*c) {
+      case '"': o << "\\\""; break;
+      case '\\': o << "\\\\"; break;
+      case '\b': o << "\\b"; break;
+      case '\f': o << "\\f"; break;
+      case '\n': o << "\\n"; break;
+      case '\r': o << "\\r"; break;
+      case '\t': o << "\\t"; break;
+      default:
+        if ('\x00' <= *c && *c <= '\x1f') {
+          o << "\\u" << std::hex << std::setw(4) << std::setfill('0')
+            << static_cast<int>(*c);
+        } else {
+          o << *c;
+        }
+    }
+  }
+  return o.str();
+}
+
+inline std::string char32ToJsonString(char32_t c) {
+  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+  std::string utf8 = converter.to_bytes(&c, &c + 1);
+  return escape_json(utf8);
+}
+
+template <typename T>
+inline bool IsEmpty(const td::Vector<T>& v) {
+  return v.size() == 0;
+}
+"#
 
 // **************************************************************************
 // Cpp Source
