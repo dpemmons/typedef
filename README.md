@@ -78,3 +78,4 @@ string templates
 code generation
 
 * [x] self-hosting!
+* [x] JSON rendering
