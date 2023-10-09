@@ -575,7 +575,7 @@ for (size_t td_iter_ = 0; td_iter_ < d.namespaces().size(); td_iter_++) {
   auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
 os << "namespace ";
 os << ns;
-os << " {";
+os << " {\n";
 }
 
 os << "\n// Struct and variant definitions\n";
@@ -641,6 +641,7 @@ for (size_t td_iter_ = 0; td_iter_ < d.namespaces().size(); td_iter_++) {
   auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
 os << "} // namespace ";
 os << ns;
+os << "\n";
 }
 
 os << "\n";
@@ -1363,8 +1364,8 @@ os << "\n}";
 
 }
 
-} // namesapce td
-} // namesapce codegen
-} // namesapce experimental
-} // namesapce cpp
+} // namespace td
+} // namespace codegen
+} // namespace experimental
+} // namespace cpp
 

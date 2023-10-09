@@ -449,7 +449,8 @@ namespace {
 <JsonHelpers()>
 }
 
-<for ns in d.namespaces>namespace <ns> {</for>
+<for ns in d.namespaces>namespace <ns> {
+</for>
 // Struct and variant definitions
 <for type_decl in d.user_type_decls><switch type_decl>
 <case type_decl.struct_decl><TmplStructDefinition(type_decl.struct_decl, opt)></case>
@@ -465,7 +466,8 @@ namespace {
 // Tmplate function definitions
 <for tmpl_func in d.tmpl_funcs><TmplFuncDefinition(tmpl_func)></for>
 
-<for ns in d.namespaces>} // namespace <ns></for>
+<for ns in d.namespaces>} // namespace <ns>
+</for>
 "
 
 // ****************************** Utils *************************************
