@@ -124,6 +124,10 @@ namespace cpp {
 
 
 
+
+
+
+
 // Tmplate function definitions
 
 void TmplStructDeclaration(std::ostream& os, const StructDecl& s, const Options& opt) {
@@ -156,6 +160,13 @@ os << s.identifier();
 os << "& operator=(";
 os << s.identifier();
 os << "&&) = default;\n\n  ";
+if (opt.generate_json_parser()) {
+os << "\n  static ";
+os << s.identifier();
+os << " FromJson(const std::string& str);\n  ";
+} else {
+}
+os << "\n\n  ";
 
 
 for (size_t td_iter_ = 0; td_iter_ < s.fields().size(); td_iter_++) {
@@ -347,15 +358,10 @@ os << v.identifier();
 os << "& operator=(";
 os << v.identifier();
 os << "&&) = default;\n\n  ";
-if (opt.generate_json_writer()) {
-os << "\n  std::string ToJson();\n  void ToJson(std::ostream& os);\n  ";
-} else {
-}
-os << "\n  ";
 if (opt.generate_json_parser()) {
-os << "\n  static void FromJson(";
+os << "\n  static ";
 os << v.identifier();
-os << "* target, const std::string& str);\n  ";
+os << " FromJson(const std::string& str);\n  ";
 } else {
 }
 os << "\n\n  enum class Tag {\n    __TAG__UNSET = 0,\n    ";
@@ -568,7 +574,7 @@ os << ns;
 os << " {\n";
 }
 
-os << "\n\n// Forward declarations.\n";
+os << "\n// Forward declarations.\n";
 
 
 for (size_t td_iter_ = 0; td_iter_ < d.user_type_decls().size(); td_iter_++) {
@@ -577,7 +583,6 @@ for (size_t td_iter_ = 0; td_iter_ < d.user_type_decls().size(); td_iter_++) {
   auto IsLast = [&]() { return td_iter_ == d.user_type_decls().size() - 1; };
   auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
   auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
-os << "\n";
 // Switch type_decl
 
 if (type_decl.is_struct_decl()) {
@@ -594,7 +599,7 @@ os << ";";
 os << "\n";
 }
 
-os << "\n\n// Struct and variant declarations\n";
+os << "\n// Struct and variant declarations\n";
 
 
 for (size_t td_iter_ = 0; td_iter_ < d.user_type_decls().size(); td_iter_++) {
@@ -603,7 +608,6 @@ for (size_t td_iter_ = 0; td_iter_ < d.user_type_decls().size(); td_iter_++) {
   auto IsLast = [&]() { return td_iter_ == d.user_type_decls().size() - 1; };
   auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
   auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
-os << "\n";
 // Switch type_decl
 
 if (type_decl.is_struct_decl()) {
@@ -616,7 +620,7 @@ TmplVariantDeclaration(os, type_decl.variant_decl(), opt);
 os << "\n";
 }
 
-os << "\n\n// Struct and variant JSON declarations\n";
+os << "\n// Struct and variant JSON declarations\n";
 
 
 for (size_t td_iter_ = 0; td_iter_ < d.user_type_decls().size(); td_iter_++) {
@@ -625,7 +629,6 @@ for (size_t td_iter_ = 0; td_iter_ < d.user_type_decls().size(); td_iter_++) {
   auto IsLast = [&]() { return td_iter_ == d.user_type_decls().size() - 1; };
   auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
   auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
-os << "\n";
 // Switch type_decl
 
 if (type_decl.is_struct_decl()) {
@@ -669,15 +672,66 @@ os << d.header_guard();
 os << "\n";
 
 }
-void JsonHelpers(std::ostream& os) {
-os << "\ninline std::string escape_json(const std::string& s) {\n  std::ostringstream o;\n  for (auto c = s.cbegin(); c != s.cend(); c++) {\n    switch (*c) {\n      case '\"': o << \"\\\\\\\"\"; break;\n      case '\\\\': o << \"\\\\\\\\\"; break;\n      case '\\b': o << \"\\\\b\"; break;\n      case '\\f': o << \"\\\\f\"; break;\n      case '\\n': o << \"\\\\n\"; break;\n      case '\\r': o << \"\\\\r\"; break;\n      case '\\t': o << \"\\\\t\"; break;\n      default:\n        if ('\\x00' <= *c && *c <= '\\x1f') {\n          o << \"\\\\u\" << std::hex << std::setw(4) << std::setfill('0')\n            << static_cast<int>(*c);\n        } else {\n          o << *c;\n        }\n    }\n  }\n  return o.str();\n}\n\ninline std::string char32ToJsonString(char32_t c) {\n  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;\n  std::string utf8 = converter.to_bytes(&c, &c + 1);\n  return escape_json(utf8);\n}\n\ntemplate <typename T>\ninline bool IsEmpty(const td::Vector<T>& v) {\n  return v.size() == 0;\n}\n";
+void JsonCppSrcHelpers(std::ostream& os) {
+os << "\ninline std::string escape_json(const std::string& s) {\n  std::ostringstream o;\n  for (auto c = s.cbegin(); c != s.cend(); c++) {\n    switch (*c) {\n      case '\"': o << \"\\\\\\\"\"; break;\n      case '\\\\': o << \"\\\\\\\\\"; break;\n      case '\\b': o << \"\\\\b\"; break;\n      case '\\f': o << \"\\\\f\"; break;\n      case '\\n': o << \"\\\\n\"; break;\n      case '\\r': o << \"\\\\r\"; break;\n      case '\\t': o << \"\\\\t\"; break;\n      default:\n        if ('\\x00' <= *c && *c <= '\\x1f') {\n          o << \"\\\\u\" << std::hex << std::setw(4) << std::setfill('0')\n            << static_cast<int>(*c);\n        } else {\n          o << *c;\n        }\n    }\n  }\n  return o.str();\n}\n\ninline std::string char32ToJsonString(char32_t c) {\n  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;\n  std::string utf8 = converter.to_bytes(&c, &c + 1);\n  return escape_json(utf8);\n}\n\ninline char32_t GetCharValue(std::string_view str) {\n  if (str.size() == 2 && str[0] == '\\\\') {\n    switch (str[1]) {\n      case 'n':\n        return U'\\n';\n      case 'r':\n        return U'\\r';\n      case 't':\n        return U'\\t';\n      case '\\\\':\n        return U'\\\\';\n      case '0':\n        return U'\\0';\n      case '\\'':\n        return U'\\'';\n      case '\\\"':\n        return U'\\\"';\n    }\n  }\n  if (str.size() == 4 && str[0] == '\\\\' && str[1] == 'x') {\n    // TODO this seems rather inefficient, do something better?\n    std::istringstream ss(std::string(str.substr(2)));\n    int value;\n    ss >> std::hex >> value;\n    return static_cast<char32_t>(value);\n  }\n\n  if (str.size() >= 3 && str.size() <= 10 && str[0] == '\\\\' && str[1] == 'u' &&\n      str[2] == '{' && str.back() == '}') {\n    // TODO this seems rather inefficient, do something better?\n    std::istringstream ss(std::string(str.substr(3, str.size() - 4)));\n    int value;\n    ss >> std::hex >> value;\n    return static_cast<char32_t>(value);\n  }\n\n  if (str.size() > 0) {\n    std::string inner_str(str);\n    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;\n    std::u32string str32 = converter.from_bytes(inner_str);\n    if (str32.size() == 1) {\n      return str32[0];\n    }\n  }\n  throw std::runtime_error(\"Invalid char.\");\n}\n";
+
+}
+void CppSrcHelpers(std::ostream& os) {
+os << "\ntemplate <typename T>\ninline bool IsEmpty(const td::Vector<T>& v) {\n  return v.size() == 0;\n}\n";
 
 }
 void CppSource(std::ostream& os, const CppData& d, const Options& opt) {
 os << "\n#include \"";
 os << d.header_filename();
-os << "\"\n\n// Generated by the Typedef compiler (EXPERIMENTAL)\n\nnamespace {\n";
-JsonHelpers(os);
+os << "\"\n\n// Generated by the Typedef compiler (EXPERIMENTAL)\n\n";
+if (opt.generate_json_parser()) {
+os << "#include \"rapidjson/document.h\"\n";
+} else {
+}
+os << "\n\nnamespace {\n";
+CppSrcHelpers(os);
+os << "\n";
+JsonCppSrcHelpers(os);
+os << "\n// Struct and variant JSON forward declarations\n";
+
+
+for (size_t td_iter_ = 0; td_iter_ < d.user_type_decls().size(); td_iter_++) {
+  auto& type_decl = d.user_type_decls()[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == d.user_type_decls().size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+// Switch type_decl
+
+if (type_decl.is_struct_decl()) {
+JsonSrcForwardDeclarations(os, type_decl.struct_decl(), opt);
+} else 
+if (type_decl.is_variant_decl()) {
+JsonSrcForwardDeclarations(os, type_decl.variant_decl(), opt);
+} else  {
+}
+}
+
+os << "\n// Struct and variant JSON definitions\n";
+
+
+for (size_t td_iter_ = 0; td_iter_ < d.user_type_decls().size(); td_iter_++) {
+  auto& type_decl = d.user_type_decls()[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == d.user_type_decls().size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+// Switch type_decl
+
+if (type_decl.is_struct_decl()) {
+JsonSrcDefinitions(os, type_decl.struct_decl(), opt);
+} else 
+if (type_decl.is_variant_decl()) {
+JsonSrcDefinitions(os, type_decl.variant_decl(), opt);
+} else  {
+}
+}
+
 os << "\n}\n\n";
 
 
@@ -712,7 +766,7 @@ TmplVariantDefinition(os, type_decl.variant_decl(), opt);
 }
 }
 
-os << "\n\n// Struct and variant JSON declarations\n";
+os << "\n// Struct and variant JSON declarations\n";
 
 
 for (size_t td_iter_ = 0; td_iter_ < d.user_type_decls().size(); td_iter_++) {
@@ -732,7 +786,7 @@ JsonVariantDefinitions(os, type_decl.variant_decl(), opt);
 }
 }
 
-os << "\n\n// Tmplate function definitions\n";
+os << "\n// Tmplate function definitions\n";
 
 
 for (size_t td_iter_ = 0; td_iter_ < d.tmpl_funcs().size(); td_iter_++) {
@@ -797,6 +851,24 @@ for (size_t td_iter_ = 0; td_iter_ < fqn.size(); td_iter_++) {
 os << n;
 if (!IsLast()) {
 os << "::";
+} else {
+}
+}
+
+
+}
+void QualifiedSnakeName(std::ostream& os, const td::Vector<std::string>& fqn) {
+
+
+for (size_t td_iter_ = 0; td_iter_ < fqn.size(); td_iter_++) {
+  auto& n = fqn[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == fqn.size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+os << n;
+if (!IsLast()) {
+os << "_";
 } else {
 }
 }
@@ -1011,7 +1083,18 @@ os << "os << \",\";";
 }
 }
 
-os << "\n  os << \"}\";\n}\n";
+os << "\n  os << \"}\";\n}";
+} else {
+}
+os << "\n";
+if (opt.generate_json_parser()) {
+os << "\n";
+QualifiedName(os, s.nqn());
+os << " ";
+QualifiedName(os, s.nqn());
+os << "::FromJson(const std::string& str) {\n  rapidjson::Document doc;\n  doc.Parse(str.c_str());\n  return JsonParse";
+QualifiedSnakeName(os, s.nqn());
+os << "(doc);\n}";
 } else {
 }
 os << "\n";
@@ -1082,6 +1165,17 @@ os << "\n  os << \"}\";\n}\n";
 } else {
 }
 os << "\n";
+if (opt.generate_json_parser()) {
+os << "\n";
+QualifiedName(os, s.nqn());
+os << " ";
+QualifiedName(os, s.nqn());
+os << "::FromJson(const std::string& str) {\n  rapidjson::Document doc;\n  doc.Parse(str.c_str());\n  return JsonParse";
+QualifiedSnakeName(os, s.nqn());
+os << "(doc);\n}";
+} else {
+}
+os << "\n";
 
 
 for (size_t td_iter_ = 0; td_iter_ < s.nested_type_decls().size(); td_iter_++) {
@@ -1123,6 +1217,220 @@ JsonVariantDefinitions(os, n.variant_decl(), opt);
 
 
 }
+void JsonSrcForwardDeclarations(std::ostream& os, const StructDecl& s, const Options& opt) {
+if (opt.generate_json_parser()) {
+os << "\n";
+QualifiedName(os, s.fqn());
+os << " JsonParse";
+QualifiedSnakeName(os, s.nqn());
+os << "(const rapidjson::Value& obj);\n";
+
+
+for (size_t td_iter_ = 0; td_iter_ < s.nested_type_decls().size(); td_iter_++) {
+  auto& n = s.nested_type_decls()[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == s.nested_type_decls().size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+// Switch n
+
+if (n.is_struct_decl()) {
+JsonSrcForwardDeclarations(os, n.struct_decl(), opt);
+} else 
+if (n.is_variant_decl()) {
+JsonSrcForwardDeclarations(os, n.variant_decl(), opt);
+} else  {
+}
+}
+
+
+
+for (size_t td_iter_ = 0; td_iter_ < s.inline_type_decls().size(); td_iter_++) {
+  auto& n = s.inline_type_decls()[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == s.inline_type_decls().size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+// Switch n
+
+if (n.is_struct_decl()) {
+JsonSrcForwardDeclarations(os, n.struct_decl(), opt);
+} else 
+if (n.is_variant_decl()) {
+JsonSrcForwardDeclarations(os, n.variant_decl(), opt);
+} else  {
+}
+}
+
+} else {
+}
+
+}
+void JsonParseValue(std::ostream& os, const AccessInfo& field) {
+os << "\n  ";
+// Switch field.td_type()
+
+if (field.td_type().is_bool_t()) {
+os << "\n  if (val.IsBool()) {\n    ret.";
+os << field.identifier();
+os << "() = val.GetBool();\n  }";
+} else 
+if (field.td_type().is_char_t()) {
+os << "\n  if (val.IsString()) {\n    std::string str = val.GetString();\n    ret.";
+os << field.identifier();
+os << "() = GetCharValue(str);\n  }";
+} else 
+if (field.td_type().is_string_t()) {
+os << "\n  if (val.IsString()) {\n    ret.";
+os << field.identifier();
+os << "() = val.GetString();\n  }";
+} else 
+if (field.td_type().is_f32_t()) {
+os << "\n  if (val.IsDouble()) {\n    ret.";
+os << field.identifier();
+os << "() = (float)val.GetDouble();\n  }";
+} else 
+if (field.td_type().is_f64_t()) {
+os << "\n  if (val.IsDouble()) {\n    ret.";
+os << field.identifier();
+os << "() = val.GetDouble();\n  }";
+} else 
+if (field.td_type().is_u8_t()) {
+os << "\n  if (val.IsUint()) {\n    // TODO bounds check.\n    ret.";
+os << field.identifier();
+os << "() = val.GetUint();\n  }";
+} else 
+if (field.td_type().is_u16_t()) {
+os << "\n  if (val.IsUint()) {\n    // TODO bounds check.\n    ret.";
+os << field.identifier();
+os << "() = val.GetUint();\n  }";
+} else 
+if (field.td_type().is_u32_t()) {
+os << "\n  if (val.IsUint()) {\n    ret.";
+os << field.identifier();
+os << "() = val.GetUint();\n  }";
+} else 
+if (field.td_type().is_u64_t()) {
+os << "\n  if (val.IsUint64()) {\n    ret.";
+os << field.identifier();
+os << "() = val.GetUint64();\n  }";
+} else 
+if (field.td_type().is_i8_t()) {
+os << "\n  if (val.IsInt()) {\n    // TODO bounds check\n    ret.";
+os << field.identifier();
+os << "() = val.GetInt();\n  }";
+} else 
+if (field.td_type().is_i16_t()) {
+os << "\n  if (val.IsInt()) {\n    // TODO bounds check\n    ret.";
+os << field.identifier();
+os << "() = val.GetInt();\n  }";
+} else 
+if (field.td_type().is_i32_t()) {
+os << "\n  if (val.IsInt()) {\n    ret.";
+os << field.identifier();
+os << "() = val.GetInt();\n  }";
+} else 
+if (field.td_type().is_i64_t()) {
+os << "\n  if (val.IsInt64()) {\n    ret.";
+os << field.identifier();
+os << "() = val.GetInt64();\n  }";
+} else 
+if (field.td_type().is_vector_t()) {
+os << "\n  if (val.IsArray()) {\n    for (const auto& val : val.GetArray()) {\n      // What I really think I want here is to call JsonParseValue\n      // with an argument that is a computed assignment target.\n      // Eg. ret.";
+os << field.identifier();
+os << "() computed from a template function.\n//       ret.";
+os << field.identifier();
+os << "().emplace_back(std::move(\n//       ));\n    }\n  }";
+} else 
+if (field.td_type().is_map_t()) {
+os << "\n  // TODO map\n  ";
+} else 
+if (field.td_type().is_struct_t()) {
+os << "\n  if (val.IsObject()) {\n    ret.";
+os << field.identifier();
+os << "() = JsonParse";
+QualifiedSnakeName(os, field.td_type().struct_t().nqn());
+os << "(val.GetObject());\n  }";
+} else 
+if (field.td_type().is_variant_t()) {
+os << "\n  if (val.IsObject()) {\n    // TODO validate only one.\n    ret.";
+os << field.identifier();
+os << "() = JsonParse";
+QualifiedSnakeName(os, field.td_type().variant_t().nqn());
+os << "(val.GetObject());\n  }";
+} else  {
+}
+os << "\n";
+
+}
+void JsonSrcDefinitions(std::ostream& os, const StructDecl& s, const Options& opt) {
+if (opt.generate_json_parser()) {
+os << "\n";
+QualifiedName(os, s.fqn());
+os << " JsonParse";
+QualifiedSnakeName(os, s.nqn());
+os << "(const rapidjson::Value& obj) {\n  ";
+QualifiedName(os, s.fqn());
+os << " ret;\n  ";
+
+
+for (size_t td_iter_ = 0; td_iter_ < s.fields().size(); td_iter_++) {
+  auto& field = s.fields()[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == s.fields().size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+os << "{\n  rapidjson::Value::ConstMemberIterator iter = obj.FindMember(\"";
+os << field.identifier();
+os << "\");\n  if (iter != obj.MemberEnd()) {\n    auto& val = iter->value;\n    ";
+JsonParseValue(os, field);
+os << "\n  }\n  } ";
+}
+
+os << "\n  return ret;\n}\n";
+
+
+for (size_t td_iter_ = 0; td_iter_ < s.nested_type_decls().size(); td_iter_++) {
+  auto& n = s.nested_type_decls()[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == s.nested_type_decls().size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+// Switch n
+
+if (n.is_struct_decl()) {
+JsonSrcDefinitions(os, n.struct_decl(), opt);
+} else 
+if (n.is_variant_decl()) {
+JsonSrcDefinitions(os, n.variant_decl(), opt);
+} else  {
+}
+}
+
+
+
+for (size_t td_iter_ = 0; td_iter_ < s.inline_type_decls().size(); td_iter_++) {
+  auto& n = s.inline_type_decls()[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == s.inline_type_decls().size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+// Switch n
+
+if (n.is_struct_decl()) {
+JsonSrcDefinitions(os, n.struct_decl(), opt);
+} else 
+if (n.is_variant_decl()) {
+JsonSrcDefinitions(os, n.variant_decl(), opt);
+} else  {
+}
+}
+
+os << "\n";
+} else {
+}
+
+}
 void JsonDeclarations(std::ostream& os, const StructDecl& s, const Options& opt) {
 if (opt.generate_json_writer()) {
 os << "\nstd::string ToJson(const ";
@@ -1130,12 +1438,6 @@ QualifiedName(os, s.nqn());
 os << "& from);\nvoid ToJson(std::ostream& os, const ";
 QualifiedName(os, s.nqn());
 os << "& from);\n";
-} else {
-}
-if (opt.generate_json_parser()) {
-os << "\nvoid FromJson(";
-QualifiedName(os, s.nqn());
-os << "* target, const std::string& str);\n";
 } else {
 }
 os << "\n";

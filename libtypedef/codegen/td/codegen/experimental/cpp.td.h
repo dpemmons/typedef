@@ -131,9 +131,35 @@ class vector_tT {
   }
   
   
+  
+  void set_fqn(td::Vector<std::string>&& val) {
+    fqn_ = std::move(val);
+  }
+  td::Vector<std::string>& fqn() {
+    return fqn_;
+  }
+  const td::Vector<std::string>& fqn() const {
+    return fqn_;
+  }
+  
+  
+  
+  void set_nqn(td::Vector<std::string>&& val) {
+    nqn_ = std::move(val);
+  }
+  td::Vector<std::string>& nqn() {
+    return nqn_;
+  }
+  const td::Vector<std::string>& nqn() const {
+    return nqn_;
+  }
+  
+  
 
  private:
   std::unique_ptr<AccessInfo> val_;
+  td::Vector<std::string> fqn_;
+  td::Vector<std::string> nqn_;
   
 }; // class vector_tT
 
@@ -240,12 +266,138 @@ class map_tT {
   }
   
   
+  
+  void set_val_fqn(td::Vector<std::string>&& val) {
+    val_fqn_ = std::move(val);
+  }
+  td::Vector<std::string>& val_fqn() {
+    return val_fqn_;
+  }
+  const td::Vector<std::string>& val_fqn() const {
+    return val_fqn_;
+  }
+  
+  
+  
+  void set_val_nqn(td::Vector<std::string>&& val) {
+    val_nqn_ = std::move(val);
+  }
+  td::Vector<std::string>& val_nqn() {
+    return val_nqn_;
+  }
+  const td::Vector<std::string>& val_nqn() const {
+    return val_nqn_;
+  }
+  
+  
 
  private:
   std::unique_ptr<AccessInfo> key_;
   std::unique_ptr<AccessInfo> val_;
+  td::Vector<std::string> val_fqn_;
+  td::Vector<std::string> val_nqn_;
   
 }; // class map_tT
+
+
+
+// TdType::struct_tT struct declaration.
+class struct_tT {
+ public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
+
+  struct_tT() {}
+  ~struct_tT() {}
+
+  struct_tT(const struct_tT&) = delete;
+  struct_tT& operator=(const struct_tT&) = delete;
+  struct_tT(struct_tT&&) = default;
+  struct_tT& operator=(struct_tT&&) = default;
+
+  
+  
+  void set_fqn(td::Vector<std::string>&& val) {
+    fqn_ = std::move(val);
+  }
+  td::Vector<std::string>& fqn() {
+    return fqn_;
+  }
+  const td::Vector<std::string>& fqn() const {
+    return fqn_;
+  }
+  
+  
+  
+  void set_nqn(td::Vector<std::string>&& val) {
+    nqn_ = std::move(val);
+  }
+  td::Vector<std::string>& nqn() {
+    return nqn_;
+  }
+  const td::Vector<std::string>& nqn() const {
+    return nqn_;
+  }
+  
+  
+
+ private:
+  td::Vector<std::string> fqn_;
+  td::Vector<std::string> nqn_;
+  
+}; // class struct_tT
+
+
+
+// TdType::variant_tT struct declaration.
+class variant_tT {
+ public:
+  // Nested type declarations
+  
+  // Inline type declarations
+  
+
+  variant_tT() {}
+  ~variant_tT() {}
+
+  variant_tT(const variant_tT&) = delete;
+  variant_tT& operator=(const variant_tT&) = delete;
+  variant_tT(variant_tT&&) = default;
+  variant_tT& operator=(variant_tT&&) = default;
+
+  
+  
+  void set_fqn(td::Vector<std::string>&& val) {
+    fqn_ = std::move(val);
+  }
+  td::Vector<std::string>& fqn() {
+    return fqn_;
+  }
+  const td::Vector<std::string>& fqn() const {
+    return fqn_;
+  }
+  
+  
+  
+  void set_nqn(td::Vector<std::string>&& val) {
+    nqn_ = std::move(val);
+  }
+  td::Vector<std::string>& nqn() {
+    return nqn_;
+  }
+  const td::Vector<std::string>& nqn() const {
+    return nqn_;
+  }
+  
+  
+
+ private:
+  td::Vector<std::string> fqn_;
+  td::Vector<std::string> nqn_;
+  
+}; // class variant_tT
 
 
 
@@ -650,44 +802,74 @@ class map_tT {
     return val_.index() == 16;
   }
   
-  bool get_struct_t() const {
-    return std::get<16>(val_);
+  bool has_struct_t() const {
+    return is_struct_t() && std::get<16>(val_).operator bool();
   }
-  void set_struct_t(bool val) {
+  void alloc_struct_t() {
     tag = Tag::TAG_struct_t;
-    val_.emplace<16>(val);
+    val_.emplace<16>(std::make_unique<struct_tT>());
   }
-  bool& struct_t() {
-    if (!is_struct_t()) {
-      tag = Tag::TAG_struct_t;
-      val_.emplace<16>();
+  void delete_struct_t() {
+    return std::get<16>(val_).reset(nullptr);
+  }
+  void set_struct_t(std::unique_ptr<struct_tT> val) {
+    tag = Tag::TAG_struct_t;
+    val_.emplace<16>(std::move(val));
+  }
+  void set_struct_t(struct_tT* val) {
+    tag = Tag::TAG_struct_t;
+    std::get<16>(val_).reset(std::move(val));
+  }
+  struct_tT* ptr_struct_t() {
+    #if TD_AUTO_ALLOC
+    if (!has_struct_t()) {
+      alloc_struct_t();
     }
-    return std::get<16>(val_);
+    #endif
+    return std::get<16>(val_).get();
   }
-  const bool& struct_t() const {
-    return std::get<16>(val_);
+  struct_tT& struct_t() {
+    return *ptr_struct_t();
+  }
+  const struct_tT& struct_t() const {
+    return *std::get<16>(val_).get();
   }
   
   bool is_variant_t() const {
     return val_.index() == 17;
   }
   
-  bool get_variant_t() const {
-    return std::get<17>(val_);
+  bool has_variant_t() const {
+    return is_variant_t() && std::get<17>(val_).operator bool();
   }
-  void set_variant_t(bool val) {
+  void alloc_variant_t() {
     tag = Tag::TAG_variant_t;
-    val_.emplace<17>(val);
+    val_.emplace<17>(std::make_unique<variant_tT>());
   }
-  bool& variant_t() {
-    if (!is_variant_t()) {
-      tag = Tag::TAG_variant_t;
-      val_.emplace<17>();
+  void delete_variant_t() {
+    return std::get<17>(val_).reset(nullptr);
+  }
+  void set_variant_t(std::unique_ptr<variant_tT> val) {
+    tag = Tag::TAG_variant_t;
+    val_.emplace<17>(std::move(val));
+  }
+  void set_variant_t(variant_tT* val) {
+    tag = Tag::TAG_variant_t;
+    std::get<17>(val_).reset(std::move(val));
+  }
+  variant_tT* ptr_variant_t() {
+    #if TD_AUTO_ALLOC
+    if (!has_variant_t()) {
+      alloc_variant_t();
     }
-    return std::get<17>(val_);
+    #endif
+    return std::get<17>(val_).get();
   }
-  const bool& variant_t() const {
-    return std::get<17>(val_);
+  variant_tT& variant_t() {
+    return *ptr_variant_t();
+  }
+  const variant_tT& variant_t() const {
+    return *std::get<17>(val_).get();
   }
   
 
@@ -711,8 +893,8 @@ class map_tT {
   , bool
   , std::unique_ptr<vector_tT>
   , std::unique_ptr<map_tT>
-  , bool
-  , bool
+  , std::unique_ptr<struct_tT>
+  , std::unique_ptr<variant_tT>
   
   > val_;
 
@@ -2624,8 +2806,12 @@ class CppData {
 
 
 
+
+
+
+
 // Tmplate function declarations
-void TmplStructDeclaration(std::ostream& os, const StructDecl& s, const Options& opt);void TmplStructDefinition(std::ostream& os, const StructDecl& s, const Options& opt);void TmplVariantDeclaration(std::ostream& os, const StructDecl& v, const Options& opt);void TmplVariantDefinition(std::ostream& os, const StructDecl& v, const Options& opt);void CppHeader(std::ostream& os, const CppData& d, const Options& opt);void JsonHelpers(std::ostream& os);void CppSource(std::ostream& os, const CppData& d, const Options& opt);void VecUserTypeDeclarationT(std::ostream& os, const td::Vector<UserTypeDeclaration>& ut, const Options& opt);void QualifiedName(std::ostream& os, const td::Vector<std::string>& fqn);void JsonPrintKey(std::ostream& os, const AccessInfo& field);void JsonPrintArray(std::ostream& os, const AccessInfo& value_type);void JsonPrintMap(std::ostream& os, const AccessInfo& key_type, const AccessInfo& val_type);void JsonPrintValue(std::ostream& os, const AccessInfo& t);void JsonStructDefinitions(std::ostream& os, const StructDecl& s, const Options& opt);void JsonVariantDefinitions(std::ostream& os, const StructDecl& s, const Options& opt);void JsonDeclarations(std::ostream& os, const StructDecl& s, const Options& opt);void TmplFuncDeclaration(std::ostream& os, const TmplFunction& t);void CppType(std::ostream& os, const AccessInfo& a);void ParamsList(std::ostream& os, const td::Vector<AccessInfo>& params);void TmplValueDereferenceT(std::ostream& os, const TmplValueDereference& v);void TmplStringExpression(std::ostream& os, const TmplExpression& i);void TmplBoolExpression(std::ostream& os, const TmplExpression& i);void TmplIfT(std::ostream& os, const TmplIf& i);void TmplIfBlockT(std::ostream& os, const TmplIfBlock& i);void TmplForT(std::ostream& os, const TmplForBlock& f);void TmplHasValRef(std::ostream& os, const TmplValueDereference& val);void TmplSwitchT(std::ostream& os, const SwitchBlock& s);void TmplItemsT(std::ostream& os, const td::Vector<TmplItem>& v);void TmplItemT(std::ostream& os, const TmplItem& i);void TmplFuncDefinition(std::ostream& os, const TmplFunction& t);
+void TmplStructDeclaration(std::ostream& os, const StructDecl& s, const Options& opt);void TmplStructDefinition(std::ostream& os, const StructDecl& s, const Options& opt);void TmplVariantDeclaration(std::ostream& os, const StructDecl& v, const Options& opt);void TmplVariantDefinition(std::ostream& os, const StructDecl& v, const Options& opt);void CppHeader(std::ostream& os, const CppData& d, const Options& opt);void JsonCppSrcHelpers(std::ostream& os);void CppSrcHelpers(std::ostream& os);void CppSource(std::ostream& os, const CppData& d, const Options& opt);void VecUserTypeDeclarationT(std::ostream& os, const td::Vector<UserTypeDeclaration>& ut, const Options& opt);void QualifiedName(std::ostream& os, const td::Vector<std::string>& fqn);void QualifiedSnakeName(std::ostream& os, const td::Vector<std::string>& fqn);void JsonPrintKey(std::ostream& os, const AccessInfo& field);void JsonPrintArray(std::ostream& os, const AccessInfo& value_type);void JsonPrintMap(std::ostream& os, const AccessInfo& key_type, const AccessInfo& val_type);void JsonPrintValue(std::ostream& os, const AccessInfo& t);void JsonStructDefinitions(std::ostream& os, const StructDecl& s, const Options& opt);void JsonVariantDefinitions(std::ostream& os, const StructDecl& s, const Options& opt);void JsonSrcForwardDeclarations(std::ostream& os, const StructDecl& s, const Options& opt);void JsonParseValue(std::ostream& os, const AccessInfo& field);void JsonSrcDefinitions(std::ostream& os, const StructDecl& s, const Options& opt);void JsonDeclarations(std::ostream& os, const StructDecl& s, const Options& opt);void TmplFuncDeclaration(std::ostream& os, const TmplFunction& t);void CppType(std::ostream& os, const AccessInfo& a);void ParamsList(std::ostream& os, const td::Vector<AccessInfo>& params);void TmplValueDereferenceT(std::ostream& os, const TmplValueDereference& v);void TmplStringExpression(std::ostream& os, const TmplExpression& i);void TmplBoolExpression(std::ostream& os, const TmplExpression& i);void TmplIfT(std::ostream& os, const TmplIf& i);void TmplIfBlockT(std::ostream& os, const TmplIfBlock& i);void TmplForT(std::ostream& os, const TmplForBlock& f);void TmplHasValRef(std::ostream& os, const TmplValueDereference& val);void TmplSwitchT(std::ostream& os, const SwitchBlock& s);void TmplItemsT(std::ostream& os, const td::Vector<TmplItem>& v);void TmplItemT(std::ostream& os, const TmplItem& i);void TmplFuncDefinition(std::ostream& os, const TmplFunction& t);
 
 } // namespace td
 } // namespace codegen

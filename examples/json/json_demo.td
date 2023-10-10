@@ -15,6 +15,24 @@ struct StructA {
   example_i16: i16;
   example_i32: i32;
   example_i64: i64;
+
+  struct NestedStruct {
+    a: i32;
+  };
+  nested_struct: NestedStruct;
+  inline_struct: struct {
+    b: str;
+  };
+
+  variant NestedVariant {
+    c: i32;
+    d: str;
+  }
+  nested_variant: NestedVariant;
+  inline_variant: variant {
+    e: i32;
+    f: str;
+  };
 }
 
 struct StructB {
