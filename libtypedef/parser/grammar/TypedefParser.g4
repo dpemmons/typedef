@@ -114,8 +114,8 @@ tmplExpression:
 tmplFunctionCall
 	returns[TmplDefinitionContext* tmpl_def, bool built_in] //
 	@init {$tmpl_def = nullptr; $built_in = false;}: //
-	tmplIdentifier TMPL_LPAREN tmplValueReferencePath? (
-		TMPL_COMMA tmplValueReferencePath
+	tmplIdentifier TMPL_LPAREN tmplExpression? (
+		TMPL_COMMA tmplExpression
 	)* TMPL_RPAREN;
 
 tmplIfBlock:

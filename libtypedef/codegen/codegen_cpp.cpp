@@ -253,9 +253,14 @@ TmplExpression GetTemplateExpression(
   if (ctx->tmplFunctionCall()) {
     e.call().func() = escape_utf8_to_cpp_identifier(
         ctx->tmplFunctionCall()->tmplIdentifier()->id);
-    for (TypedefParser::TmplValueReferencePathContext* path :
-         ctx->tmplFunctionCall()->tmplValueReferencePath()) {
-      e.call().args().emplace_back(GetTemplateValueDereference(path));
+    for (TypedefParser::TmplExpressionContext* expr :
+         ctx->tmplFunctionCall()->tmplExpression()) {
+      if (expr->tmplValueReferencePath()) {
+        e.call().args().emplace_back(
+            GetTemplateValueDereference(expr->tmplValueReferencePath()));
+      } else {
+        throw_logic_error("non tmplValueReferencePath not yet supported");
+      }
     }
   } else if (ctx->tmplValueReferencePath()) {
     e.val_ref() = GetTemplateValueDereference(ctx->tmplValueReferencePath());

@@ -284,11 +284,11 @@ TmplExpression GetTemplateExpression(
     TypedefParser::TmplExpressionContext* ctx) {
   TmplExpression e;
   if (ctx->tmplFunctionCall()) {
-    e.call().func() = escape_utf8_to_cpp_identifier(
+    e.call().identifier() = escape_utf8_to_cpp_identifier(
         ctx->tmplFunctionCall()->tmplIdentifier()->id);
-    for (TypedefParser::TmplValueReferencePathContext* path :
-         ctx->tmplFunctionCall()->tmplValueReferencePath()) {
-      e.call().args().emplace_back(GetTemplateValueDereference(path));
+    for (TypedefParser::TmplExpressionContext* expr :
+         ctx->tmplFunctionCall()->tmplExpression()) {
+      e.call().args().emplace_back(GetTemplateExpression(expr));
     }
   } else if (ctx->tmplValueReferencePath()) {
     e.val_ref() = GetTemplateValueDereference(ctx->tmplValueReferencePath());

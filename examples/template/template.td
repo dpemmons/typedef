@@ -93,4 +93,13 @@ template PrintIndices(v: vector<str>) t"
   <Literal()>
 "
 
-template Literal() t"literal template function."
+template Literal() t"Hello world from a literal template."
+
+template PrintTheHellos(a: str, b:str) t"
+First one: <a>
+Second one: <b>
+"
+template SayHi() t"Hello World!"
+template ATemplateThatCallsAnotherWithYetOthersAsArguments() t"
+  <PrintTheHellos(Literal(), SayHi())>
+"

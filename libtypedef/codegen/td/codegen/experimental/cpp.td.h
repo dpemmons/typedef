@@ -40,6 +40,8 @@ class UserTypeDeclaration;
 
 class TmplValueDereference;
 
+class TmplFuncCall;
+
 class TmplExpression;
 
 class TmplIf;
@@ -1438,13 +1440,7 @@ class TmplValueDereference {
 
 
 
-// td::codegen::experimental::cpp::TmplExpression variant declaration.
-class TmplExpression {
- public:
-  // Nested type declarations
-  
-
-// TmplExpression::TmplFuncCall struct declaration.
+// TmplFuncCall struct declaration.
 class TmplFuncCall {
  public:
   // Nested type declarations
@@ -1462,37 +1458,43 @@ class TmplFuncCall {
 
   
   
-  void set_func(std::string&& val) {
-    func_ = std::move(val);
+  void set_identifier(std::string&& val) {
+    identifier_ = std::move(val);
   }
-  std::string& func() {
-    return func_;
+  std::string& identifier() {
+    return identifier_;
   }
-  const std::string& func() const {
-    return func_;
+  const std::string& identifier() const {
+    return identifier_;
   }
   
   
   
-  void set_args(td::Vector<TmplValueDereference>&& val) {
+  void set_args(td::Vector<TmplExpression>&& val) {
     args_ = std::move(val);
   }
-  td::Vector<TmplValueDereference>& args() {
+  td::Vector<TmplExpression>& args() {
     return args_;
   }
-  const td::Vector<TmplValueDereference>& args() const {
+  const td::Vector<TmplExpression>& args() const {
     return args_;
   }
   
   
 
  private:
-  std::string func_;
-  td::Vector<TmplValueDereference> args_;
+  std::string identifier_;
+  td::Vector<TmplExpression> args_;
   
 }; // class TmplFuncCall
 
 
+
+// td::codegen::experimental::cpp::TmplExpression variant declaration.
+class TmplExpression {
+ public:
+  // Nested type declarations
+  
   // Inline type declarations
   
 
@@ -2810,8 +2812,10 @@ class CppData {
 
 
 
+
+
 // Tmplate function declarations
-void TmplStructDeclaration(std::ostream& os, const StructDecl& s, const Options& opt);void TmplStructDefinition(std::ostream& os, const StructDecl& s, const Options& opt);void TmplVariantDeclaration(std::ostream& os, const StructDecl& v, const Options& opt);void TmplVariantDefinition(std::ostream& os, const StructDecl& v, const Options& opt);void CppHeader(std::ostream& os, const CppData& d, const Options& opt);void JsonCppSrcHelpers(std::ostream& os);void CppSrcHelpers(std::ostream& os);void CppSource(std::ostream& os, const CppData& d, const Options& opt);void VecUserTypeDeclarationT(std::ostream& os, const td::Vector<UserTypeDeclaration>& ut, const Options& opt);void QualifiedName(std::ostream& os, const td::Vector<std::string>& fqn);void QualifiedSnakeName(std::ostream& os, const td::Vector<std::string>& fqn);void JsonPrintKey(std::ostream& os, const AccessInfo& field);void JsonPrintArray(std::ostream& os, const AccessInfo& value_type);void JsonPrintMap(std::ostream& os, const AccessInfo& key_type, const AccessInfo& val_type);void JsonPrintValue(std::ostream& os, const AccessInfo& t);void JsonStructDefinitions(std::ostream& os, const StructDecl& s, const Options& opt);void JsonVariantDefinitions(std::ostream& os, const StructDecl& s, const Options& opt);void JsonSrcForwardDeclarations(std::ostream& os, const StructDecl& s, const Options& opt);void JsonParseValue(std::ostream& os, const AccessInfo& field);void JsonSrcDefinitions(std::ostream& os, const StructDecl& s, const Options& opt);void JsonDeclarations(std::ostream& os, const StructDecl& s, const Options& opt);void TmplFuncDeclaration(std::ostream& os, const TmplFunction& t);void CppType(std::ostream& os, const AccessInfo& a);void ParamsList(std::ostream& os, const td::Vector<AccessInfo>& params);void TmplValueDereferenceT(std::ostream& os, const TmplValueDereference& v);void TmplStringExpression(std::ostream& os, const TmplExpression& i);void TmplBoolExpression(std::ostream& os, const TmplExpression& i);void TmplIfT(std::ostream& os, const TmplIf& i);void TmplIfBlockT(std::ostream& os, const TmplIfBlock& i);void TmplForT(std::ostream& os, const TmplForBlock& f);void TmplHasValRef(std::ostream& os, const TmplValueDereference& val);void TmplSwitchT(std::ostream& os, const SwitchBlock& s);void TmplItemsT(std::ostream& os, const td::Vector<TmplItem>& v);void TmplItemT(std::ostream& os, const TmplItem& i);void TmplFuncDefinition(std::ostream& os, const TmplFunction& t);
+void TmplStructDeclaration(std::ostream& os, const StructDecl& s, const Options& opt);void TmplStructDefinition(std::ostream& os, const StructDecl& s, const Options& opt);void TmplVariantDeclaration(std::ostream& os, const StructDecl& v, const Options& opt);void TmplVariantDefinition(std::ostream& os, const StructDecl& v, const Options& opt);void CppHeader(std::ostream& os, const CppData& d, const Options& opt);void JsonCppSrcHelpers(std::ostream& os);void CppSrcHelpers(std::ostream& os);void CppSource(std::ostream& os, const CppData& d, const Options& opt);void VecUserTypeDeclarationT(std::ostream& os, const td::Vector<UserTypeDeclaration>& ut, const Options& opt);void CppType(std::ostream& os, const AccessInfo& a);void QualifiedName(std::ostream& os, const td::Vector<std::string>& fqn);void QualifiedSnakeName(std::ostream& os, const td::Vector<std::string>& fqn);void JsonPrintKey(std::ostream& os, const AccessInfo& field);void JsonPrintArray(std::ostream& os, const AccessInfo& value_type);void JsonPrintMap(std::ostream& os, const AccessInfo& key_type, const AccessInfo& val_type);void JsonPrintValue(std::ostream& os, const AccessInfo& t);void JsonStructDefinitions(std::ostream& os, const StructDecl& s, const Options& opt);void JsonVariantDefinitions(std::ostream& os, const StructDecl& s, const Options& opt);void JsonSrcForwardDeclarations(std::ostream& os, const StructDecl& s, const Options& opt);void JsonParseValue(std::ostream& os, const AccessInfo& field);void JsonSrcDefinitions(std::ostream& os, const StructDecl& s, const Options& opt);void JsonDeclarations(std::ostream& os, const StructDecl& s, const Options& opt);void TmplValueDereferenceT(std::ostream& os, const TmplValueDereference& v);void TmplStringExpression(std::ostream& os, const TmplExpression& i);void TmplOStreamExpression(std::ostream& os, const TmplExpression& i);void TmplBoolExpression(std::ostream& os, const TmplExpression& i);void TmplIfT(std::ostream& os, const TmplIf& i);void TmplIfBlockT(std::ostream& os, const TmplIfBlock& i);void TmplForT(std::ostream& os, const TmplForBlock& f);void TmplHasValRef(std::ostream& os, const TmplValueDereference& val);void TmplSwitchT(std::ostream& os, const SwitchBlock& s);void TmplItemsT(std::ostream& os, const td::Vector<TmplItem>& v);void TmplItemT(std::ostream& os, const TmplItem& i);void OStreamParamsList(std::ostream& os, const td::Vector<AccessInfo>& params);void ParamsList(std::ostream& os, const td::Vector<AccessInfo>& params);void TmplFuncDeclaration(std::ostream& os, const TmplFunction& t);void TmplFuncDefinition(std::ostream& os, const TmplFunction& t);
 
 } // namespace td
 } // namespace codegen

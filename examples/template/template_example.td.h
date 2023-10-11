@@ -458,7 +458,18 @@ void ToJson(std::ostream& os, const SomeVariant& from);
 
 
 // Tmplate function declarations
-void PrintStructC(std::ostream& os, const StructC& sc);void PrintTemplateData(std::ostream& os, const TemplateData& t);void DoSomeVariant(std::ostream& os, const SomeVariant& v);void LoopLogic(std::ostream& os, const td::Vector<std::string>& v);void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v);void TestIsEmpty(std::ostream& os, const td::Vector<std::string>& v);void PrintIndices(std::ostream& os, const td::Vector<std::string>& v);void Literal(std::ostream& os);
+void PrintStructC(std::ostream& os, const StructC& sc);
+std::string PrintStructC(const StructC& sc);void PrintTemplateData(std::ostream& os, const TemplateData& t);
+std::string PrintTemplateData(const TemplateData& t);void DoSomeVariant(std::ostream& os, const SomeVariant& v);
+std::string DoSomeVariant(const SomeVariant& v);void LoopLogic(std::ostream& os, const td::Vector<std::string>& v);
+std::string LoopLogic(const td::Vector<std::string>& v);void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v);
+std::string BooleanLogic(const td::Vector<std::string>& v);void TestIsEmpty(std::ostream& os, const td::Vector<std::string>& v);
+std::string TestIsEmpty(const td::Vector<std::string>& v);void PrintIndices(std::ostream& os, const td::Vector<std::string>& v);
+std::string PrintIndices(const td::Vector<std::string>& v);void Literal(std::ostream& os);
+std::string Literal();void PrintTheHellos(std::ostream& os, const std::string& a, const std::string& b);
+std::string PrintTheHellos(const std::string& a, const std::string& b);void SayHi(std::ostream& os);
+std::string SayHi();void ATemplateThatCallsAnotherWithYetOthersAsArguments(std::ostream& os);
+std::string ATemplateThatCallsAnotherWithYetOthersAsArguments();
 
 } // namespace template_example
 

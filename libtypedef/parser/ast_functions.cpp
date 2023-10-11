@@ -247,6 +247,16 @@ bool ReferencesPrimitiveIntegerType(TypedefParser::TypeAnnotationContext* ctx) {
           prim->KW_I8() || prim->KW_I16() || prim->KW_I32() || prim->KW_I64());
 }
 
+bool ReferencesPrimitiveStringType(TypedefParser::TypeAnnotationContext* ctx) {
+  if (!ctx->typeIdentifier() ||
+      !ctx->typeIdentifier()->primitiveTypeIdentifier()) {
+    return false;
+  }
+  TypedefParser::PrimitiveTypeIdentifierContext* prim =
+      ctx->typeIdentifier()->primitiveTypeIdentifier();
+  return prim->KW_STRING();
+}
+
 TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitiveIdentifier(
     TypedefParser::TypeAnnotationContext* ctx) {
   return ReferencesPrimitiveType(ctx)

@@ -1048,6 +1048,36 @@ TEST_CASE("Index0 and Index1 are not truthy", "[template][expressions]") {
   REQUIRE(parser.GetError(1).error_type == ParserErrorInfo::INVALID_ARGUMENT);
 }
 
+TEST_CASE("Use another function as a function argument", "[template][expressions]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+
+    template DoSomething(a: str) t"Another function said \"<a>\""
+    template SayHi() t"Hell World!"
+    template DoIt() t"
+      <DoSomething(SayHi())>
+    "
+  )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+}
+
+TEST_CASE("Use binary function argument should fail", "[template][expressions]") {
+  Parser parser(R"(
+    typedef=alpha;
+    module test;
+
+    template DoSomething(a: str) t"Another function said \"<a>\""
+    template SayHi() t"Hell World!"
+    template DoIt(v: vector<str>) t"
+      <for i in v>
+      <DoSomething(Index0())>
+      </for>
+    "
+  )");
+  REQUIRE_NO_PARSE_ERROR(parser.Parse());
+}
+
 TEST_CASE("Template literal", "[template][literal]") {
   Parser parser(R"(
     typedef=alpha;

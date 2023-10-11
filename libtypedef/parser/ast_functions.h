@@ -72,6 +72,7 @@ bool ReferencesBuiltinMapType(TypedefParser::TypeAnnotationContext* ctx);
 bool ReferencesPrimitiveType(TypedefParser::TypeAnnotationContext* ctx);
 bool ReferencesPrimitiveFloatType(TypedefParser::TypeAnnotationContext* ctx);
 bool ReferencesPrimitiveIntegerType(TypedefParser::TypeAnnotationContext* ctx);
+bool ReferencesPrimitiveStringType(TypedefParser::TypeAnnotationContext* ctx);
 TypedefParser::PrimitiveTypeIdentifierContext* GetReferencedPrimitiveIdentifier(
     TypedefParser::TypeAnnotationContext* ctx);
 

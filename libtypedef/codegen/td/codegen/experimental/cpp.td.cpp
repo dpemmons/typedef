@@ -58,6 +58,8 @@ namespace cpp {
 
 // TmplValueDereference member definitions
 
+// TmplFuncCall member definitions
+
 // td::codegen::experimental::cpp::TmplExpression member definitions
 
 // TmplIf member definitions
@@ -839,6 +841,30 @@ os << "\n";
 
 
 }
+void CppType(std::ostream& os, const AccessInfo& a) {
+os << a.cpp_type();
+if (!IsEmpty(a.type_arguments())) {
+os << "<";
+
+
+for (size_t td_iter_ = 0; td_iter_ < a.type_arguments().size(); td_iter_++) {
+  auto& arg = a.type_arguments()[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == a.type_arguments().size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+CppType(os, arg);
+if (!IsLast()) {
+os << ", ";
+} else {
+}
+}
+
+os << ">";
+} else {
+}
+
+}
 void QualifiedName(std::ostream& os, const td::Vector<std::string>& fqn) {
 
 
@@ -1482,55 +1508,6 @@ JsonDeclarations(os, n.variant_decl(), opt);
 
 
 }
-void TmplFuncDeclaration(std::ostream& os, const TmplFunction& t) {
-os << "void ";
-os << t.identifier();
-os << "(std::ostream& os";
-ParamsList(os, t.params());
-os << ");";
-
-}
-void CppType(std::ostream& os, const AccessInfo& a) {
-os << a.cpp_type();
-if (!IsEmpty(a.type_arguments())) {
-os << "<";
-
-
-for (size_t td_iter_ = 0; td_iter_ < a.type_arguments().size(); td_iter_++) {
-  auto& arg = a.type_arguments()[td_iter_];
-  auto IsFirst = [&]() { return td_iter_ == 0; };
-  auto IsLast = [&]() { return td_iter_ == a.type_arguments().size() - 1; };
-  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
-  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
-CppType(os, arg);
-if (!IsLast()) {
-os << ", ";
-} else {
-}
-}
-
-os << ">";
-} else {
-}
-
-}
-void ParamsList(std::ostream& os, const td::Vector<AccessInfo>& params) {
-
-
-for (size_t td_iter_ = 0; td_iter_ < params.size(); td_iter_++) {
-  auto& param = params[td_iter_];
-  auto IsFirst = [&]() { return td_iter_ == 0; };
-  auto IsLast = [&]() { return td_iter_ == params.size() - 1; };
-  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
-  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
-os << ", const ";
-CppType(os, param);
-os << "& ";
-os << param.identifier();
-}
-
-
-}
 void TmplValueDereferenceT(std::ostream& os, const TmplValueDereference& v) {
 
 
@@ -1557,8 +1534,8 @@ void TmplStringExpression(std::ostream& os, const TmplExpression& i) {
 // Switch i
 
 if (i.is_call()) {
-os << i.call().func();
-os << "(os";
+os << i.call().identifier();
+os << "(";
 
 
 for (size_t td_iter_ = 0; td_iter_ < i.call().args().size(); td_iter_++) {
@@ -1567,14 +1544,16 @@ for (size_t td_iter_ = 0; td_iter_ < i.call().args().size(); td_iter_++) {
   auto IsLast = [&]() { return td_iter_ == i.call().args().size() - 1; };
   auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
   auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
-os << ", ";
-TmplValueDereferenceT(os, arg);
+TmplValueDereferenceT(os, arg.val_ref());
+if (!IsLast()) {
+os << ",";
+} else {
+}
 }
 
 os << ")";
 } else 
 if (i.is_val_ref()) {
-os << "os << ";
 TmplValueDereferenceT(os, i.val_ref());
 } else 
 if (i.is_expr()) {
@@ -1586,11 +1565,44 @@ os << "#error If this was emitted then there's a problem with type checking.";
 }
 
 }
+void TmplOStreamExpression(std::ostream& os, const TmplExpression& i) {
+// Switch i
+
+if (i.is_call()) {
+os << i.call().identifier();
+os << "(os";
+
+
+for (size_t td_iter_ = 0; td_iter_ < i.call().args().size(); td_iter_++) {
+  auto& arg = i.call().args()[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == i.call().args().size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+os << ", ";
+TmplStringExpression(os, arg);
+}
+
+os << ")";
+} else 
+if (i.is_val_ref()) {
+os << "os << ";
+TmplValueDereferenceT(os, i.val_ref());
+} else 
+if (i.is_expr()) {
+os << "(";
+TmplOStreamExpression(os, i.expr());
+os << ")";
+} else  {
+os << "#error If this was emitted then there's a problem with type checking.";
+}
+
+}
 void TmplBoolExpression(std::ostream& os, const TmplExpression& i) {
 // Switch i
 
 if (i.is_call()) {
-os << i.call().func();
+os << i.call().identifier();
 os << "(";
 
 
@@ -1600,7 +1612,7 @@ for (size_t td_iter_ = 0; td_iter_ < i.call().args().size(); td_iter_++) {
   auto IsLast = [&]() { return td_iter_ == i.call().args().size() - 1; };
   auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
   auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
-TmplValueDereferenceT(os, arg);
+TmplValueDereferenceT(os, arg.val_ref());
 if (!IsLast()) {
 os << ", ";
 } else {
@@ -1754,7 +1766,7 @@ os << i.text();
 os << "\";";
 } else 
 if (i.is_expression()) {
-TmplStringExpression(os, i.expression());
+TmplOStreamExpression(os, i.expression());
 os << ";";
 } else 
 if (i.is_if_block()) {
@@ -1769,14 +1781,84 @@ TmplSwitchT(os, i.switch_block());
 }
 
 }
+void OStreamParamsList(std::ostream& os, const td::Vector<AccessInfo>& params) {
+os << "std::ostream& os";
+
+
+for (size_t td_iter_ = 0; td_iter_ < params.size(); td_iter_++) {
+  auto& param = params[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == params.size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+os << ", const ";
+CppType(os, param);
+os << "& ";
+os << param.identifier();
+}
+
+
+}
+void ParamsList(std::ostream& os, const td::Vector<AccessInfo>& params) {
+
+
+for (size_t td_iter_ = 0; td_iter_ < params.size(); td_iter_++) {
+  auto& param = params[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == params.size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+os << "const ";
+CppType(os, param);
+os << "& ";
+os << param.identifier();
+if (!IsLast()) {
+os << ", ";
+} else {
+}
+}
+
+
+}
+void TmplFuncDeclaration(std::ostream& os, const TmplFunction& t) {
+os << "void ";
+os << t.identifier();
+os << "(";
+OStreamParamsList(os, t.params());
+os << ");\nstd::string ";
+os << t.identifier();
+os << "(";
+ParamsList(os, t.params());
+os << ");";
+
+}
 void TmplFuncDefinition(std::ostream& os, const TmplFunction& t) {
 os << "\nvoid ";
 os << t.identifier();
-os << "(std::ostream& os";
-ParamsList(os, t.params());
+os << "(";
+OStreamParamsList(os, t.params());
 os << ") {\n";
 TmplItemsT(os, t.items());
-os << "\n}";
+os << "\n}\nstd::string ";
+os << t.identifier();
+os << "(";
+ParamsList(os, t.params());
+os << ") {\n  std::stringstream oss;\n  ";
+os << t.identifier();
+os << "(oss";
+
+
+for (size_t td_iter_ = 0; td_iter_ < t.params().size(); td_iter_++) {
+  auto& param = t.params()[td_iter_];
+  auto IsFirst = [&]() { return td_iter_ == 0; };
+  auto IsLast = [&]() { return td_iter_ == t.params().size() - 1; };
+  auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
+  auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
+os << ", ";
+os << param.identifier();
+}
+
+os << ");\n  return oss.str();\n}";
 
 }
 

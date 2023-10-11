@@ -70,11 +70,12 @@ struct TmplValueDereference {
   val_ref_path: vector<str>;
 }
 
+struct TmplFuncCall {
+  identifier: str;
+  args: vector<TmplExpression>;
+}
+
 variant TmplExpression {
-  struct TmplFuncCall {
-    func: str;
-    args: vector<TmplValueDereference>;
-  }
   call: TmplFuncCall;
   val_ref: TmplValueDereference;
   expr: TmplExpression;
@@ -582,6 +583,7 @@ t"<for n in ut>
 </switch>
 </for>"
 
+template CppType(a: AccessInfo) t"<a.cpp_type><if !IsEmpty(a.type_arguments)>\<<for arg in a.type_arguments><CppType(arg)><if !IsLast()>, </if></for>\></if>"
 template QualifiedName(fqn: vector<str>) t"<for n in fqn><n><if !IsLast()>::</if></for>"
 template QualifiedSnakeName(fqn: vector<str>) t"<for n in fqn><n><if !IsLast()>_</if></for>"
 
@@ -905,25 +907,27 @@ void ToJson(std::ostream& os, const <QualifiedName(s.nqn)>& from);
 // **************************************************************************
 // **************************************************************************
 
-template TmplFuncDeclaration(t: TmplFunction)
-t"void <t.identifier>(std::ostream& os<ParamsList(t.params)>);"
-
-template CppType(a: AccessInfo) t"<a.cpp_type><if !IsEmpty(a.type_arguments)>\<<for arg in a.type_arguments><CppType(arg)><if !IsLast()>, </if></for>\></if>"
-
-template ParamsList(params: vector<AccessInfo>)
-t"<for param in params>, const <CppType(param)>& <param.identifier></for>"
-
 template TmplValueDereferenceT(v: TmplValueDereference) t"<for part in v.val_ref_path><part><if !IsFirst()>()</if><if !IsLast()>.</if></for>"
 
 template TmplStringExpression(i: TmplExpression) t"<switch i>
-<case i.call><i.call.func>(os<for arg in i.call.args>, <TmplValueDereferenceT(arg)></for>)</case>
-<case i.val_ref>os \<\< <TmplValueDereferenceT(i.val_ref)></case>
+<case i.call><i.call.identifier>(<for arg in i.call.args><TmplValueDereferenceT(arg.val_ref)><if !IsLast()>,</if></for>)</case>
+<case i.val_ref><TmplValueDereferenceT(i.val_ref)></case>
 <case i.expr>(<TmplStringExpression(i.expr)>)</case>
 <default>#error If this was emitted then there's a problem with type checking.</default>
 </switch>"
 
+// Expressions that expect an std::ostream "os" object in scope
+template TmplOStreamExpression(i: TmplExpression) t"<switch i>
+<case i.call><i.call.identifier>(os<for arg in i.call.args>, <TmplStringExpression(arg)></for>)</case>
+<case i.val_ref>os \<\< <TmplValueDereferenceT(i.val_ref)></case>
+<case i.expr>(<TmplOStreamExpression(i.expr)>)</case>
+<default>#error If this was emitted then there's a problem with type checking.</default>
+</switch>"
+
+// Currently, only the only truthy functions are built-ins, and those only accept
+// TmplValueDereference arguments.
 template TmplBoolExpression(i: TmplExpression) t"<switch i>
-<case i.call><i.call.func>(<for arg in i.call.args><TmplValueDereferenceT(arg)><if !IsLast()>, </if></for>)</case>
+<case i.call><i.call.identifier>(<for arg in i.call.args><TmplValueDereferenceT(arg.val_ref)><if !IsLast()>, </if></for>)</case>
 <case i.val_ref><TmplValueDereferenceT(i.val_ref)></case>
 <case i.expr>(<TmplBoolExpression(i.expr)>)</case>
 <case i.not_expr>!<TmplBoolExpression(i.not_expr)></case>
@@ -968,13 +972,32 @@ template TmplItemsT(v: vector<TmplItem>) t"<for i in v><TmplItemT(i)>
 template TmplItemT(i: TmplItem)
 t"<switch i>
 <case i.text>os \<\< \"<i.text>\";</case>
-<case i.expression><TmplStringExpression(i.expression)>;</case>
+<case i.expression><TmplOStreamExpression(i.expression)>;</case>
 <case i.if_block><TmplIfBlockT(i.if_block)></case>
 <case i.for_block><TmplForT(i.for_block)></case>
 <case i.switch_block><TmplSwitchT(i.switch_block)></case>
 </switch>"
 
+// **************************************************************************
+// Tempalte Function declaration and definition
+// **************************************************************************
+template OStreamParamsList(params: vector<AccessInfo>)
+t"std::ostream& os<for param in params>, const <CppType(param)>& <param.identifier></for>"
+template ParamsList(params: vector<AccessInfo>)
+t"<for param in params>const <CppType(param)>& <param.identifier><if !IsLast()>, </if></for>"
+// template CallOSFunctionParamsList(params: vector<AccessInfo>)
+// t"os<for param in params>, <param.identifier></for>"
+
+template TmplFuncDeclaration(t: TmplFunction)
+t"void <t.identifier>(<OStreamParamsList(t.params)>);
+std::string <t.identifier>(<ParamsList(t.params)>);"
+
 template TmplFuncDefinition(t: TmplFunction) t"
-void <t.identifier>(std::ostream& os<ParamsList(t.params)>) {
+void <t.identifier>(<OStreamParamsList(t.params)>) {
 <TmplItemsT(t.items)>
+}
+std::string <t.identifier>(<ParamsList(t.params)>) {
+  std::stringstream oss;
+  <t.identifier>(oss<for param in t.params>, <param.identifier></for>);
+  return oss.str();
 }"

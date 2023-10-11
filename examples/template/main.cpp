@@ -51,5 +51,7 @@ int main(int argc, char *argv[]) {
 
   PrintIndices(std::cout, v);
 
+  ATemplateThatCallsAnotherWithYetOthersAsArguments(std::cout);
+
   return 0;
 }

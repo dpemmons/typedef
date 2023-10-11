@@ -27,8 +27,8 @@ void SecondPassListener::exitTmplItem(TypedefParser::TmplItemContext* ctx) {
 
 void SecondPassListener::enterTmplFunctionCall(
     TypedefParser::TmplFunctionCallContext* ctx) {
-  std::vector<TypedefParser::TmplValueReferencePathContext*> actual_params =
-      ctx->tmplValueReferencePath();
+  std::vector<TypedefParser::TmplExpressionContext*> actual_params =
+      ctx->tmplExpression();
   if (ctx->built_in) {
     size_t expected_count = 0;
     if (ctx->tmplIdentifier()->id == "IsEmpty") {
@@ -42,8 +42,13 @@ void SecondPassListener::enterTmplFunctionCall(
                       actual_params.size()));
     }
     if (ctx->tmplIdentifier()->id == "IsEmpty") {
-      if (actual_params[0]->leaf_annotation &&
-          ReferencesBuiltinVectorType(actual_params[0]->leaf_annotation)) {
+      if (!actual_params[0]->tmplValueReferencePath()) {
+        return AddError(actual_params[0], ParserErrorInfo::INVALID_ARGUMENT,
+                        fmt::format("Vector type expected."));
+      }
+      if (actual_params[0]->tmplValueReferencePath()->leaf_annotation &&
+          ReferencesBuiltinVectorType(
+              actual_params[0]->tmplValueReferencePath()->leaf_annotation)) {
         return;
       } else {
         return AddError(actual_params[0], ParserErrorInfo::INVALID_ARGUMENT,
@@ -64,8 +69,7 @@ void SecondPassListener::enterTmplFunctionCall(
   for (size_t ii = 0; ii < expected_params.size(); ii++) {
     TypedefParser::FunctionParameterContext* expected_param =
         expected_params[ii];
-    TypedefParser::TmplValueReferencePathContext* called_with_param =
-        actual_params[ii];
+    TypedefParser::TmplExpressionContext* called_with_param = actual_params[ii];
     if (!expected_param) {
       throw_logic_error("invalid state: missing expected param");
     } else if (!called_with_param) {
@@ -75,22 +79,40 @@ void SecondPassListener::enterTmplFunctionCall(
     std::stringstream ss_expected;
     PrintTypeAnnotation(ss_expected, expected_param->parameter_type);
     std::stringstream ss_actual;
-    if (called_with_param->leaf_annotation) {
-      if (!expected_param->parameter_type->typeIdentifier()) {
-        throw_logic_error("invalid state: missing expected param identifier");
+    if (ReferencesPrimitiveStringType(expected_param->parameter_type) &&
+        called_with_param->tmplFunctionCall()) {
+      if (called_with_param->tmplFunctionCall()->built_in) {
+        return AddError(called_with_param, ParserErrorInfo::INVALID_ARGUMENT,
+                        "Built-in function cannot be used here.");
       }
-      PrintTypeAnnotation(ss_actual, called_with_param->leaf_annotation);
-    } else if (called_with_param->leaf_definition) {
-      PrintTypeDefinition(ss_actual, called_with_param->leaf_definition);
-    }
+      // ok.
+    } else {
+      if (!called_with_param->tmplValueReferencePath()) {
+        return AddError(called_with_param, ParserErrorInfo::INVALID_ARGUMENT,
+                        "Value reference expected");
+      }
+      if (called_with_param->tmplValueReferencePath()->leaf_annotation) {
+        if (!expected_param->parameter_type->typeIdentifier()) {
+          throw_logic_error("invalid state: missing expected param identifier");
+        }
+        PrintTypeAnnotation(
+            ss_actual,
+            called_with_param->tmplValueReferencePath()->leaf_annotation);
+      } else if (called_with_param->tmplValueReferencePath()->leaf_definition) {
+        PrintTypeDefinition(
+            ss_actual,
+            called_with_param->tmplValueReferencePath()->leaf_definition);
+      }
 
-    bool matches = CheckMatch(expected_param->parameter_type,
-                              called_with_param->leaf_annotation,
-                              called_with_param->leaf_definition);
-    if (!matches) {
-      AddError(called_with_param, ParserErrorInfo::INVALID_ARGUMENT,
-               fmt::format("Expected '{}' but got '{}'", ss_expected.str(),
-                           ss_actual.str()));
+      bool matches = CheckMatch(
+          expected_param->parameter_type,
+          called_with_param->tmplValueReferencePath()->leaf_annotation,
+          called_with_param->tmplValueReferencePath()->leaf_definition);
+      if (!matches) {
+        AddError(called_with_param, ParserErrorInfo::INVALID_ARGUMENT,
+                 fmt::format("Expected '{}' but got '{}'", ss_expected.str(),
+                             ss_actual.str()));
+      }
     }
   }
 }

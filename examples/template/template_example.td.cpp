@@ -437,6 +437,11 @@ os << sc.jkl();
 os << "\n";
 
 }
+std::string PrintStructC(const StructC& sc) {
+  std::stringstream oss;
+  PrintStructC(oss, sc);
+  return oss.str();
+}
 void PrintTemplateData(std::ostream& os, const TemplateData& t) {
 os << "\n  here's an if:\n  ";
 if (t.has_name()) {
@@ -480,6 +485,11 @@ PrintStructC(os, t.structC());
 os << "\n";
 
 }
+std::string PrintTemplateData(const TemplateData& t) {
+  std::stringstream oss;
+  PrintTemplateData(oss, t);
+  return oss.str();
+}
 void DoSomeVariant(std::ostream& os, const SomeVariant& v) {
 os << "\n  ";
 // Switch v
@@ -500,6 +510,11 @@ os << "It's the default!";
 }
 os << "\n";
 
+}
+std::string DoSomeVariant(const SomeVariant& v) {
+  std::stringstream oss;
+  DoSomeVariant(oss, v);
+  return oss.str();
 }
 void LoopLogic(std::ostream& os, const td::Vector<std::string>& v) {
 os << "\n  LoopLogic:\n  ";
@@ -531,6 +546,11 @@ os << "\n  ";
 os << "\n";
 
 }
+std::string LoopLogic(const td::Vector<std::string>& v) {
+  std::stringstream oss;
+  LoopLogic(oss, v);
+  return oss.str();
+}
 void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v) {
 os << "\n  BooleanLogic:\n  ";
 
@@ -559,6 +579,11 @@ os << "\n  ";
 os << "\n";
 
 }
+std::string BooleanLogic(const td::Vector<std::string>& v) {
+  std::stringstream oss;
+  BooleanLogic(oss, v);
+  return oss.str();
+}
 void TestIsEmpty(std::ostream& os, const td::Vector<std::string>& v) {
 os << "v is ";
 if (!IsEmpty(v)) {
@@ -567,6 +592,11 @@ os << " not ";
 }
 os << " empty.";
 
+}
+std::string TestIsEmpty(const td::Vector<std::string>& v) {
+  std::stringstream oss;
+  TestIsEmpty(oss, v);
+  return oss.str();
 }
 void PrintIndices(std::ostream& os, const td::Vector<std::string>& v) {
 os << "\n  ";
@@ -592,9 +622,52 @@ Literal(os);
 os << "\n";
 
 }
+std::string PrintIndices(const td::Vector<std::string>& v) {
+  std::stringstream oss;
+  PrintIndices(oss, v);
+  return oss.str();
+}
 void Literal(std::ostream& os) {
-os << "literal template function.";
+os << "Hello world from a literal template.";
 
+}
+std::string Literal() {
+  std::stringstream oss;
+  Literal(oss);
+  return oss.str();
+}
+void PrintTheHellos(std::ostream& os, const std::string& a, const std::string& b) {
+os << "\nFirst one: ";
+os << a;
+os << "\nSecond one: ";
+os << b;
+os << "\n";
+
+}
+std::string PrintTheHellos(const std::string& a, const std::string& b) {
+  std::stringstream oss;
+  PrintTheHellos(oss, a, b);
+  return oss.str();
+}
+void SayHi(std::ostream& os) {
+os << "Hello World!";
+
+}
+std::string SayHi() {
+  std::stringstream oss;
+  SayHi(oss);
+  return oss.str();
+}
+void ATemplateThatCallsAnotherWithYetOthersAsArguments(std::ostream& os) {
+os << "\n  ";
+PrintTheHellos(os, Literal(), SayHi());
+os << "\n";
+
+}
+std::string ATemplateThatCallsAnotherWithYetOthersAsArguments() {
+  std::stringstream oss;
+  ATemplateThatCallsAnotherWithYetOthersAsArguments(oss);
+  return oss.str();
 }
 
 } // namespace template_example

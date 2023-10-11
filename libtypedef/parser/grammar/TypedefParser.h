@@ -444,8 +444,8 @@ public:
     TmplIdentifierContext *tmplIdentifier();
     antlr4::tree::TerminalNode *TMPL_LPAREN();
     antlr4::tree::TerminalNode *TMPL_RPAREN();
-    std::vector<TmplValueReferencePathContext *> tmplValueReferencePath();
-    TmplValueReferencePathContext* tmplValueReferencePath(size_t i);
+    std::vector<TmplExpressionContext *> tmplExpression();
+    TmplExpressionContext* tmplExpression(size_t i);
     std::vector<antlr4::tree::TerminalNode *> TMPL_COMMA();
     antlr4::tree::TerminalNode* TMPL_COMMA(size_t i);
 
