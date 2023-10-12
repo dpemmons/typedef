@@ -30,41 +30,6 @@ void RenderStructA(std::ostream& os) {
   json_demo::ToJson(os, a);
 }
 
-void Assert(bool val) {
-  if (!val) {
-    throw std::string("Assert failed");
-  }
-}
-
-// StructA::NestedStruct ParseStructANestedStruct(const rapidjson::Value& obj) {
-//   StructA::NestedStruct ret;
-//   if (!obj.IsObject()) {
-//     return ret;
-//   }
-
-//   return ret;
-// }
-
-// StructA ParseStructA(const rapidjson::Value& obj) {
-//   StructA ret;
-//   if (!obj.IsObject()) {
-//     return ret;
-//   }
-//   rapidjson::Value::ConstMemberIterator iter =
-//   obj.FindMember("nested_struct"); if (iter != obj.MemberEnd() &&
-//   iter->value.IsObject()) {
-//     ret.nested_struct() = ParseStructANestedStruct(iter->value);
-//   }
-//   return ret;
-// }
-
-// StructA ParseStructA(const std::string& str) {
-//   StructA a;
-//   rapidjson::Document doc;
-//   doc.Parse(str.c_str());
-//   return ParseStructA(doc);
-// }
-
 ///////////////// StructB //////////////////////
 void RenderStructB(std::ostream& os) {
   StructB b;
@@ -123,8 +88,8 @@ StructB ParseStructB(const std::string& str) {
 ///////////////// StructC //////////////////////
 void RenderStructC(std::ostream& os) {
   StructC c;
-  c.example_map_bool_bool().insert({true, true});
-  c.example_map_bool_bool().insert({false, false});
+  // c.example_map_bool_bool().insert({true, true});
+  // c.example_map_bool_bool().insert({false, false});
 
   c.example_map_char_char().insert({'a', 'b'});
   c.example_map_char_char().insert({U'🔥', U'🚒'});
@@ -132,8 +97,8 @@ void RenderStructC(std::ostream& os) {
   c.example_map_str_str().insert({"foo", "bar"});
   c.example_map_str_str().insert({"🔥🔥🔥", "🚒🚒🚒"});
 
-  c.example_map_int_int().insert({1, 2});
-  c.example_map_int_int().insert({3, 4});
+  // c.example_map_int_int().insert({1, 2});
+  // c.example_map_int_int().insert({3, 4});
 
   StructC::NestedStruct sc_nested1;
   sc_nested1.a() = 42;
@@ -191,9 +156,10 @@ int main() {
     std::cout << std::endl;
   }
 
-  if (true) {
+  if (false) {
     std::cout << std::endl << "StructB:" << std::endl;
     RenderStructB(std::cout);
+    std::cout << std::endl;
 
     std::stringstream ss;
     RenderStructB(ss);
@@ -202,8 +168,20 @@ int main() {
     ToJson(std::cout, b);
     std::cout << std::endl;
   }
-  // std::cout << std::endl << "StructC:" << std::endl;
-  // RenderStructC(std::cout);
+
+  if (true) {
+    std::cout << std::endl << "StructC:" << std::endl;
+    RenderStructC(std::cout);
+    std::cout << std::endl;
+
+    std::stringstream ss;
+    RenderStructC(ss);
+    StructC c = StructC::FromJson(ss.str());
+    std::cout << "Reconstituted StruStructC:" << std::endl;
+    ToJson(std::cout, c);
+    std::cout << std::endl;
+  }
+
   // std::cout << std::endl << "VariantABool:" << std::endl;
   // RenderVariantABool(std::cout);
   // std::cout << std::endl << "VariantAChar:" << std::endl;

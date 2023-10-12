@@ -442,8 +442,10 @@ template CppHeader(d: CppData, opt: Options) t"
 
 #endif  // <d.header_guard>
 "
-
-template JsonCppSrcHelpers() r#"
+// **************************************************************************
+// Cpp Helpers
+// **************************************************************************
+template CppSrcJsonWriterHelpers() r#"
 inline std::string escape_json(const std::string& s) {
   std::ostringstream o;
   for (auto c = s.cbegin(); c != s.cend(); c++) {
@@ -471,6 +473,18 @@ inline std::string char32ToJsonString(char32_t c) {
   std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
   std::string utf8 = converter.to_bytes(&c, &c + 1);
   return escape_json(utf8);
+}
+
+// This is a very inefficint way of doing this, but
+// C++17 standard libs don't give us great options.
+// TODO: Also it may not work in C++20?
+std::u32string decode_utf8(const std::string& utf8_string) {
+  struct destructible_codecvt : public std::codecvt<char32_t, char, std::mbstate_t> {
+    using std::codecvt<char32_t, char, std::mbstate_t>::codecvt;
+    ~destructible_codecvt() = default;
+  };
+  std::wstring_convert<destructible_codecvt, char32_t> utf32_converter;
+  return utf32_converter.from_bytes(utf8_string);
 }
 
 inline char32_t GetCharValue(std::string_view str) {
@@ -511,13 +525,135 @@ inline char32_t GetCharValue(std::string_view str) {
 
   if (str.size() > 0) {
     std::string inner_str(str);
-    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
-    std::u32string str32 = converter.from_bytes(inner_str);
+    std::u32string str32 = decode_utf8(inner_str);
     if (str32.size() == 1) {
       return str32[0];
     }
   }
-  throw std::runtime_error("Invalid char.");
+  throw std::runtime_error("JSON format error: expected 'char'.");
+}
+"#
+
+template CppSrcJsonParserHelpers() r#"
+bool JsonParseBool(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsBool()) {
+    return val.GetBool();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'bool'.");
+  }
+}
+char32_t JsonParseChar(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsString()) {
+    std::string str(val.GetString(), val.GetStringLength());
+    return GetCharValue(str);
+  } else {
+    throw std::runtime_error("JSON format error: expected 'string'.");
+  }
+}
+std::string JsonParseStr(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsString()) {
+    return val.GetString();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'string'.");
+  }
+}
+float JsonParseF32(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsDouble()) {
+    return (float)val.GetDouble();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'float'.");
+  }
+}
+double JsonParseF64(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsDouble()) {
+    return val.GetDouble();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'double'.");
+  }
+}
+std::uint8_t JsonParseU8(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsUint()) {
+    unsigned int ui = val.GetUint();
+    if (ui > std::numeric_limits<std::uint8_t>::max() ||
+        ui < std::numeric_limits<std::uint8_t>::min()) {
+      throw std::runtime_error("JSON format error: unsigned integer '" +
+                               std::to_string(ui) +
+                               "' exceeded 'u8' capacity.");
+    }
+    return (std::uint8_t)ui;
+  } else {
+    throw std::runtime_error("JSON format error: expected 'unsigned integer'.");
+  }
+}
+std::uint16_t JsonParseU16(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsUint()) {
+    unsigned int ui = val.GetUint();
+    if (ui > std::numeric_limits<std::uint16_t>::max() ||
+        ui < std::numeric_limits<std::uint16_t>::min()) {
+      throw std::runtime_error("JSON format error: unsigned integer '" +
+                               std::to_string(ui) +
+                               "' exceeded 'u16' capacity.");
+    }
+    return (std::uint16_t)ui;
+  } else {
+    throw std::runtime_error("JSON format error: expected 'unsigned integer'.");
+  }
+}
+std::uint32_t JsonParseU32(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsUint()) {
+    return val.GetUint();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'unsigned integer'.");
+  }
+}
+std::uint64_t JsonParseU64(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsUint64()) {
+    return val.GetUint64();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'unsigned integer'.");
+  }
+}
+std::int8_t JsonParseI8(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsInt()) {
+    int ui = val.GetInt();
+    if (ui > std::numeric_limits<std::int8_t>::max() ||
+        ui < std::numeric_limits<std::int8_t>::min()) {
+      throw std::runtime_error("JSON format error: integer '" +
+                               std::to_string(ui) +
+                               "' exceeded 'i8' capacity.");
+    }
+    return (std::int8_t)ui;
+  } else {
+    throw std::runtime_error("JSON format error: expected 'integer'.");
+  }
+}
+std::int16_t JsonParseI16(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsInt()) {
+    int ui = val.GetInt();
+    if (ui > std::numeric_limits<std::int16_t>::max() ||
+        ui < std::numeric_limits<std::int16_t>::min()) {
+      throw std::runtime_error("JSON format error: integer '" +
+                               std::to_string(ui) +
+                               "' exceeded 'i16' capacity.");
+    }
+    return (std::int16_t)ui;
+  } else {
+    throw std::runtime_error("JSON format error: expected 'integer'.");
+  }
+}
+std::int32_t JsonParseI32(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsInt()) {
+    return val.GetInt();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'integer'.");
+  }
+}
+std::int64_t JsonParseI64(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsInt64()) {
+    return val.GetInt64();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'integer'.");
+  }
 }
 "#
 
@@ -541,7 +677,8 @@ template CppSource(d: CppData, opt: Options) t"
 
 namespace {
 <CppSrcHelpers()>
-<JsonCppSrcHelpers()>
+<if opt.generate_json_writer><CppSrcJsonWriterHelpers()></if>
+<if opt.generate_json_parser><CppSrcJsonParserHelpers()></if>
 // Struct and variant JSON forward declarations
 <for type_decl in d.user_type_decls><switch type_decl>
 <case type_decl.struct_decl><JsonSrcForwardDeclarations(type_decl.struct_decl, opt)></case>
@@ -775,88 +912,126 @@ t"<if opt.generate_json_parser>
 <case n.variant_decl><JsonSrcForwardDeclarations(n.variant_decl, opt)></case>
 </switch></for></if>"
 
-template JsonParseValue(field: AccessInfo) t"
-  <switch field.td_type>
-  <case field.td_type.bool_t>
-  if (val.IsBool()) {
-    ret.<field.identifier>() = val.GetBool();
-  }</case>
-  <case field.td_type.char_t>
-  if (val.IsString()) {
-    std::string str = val.GetString();
-    ret.<field.identifier>() = GetCharValue(str);
-  }</case>
-  <case field.td_type.string_t>
-  if (val.IsString()) {
-    ret.<field.identifier>() = val.GetString();
-  }</case>
-  <case field.td_type.f32_t>
-  if (val.IsDouble()) {
-    ret.<field.identifier>() = (float)val.GetDouble();
-  }</case>
-  <case field.td_type.f64_t>
-  if (val.IsDouble()) {
-    ret.<field.identifier>() = val.GetDouble();
-  }</case>
-  <case field.td_type.u8_t>
-  if (val.IsUint()) {
-    // TODO bounds check.
-    ret.<field.identifier>() = val.GetUint();
-  }</case>
-  <case field.td_type.u16_t>
-  if (val.IsUint()) {
-    // TODO bounds check.
-    ret.<field.identifier>() = val.GetUint();
-  }</case>
-  <case field.td_type.u32_t>
-  if (val.IsUint()) {
-    ret.<field.identifier>() = val.GetUint();
-  }</case>
-  <case field.td_type.u64_t>
-  if (val.IsUint64()) {
-    ret.<field.identifier>() = val.GetUint64();
-  }</case>
-  <case field.td_type.i8_t>
-  if (val.IsInt()) {
-    // TODO bounds check
-    ret.<field.identifier>() = val.GetInt();
-  }</case>
-  <case field.td_type.i16_t>
-  if (val.IsInt()) {
-    // TODO bounds check
-    ret.<field.identifier>() = val.GetInt();
-  }</case>
-  <case field.td_type.i32_t>
-  if (val.IsInt()) {
-    ret.<field.identifier>() = val.GetInt();
-  }</case>
-  <case field.td_type.i64_t>
-  if (val.IsInt64()) {
-    ret.<field.identifier>() = val.GetInt64();
-  }</case>
-  <case field.td_type.vector_t>
-  if (val.IsArray()) {
-    for (const auto& val : val.GetArray()) {
-      // What I really think I want here is to call JsonParseValue
-      // with an argument that is a computed assignment target.
-      // Eg. ret.<field.identifier>() computed from a template function.
-//       ret.<field.identifier>().emplace_back(std::move(
-//       ));
-    }
-  }</case>
-  <case field.td_type.map_t>
-  // TODO map
-  </case>
-  <case field.td_type.struct_t>
-  if (val.IsObject()) {
-    ret.<field.identifier>() = JsonParse<QualifiedSnakeName(field.td_type.struct_t.nqn)>(val.GetObject());
-  }</case>
-  <case field.td_type.variant_t>
-  if (val.IsObject()) {
-    // TODO validate only one.
-    ret.<field.identifier>() = JsonParse<QualifiedSnakeName(field.td_type.variant_t.nqn)>(val.GetObject());
-  }</case>
-  </switch>
+template JsonParseArrayLambda(from_type: AccessInfo) t"
+auto json_parse_array_lambda = [](auto& value_type, const rapidjson::Value& src) {
+  using VectorType = std::remove_reference_t\<decltype(value_type)\>;
+  VectorType vec;
+  for (rapidjson::SizeType ii = 0; ii \< src.Size(); ii++) {
+    <switch from_type.td_type>
+    <case from_type.td_type.bool_t>vec.push_back(JsonParseBool(src[ii]));</case>
+    <case from_type.td_type.char_t>vec.push_back(JsonParseChar(src[ii]));</case>
+    <case from_type.td_type.string_t>vec.push_back(JsonParseStr(src[ii]));</case>
+    <case from_type.td_type.f32_t>vec.push_back(JsonParseF32(src[ii]));</case>
+    <case from_type.td_type.f64_t>vec.push_back(JsonParseF64(src[ii]));</case>
+    <case from_type.td_type.u8_t>vec.push_back(JsonParseU8(src[ii]));</case>
+    <case from_type.td_type.u16_t>vec.push_back(JsonParseU16(src[ii]));</case>
+    <case from_type.td_type.u32_t>vec.push_back(JsonParseU32(src[ii]));</case>
+    <case from_type.td_type.u64_t>vec.push_back(JsonParseU64(src[ii]));</case>
+    <case from_type.td_type.i8_t>vec.push_back(JsonParseI8(src[ii]));</case>
+    <case from_type.td_type.i16_t>vec.push_back(JsonParseI16(src[ii]));</case>
+    <case from_type.td_type.i32_t>vec.push_back(JsonParseI32(src[ii]));</case>
+    <case from_type.td_type.i64_t>vec.push_back(JsonParseI64(src[ii]));</case>
+    <case from_type.td_type.vector_t>
+    if (src.IsArray()) {
+      vec.emplace_back();
+      auto& innerVec = vec.back();
+      <JsonParseArrayLambda(from_type.td_type.vector_t.val)>
+      innerVec = json_parse_array_lambda(innerVec, src[ii]);
+    }</case>
+    <case from_type.td_type.struct_t>
+      vec.push_back(JsonParse<QualifiedSnakeName(from_type.td_type.struct_t.nqn)>(src[ii]));
+    </case>
+    <case from_type.td_type.variant_t>
+      if (src[ii].MemberCount() \> 1) {
+        throw std::runtime_error(\"One member expected for variant type; found \" + std::to_string(val.MemberCount()));
+      }
+      vec.push_back(JsonParse<QualifiedSnakeName(from_type.td_type.variant_t.nqn)>(src[ii]));
+    </case>
+    <default></default>
+    </switch>
+  }
+  return vec;
+};
+"
+
+template JsonParseMapLambda(key_type: AccessInfo, val_type: AccessInfo) t"
+auto json_parse_map_lambda = [](auto& value_type, const rapidjson::Value& src) {
+  using MapType = std::remove_reference_t\<decltype(value_type)\>;
+  MapType map;
+  using KeyType = typename MapType::key_type;
+  using ValType = typename MapType::mapped_type;
+  using PairType = std::pair\<const KeyType, ValType\>;
+  for (auto& m : src.GetObject()) {
+    <switch key_type.td_type>
+    <case key_type.td_type.bool_t>KeyType key = JsonParseBool(m.name);</case>
+    <case key_type.td_type.char_t>KeyType key = JsonParseChar(m.name);</case>
+    <case key_type.td_type.string_t>KeyType key = JsonParseStr(m.name);</case>
+    <case key_type.td_type.f32_t>KeyType key = JsonParseF32(m.name);</case>
+    <case key_type.td_type.f64_t>KeyType key = JsonParseF64(m.name);</case>
+    <case key_type.td_type.u8_t>KeyType key = JsonParseU8(m.name);</case>
+    <case key_type.td_type.u16_t>KeyType key = JsonParseU16(m.name);</case>
+    <case key_type.td_type.u32_t>KeyType key = JsonParseU32(m.name);</case>
+    <case key_type.td_type.u64_t>KeyType key = JsonParseU64(m.name);</case>
+    <case key_type.td_type.i8_t>KeyType key = JsonParseI8(m.name);</case>
+    <case key_type.td_type.i16_t>KeyType key = JsonParseI16(m.name);</case>
+    <case key_type.td_type.i32_t>KeyType key = JsonParseI32(m.name);</case>
+    <case key_type.td_type.i64_t>KeyType key = JsonParseI64(m.name);</case>
+    <default>#error If this was emitted then there's a problem with map key type checking.</default>
+    </switch>
+
+    <switch val_type.td_type>
+    <case val_type.td_type.bool_t>ValType map_val = JsonParseBool(m.value);</case>
+    <case val_type.td_type.char_t>ValType map_val = JsonParseChar(m.value);</case>
+    <case val_type.td_type.string_t>ValType map_val = JsonParseStr(m.value);</case>
+    <case val_type.td_type.f32_t>ValType map_val = JsonParseF32(m.value);</case>
+    <case val_type.td_type.f64_t>ValType map_val = JsonParseF64(m.value);</case>
+    <case val_type.td_type.u8_t>ValType map_val = JsonParseU8(m.value);</case>
+    <case val_type.td_type.u16_t>ValType map_val = JsonParseU16(m.value);</case>
+    <case val_type.td_type.u32_t>ValType map_val = JsonParseU32(m.value);</case>
+    <case val_type.td_type.u64_t>ValType map_val = JsonParseU64(m.value);</case>
+    <case val_type.td_type.i8_t>ValType map_val = JsonParseI8(m.value);</case>
+    <case val_type.td_type.i16_t>ValType map_val = JsonParseI16(m.value);</case>
+    <case val_type.td_type.i32_t>ValType map_val = JsonParseI32(m.value);</case>
+    <case val_type.td_type.i64_t>ValType map_val = JsonParseI64(m.value);</case>
+    <case val_type.td_type.vector_t>
+    ValType map_val;
+    if (m.value.IsArray()) {
+      <JsonParseArrayLambda(val_type.td_type.vector_t.val)>
+      map_val = json_parse_array_lambda(map_val, m.value);
+    } else {
+      throw std::runtime_error(\"JSON format error: expected 'array'.\");
+    }</case>
+    <case val_type.td_type.map_t>
+    ValType map_val;
+    if (m.value.IsObject()) {
+      <JsonParseMapLambda(val_type.td_type.map_t.key, val_type.td_type.map_t.val)>
+      map_val = json_parse_map_lambda(map_val, m.value);
+    } else {
+      throw std::runtime_error(\"JSON format error: expected 'object'.\");
+    }</case>
+    <case val_type.td_type.struct_t>
+    ValType map_val;
+    if (m.value.IsObject()) {
+      map_val = JsonParse<QualifiedSnakeName(val_type.td_type.struct_t.nqn)>(m.value);
+    } else {
+      throw std::runtime_error(\"JSON format error: expected 'object'.\");
+    }</case>
+    <case val_type.td_type.variant_t>
+    ValType map_val;
+    if (m.value.IsObject()) {
+      if (m.value.MemberCount() \> 1) {
+        throw std::runtime_error(\"JSON format error: one member expected for variant type; found \" + std::to_string(m.value.MemberCount()));
+      }
+      map_val = JsonParse<QualifiedSnakeName(val_type.td_type.variant_t.nqn)>(m.value);
+    } else {
+      throw std::runtime_error(\"JSON format error: expected 'object'.\");
+    }</case>
+    </switch>
+
+    map.emplace(std::make_pair(key, std::move(map_val)));
+  }
+  return map;
+};
 "
 
 // **************************************************************************
@@ -864,13 +1039,61 @@ template JsonParseValue(field: AccessInfo) t"
 // **************************************************************************
 template JsonSrcDefinitions(s: StructDecl, opt: Options)
 t"<if opt.generate_json_parser>
-<QualifiedName(s.fqn)> JsonParse<QualifiedSnakeName(s.nqn)>(const rapidjson::Value& obj) {
+<QualifiedName(s.fqn)> JsonParse<QualifiedSnakeName(s.nqn)>(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error(\"JSON format error: expected 'object'.\");
+  }
   <QualifiedName(s.fqn)> ret;
   <for field in s.fields>{
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember(\"<field.identifier>\");
   if (iter != obj.MemberEnd()) {
     auto& val = iter-\>value;
-    <JsonParseValue(field)>
+    <switch field.td_type>
+    <case field.td_type.bool_t>ret.<field.identifier>() = JsonParseBool(val);</case>
+    <case field.td_type.char_t>ret.<field.identifier>() = JsonParseChar(val);</case>
+    <case field.td_type.string_t>ret.<field.identifier>() = JsonParseStr(val);</case>
+    <case field.td_type.f32_t>ret.<field.identifier>() = JsonParseF32(val);</case>
+    <case field.td_type.f64_t>ret.<field.identifier>() = JsonParseF64(val);</case>
+    <case field.td_type.u8_t>ret.<field.identifier>() = JsonParseU8(val);</case>
+    <case field.td_type.u16_t>ret.<field.identifier>() = JsonParseU16(val);</case>
+    <case field.td_type.u32_t>ret.<field.identifier>() = JsonParseU32(val);</case>
+    <case field.td_type.u64_t>ret.<field.identifier>() = JsonParseU64(val);</case>
+    <case field.td_type.i8_t>ret.<field.identifier>() = JsonParseI8(val);</case>
+    <case field.td_type.i16_t>ret.<field.identifier>() = JsonParseI16(val);</case>
+    <case field.td_type.i32_t>ret.<field.identifier>() = JsonParseI32(val);</case>
+    <case field.td_type.i64_t>ret.<field.identifier>() = JsonParseI64(val);</case>
+    <case field.td_type.vector_t>
+    if (val.IsArray()) {
+      <JsonParseArrayLambda(field.td_type.vector_t.val)>
+      ret.<field.identifier>() = json_parse_array_lambda(ret.<field.identifier>(), val);
+    } else {
+      throw std::runtime_error(\"JSON format error: expected 'array'.\");
+    }</case>
+    <case field.td_type.map_t>
+    if (val.IsObject()) {
+      <JsonParseMapLambda(field.td_type.map_t.key, field.td_type.map_t.val)>
+      ret.<field.identifier>() = json_parse_map_lambda(ret.<field.identifier>(), val);
+    } else {
+      throw std::runtime_error(\"JSON format error: expected 'object'.\");
+    }
+    </case>
+    <case field.td_type.struct_t>
+    if (val.IsObject()) {
+      ret.<field.identifier>() = JsonParse<QualifiedSnakeName(field.td_type.struct_t.nqn)>(val);
+    } else {
+      throw std::runtime_error(\"JSON format error: expected 'object'.\");
+    }</case>
+    <case field.td_type.variant_t>
+    if (val.IsObject()) {
+      if (val.MemberCount() \> 1) {
+        throw std::runtime_error(\"JSON format error: one member expected for variant type; found \" + std::to_string(val.MemberCount()));
+      }
+      ret.<field.identifier>() = JsonParse<QualifiedSnakeName(field.td_type.variant_t.nqn)>(val);
+    } else {
+      throw std::runtime_error(\"JSON format error: expected 'object'.\");
+    }</case>
+    </switch>
   }
   } </for>
   return ret;

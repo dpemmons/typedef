@@ -43,6 +43,18 @@ inline std::string char32ToJsonString(char32_t c) {
   return escape_json(utf8);
 }
 
+// This is a very inefficint way of doing this, but
+// C++17 standard libs don't give us great options.
+// TODO: Also it may not work in C++20?
+std::u32string decode_utf8(const std::string& utf8_string) {
+  struct destructible_codecvt : public std::codecvt<char32_t, char, std::mbstate_t> {
+    using std::codecvt<char32_t, char, std::mbstate_t>::codecvt;
+    ~destructible_codecvt() = default;
+  };
+  std::wstring_convert<destructible_codecvt, char32_t> utf32_converter;
+  return utf32_converter.from_bytes(utf8_string);
+}
+
 inline char32_t GetCharValue(std::string_view str) {
   if (str.size() == 2 && str[0] == '\\') {
     switch (str[1]) {
@@ -81,13 +93,134 @@ inline char32_t GetCharValue(std::string_view str) {
 
   if (str.size() > 0) {
     std::string inner_str(str);
-    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
-    std::u32string str32 = converter.from_bytes(inner_str);
+    std::u32string str32 = decode_utf8(inner_str);
     if (str32.size() == 1) {
       return str32[0];
     }
   }
-  throw std::runtime_error("Invalid char.");
+  throw std::runtime_error("JSON format error: expected 'char'.");
+}
+
+
+bool JsonParseBool(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsBool()) {
+    return val.GetBool();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'bool'.");
+  }
+}
+char32_t JsonParseChar(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsString()) {
+    std::string str(val.GetString(), val.GetStringLength());
+    return GetCharValue(str);
+  } else {
+    throw std::runtime_error("JSON format error: expected 'string'.");
+  }
+}
+std::string JsonParseStr(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsString()) {
+    return val.GetString();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'string'.");
+  }
+}
+float JsonParseF32(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsDouble()) {
+    return (float)val.GetDouble();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'float'.");
+  }
+}
+double JsonParseF64(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsDouble()) {
+    return val.GetDouble();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'double'.");
+  }
+}
+std::uint8_t JsonParseU8(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsUint()) {
+    unsigned int ui = val.GetUint();
+    if (ui > std::numeric_limits<std::uint8_t>::max() ||
+        ui < std::numeric_limits<std::uint8_t>::min()) {
+      throw std::runtime_error("JSON format error: unsigned integer '" +
+                               std::to_string(ui) +
+                               "' exceeded 'u8' capacity.");
+    }
+    return (std::uint8_t)ui;
+  } else {
+    throw std::runtime_error("JSON format error: expected 'unsigned integer'.");
+  }
+}
+std::uint16_t JsonParseU16(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsUint()) {
+    unsigned int ui = val.GetUint();
+    if (ui > std::numeric_limits<std::uint16_t>::max() ||
+        ui < std::numeric_limits<std::uint16_t>::min()) {
+      throw std::runtime_error("JSON format error: unsigned integer '" +
+                               std::to_string(ui) +
+                               "' exceeded 'u16' capacity.");
+    }
+    return (std::uint16_t)ui;
+  } else {
+    throw std::runtime_error("JSON format error: expected 'unsigned integer'.");
+  }
+}
+std::uint32_t JsonParseU32(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsUint()) {
+    return val.GetUint();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'unsigned integer'.");
+  }
+}
+std::uint64_t JsonParseU64(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsUint64()) {
+    return val.GetUint64();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'unsigned integer'.");
+  }
+}
+std::int8_t JsonParseI8(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsInt()) {
+    int ui = val.GetInt();
+    if (ui > std::numeric_limits<std::int8_t>::max() ||
+        ui < std::numeric_limits<std::int8_t>::min()) {
+      throw std::runtime_error("JSON format error: integer '" +
+                               std::to_string(ui) +
+                               "' exceeded 'i8' capacity.");
+    }
+    return (std::int8_t)ui;
+  } else {
+    throw std::runtime_error("JSON format error: expected 'integer'.");
+  }
+}
+std::int16_t JsonParseI16(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsInt()) {
+    int ui = val.GetInt();
+    if (ui > std::numeric_limits<std::int16_t>::max() ||
+        ui < std::numeric_limits<std::int16_t>::min()) {
+      throw std::runtime_error("JSON format error: integer '" +
+                               std::to_string(ui) +
+                               "' exceeded 'i16' capacity.");
+    }
+    return (std::int16_t)ui;
+  } else {
+    throw std::runtime_error("JSON format error: expected 'integer'.");
+  }
+}
+std::int32_t JsonParseI32(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsInt()) {
+    return val.GetInt();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'integer'.");
+  }
+}
+std::int64_t JsonParseI64(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
+  if (val.IsInt64()) {
+    return val.GetInt64();
+  } else {
+    throw std::runtime_error("JSON format error: expected 'integer'.");
+  }
 }
 
 // Struct and variant JSON forward declarations
@@ -126,792 +259,740 @@ simple_values::VariantC::VariantFT JsonParseVariantC_VariantFT(const rapidjson::
 
 // Struct and variant JSON definitions
 
-simple_values::StructA JsonParseStructA(const rapidjson::Value& obj) {
+simple_values::StructA JsonParseStructA(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::StructA ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_bool");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsBool()) {
-    ret.example_bool() = val.GetBool();
-  }
-
+    ret.example_bool() = JsonParseBool(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_char");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsString()) {
-    std::string str = val.GetString();
-    ret.example_char() = GetCharValue(str);
-  }
-
+    ret.example_char() = JsonParseChar(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_str");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsString()) {
-    ret.example_str() = val.GetString();
-  }
-
+    ret.example_str() = JsonParseStr(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_f32");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsDouble()) {
-    ret.example_f32() = (float)val.GetDouble();
-  }
-
+    ret.example_f32() = JsonParseF32(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_f64");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsDouble()) {
-    ret.example_f64() = val.GetDouble();
-  }
-
+    ret.example_f64() = JsonParseF64(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_u8");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsUint()) {
-    // TODO bounds check.
-    ret.example_u8() = val.GetUint();
-  }
-
+    ret.example_u8() = JsonParseU8(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_u16");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsUint()) {
-    // TODO bounds check.
-    ret.example_u16() = val.GetUint();
-  }
-
+    ret.example_u16() = JsonParseU16(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_u32");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsUint()) {
-    ret.example_u32() = val.GetUint();
-  }
-
+    ret.example_u32() = JsonParseU32(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_u64");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsUint64()) {
-    ret.example_u64() = val.GetUint64();
-  }
-
+    ret.example_u64() = JsonParseU64(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_i8");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    // TODO bounds check
-    ret.example_i8() = val.GetInt();
-  }
-
+    ret.example_i8() = JsonParseI8(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_i16");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    // TODO bounds check
-    ret.example_i16() = val.GetInt();
-  }
-
+    ret.example_i16() = JsonParseI16(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_i32");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    ret.example_i32() = val.GetInt();
-  }
-
+    ret.example_i32() = JsonParseI32(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_i64");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt64()) {
-    ret.example_i64() = val.GetInt64();
-  }
-
+    ret.example_i64() = JsonParseI64(val);
   }
   } 
   return ret;
 }
 
 
-simple_values::StructB JsonParseStructB(const rapidjson::Value& obj) {
+simple_values::StructB JsonParseStructB(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::StructB ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_bool");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsBool()) {
-    ret.example_bool() = val.GetBool();
-  }
-
+    ret.example_bool() = JsonParseBool(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_char");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsString()) {
-    std::string str = val.GetString();
-    ret.example_char() = GetCharValue(str);
-  }
-
+    ret.example_char() = JsonParseChar(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_str");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsString()) {
-    ret.example_str() = val.GetString();
-  }
-
+    ret.example_str() = JsonParseStr(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_f32");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsDouble()) {
-    ret.example_f32() = (float)val.GetDouble();
-  }
-
+    ret.example_f32() = JsonParseF32(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_f64");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsDouble()) {
-    ret.example_f64() = val.GetDouble();
-  }
-
+    ret.example_f64() = JsonParseF64(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_u8");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsUint()) {
-    // TODO bounds check.
-    ret.example_u8() = val.GetUint();
-  }
-
+    ret.example_u8() = JsonParseU8(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_u16");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsUint()) {
-    // TODO bounds check.
-    ret.example_u16() = val.GetUint();
-  }
-
+    ret.example_u16() = JsonParseU16(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_u32");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsUint()) {
-    ret.example_u32() = val.GetUint();
-  }
-
+    ret.example_u32() = JsonParseU32(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_u64");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsUint64()) {
-    ret.example_u64() = val.GetUint64();
-  }
-
+    ret.example_u64() = JsonParseU64(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_i8");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    // TODO bounds check
-    ret.example_i8() = val.GetInt();
-  }
-
+    ret.example_i8() = JsonParseI8(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_i16");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    // TODO bounds check
-    ret.example_i16() = val.GetInt();
-  }
-
+    ret.example_i16() = JsonParseI16(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_i32");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    ret.example_i32() = val.GetInt();
-  }
-
+    ret.example_i32() = JsonParseI32(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("example_i64");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt64()) {
-    ret.example_i64() = val.GetInt64();
-  }
-
+    ret.example_i64() = JsonParseI64(val);
   }
   } 
   return ret;
 }
 
 
-simple_values::StructC JsonParseStructC(const rapidjson::Value& obj) {
+simple_values::StructC JsonParseStructC(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::StructC ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("asdf");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    ret.asdf() = JsonParseStructA(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      ret.asdf() = JsonParseStructA(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("zxcv");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    ret.zxcv() = val.GetInt();
-  }
-
+    ret.zxcv() = JsonParseI32(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("jkl");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    ret.jkl() = val.GetInt();
-  }
-
+    ret.jkl() = JsonParseI32(val);
   }
   } 
   return ret;
 }
 
 
-simple_values::VariantA JsonParseVariantA(const rapidjson::Value& obj) {
+simple_values::VariantA JsonParseVariantA(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::VariantA ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("a");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsBool()) {
-    ret.a() = val.GetBool();
-  }
-
+    ret.a() = JsonParseBool(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("b");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    // TODO bounds check
-    ret.b() = val.GetInt();
-  }
-
+    ret.b() = JsonParseI8(val);
   }
   } 
   return ret;
 }
 
 
-simple_values::VariantB JsonParseVariantB(const rapidjson::Value& obj) {
+simple_values::VariantB JsonParseVariantB(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::VariantB ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("a");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsBool()) {
-    ret.a() = val.GetBool();
-  }
-
+    ret.a() = JsonParseBool(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("b");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsString()) {
-    std::string str = val.GetString();
-    ret.b() = GetCharValue(str);
-  }
-
+    ret.b() = JsonParseChar(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("c");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsString()) {
-    ret.c() = val.GetString();
-  }
-
+    ret.c() = JsonParseStr(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("d");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsUint()) {
-    // TODO bounds check.
-    ret.d() = val.GetUint();
-  }
-
+    ret.d() = JsonParseU8(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("e");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsUint()) {
-    // TODO bounds check.
-    ret.e() = val.GetUint();
-  }
-
+    ret.e() = JsonParseU16(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("f");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsUint()) {
-    ret.f() = val.GetUint();
-  }
-
+    ret.f() = JsonParseU32(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("g");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsUint64()) {
-    ret.g() = val.GetUint64();
-  }
-
+    ret.g() = JsonParseU64(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("h");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    // TODO bounds check
-    ret.h() = val.GetInt();
-  }
-
+    ret.h() = JsonParseI8(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("i");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    // TODO bounds check
-    ret.i() = val.GetInt();
-  }
-
+    ret.i() = JsonParseI16(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("j");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    ret.j() = val.GetInt();
-  }
-
+    ret.j() = JsonParseI32(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("k");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt64()) {
-    ret.k() = val.GetInt64();
-  }
-
+    ret.k() = JsonParseI64(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("sa");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    ret.sa() = JsonParseStructA(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      ret.sa() = JsonParseStructA(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("sb");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    ret.sb() = JsonParseStructB(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      ret.sb() = JsonParseStructB(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("sc");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    ret.sc() = JsonParseStructC(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      ret.sc() = JsonParseStructC(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("va");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsArray()) {
-    for (const auto& val : val.GetArray()) {
-      // What I really think I want here is to call JsonParseValue
-      // with an argument that is a computed assignment target.
-      // Eg. ret.va() computed from a template function.
-//       ret.va().emplace_back(std::move(
-//       ));
+    if (val.IsArray()) {
+      
+auto json_parse_array_lambda = [](auto& value_type, const rapidjson::Value& src) {
+  using VectorType = std::remove_reference_t<decltype(value_type)>;
+  VectorType vec;
+  for (rapidjson::SizeType ii = 0; ii < src.Size(); ii++) {
+    vec.push_back(JsonParseU8(src[ii]));
+  }
+  return vec;
+};
+
+      ret.va() = json_parse_array_lambda(ret.va(), val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'array'.");
     }
   }
-
-  }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("vara");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    // TODO validate only one.
-    ret.vara() = JsonParseVariantA(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      if (val.MemberCount() > 1) {
+        throw std::runtime_error("JSON format error: one member expected for variant type; found " + std::to_string(val.MemberCount()));
+      }
+      ret.vara() = JsonParseVariantA(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("mapa");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  // TODO map
-  
+    if (val.IsObject()) {
+      
+auto json_parse_map_lambda = [](auto& value_type, const rapidjson::Value& src) {
+  using MapType = std::remove_reference_t<decltype(value_type)>;
+  MapType map;
+  using KeyType = typename MapType::key_type;
+  using ValType = typename MapType::mapped_type;
+  using PairType = std::pair<const KeyType, ValType>;
+  for (auto& m : src.GetObject()) {
+    KeyType key = JsonParseI32(m.name);
 
+    
+    ValType map_val;
+    if (m.value.IsObject()) {
+      if (m.value.MemberCount() > 1) {
+        throw std::runtime_error("JSON format error: one member expected for variant type; found " + std::to_string(m.value.MemberCount()));
+      }
+      map_val = JsonParseVariantB(m.value);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
+
+    map.emplace(std::make_pair(key, std::move(map_val)));
+  }
+  return map;
+};
+
+      ret.mapa() = json_parse_map_lambda(ret.mapa(), val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
+    
   }
   } 
   return ret;
 }
 
 
-simple_values::StructD JsonParseStructD(const rapidjson::Value& obj) {
+simple_values::StructD JsonParseStructD(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::StructD ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("a_struct");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    ret.a_struct() = JsonParseStructA(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      ret.a_struct() = JsonParseStructA(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("b_variant");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    // TODO validate only one.
-    ret.b_variant() = JsonParseVariantA(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      if (val.MemberCount() > 1) {
+        throw std::runtime_error("JSON format error: one member expected for variant type; found " + std::to_string(val.MemberCount()));
+      }
+      ret.b_variant() = JsonParseVariantA(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("c_vec");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsArray()) {
-    for (const auto& val : val.GetArray()) {
-      // What I really think I want here is to call JsonParseValue
-      // with an argument that is a computed assignment target.
-      // Eg. ret.c_vec() computed from a template function.
-//       ret.c_vec().emplace_back(std::move(
-//       ));
+    if (val.IsArray()) {
+      
+auto json_parse_array_lambda = [](auto& value_type, const rapidjson::Value& src) {
+  using VectorType = std::remove_reference_t<decltype(value_type)>;
+  VectorType vec;
+  for (rapidjson::SizeType ii = 0; ii < src.Size(); ii++) {
+    vec.push_back(JsonParseU8(src[ii]));
+  }
+  return vec;
+};
+
+      ret.c_vec() = json_parse_array_lambda(ret.c_vec(), val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'array'.");
     }
   }
-
-  }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("d_map");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  // TODO map
-  
+    if (val.IsObject()) {
+      
+auto json_parse_map_lambda = [](auto& value_type, const rapidjson::Value& src) {
+  using MapType = std::remove_reference_t<decltype(value_type)>;
+  MapType map;
+  using KeyType = typename MapType::key_type;
+  using ValType = typename MapType::mapped_type;
+  using PairType = std::pair<const KeyType, ValType>;
+  for (auto& m : src.GetObject()) {
+    KeyType key = JsonParseI32(m.name);
 
+    
+    ValType map_val;
+    if (m.value.IsObject()) {
+      if (m.value.MemberCount() > 1) {
+        throw std::runtime_error("JSON format error: one member expected for variant type; found " + std::to_string(m.value.MemberCount()));
+      }
+      map_val = JsonParseVariantB(m.value);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
+
+    map.emplace(std::make_pair(key, std::move(map_val)));
+  }
+  return map;
+};
+
+      ret.d_map() = json_parse_map_lambda(ret.d_map(), val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
+    
   }
   } 
   return ret;
 }
 
 
-simple_values::StructE JsonParseStructE(const rapidjson::Value& obj) {
+simple_values::StructE JsonParseStructE(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::StructE ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("inlineStruct");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    ret.inlineStruct() = JsonParseStructE_inlineStructT(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      ret.inlineStruct() = JsonParseStructE_inlineStructT(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("vec_a");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsArray()) {
-    for (const auto& val : val.GetArray()) {
-      // What I really think I want here is to call JsonParseValue
-      // with an argument that is a computed assignment target.
-      // Eg. ret.vec_a() computed from a template function.
-//       ret.vec_a().emplace_back(std::move(
-//       ));
+    if (val.IsArray()) {
+      
+auto json_parse_array_lambda = [](auto& value_type, const rapidjson::Value& src) {
+  using VectorType = std::remove_reference_t<decltype(value_type)>;
+  VectorType vec;
+  for (rapidjson::SizeType ii = 0; ii < src.Size(); ii++) {
+    vec.push_back(JsonParseI32(src[ii]));
+  }
+  return vec;
+};
+
+      ret.vec_a() = json_parse_array_lambda(ret.vec_a(), val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'array'.");
     }
   }
-
-  }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("map_a");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  // TODO map
-  
+    if (val.IsObject()) {
+      
+auto json_parse_map_lambda = [](auto& value_type, const rapidjson::Value& src) {
+  using MapType = std::remove_reference_t<decltype(value_type)>;
+  MapType map;
+  using KeyType = typename MapType::key_type;
+  using ValType = typename MapType::mapped_type;
+  using PairType = std::pair<const KeyType, ValType>;
+  for (auto& m : src.GetObject()) {
+    KeyType key = JsonParseStr(m.name);
 
+    
+    ValType map_val;
+    if (m.value.IsObject()) {
+      map_val = JsonParseStructD(m.value);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
+
+    map.emplace(std::make_pair(key, std::move(map_val)));
+  }
+  return map;
+};
+
+      ret.map_a() = json_parse_map_lambda(ret.map_a(), val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
+    
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("nestedStructField");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    ret.nestedStructField() = JsonParseStructE_NestedStruct(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      ret.nestedStructField() = JsonParseStructE_NestedStruct(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("nestedVariantField");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    // TODO validate only one.
-    ret.nestedVariantField() = JsonParseStructE_NestedVariant(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      if (val.MemberCount() > 1) {
+        throw std::runtime_error("JSON format error: one member expected for variant type; found " + std::to_string(val.MemberCount()));
+      }
+      ret.nestedVariantField() = JsonParseStructE_NestedVariant(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } 
   return ret;
 }
 
-simple_values::StructE::VariantE JsonParseStructE_VariantE(const rapidjson::Value& obj) {
+simple_values::StructE::VariantE JsonParseStructE_VariantE(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::StructE::VariantE ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("va");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    ret.va() = val.GetInt();
-  }
-
+    ret.va() = JsonParseI32(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("vb");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsString()) {
-    ret.vb() = val.GetString();
-  }
-
+    ret.vb() = JsonParseStr(val);
   }
   } 
   return ret;
 }
 
 
-simple_values::StructE::NestedStruct JsonParseStructE_NestedStruct(const rapidjson::Value& obj) {
+simple_values::StructE::NestedStruct JsonParseStructE_NestedStruct(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::StructE::NestedStruct ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("a");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    ret.a() = val.GetInt();
-  }
-
+    ret.a() = JsonParseI32(val);
   }
   } 
   return ret;
 }
 
 
-simple_values::StructE::NestedVariant JsonParseStructE_NestedVariant(const rapidjson::Value& obj) {
+simple_values::StructE::NestedVariant JsonParseStructE_NestedVariant(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::StructE::NestedVariant ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("a");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt64()) {
-    ret.a() = val.GetInt64();
-  }
-
+    ret.a() = JsonParseI64(val);
   }
   } 
   return ret;
 }
 
 
-simple_values::StructE::inlineStructT JsonParseStructE_inlineStructT(const rapidjson::Value& obj) {
+simple_values::StructE::inlineStructT JsonParseStructE_inlineStructT(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::StructE::inlineStructT ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("a");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    ret.a() = val.GetInt();
-  }
-
+    ret.a() = JsonParseI32(val);
   }
   } 
   return ret;
@@ -919,189 +1000,257 @@ simple_values::StructE::inlineStructT JsonParseStructE_inlineStructT(const rapid
 
 
 
-simple_values::VariantC JsonParseVariantC(const rapidjson::Value& obj) {
+simple_values::VariantC JsonParseVariantC(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::VariantC ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("inlineStruct");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    ret.inlineStruct() = JsonParseVariantC_inlineStructT(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      ret.inlineStruct() = JsonParseVariantC_inlineStructT(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("VariantF");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    // TODO validate only one.
-    ret.VariantF() = JsonParseVariantC_VariantFT(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      if (val.MemberCount() > 1) {
+        throw std::runtime_error("JSON format error: one member expected for variant type; found " + std::to_string(val.MemberCount()));
+      }
+      ret.VariantF() = JsonParseVariantC_VariantFT(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("vec_a");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsArray()) {
-    for (const auto& val : val.GetArray()) {
-      // What I really think I want here is to call JsonParseValue
-      // with an argument that is a computed assignment target.
-      // Eg. ret.vec_a() computed from a template function.
-//       ret.vec_a().emplace_back(std::move(
-//       ));
+    if (val.IsArray()) {
+      
+auto json_parse_array_lambda = [](auto& value_type, const rapidjson::Value& src) {
+  using VectorType = std::remove_reference_t<decltype(value_type)>;
+  VectorType vec;
+  for (rapidjson::SizeType ii = 0; ii < src.Size(); ii++) {
+    vec.push_back(JsonParseI32(src[ii]));
+  }
+  return vec;
+};
+
+      ret.vec_a() = json_parse_array_lambda(ret.vec_a(), val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'array'.");
     }
   }
-
-  }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("map_a");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  // TODO map
-  
+    if (val.IsObject()) {
+      
+auto json_parse_map_lambda = [](auto& value_type, const rapidjson::Value& src) {
+  using MapType = std::remove_reference_t<decltype(value_type)>;
+  MapType map;
+  using KeyType = typename MapType::key_type;
+  using ValType = typename MapType::mapped_type;
+  using PairType = std::pair<const KeyType, ValType>;
+  for (auto& m : src.GetObject()) {
+    KeyType key = JsonParseStr(m.name);
 
+    
+    ValType map_val;
+    if (m.value.IsObject()) {
+      map_val = JsonParseStructD(m.value);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
+
+    map.emplace(std::make_pair(key, std::move(map_val)));
+  }
+  return map;
+};
+
+      ret.map_a() = json_parse_map_lambda(ret.map_a(), val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
+    
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("nestedStructField");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    ret.nestedStructField() = JsonParseVariantC_NestedStruct(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      ret.nestedStructField() = JsonParseVariantC_NestedStruct(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("nestedVariantField");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsObject()) {
-    // TODO validate only one.
-    ret.nestedVariantField() = JsonParseVariantC_NestedVariant(val.GetObject());
-  }
-
+    if (val.IsObject()) {
+      if (val.MemberCount() > 1) {
+        throw std::runtime_error("JSON format error: one member expected for variant type; found " + std::to_string(val.MemberCount()));
+      }
+      ret.nestedVariantField() = JsonParseVariantC_NestedVariant(val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("map_b");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  // TODO map
-  
+    if (val.IsObject()) {
+      
+auto json_parse_map_lambda = [](auto& value_type, const rapidjson::Value& src) {
+  using MapType = std::remove_reference_t<decltype(value_type)>;
+  MapType map;
+  using KeyType = typename MapType::key_type;
+  using ValType = typename MapType::mapped_type;
+  using PairType = std::pair<const KeyType, ValType>;
+  for (auto& m : src.GetObject()) {
+    KeyType key = JsonParseI32(m.name);
 
+    
+    ValType map_val;
+    if (m.value.IsObject()) {
+      if (m.value.MemberCount() > 1) {
+        throw std::runtime_error("JSON format error: one member expected for variant type; found " + std::to_string(m.value.MemberCount()));
+      }
+      map_val = JsonParseVariantC_NestedVariant(m.value);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
+
+    map.emplace(std::make_pair(key, std::move(map_val)));
+  }
+  return map;
+};
+
+      ret.map_b() = json_parse_map_lambda(ret.map_b(), val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'object'.");
+    }
+    
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("vec_b");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
     
-  
-  if (val.IsArray()) {
-    for (const auto& val : val.GetArray()) {
-      // What I really think I want here is to call JsonParseValue
-      // with an argument that is a computed assignment target.
-      // Eg. ret.vec_b() computed from a template function.
-//       ret.vec_b().emplace_back(std::move(
-//       ));
+    if (val.IsArray()) {
+      
+auto json_parse_array_lambda = [](auto& value_type, const rapidjson::Value& src) {
+  using VectorType = std::remove_reference_t<decltype(value_type)>;
+  VectorType vec;
+  for (rapidjson::SizeType ii = 0; ii < src.Size(); ii++) {
+    vec.push_back(JsonParseI32(src[ii]));
+  }
+  return vec;
+};
+
+      ret.vec_b() = json_parse_array_lambda(ret.vec_b(), val);
+    } else {
+      throw std::runtime_error("JSON format error: expected 'array'.");
     }
   }
-
-  }
   } 
   return ret;
 }
 
-simple_values::VariantC::NestedStruct JsonParseVariantC_NestedStruct(const rapidjson::Value& obj) {
+simple_values::VariantC::NestedStruct JsonParseVariantC_NestedStruct(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::VariantC::NestedStruct ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("a");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    ret.a() = val.GetInt();
-  }
-
+    ret.a() = JsonParseI32(val);
   }
   } 
   return ret;
 }
 
 
-simple_values::VariantC::NestedVariant JsonParseVariantC_NestedVariant(const rapidjson::Value& obj) {
+simple_values::VariantC::NestedVariant JsonParseVariantC_NestedVariant(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::VariantC::NestedVariant ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("a");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt64()) {
-    ret.a() = val.GetInt64();
-  }
-
+    ret.a() = JsonParseI64(val);
   }
   } 
   return ret;
 }
 
 
-simple_values::VariantC::inlineStructT JsonParseVariantC_inlineStructT(const rapidjson::Value& obj) {
+simple_values::VariantC::inlineStructT JsonParseVariantC_inlineStructT(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::VariantC::inlineStructT ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("a");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    ret.a() = val.GetInt();
-  }
-
+    ret.a() = JsonParseI32(val);
   }
   } 
   return ret;
 }
 
 
-simple_values::VariantC::VariantFT JsonParseVariantC_VariantFT(const rapidjson::Value& obj) {
+simple_values::VariantC::VariantFT JsonParseVariantC_VariantFT(const rapidjson::Value& val) {
+  if (!val.IsObject()) {
+    throw std::runtime_error("JSON format error: expected 'object'.");
+  }
   simple_values::VariantC::VariantFT ret;
   {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("va");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsInt()) {
-    ret.va() = val.GetInt();
-  }
-
+    ret.va() = JsonParseI32(val);
   }
   } {
+  auto obj = val.GetObject();
   rapidjson::Value::ConstMemberIterator iter = obj.FindMember("vb");
   if (iter != obj.MemberEnd()) {
     auto& val = iter->value;
-    
-  
-  if (val.IsString()) {
-    ret.vb() = val.GetString();
-  }
-
+    ret.vb() = JsonParseStr(val);
   }
   } 
   return ret;
