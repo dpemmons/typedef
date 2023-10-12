@@ -34,50 +34,20 @@ struct SomeStruct {
 }
     )");
   REQUIRE_NO_PARSE_ERROR(parser.Parse());
-  // TODO: finish these...
-  // REQUIRE(parsed_file->mod->GetMap("SomeBoolMap"));
-  // REQUIRE(parsed_file->mod->GetMap("SomeBoolMap")->key_type->IsBool());
-  // REQUIRE(parsed_file->mod->GetMap("SomeBoolMap")->value_type->IsStr());
+  auto* ctx = FindType(parser.GetCompilationUnitContext(), "SomeStruct");
+  REQUIRE(IsBool(GetTypeArgument(GetTypeAnnotation(FindField(ctx, "some_bool_map")))));
+  REQUIRE(IsStr(GetTypeArgument(GetTypeAnnotation(FindField(ctx, "some_bool_map")), 1)));
 
-  // REQUIRE(parsed_file->mod->GetMap("SomeCharMap"));
-  // REQUIRE(parsed_file->mod->GetMap("SomeCharMap")->key_type->IsChar());
-  // REQUIRE(parsed_file->mod->GetMap("SomeCharMap")->value_type->IsStr());
-
-  // REQUIRE(parsed_file->mod->GetMap("SomeU8Map"));
-  // REQUIRE(parsed_file->mod->GetMap("SomeU8Map")->key_type->IsU8());
-  // REQUIRE(parsed_file->mod->GetMap("SomeU8Map")->value_type->IsStr());
-
-  // REQUIRE(parsed_file->mod->GetMap("SomeU16Map"));
-  // REQUIRE(parsed_file->mod->GetMap("SomeU16Map")->key_type->IsU16());
-  // REQUIRE(parsed_file->mod->GetMap("SomeU16Map")->value_type->IsStr());
-
-  // REQUIRE(parsed_file->mod->GetMap("SomeU32Map"));
-  // REQUIRE(parsed_file->mod->GetMap("SomeU32Map")->key_type->IsU32());
-  // REQUIRE(parsed_file->mod->GetMap("SomeU32Map")->value_type->IsStr());
-
-  // REQUIRE(parsed_file->mod->GetMap("SomeU64Map"));
-  // REQUIRE(parsed_file->mod->GetMap("SomeU64Map")->key_type->IsU64());
-  // REQUIRE(parsed_file->mod->GetMap("SomeU64Map")->value_type->IsStr());
-
-  // REQUIRE(parsed_file->mod->GetMap("SomeI8Map"));
-  // REQUIRE(parsed_file->mod->GetMap("SomeI8Map")->key_type->IsI8());
-  // REQUIRE(parsed_file->mod->GetMap("SomeI8Map")->value_type->IsStr());
-
-  // REQUIRE(parsed_file->mod->GetMap("SomeI16Map"));
-  // REQUIRE(parsed_file->mod->GetMap("SomeI16Map")->key_type->IsI16());
-  // REQUIRE(parsed_file->mod->GetMap("SomeI16Map")->value_type->IsStr());
-
-  // REQUIRE(parsed_file->mod->GetMap("SomeI32Map"));
-  // REQUIRE(parsed_file->mod->GetMap("SomeI32Map")->key_type->IsI32());
-  // REQUIRE(parsed_file->mod->GetMap("SomeI32Map")->value_type->IsStr());
-
-  // REQUIRE(parsed_file->mod->GetMap("SomeI64Map"));
-  // REQUIRE(parsed_file->mod->GetMap("SomeI64Map")->key_type->IsI64());
-  // REQUIRE(parsed_file->mod->GetMap("SomeI64Map")->value_type->IsStr());
-
-  // REQUIRE(parsed_file->mod->GetMap("SomeStrMap"));
-  // REQUIRE(parsed_file->mod->GetMap("SomeStrMap")->key_type->IsStr());
-  // REQUIRE(parsed_file->mod->GetMap("SomeStrMap")->value_type->IsStr());
+  REQUIRE(IsChar(GetTypeArgument(GetTypeAnnotation(FindField(ctx, "some_char_map")))));
+  REQUIRE(IsU8(GetTypeArgument(GetTypeAnnotation(FindField(ctx, "some_u8_map")))));
+  REQUIRE(IsU16(GetTypeArgument(GetTypeAnnotation(FindField(ctx, "some_u16_map")))));
+  REQUIRE(IsU32(GetTypeArgument(GetTypeAnnotation(FindField(ctx, "some_u32_map")))));
+  REQUIRE(IsU64(GetTypeArgument(GetTypeAnnotation(FindField(ctx, "some_u64_map")))));
+  REQUIRE(IsI8(GetTypeArgument(GetTypeAnnotation(FindField(ctx, "some_i8_map")))));
+  REQUIRE(IsI16(GetTypeArgument(GetTypeAnnotation(FindField(ctx, "some_i16_map")))));
+  REQUIRE(IsI32(GetTypeArgument(GetTypeAnnotation(FindField(ctx, "some_i32_map")))));
+  REQUIRE(IsI64(GetTypeArgument(GetTypeAnnotation(FindField(ctx, "some_i64_map")))));
+  REQUIRE(IsStr(GetTypeArgument(GetTypeAnnotation(FindField(ctx, "some_str_map")))));
 }
 
 TEST_CASE("Map with invalid type argument count should error", "[map]") {
