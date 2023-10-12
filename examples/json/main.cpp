@@ -88,8 +88,8 @@ StructB ParseStructB(const std::string& str) {
 ///////////////// StructC //////////////////////
 void RenderStructC(std::ostream& os) {
   StructC c;
-  // c.example_map_bool_bool().insert({true, true});
-  // c.example_map_bool_bool().insert({false, false});
+  c.example_map_bool_bool().insert({true, true});
+  c.example_map_bool_bool().insert({false, false});
 
   c.example_map_char_char().insert({'a', 'b'});
   c.example_map_char_char().insert({U'🔥', U'🚒'});
@@ -97,8 +97,8 @@ void RenderStructC(std::ostream& os) {
   c.example_map_str_str().insert({"foo", "bar"});
   c.example_map_str_str().insert({"🔥🔥🔥", "🚒🚒🚒"});
 
-  // c.example_map_int_int().insert({1, 2});
-  // c.example_map_int_int().insert({3, 4});
+  c.example_map_int_int().insert({1, 2});
+  c.example_map_int_int().insert({3, 4});
 
   StructC::NestedStruct sc_nested1;
   sc_nested1.a() = 42;
@@ -116,7 +116,7 @@ void RenderStructC(std::ostream& os) {
   vec2.push_back(5);
   vec2.push_back(6);
   c.example_map_str_vec().insert({"123", std::move(vec1)});
-  c.example_map_str_vec().insert({"456", std::move(vec1)});
+  c.example_map_str_vec().insert({"456", std::move(vec2)});
 
   td::Map<std::string, int32_t> first_map;
   first_map.insert({"universe", 42});

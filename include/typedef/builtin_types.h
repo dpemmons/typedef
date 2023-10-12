@@ -1,12 +1,7 @@
 #ifndef TYPEDEF_BUILTIN_TYPES_H__
 #define TYPEDEF_BUILTIN_TYPES_H__
 
-#include <codecvt>
-#include <iomanip>
-#include <locale>
 #include <map>
-#include <sstream>
-#include <string>
 #include <vector>
 
 namespace td {
