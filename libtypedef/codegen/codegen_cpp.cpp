@@ -46,6 +46,15 @@ std::string GetInlineCppType(TypedefParser::FieldDefinitionContext* ctx) {
   return escape_utf8_to_cpp_identifier(ctx->field_identifier->id + "T");
 }
 
+Vector<std::string> GetQN(TypedefParser::TypeDefinitionContext* type,
+                          bool include_namespace);
+Vector<std::string> GetFQN(TypedefParser::TypeDefinitionContext* type) {
+  return GetQN(type, true);
+}
+Vector<std::string> GetNQN(TypedefParser::TypeDefinitionContext* type) {
+  return GetQN(type, false);
+}
+
 AccessInfo GetAccessInfoForType(TypedefParser::TypeAnnotationContext* ctx) {
   AccessInfo ai;
   if (ReferencesPrimitiveType(ctx)) {
@@ -111,6 +120,12 @@ AccessInfo GetAccessInfoForType(TypedefParser::TypeAnnotationContext* ctx) {
         GetAccessInfoForType(GetTypeArgument(ctx, 0)));
     ai.td_type().vector_t().val() =
         GetAccessInfoForType(GetTypeArgument(ctx, 0));
+    if (ReferencesUserType(GetTypeArgument(ctx, 0))) {
+      ai.td_type().vector_t().fqn() =
+          GetFQN(GetReferencedUserType(GetTypeArgument(ctx, 0)));
+      ai.td_type().vector_t().nqn() =
+          GetNQN(GetReferencedUserType(GetTypeArgument(ctx, 0)));
+    }
   } else if (ReferencesBuiltinMapType(ctx)) {
     ai.cpp_type() = "td::Map";
     ai.access_by().reference() = true;
@@ -120,14 +135,22 @@ AccessInfo GetAccessInfoForType(TypedefParser::TypeAnnotationContext* ctx) {
         GetAccessInfoForType(GetTypeArgument(ctx, 1)));
     ai.td_type().map_t().key() = GetAccessInfoForType(GetTypeArgument(ctx, 0));
     ai.td_type().map_t().val() = GetAccessInfoForType(GetTypeArgument(ctx, 1));
+    if (ReferencesUserType(GetTypeArgument(ctx, 1))) {
+      ai.td_type().map_t().val_fqn() =
+          GetFQN(GetReferencedUserType(GetTypeArgument(ctx, 1)));
+      ai.td_type().map_t().val_nqn() =
+          GetNQN(GetReferencedUserType(GetTypeArgument(ctx, 1)));
+    }
   } else if (ReferencesUserType(ctx)) {
     ai.cpp_type() = escape_utf8_to_cpp_identifier(
         GetReferencedUserType(ctx)->type_identifier->id);
     ai.access_by().pointer() = true;
     if (DefinesStruct(GetReferencedUserType(ctx))) {
-      ai.td_type().struct_t() = true;
+      ai.td_type().struct_t().fqn() = GetFQN(GetReferencedUserType(ctx));
+      ai.td_type().struct_t().nqn() = GetNQN(GetReferencedUserType(ctx));
     } else if (DefinesVariant(GetReferencedUserType(ctx))) {
-      ai.td_type().variant_t() = true;
+      ai.td_type().variant_t().fqn() = GetFQN(GetReferencedUserType(ctx));
+      ai.td_type().variant_t().nqn() = GetNQN(GetReferencedUserType(ctx));
     } else {
       throw_logic_error("invalid state");
     }
@@ -143,9 +166,11 @@ AccessInfo GetField(TypedefParser::FieldDefinitionContext* field) {
     a.cpp_type() = GetNestedTypeIdentifier(field);
     a.access_by().pointer() = true;
     if (DefinesStruct(GetInlineUserType(field))) {
-      a.td_type().struct_t() = true;
+      a.td_type().struct_t().fqn() = GetFQN(GetInlineUserType(field));
+      a.td_type().struct_t().nqn() = GetNQN(GetInlineUserType(field));
     } else if (DefinesVariant(GetInlineUserType(field))) {
-      a.td_type().variant_t() = true;
+      a.td_type().variant_t().fqn() = GetFQN(GetInlineUserType(field));
+      a.td_type().variant_t().nqn() = GetNQN(GetInlineUserType(field));
     } else {
       throw_logic_error("invalid state");
     }
@@ -251,16 +276,11 @@ TmplExpression GetTemplateExpression(
     TypedefParser::TmplExpressionContext* ctx) {
   TmplExpression e;
   if (ctx->tmplFunctionCall()) {
-    e.call().func() = escape_utf8_to_cpp_identifier(
+    e.call().identifier() = escape_utf8_to_cpp_identifier(
         ctx->tmplFunctionCall()->tmplIdentifier()->id);
     for (TypedefParser::TmplExpressionContext* expr :
          ctx->tmplFunctionCall()->tmplExpression()) {
-      if (expr->tmplValueReferencePath()) {
-        e.call().args().emplace_back(
-            GetTemplateValueDereference(expr->tmplValueReferencePath()));
-      } else {
-        throw_logic_error("non tmplValueReferencePath not yet supported");
-      }
+      e.call().args().emplace_back(GetTemplateExpression(expr));
     }
   } else if (ctx->tmplValueReferencePath()) {
     e.val_ref() = GetTemplateValueDereference(ctx->tmplValueReferencePath());
