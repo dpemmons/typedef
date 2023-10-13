@@ -53,20 +53,20 @@ void RenderStructB(std::ostream& os) {
   nested2.a() = 420;
   b.example_vec_nested_struct().push_back(std::move(nested2));
 
-  td::Vector<int32_t> vec1;
+  std::vector<int32_t> vec1;
   vec1.push_back(1);
   vec1.push_back(2);
   vec1.push_back(3);
-  td::Vector<int32_t> vec2;
+  std::vector<int32_t> vec2;
   vec2.push_back(4);
   vec2.push_back(5);
   vec2.push_back(6);
   b.example_vec_vec_int().push_back(std::move(vec1));
   b.example_vec_vec_int().push_back(std::move(vec2));
 
-  td::Map<std::string, int32_t> first_map;
+  std::map<std::string, int32_t> first_map;
   first_map.insert({"universe", 42});
-  td::Map<std::string, int32_t> second_map;
+  std::map<std::string, int32_t> second_map;
   second_map.insert({"green", 420});
   b.example_vec_map_str_int().push_back(std::move(first_map));
   b.example_vec_map_str_int().push_back(std::move(second_map));
@@ -107,20 +107,20 @@ void RenderStructC(std::ostream& os) {
   c.example_map_str_nested_struct().insert({"universe", std::move(sc_nested1)});
   c.example_map_str_nested_struct().insert({"green", std::move(sc_nested2)});
 
-  td::Vector<int32_t> vec1;
+  std::vector<int32_t> vec1;
   vec1.push_back(1);
   vec1.push_back(2);
   vec1.push_back(3);
-  td::Vector<int32_t> vec2;
+  std::vector<int32_t> vec2;
   vec2.push_back(4);
   vec2.push_back(5);
   vec2.push_back(6);
   c.example_map_str_vec().insert({"123", std::move(vec1)});
   c.example_map_str_vec().insert({"456", std::move(vec2)});
 
-  td::Map<std::string, int32_t> first_map;
+  std::map<std::string, int32_t> first_map;
   first_map.insert({"universe", 42});
-  td::Map<std::string, int32_t> second_map;
+  std::map<std::string, int32_t> second_map;
   second_map.insert({"green", 420});
 
   c.example_map_str_map().insert({"first", std::move(first_map)});

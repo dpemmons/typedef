@@ -3,9 +3,11 @@
 #define JSON_DEMO_TD_CPP_H__
 
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <string>
 #include <variant>
+#include <vector>
 #include <ostream>
 
 #include <typedef/builtin_types.h>
@@ -761,98 +763,98 @@ class NestedStruct {
 
   
   
-  void set_example_vec_bool(td::Vector<bool>&& val) {
+  void set_example_vec_bool(std::vector<bool>&& val) {
     example_vec_bool_ = std::move(val);
   }
-  td::Vector<bool>& example_vec_bool() {
+  std::vector<bool>& example_vec_bool() {
     return example_vec_bool_;
   }
-  const td::Vector<bool>& example_vec_bool() const {
+  const std::vector<bool>& example_vec_bool() const {
     return example_vec_bool_;
   }
   
   
   
-  void set_example_vec_char(td::Vector<char32_t>&& val) {
+  void set_example_vec_char(std::vector<char32_t>&& val) {
     example_vec_char_ = std::move(val);
   }
-  td::Vector<char32_t>& example_vec_char() {
+  std::vector<char32_t>& example_vec_char() {
     return example_vec_char_;
   }
-  const td::Vector<char32_t>& example_vec_char() const {
+  const std::vector<char32_t>& example_vec_char() const {
     return example_vec_char_;
   }
   
   
   
-  void set_example_vec_str(td::Vector<std::string>&& val) {
+  void set_example_vec_str(std::vector<std::string>&& val) {
     example_vec_str_ = std::move(val);
   }
-  td::Vector<std::string>& example_vec_str() {
+  std::vector<std::string>& example_vec_str() {
     return example_vec_str_;
   }
-  const td::Vector<std::string>& example_vec_str() const {
+  const std::vector<std::string>& example_vec_str() const {
     return example_vec_str_;
   }
   
   
   
-  void set_example_vec_int(td::Vector<std::int32_t>&& val) {
+  void set_example_vec_int(std::vector<std::int32_t>&& val) {
     example_vec_int_ = std::move(val);
   }
-  td::Vector<std::int32_t>& example_vec_int() {
+  std::vector<std::int32_t>& example_vec_int() {
     return example_vec_int_;
   }
-  const td::Vector<std::int32_t>& example_vec_int() const {
+  const std::vector<std::int32_t>& example_vec_int() const {
     return example_vec_int_;
   }
   
   
   
-  void set_example_vec_nested_struct(td::Vector<NestedStruct>&& val) {
+  void set_example_vec_nested_struct(std::vector<NestedStruct>&& val) {
     example_vec_nested_struct_ = std::move(val);
   }
-  td::Vector<NestedStruct>& example_vec_nested_struct() {
+  std::vector<NestedStruct>& example_vec_nested_struct() {
     return example_vec_nested_struct_;
   }
-  const td::Vector<NestedStruct>& example_vec_nested_struct() const {
+  const std::vector<NestedStruct>& example_vec_nested_struct() const {
     return example_vec_nested_struct_;
   }
   
   
   
-  void set_example_vec_vec_int(td::Vector<td::Vector<std::int32_t>>&& val) {
+  void set_example_vec_vec_int(std::vector<std::vector<std::int32_t>>&& val) {
     example_vec_vec_int_ = std::move(val);
   }
-  td::Vector<td::Vector<std::int32_t>>& example_vec_vec_int() {
+  std::vector<std::vector<std::int32_t>>& example_vec_vec_int() {
     return example_vec_vec_int_;
   }
-  const td::Vector<td::Vector<std::int32_t>>& example_vec_vec_int() const {
+  const std::vector<std::vector<std::int32_t>>& example_vec_vec_int() const {
     return example_vec_vec_int_;
   }
   
   
   
-  void set_example_vec_map_str_int(td::Vector<td::Map<std::string, std::int32_t>>&& val) {
+  void set_example_vec_map_str_int(std::vector<std::map<std::string, std::int32_t>>&& val) {
     example_vec_map_str_int_ = std::move(val);
   }
-  td::Vector<td::Map<std::string, std::int32_t>>& example_vec_map_str_int() {
+  std::vector<std::map<std::string, std::int32_t>>& example_vec_map_str_int() {
     return example_vec_map_str_int_;
   }
-  const td::Vector<td::Map<std::string, std::int32_t>>& example_vec_map_str_int() const {
+  const std::vector<std::map<std::string, std::int32_t>>& example_vec_map_str_int() const {
     return example_vec_map_str_int_;
   }
   
   
 
  private:
-  td::Vector<bool> example_vec_bool_;
-  td::Vector<char32_t> example_vec_char_;
-  td::Vector<std::string> example_vec_str_;
-  td::Vector<std::int32_t> example_vec_int_;
-  td::Vector<NestedStruct> example_vec_nested_struct_;
-  td::Vector<td::Vector<std::int32_t>> example_vec_vec_int_;
-  td::Vector<td::Map<std::string, std::int32_t>> example_vec_map_str_int_;
+  std::vector<bool> example_vec_bool_;
+  std::vector<char32_t> example_vec_char_;
+  std::vector<std::string> example_vec_str_;
+  std::vector<std::int32_t> example_vec_int_;
+  std::vector<NestedStruct> example_vec_nested_struct_;
+  std::vector<std::vector<std::int32_t>> example_vec_vec_int_;
+  std::vector<std::map<std::string, std::int32_t>> example_vec_map_str_int_;
   
 }; // class StructB
 
@@ -923,98 +925,98 @@ class NestedStruct {
 
   
   
-  void set_example_map_bool_bool(td::Map<bool, bool>&& val) {
+  void set_example_map_bool_bool(std::map<bool, bool>&& val) {
     example_map_bool_bool_ = std::move(val);
   }
-  td::Map<bool, bool>& example_map_bool_bool() {
+  std::map<bool, bool>& example_map_bool_bool() {
     return example_map_bool_bool_;
   }
-  const td::Map<bool, bool>& example_map_bool_bool() const {
+  const std::map<bool, bool>& example_map_bool_bool() const {
     return example_map_bool_bool_;
   }
   
   
   
-  void set_example_map_char_char(td::Map<char32_t, char32_t>&& val) {
+  void set_example_map_char_char(std::map<char32_t, char32_t>&& val) {
     example_map_char_char_ = std::move(val);
   }
-  td::Map<char32_t, char32_t>& example_map_char_char() {
+  std::map<char32_t, char32_t>& example_map_char_char() {
     return example_map_char_char_;
   }
-  const td::Map<char32_t, char32_t>& example_map_char_char() const {
+  const std::map<char32_t, char32_t>& example_map_char_char() const {
     return example_map_char_char_;
   }
   
   
   
-  void set_example_map_str_str(td::Map<std::string, std::string>&& val) {
+  void set_example_map_str_str(std::map<std::string, std::string>&& val) {
     example_map_str_str_ = std::move(val);
   }
-  td::Map<std::string, std::string>& example_map_str_str() {
+  std::map<std::string, std::string>& example_map_str_str() {
     return example_map_str_str_;
   }
-  const td::Map<std::string, std::string>& example_map_str_str() const {
+  const std::map<std::string, std::string>& example_map_str_str() const {
     return example_map_str_str_;
   }
   
   
   
-  void set_example_map_int_int(td::Map<std::int32_t, std::int32_t>&& val) {
+  void set_example_map_int_int(std::map<std::int32_t, std::int32_t>&& val) {
     example_map_int_int_ = std::move(val);
   }
-  td::Map<std::int32_t, std::int32_t>& example_map_int_int() {
+  std::map<std::int32_t, std::int32_t>& example_map_int_int() {
     return example_map_int_int_;
   }
-  const td::Map<std::int32_t, std::int32_t>& example_map_int_int() const {
+  const std::map<std::int32_t, std::int32_t>& example_map_int_int() const {
     return example_map_int_int_;
   }
   
   
   
-  void set_example_map_str_nested_struct(td::Map<std::string, NestedStruct>&& val) {
+  void set_example_map_str_nested_struct(std::map<std::string, NestedStruct>&& val) {
     example_map_str_nested_struct_ = std::move(val);
   }
-  td::Map<std::string, NestedStruct>& example_map_str_nested_struct() {
+  std::map<std::string, NestedStruct>& example_map_str_nested_struct() {
     return example_map_str_nested_struct_;
   }
-  const td::Map<std::string, NestedStruct>& example_map_str_nested_struct() const {
+  const std::map<std::string, NestedStruct>& example_map_str_nested_struct() const {
     return example_map_str_nested_struct_;
   }
   
   
   
-  void set_example_map_str_vec(td::Map<std::string, td::Vector<std::int32_t>>&& val) {
+  void set_example_map_str_vec(std::map<std::string, std::vector<std::int32_t>>&& val) {
     example_map_str_vec_ = std::move(val);
   }
-  td::Map<std::string, td::Vector<std::int32_t>>& example_map_str_vec() {
+  std::map<std::string, std::vector<std::int32_t>>& example_map_str_vec() {
     return example_map_str_vec_;
   }
-  const td::Map<std::string, td::Vector<std::int32_t>>& example_map_str_vec() const {
+  const std::map<std::string, std::vector<std::int32_t>>& example_map_str_vec() const {
     return example_map_str_vec_;
   }
   
   
   
-  void set_example_map_str_map(td::Map<std::string, td::Map<std::string, std::int32_t>>&& val) {
+  void set_example_map_str_map(std::map<std::string, std::map<std::string, std::int32_t>>&& val) {
     example_map_str_map_ = std::move(val);
   }
-  td::Map<std::string, td::Map<std::string, std::int32_t>>& example_map_str_map() {
+  std::map<std::string, std::map<std::string, std::int32_t>>& example_map_str_map() {
     return example_map_str_map_;
   }
-  const td::Map<std::string, td::Map<std::string, std::int32_t>>& example_map_str_map() const {
+  const std::map<std::string, std::map<std::string, std::int32_t>>& example_map_str_map() const {
     return example_map_str_map_;
   }
   
   
 
  private:
-  td::Map<bool, bool> example_map_bool_bool_;
-  td::Map<char32_t, char32_t> example_map_char_char_;
-  td::Map<std::string, std::string> example_map_str_str_;
-  td::Map<std::int32_t, std::int32_t> example_map_int_int_;
-  td::Map<std::string, NestedStruct> example_map_str_nested_struct_;
-  td::Map<std::string, td::Vector<std::int32_t>> example_map_str_vec_;
-  td::Map<std::string, td::Map<std::string, std::int32_t>> example_map_str_map_;
+  std::map<bool, bool> example_map_bool_bool_;
+  std::map<char32_t, char32_t> example_map_char_char_;
+  std::map<std::string, std::string> example_map_str_str_;
+  std::map<std::int32_t, std::int32_t> example_map_int_int_;
+  std::map<std::string, NestedStruct> example_map_str_nested_struct_;
+  std::map<std::string, std::vector<std::int32_t>> example_map_str_vec_;
+  std::map<std::string, std::map<std::string, std::int32_t>> example_map_str_map_;
   
 }; // class StructC
 

@@ -3,9 +3,11 @@
 #define SIMPLE_VALUES_TD_CPP_H__
 
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <string>
 #include <variant>
+#include <vector>
 #include <ostream>
 
 #include <typedef/builtin_types.h>
@@ -1091,17 +1093,17 @@ class VariantB {
     return val_.index() == 15;
   }
   
-  td::Vector<std::uint8_t>& va() {
+  std::vector<std::uint8_t>& va() {
     if (!is_va()) {
       tag = Tag::TAG_va;
       val_.emplace<15>();
     }
     return std::get<15>(val_);
   }
-  const td::Vector<std::uint8_t>& va() const {
+  const std::vector<std::uint8_t>& va() const {
     return std::get<15>(val_);
   }
-  void set_va(td::Vector<std::uint8_t>&& val) {
+  void set_va(std::vector<std::uint8_t>&& val) {
     tag = Tag::TAG_va;
     val_.emplace<15>(std::move(val));
   }
@@ -1147,17 +1149,17 @@ class VariantB {
     return val_.index() == 17;
   }
   
-  td::Map<std::int32_t, VariantB>& mapa() {
+  std::map<std::int32_t, VariantB>& mapa() {
     if (!is_mapa()) {
       tag = Tag::TAG_mapa;
       val_.emplace<17>();
     }
     return std::get<17>(val_);
   }
-  const td::Map<std::int32_t, VariantB>& mapa() const {
+  const std::map<std::int32_t, VariantB>& mapa() const {
     return std::get<17>(val_);
   }
-  void set_mapa(td::Map<std::int32_t, VariantB>&& val) {
+  void set_mapa(std::map<std::int32_t, VariantB>&& val) {
     tag = Tag::TAG_mapa;
     val_.emplace<17>(std::move(val));
   }
@@ -1182,9 +1184,9 @@ class VariantB {
   , std::unique_ptr<StructA>
   , std::unique_ptr<StructB>
   , std::unique_ptr<StructC>
-  , td::Vector<std::uint8_t>
+  , std::vector<std::uint8_t>
   , std::unique_ptr<VariantA>
-  , td::Map<std::int32_t, VariantB>
+  , std::map<std::int32_t, VariantB>
   
   > val_;
 
@@ -1297,25 +1299,25 @@ class StructD {
   
   
   
-  void set_c_vec(td::Vector<std::uint8_t>&& val) {
+  void set_c_vec(std::vector<std::uint8_t>&& val) {
     c_vec_ = std::move(val);
   }
-  td::Vector<std::uint8_t>& c_vec() {
+  std::vector<std::uint8_t>& c_vec() {
     return c_vec_;
   }
-  const td::Vector<std::uint8_t>& c_vec() const {
+  const std::vector<std::uint8_t>& c_vec() const {
     return c_vec_;
   }
   
   
   
-  void set_d_map(td::Map<std::int32_t, VariantB>&& val) {
+  void set_d_map(std::map<std::int32_t, VariantB>&& val) {
     d_map_ = std::move(val);
   }
-  td::Map<std::int32_t, VariantB>& d_map() {
+  std::map<std::int32_t, VariantB>& d_map() {
     return d_map_;
   }
-  const td::Map<std::int32_t, VariantB>& d_map() const {
+  const std::map<std::int32_t, VariantB>& d_map() const {
     return d_map_;
   }
   
@@ -1324,8 +1326,8 @@ class StructD {
  private:
   std::unique_ptr<StructA> a_struct_;
   std::unique_ptr<VariantA> b_variant_;
-  td::Vector<std::uint8_t> c_vec_;
-  td::Map<std::int32_t, VariantB> d_map_;
+  std::vector<std::uint8_t> c_vec_;
+  std::map<std::int32_t, VariantB> d_map_;
   
 }; // class StructD
 
@@ -1635,25 +1637,25 @@ class inlineStructT {
   
   
   
-  void set_vec_a(td::Vector<std::int32_t>&& val) {
+  void set_vec_a(std::vector<std::int32_t>&& val) {
     vec_a_ = std::move(val);
   }
-  td::Vector<std::int32_t>& vec_a() {
+  std::vector<std::int32_t>& vec_a() {
     return vec_a_;
   }
-  const td::Vector<std::int32_t>& vec_a() const {
+  const std::vector<std::int32_t>& vec_a() const {
     return vec_a_;
   }
   
   
   
-  void set_map_a(td::Map<std::string, StructD>&& val) {
+  void set_map_a(std::map<std::string, StructD>&& val) {
     map_a_ = std::move(val);
   }
-  td::Map<std::string, StructD>& map_a() {
+  std::map<std::string, StructD>& map_a() {
     return map_a_;
   }
-  const td::Map<std::string, StructD>& map_a() const {
+  const std::map<std::string, StructD>& map_a() const {
     return map_a_;
   }
   
@@ -1745,8 +1747,8 @@ class inlineStructT {
 
  private:
   std::unique_ptr<inlineStructT> inlineStruct_;
-  td::Vector<std::int32_t> vec_a_;
-  td::Map<std::string, StructD> map_a_;
+  std::vector<std::int32_t> vec_a_;
+  std::map<std::string, StructD> map_a_;
   std::unique_ptr<NestedStruct> nestedStructField_;
   std::unique_ptr<NestedVariant> nestedVariantField_;
   
@@ -2109,17 +2111,17 @@ class VariantFT {
     return val_.index() == 3;
   }
   
-  td::Vector<std::int32_t>& vec_a() {
+  std::vector<std::int32_t>& vec_a() {
     if (!is_vec_a()) {
       tag = Tag::TAG_vec_a;
       val_.emplace<3>();
     }
     return std::get<3>(val_);
   }
-  const td::Vector<std::int32_t>& vec_a() const {
+  const std::vector<std::int32_t>& vec_a() const {
     return std::get<3>(val_);
   }
-  void set_vec_a(td::Vector<std::int32_t>&& val) {
+  void set_vec_a(std::vector<std::int32_t>&& val) {
     tag = Tag::TAG_vec_a;
     val_.emplace<3>(std::move(val));
   }
@@ -2128,17 +2130,17 @@ class VariantFT {
     return val_.index() == 4;
   }
   
-  td::Map<std::string, StructD>& map_a() {
+  std::map<std::string, StructD>& map_a() {
     if (!is_map_a()) {
       tag = Tag::TAG_map_a;
       val_.emplace<4>();
     }
     return std::get<4>(val_);
   }
-  const td::Map<std::string, StructD>& map_a() const {
+  const std::map<std::string, StructD>& map_a() const {
     return std::get<4>(val_);
   }
-  void set_map_a(td::Map<std::string, StructD>&& val) {
+  void set_map_a(std::map<std::string, StructD>&& val) {
     tag = Tag::TAG_map_a;
     val_.emplace<4>(std::move(val));
   }
@@ -2221,17 +2223,17 @@ class VariantFT {
     return val_.index() == 7;
   }
   
-  td::Map<std::int32_t, NestedVariant>& map_b() {
+  std::map<std::int32_t, NestedVariant>& map_b() {
     if (!is_map_b()) {
       tag = Tag::TAG_map_b;
       val_.emplace<7>();
     }
     return std::get<7>(val_);
   }
-  const td::Map<std::int32_t, NestedVariant>& map_b() const {
+  const std::map<std::int32_t, NestedVariant>& map_b() const {
     return std::get<7>(val_);
   }
-  void set_map_b(td::Map<std::int32_t, NestedVariant>&& val) {
+  void set_map_b(std::map<std::int32_t, NestedVariant>&& val) {
     tag = Tag::TAG_map_b;
     val_.emplace<7>(std::move(val));
   }
@@ -2240,17 +2242,17 @@ class VariantFT {
     return val_.index() == 8;
   }
   
-  td::Vector<std::int32_t>& vec_b() {
+  std::vector<std::int32_t>& vec_b() {
     if (!is_vec_b()) {
       tag = Tag::TAG_vec_b;
       val_.emplace<8>();
     }
     return std::get<8>(val_);
   }
-  const td::Vector<std::int32_t>& vec_b() const {
+  const std::vector<std::int32_t>& vec_b() const {
     return std::get<8>(val_);
   }
-  void set_vec_b(td::Vector<std::int32_t>&& val) {
+  void set_vec_b(std::vector<std::int32_t>&& val) {
     tag = Tag::TAG_vec_b;
     val_.emplace<8>(std::move(val));
   }
@@ -2263,12 +2265,12 @@ class VariantFT {
     std::monostate
   , std::unique_ptr<inlineStructT>
   , std::unique_ptr<VariantFT>
-  , td::Vector<std::int32_t>
-  , td::Map<std::string, StructD>
+  , std::vector<std::int32_t>
+  , std::map<std::string, StructD>
   , std::unique_ptr<NestedStruct>
   , std::unique_ptr<NestedVariant>
-  , td::Map<std::int32_t, NestedVariant>
-  , td::Vector<std::int32_t>
+  , std::map<std::int32_t, NestedVariant>
+  , std::vector<std::int32_t>
   
   > val_;
 

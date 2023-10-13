@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
   sv.d_struct().jkl() = 6;
   DoSomeVariant(std::cout, sv);
 
-  td::Vector<std::string> v;
+  std::vector<std::string> v;
   v.push_back("one");
   v.push_back("two");
   v.push_back("three");
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
   TestIsEmpty(std::cout, v);
 
-  td::Vector<std::string> emptyvec;
+  std::vector<std::string> emptyvec;
   TestIsEmpty(std::cout, emptyvec);
 
   PrintIndices(std::cout, v);

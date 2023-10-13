@@ -3,9 +3,11 @@
 #define TEMPLATE_EXAMPLE_TD_CPP_H__
 
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <string>
 #include <variant>
+#include <vector>
 #include <ostream>
 
 #include <typedef/builtin_types.h>
@@ -209,25 +211,25 @@ class TemplateData {
   
   
   
-  void set_someVec(td::Vector<std::int32_t>&& val) {
+  void set_someVec(std::vector<std::int32_t>&& val) {
     someVec_ = std::move(val);
   }
-  td::Vector<std::int32_t>& someVec() {
+  std::vector<std::int32_t>& someVec() {
     return someVec_;
   }
-  const td::Vector<std::int32_t>& someVec() const {
+  const std::vector<std::int32_t>& someVec() const {
     return someVec_;
   }
   
   
   
-  void set_someMap(td::Map<std::string, std::string>&& val) {
+  void set_someMap(std::map<std::string, std::string>&& val) {
     someMap_ = std::move(val);
   }
-  td::Map<std::string, std::string>& someMap() {
+  std::map<std::string, std::string>& someMap() {
     return someMap_;
   }
-  const td::Map<std::string, std::string>& someMap() const {
+  const std::map<std::string, std::string>& someMap() const {
     return someMap_;
   }
   
@@ -280,8 +282,8 @@ class TemplateData {
   bool has_name_ = 0;
   std::string name2_;
   bool has_name2_ = 0;
-  td::Vector<std::int32_t> someVec_;
-  td::Map<std::string, std::string> someMap_;
+  std::vector<std::int32_t> someVec_;
+  std::map<std::string, std::string> someMap_;
   std::unique_ptr<StructC> structC_;
   
 }; // class TemplateData
@@ -461,11 +463,11 @@ void ToJson(std::ostream& os, const SomeVariant& from);
 void PrintStructC(std::ostream& os, const StructC& sc);
 std::string PrintStructC(const StructC& sc);void PrintTemplateData(std::ostream& os, const TemplateData& t);
 std::string PrintTemplateData(const TemplateData& t);void DoSomeVariant(std::ostream& os, const SomeVariant& v);
-std::string DoSomeVariant(const SomeVariant& v);void LoopLogic(std::ostream& os, const td::Vector<std::string>& v);
-std::string LoopLogic(const td::Vector<std::string>& v);void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v);
-std::string BooleanLogic(const td::Vector<std::string>& v);void TestIsEmpty(std::ostream& os, const td::Vector<std::string>& v);
-std::string TestIsEmpty(const td::Vector<std::string>& v);void PrintIndices(std::ostream& os, const td::Vector<std::string>& v);
-std::string PrintIndices(const td::Vector<std::string>& v);void Literal(std::ostream& os);
+std::string DoSomeVariant(const SomeVariant& v);void LoopLogic(std::ostream& os, const std::vector<std::string>& v);
+std::string LoopLogic(const std::vector<std::string>& v);void BooleanLogic(std::ostream& os, const std::vector<std::string>& v);
+std::string BooleanLogic(const std::vector<std::string>& v);void TestIsEmpty(std::ostream& os, const std::vector<std::string>& v);
+std::string TestIsEmpty(const std::vector<std::string>& v);void PrintIndices(std::ostream& os, const std::vector<std::string>& v);
+std::string PrintIndices(const std::vector<std::string>& v);void Literal(std::ostream& os);
 std::string Literal();void PrintTheHellos(std::ostream& os, const std::string& a, const std::string& b);
 std::string PrintTheHellos(const std::string& a, const std::string& b);void SayHi(std::ostream& os);
 std::string SayHi();void ATemplateThatCallsAnotherWithYetOthersAsArguments(std::ostream& os);

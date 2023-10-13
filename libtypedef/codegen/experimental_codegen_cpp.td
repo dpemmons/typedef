@@ -394,9 +394,11 @@ template CppHeader(d: CppData, opt: Options) t"
 #define <d.header_guard>
 
 #include \<cstdint\>
+#include \<map\>
 #include \<memory\>
 #include \<string\>
 #include \<variant\>
+#include \<vector\>
 #include \<ostream\>
 
 #include \<typedef/builtin_types.h\>
@@ -695,7 +697,7 @@ bool GetBoolFromString(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
 
 template CppSrcHelpers() r#"
 template <typename T>
-inline bool IsEmpty(const td::Vector<T>& v) {
+inline bool IsEmpty(const std::vector<T>& v) {
   return v.size() == 0;
 }
 "#

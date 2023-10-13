@@ -18,11 +18,11 @@ using namespace std;
 using namespace td::codegen::cpp;
 
 // Forward declarations
-Vector<TmplItem> GetTemplateItems(
+vector<TmplItem> GetTemplateItems(
     vector<TypedefParser::TmplItemContext*> itm_ctxs);
 UserTypeDeclaration GetTypeDeclaration(
     TypedefParser::TypeDefinitionContext* type);
-Vector<UserTypeDeclaration> GetUserTypeDecls(
+vector<UserTypeDeclaration> GetUserTypeDecls(
     vector<TypedefParser::TypeDefinitionContext*> types);
 
 string HeaderGuard(const filesystem::path& source_filename) {
@@ -46,12 +46,12 @@ std::string GetInlineCppType(TypedefParser::FieldDefinitionContext* ctx) {
   return escape_utf8_to_cpp_identifier(ctx->field_identifier->id + "T");
 }
 
-Vector<std::string> GetQN(TypedefParser::TypeDefinitionContext* type,
+vector<std::string> GetQN(TypedefParser::TypeDefinitionContext* type,
                           bool include_namespace);
-Vector<std::string> GetFQN(TypedefParser::TypeDefinitionContext* type) {
+vector<std::string> GetFQN(TypedefParser::TypeDefinitionContext* type) {
   return GetQN(type, true);
 }
-Vector<std::string> GetNQN(TypedefParser::TypeDefinitionContext* type) {
+vector<std::string> GetNQN(TypedefParser::TypeDefinitionContext* type) {
   return GetQN(type, false);
 }
 
@@ -114,7 +114,7 @@ AccessInfo GetAccessInfoForType(TypedefParser::TypeAnnotationContext* ctx) {
       throw_logic_error("invalid state");
     }
   } else if (ReferencesBuiltinVectorType(ctx)) {
-    ai.cpp_type() = "td::Vector";
+    ai.cpp_type() = "std::vector";
     ai.access_by().reference() = true;
     ai.type_arguments().emplace_back(
         GetAccessInfoForType(GetTypeArgument(ctx, 0)));
@@ -127,7 +127,7 @@ AccessInfo GetAccessInfoForType(TypedefParser::TypeAnnotationContext* ctx) {
           GetNQN(GetReferencedUserType(GetTypeArgument(ctx, 0)));
     }
   } else if (ReferencesBuiltinMapType(ctx)) {
-    ai.cpp_type() = "td::Map";
+    ai.cpp_type() = "std::map";
     ai.access_by().reference() = true;
     ai.type_arguments().emplace_back(
         GetAccessInfoForType(GetTypeArgument(ctx, 0)));
@@ -181,9 +181,9 @@ AccessInfo GetField(TypedefParser::FieldDefinitionContext* field) {
   return a;
 }
 
-Vector<std::string> GetQN(TypedefParser::TypeDefinitionContext* type,
+vector<std::string> GetQN(TypedefParser::TypeDefinitionContext* type,
                           bool include_namespace) {
-  Vector<std::string> fqn;
+  vector<std::string> fqn;
   for (TypedefParser::IdentifierCtx& id_ctx : type->ns_ctx) {
     // First resolve the module namespaces
     if (auto* c = GetCompilationUnitContext(id_ctx)) {
@@ -252,9 +252,9 @@ UserTypeDeclaration GetTypeDeclaration(
   return decl;
 }
 
-Vector<UserTypeDeclaration> GetUserTypeDecls(
+vector<UserTypeDeclaration> GetUserTypeDecls(
     vector<TypedefParser::TypeDefinitionContext*> types) {
-  Vector<UserTypeDeclaration> utds;
+  vector<UserTypeDeclaration> utds;
   for (auto* type : types) {
     utds.emplace_back(GetTypeDeclaration(type));
   }
@@ -394,9 +394,9 @@ std::string escapeStringForCpp(const std::string& input) {
   return oss.str();
 }
 
-Vector<TmplItem> GetTemplateItems(
+vector<TmplItem> GetTemplateItems(
     vector<TypedefParser::TmplItemContext*> itm_ctxs) {
-  Vector<TmplItem> tis;
+  vector<TmplItem> tis;
   for (TypedefParser::TmplItemContext* itm_ctx : itm_ctxs) {
     TmplItem ti;
     if (itm_ctx->tmplText()) {
@@ -436,9 +436,9 @@ TmplFunction GetTemplateFunc(TypedefParser::TmplDefinitionContext* tmpl_def) {
   return t;
 }
 
-Vector<TmplFunction> GetTemplateFuncs(
+vector<TmplFunction> GetTemplateFuncs(
     vector<TypedefParser::TmplDefinitionContext*> tmpl_defs) {
-  Vector<TmplFunction> tfs;
+  vector<TmplFunction> tfs;
   for (TypedefParser::TmplDefinitionContext* tmpl_def : tmpl_defs) {
     tfs.emplace_back(GetTemplateFunc(tmpl_def));
   }

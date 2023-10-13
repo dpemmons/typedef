@@ -21,7 +21,7 @@
 namespace {
 
 template <typename T>
-inline bool IsEmpty(const td::Vector<T>& v) {
+inline bool IsEmpty(const std::vector<T>& v) {
   return v.size() == 0;
 }
 

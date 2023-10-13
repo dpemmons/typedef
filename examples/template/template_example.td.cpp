@@ -21,7 +21,7 @@
 namespace {
 
 template <typename T>
-inline bool IsEmpty(const td::Vector<T>& v) {
+inline bool IsEmpty(const std::vector<T>& v) {
   return v.size() == 0;
 }
 
@@ -697,7 +697,7 @@ std::string DoSomeVariant(const SomeVariant& v) {
   DoSomeVariant(oss, v);
   return oss.str();
 }
-void LoopLogic(std::ostream& os, const td::Vector<std::string>& v) {
+void LoopLogic(std::ostream& os, const std::vector<std::string>& v) {
 os << "\n  LoopLogic:\n  ";
 
 
@@ -727,12 +727,12 @@ os << "\n  ";
 os << "\n";
 
 }
-std::string LoopLogic(const td::Vector<std::string>& v) {
+std::string LoopLogic(const std::vector<std::string>& v) {
   std::stringstream oss;
   LoopLogic(oss, v);
   return oss.str();
 }
-void BooleanLogic(std::ostream& os, const td::Vector<std::string>& v) {
+void BooleanLogic(std::ostream& os, const std::vector<std::string>& v) {
 os << "\n  BooleanLogic:\n  ";
 
 
@@ -760,12 +760,12 @@ os << "\n  ";
 os << "\n";
 
 }
-std::string BooleanLogic(const td::Vector<std::string>& v) {
+std::string BooleanLogic(const std::vector<std::string>& v) {
   std::stringstream oss;
   BooleanLogic(oss, v);
   return oss.str();
 }
-void TestIsEmpty(std::ostream& os, const td::Vector<std::string>& v) {
+void TestIsEmpty(std::ostream& os, const std::vector<std::string>& v) {
 os << "v is ";
 if (!IsEmpty(v)) {
 os << " not ";
@@ -774,12 +774,12 @@ os << " not ";
 os << " empty.";
 
 }
-std::string TestIsEmpty(const td::Vector<std::string>& v) {
+std::string TestIsEmpty(const std::vector<std::string>& v) {
   std::stringstream oss;
   TestIsEmpty(oss, v);
   return oss.str();
 }
-void PrintIndices(std::ostream& os, const td::Vector<std::string>& v) {
+void PrintIndices(std::ostream& os, const std::vector<std::string>& v) {
 os << "\n  ";
 
 
@@ -803,7 +803,7 @@ Literal(os);
 os << "\n";
 
 }
-std::string PrintIndices(const td::Vector<std::string>& v) {
+std::string PrintIndices(const std::vector<std::string>& v) {
   std::stringstream oss;
   PrintIndices(oss, v);
   return oss.str();
