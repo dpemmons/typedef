@@ -450,6 +450,12 @@ bool GetBool(TypedefParser::FieldDefinitionContext* ctx) {
   return pctx->boolLiteral()->bool_literal;
 }
 
+TypedefParser::PrimitiveLiteralContext* GetBoolLiteral(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
+  return (pctx && IsBoolLiteral(pctx)) ? pctx : nullptr;
+}
+
 char32_t GetChar(TypedefParser::PrimitiveLiteralContext* pctx) {
   if (!pctx || !IsCharLiteral(pctx)) {
     throw_logic_error("not a char")
@@ -463,6 +469,12 @@ char32_t GetChar(TypedefParser::FieldDefinitionContext* ctx) {
     throw_logic_error("not a char")
   }
   return pctx->charLiteral()->char_literal;
+}
+
+TypedefParser::PrimitiveLiteralContext* GetCharLiteral(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
+  return (pctx && IsCharLiteral(pctx)) ? pctx : nullptr;
 }
 
 std::string* GetStr(TypedefParser::PrimitiveLiteralContext* pctx) {
@@ -480,6 +492,12 @@ std::string* GetStr(TypedefParser::FieldDefinitionContext* ctx) {
   return &pctx->stringLiteral()->string_literal;
 }
 
+TypedefParser::PrimitiveLiteralContext* GetStrLiteral(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
+  return (pctx && IsStrLiteral(pctx)) ? pctx : nullptr;
+}
+
 float GetF32(TypedefParser::PrimitiveLiteralContext* pctx) {
   if (!pctx || !IsF32Literal(pctx)) {
     throw_logic_error("not a f32")
@@ -493,6 +511,12 @@ float GetF32(TypedefParser::FieldDefinitionContext* ctx) {
     throw_logic_error("not a f32")
   }
   return GetF32(pctx->floatLiteral()->float_literal);
+}
+
+TypedefParser::PrimitiveLiteralContext* GetF32Literal(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
+  return (pctx && IsF32Literal(pctx)) ? pctx : nullptr;
 }
 
 double GetF64(TypedefParser::PrimitiveLiteralContext* pctx) {
@@ -510,6 +534,12 @@ double GetF64(TypedefParser::FieldDefinitionContext* ctx) {
   return GetF64(pctx->floatLiteral()->float_literal);
 }
 
+TypedefParser::PrimitiveLiteralContext* GetF64Literal(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
+  return (pctx && IsF64Literal(pctx)) ? pctx : nullptr;
+}
+
 uint8_t GetU8(TypedefParser::PrimitiveLiteralContext* pctx) {
   if (!pctx || !IsU8Literal(pctx)) {
     throw_logic_error("not a u8")
@@ -523,6 +553,12 @@ uint8_t GetU8(TypedefParser::FieldDefinitionContext* ctx) {
     throw_logic_error("not a u8")
   }
   return GetU8(pctx->integerLiteral()->integer_literal);
+}
+
+TypedefParser::PrimitiveLiteralContext* GetU8Literal(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
+  return (pctx && IsU8Literal(pctx)) ? pctx : nullptr;
 }
 
 uint16_t GetU16(TypedefParser::PrimitiveLiteralContext* pctx) {
@@ -540,6 +576,12 @@ uint16_t GetU16(TypedefParser::FieldDefinitionContext* ctx) {
   return GetU16(pctx->integerLiteral()->integer_literal);
 }
 
+TypedefParser::PrimitiveLiteralContext* GetU16Literal(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
+  return (pctx && IsU16Literal(pctx)) ? pctx : nullptr;
+}
+
 uint32_t GetU32(TypedefParser::PrimitiveLiteralContext* pctx) {
   if (!pctx || !IsU32Literal(pctx)) {
     throw_logic_error("not a u32")
@@ -553,6 +595,12 @@ uint32_t GetU32(TypedefParser::FieldDefinitionContext* ctx) {
     throw_logic_error("not a u32")
   }
   return GetU32(pctx->integerLiteral()->integer_literal);
+}
+
+TypedefParser::PrimitiveLiteralContext* GetU32Literal(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
+  return (pctx && IsU32Literal(pctx)) ? pctx : nullptr;
 }
 
 uint64_t GetU64(TypedefParser::PrimitiveLiteralContext* pctx) {
@@ -570,6 +618,12 @@ uint64_t GetU64(TypedefParser::FieldDefinitionContext* ctx) {
   return GetU64(pctx->integerLiteral()->integer_literal);
 }
 
+TypedefParser::PrimitiveLiteralContext* GetU64Literal(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
+  return (pctx && IsU64Literal(pctx)) ? pctx : nullptr;
+}
+
 int8_t GetI8(TypedefParser::PrimitiveLiteralContext* pctx) {
   if (!pctx || !IsI8Literal(pctx)) {
     throw_logic_error("not a i8")
@@ -583,6 +637,12 @@ int8_t GetI8(TypedefParser::FieldDefinitionContext* ctx) {
     throw_logic_error("not a i8")
   }
   return GetI8(pctx->integerLiteral()->integer_literal);
+}
+
+TypedefParser::PrimitiveLiteralContext* GetI8Literal(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
+  return (pctx && IsI8Literal(pctx)) ? pctx : nullptr;
 }
 
 int16_t GetI16(TypedefParser::PrimitiveLiteralContext* pctx) {
@@ -600,6 +660,12 @@ int16_t GetI16(TypedefParser::FieldDefinitionContext* ctx) {
   return GetI16(pctx->integerLiteral()->integer_literal);
 }
 
+TypedefParser::PrimitiveLiteralContext* GetI16Literal(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
+  return (pctx && IsI16Literal(pctx)) ? pctx : nullptr;
+}
+
 int32_t GetI32(TypedefParser::PrimitiveLiteralContext* pctx) {
   if (!pctx || !IsI32Literal(pctx)) {
     throw_logic_error("not a i32")
@@ -615,6 +681,12 @@ int32_t GetI32(TypedefParser::FieldDefinitionContext* ctx) {
   return GetI32(pctx->integerLiteral()->integer_literal);
 }
 
+TypedefParser::PrimitiveLiteralContext* GetI32Literal(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
+  return (pctx && IsI32Literal(pctx)) ? pctx : nullptr;
+}
+
 int64_t GetI64(TypedefParser::PrimitiveLiteralContext* pctx) {
   if (!pctx || !IsI64Literal(pctx)) {
     throw_logic_error("not a i64")
@@ -628,6 +700,12 @@ int64_t GetI64(TypedefParser::FieldDefinitionContext* ctx) {
     throw_logic_error("not a i64")
   }
   return GetI64(pctx->integerLiteral()->integer_literal);
+}
+
+TypedefParser::PrimitiveLiteralContext* GetI64Literal(
+    TypedefParser::FieldDefinitionContext* ctx) {
+  TypedefParser::PrimitiveLiteralContext* pctx = GetPrimitiveLiteral(ctx);
+  return (pctx && IsI64Literal(pctx)) ? pctx : nullptr;
 }
 
 TypedefParser::TypeDefinitionContext* FindType(
@@ -707,11 +785,6 @@ TypedefParser::TmplExpressionContext* GetTmplExpression(
       count++;
     }
   }
-  return nullptr;
-}
-
-TypedefParser::TypeAnnotationContext* GetReferencedTypeAnnotation(
-    TypedefParser::TmplValueReferencePathContext* ctx) {
   return nullptr;
 }
 

@@ -5,20 +5,57 @@
 
 #include <string>
 #include <sstream>
+#include <locale>
+#include <codecvt>
+#include <iomanip>
 // JSON parser required headers
 #include "rapidjson/document.h"
 #include <charconv>
-#include <codecvt>
 #include <iomanip>
 #include <locale>
 // JSON writer required headers
 #include <charconv>
-#include <codecvt>
 #include <iomanip>
 #include <locale>
 
 
 namespace {
+
+std::string escape_char32_t_as_literal(char32_t c) {
+  switch (c) {
+    case U'\a':
+      return R"(U'\a')";
+    case U'\b':
+      return R"(U'\b')";
+    case U'\f':
+      return R"(U'\f')";
+    case U'\n':
+      return R"(U'\n')";
+    case U'\r':
+      return R"(U'\r')";
+    case U'\t':
+      return R"(U'\t')";
+    case U'\v':
+      return R"(U'\v')";
+    case U'\'':
+      return R"(U'\'')";
+    case U'\"':
+      return R"(U'\"')";
+    case U'\\':
+      return R"(U'\\')";
+    default:
+      if (c < 32 || c >= 0x7F) {
+        // For characters outside of the ASCII range
+        std::ostringstream oss;
+        oss << "U'\\U" << std::setw(8) << std::setfill('0') << std::hex
+            << std::uppercase << static_cast<int>(c) << "'";
+        return oss.str();
+      } else {
+        // For all other characters, return as is
+        return "U'" + std::string(1, static_cast<char>(c)) + "'";
+      }
+  }
+}
 
 template <typename T>
 inline bool IsEmpty(const std::vector<T>& v) {

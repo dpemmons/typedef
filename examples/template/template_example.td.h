@@ -128,8 +128,11 @@ class StructC {
   
 
  private:
+  // asdf
   std::unique_ptr<TemplateData> asdf_;
+  // zxcv
   std::int32_t zxcv_ = 0;
+  // jkl
   std::int32_t jkl_ = 0;
   
 }; // class StructC
@@ -278,12 +281,19 @@ class TemplateData {
   
 
  private:
-  std::string name_;
+  // name
+  std::string name_ = "";
+  // has_name
   bool has_name_ = 0;
-  std::string name2_;
+  // name2
+  std::string name2_ = "";
+  // has_name2
   bool has_name2_ = 0;
+  // someVec
   std::vector<std::int32_t> someVec_;
+  // someMap
   std::map<std::string, std::string> someMap_;
+  // structC
   std::unique_ptr<StructC> structC_;
   
 }; // class TemplateData

@@ -207,7 +207,7 @@ boolLiteral
 	@after {td::SetBoolLiteral($bool_literal, $ctx);}: KW_TRUE | KW_FALSE;
 charLiteral
 	returns[char32_t char_literal]
-	@after {td::SetCharLiteral($char_literal, $ctx);}: CHAR_LITERAL;
+	@after {$char_literal = 0;}: CHAR_LITERAL;
 stringLiteral
 	returns[std::string string_literal]
 	@after {td::SetStringLiteral($string_literal, $ctx);}: STRING_LITERAL | RAW_STRING_LITERAL;

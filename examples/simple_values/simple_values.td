@@ -28,7 +28,7 @@ struct StructB {
 
   example_char: char = '🔥';
 
-  example_str: str = "hello world";
+  example_str: str = "hello👋 world🌎";
 
   example_f32: f32 = 3.14;
   example_f64: f64 = 5.16;

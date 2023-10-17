@@ -122,6 +122,14 @@ void FirstPassListener::enterFieldDefinition(
         if (!ctx->primitiveLiteral()->charLiteral()) {
           AddError(ctx->primitiveLiteral(), ParserErrorInfo::TYPE_MISMATCH,
                    "char expected.");
+        } else {
+          try {
+            SetCharLiteral(ctx->primitiveLiteral()->charLiteral()->char_literal,
+                           ctx->primitiveLiteral()->charLiteral());
+          } catch (td::ParserErrorInfo& pei) {
+            errors_list_.push_back((pei));
+            return;
+          }
         }
       } else if (primitive_type_annotation->KW_STRING()) {
         if (!ctx->primitiveLiteral()->stringLiteral()) {
@@ -381,12 +389,6 @@ void FirstPassListener::enterTmplValueReferencePath(
       AddError(part, ParserErrorInfo::FIELD_NOT_FOUND);
       return;
     }
-    // if (!HasTypeAnnotation(field)) {
-    //   // TODO handle inline types!
-    //   AddError(part, ParserErrorInfo::TYPE_CONSTRAINT_VIOLATION,
-    //            "Type expcted.");
-    //   return;
-    // }
     if (ReferencesUserType(field)) {
       type_annotation_previous_field = nullptr;
       type_def_previous_field = GetReferencedUserType(field);

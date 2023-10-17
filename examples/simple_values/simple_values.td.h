@@ -253,18 +253,31 @@ class StructA {
   
 
  private:
+  // example_bool
   bool example_bool_ = 0;
-  char32_t example_char_ = 0;
-  std::string example_str_;
+  // example_char
+  char32_t example_char_ = U'\U00000000';
+  // example_str
+  std::string example_str_ = "";
+  // example_f32
   float example_f32_ = 0;
+  // example_f64
   double example_f64_ = 0;
+  // example_u8
   std::uint8_t example_u8_ = 0;
+  // example_u16
   std::uint16_t example_u16_ = 0;
+  // example_u32
   std::uint32_t example_u32_ = 0;
+  // example_u64
   std::uint64_t example_u64_ = 0;
+  // example_i8
   std::int8_t example_i8_ = 0;
+  // example_i16
   std::int16_t example_i16_ = 0;
+  // example_i32
   std::int32_t example_i32_ = 0;
+  // example_i64
   std::int64_t example_i64_ = 0;
   
 }; // class StructA
@@ -485,19 +498,32 @@ class StructB {
   
 
  private:
-  bool example_bool_ = 0;
-  char32_t example_char_ = 0;
-  std::string example_str_;
-  float example_f32_ = 0;
-  double example_f64_ = 0;
-  std::uint8_t example_u8_ = 0;
-  std::uint16_t example_u16_ = 0;
-  std::uint32_t example_u32_ = 0;
-  std::uint64_t example_u64_ = 0;
-  std::int8_t example_i8_ = 0;
-  std::int16_t example_i16_ = 0;
-  std::int32_t example_i32_ = 0;
-  std::int64_t example_i64_ = 0;
+  // example_bool
+  bool example_bool_ = 1;
+  // example_char
+  char32_t example_char_ = U'\U0001F525';
+  // example_str
+  std::string example_str_ = "hello👋 world🌎";
+  // example_f32
+  float example_f32_ = 3.14;
+  // example_f64
+  double example_f64_ = 5.16;
+  // example_u8
+  std::uint8_t example_u8_ = 8;
+  // example_u16
+  std::uint16_t example_u16_ = 16;
+  // example_u32
+  std::uint32_t example_u32_ = 32;
+  // example_u64
+  std::uint64_t example_u64_ = 64;
+  // example_i8
+  std::int8_t example_i8_ = -8;
+  // example_i16
+  std::int16_t example_i16_ = -16;
+  // example_i32
+  std::int32_t example_i32_ = -32;
+  // example_i64
+  std::int64_t example_i64_ = -64;
   
 }; // class StructB
 
@@ -597,8 +623,11 @@ class StructC {
   
 
  private:
+  // asdf
   std::unique_ptr<StructA> asdf_;
+  // zxcv
   std::int32_t zxcv_ = 0;
+  // jkl
   std::int32_t jkl_ = 0;
   
 }; // class StructC
@@ -1324,9 +1353,13 @@ class StructD {
   
 
  private:
+  // a_struct
   std::unique_ptr<StructA> a_struct_;
+  // b_variant
   std::unique_ptr<VariantA> b_variant_;
+  // c_vec
   std::vector<std::uint8_t> c_vec_;
+  // d_map
   std::map<std::int32_t, VariantB> d_map_;
   
 }; // class StructD
@@ -1463,6 +1496,7 @@ class NestedStruct {
   
 
  private:
+  // a
   std::int32_t a_ = 0;
   
 }; // class NestedStruct
@@ -1575,6 +1609,7 @@ class inlineStructT {
   
 
  private:
+  // a
   std::int32_t a_ = 0;
   
 }; // class inlineStructT
@@ -1746,10 +1781,15 @@ class inlineStructT {
   
 
  private:
+  // inlineStruct
   std::unique_ptr<inlineStructT> inlineStruct_;
+  // vec_a
   std::vector<std::int32_t> vec_a_;
+  // map_a
   std::map<std::string, StructD> map_a_;
+  // nestedStructField
   std::unique_ptr<NestedStruct> nestedStructField_;
+  // nestedVariantField
   std::unique_ptr<NestedVariant> nestedVariantField_;
   
 }; // class StructE
@@ -1799,6 +1839,7 @@ class NestedStruct {
   
 
  private:
+  // a
   std::int32_t a_ = 0;
   
 }; // class NestedStruct
@@ -1911,6 +1952,7 @@ class inlineStructT {
   
 
  private:
+  // a
   std::int32_t a_ = 0;
   
 }; // class inlineStructT

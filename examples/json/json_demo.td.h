@@ -78,6 +78,7 @@ class NestedStruct {
   
 
  private:
+  // a
   std::int32_t a_ = 0;
   
 }; // class NestedStruct
@@ -208,7 +209,8 @@ class inline_structT {
   
 
  private:
-  std::string b_;
+  // b
+  std::string b_ = "";
   
 }; // class inline_structT
 
@@ -676,22 +678,39 @@ class inline_variantT {
   
 
  private:
+  // example_bool
   bool example_bool_ = 0;
-  char32_t example_char_ = 0;
-  std::string example_str_;
+  // example_char
+  char32_t example_char_ = U'\U00000000';
+  // example_str
+  std::string example_str_ = "";
+  // example_f32
   float example_f32_ = 0;
+  // example_f64
   double example_f64_ = 0;
+  // example_u8
   std::uint8_t example_u8_ = 0;
+  // example_u16
   std::uint16_t example_u16_ = 0;
+  // example_u32
   std::uint32_t example_u32_ = 0;
+  // example_u64
   std::uint64_t example_u64_ = 0;
+  // example_i8
   std::int8_t example_i8_ = 0;
+  // example_i16
   std::int16_t example_i16_ = 0;
+  // example_i32
   std::int32_t example_i32_ = 0;
+  // example_i64
   std::int64_t example_i64_ = 0;
+  // nested_struct
   std::unique_ptr<NestedStruct> nested_struct_;
+  // inline_struct
   std::unique_ptr<inline_structT> inline_struct_;
+  // nested_variant
   std::unique_ptr<NestedVariant> nested_variant_;
+  // inline_variant
   std::unique_ptr<inline_variantT> inline_variant_;
   
 }; // class StructA
@@ -741,6 +760,7 @@ class NestedStruct {
   
 
  private:
+  // a
   std::int32_t a_ = 0;
   
 }; // class NestedStruct
@@ -848,12 +868,19 @@ class NestedStruct {
   
 
  private:
+  // example_vec_bool
   std::vector<bool> example_vec_bool_;
+  // example_vec_char
   std::vector<char32_t> example_vec_char_;
+  // example_vec_str
   std::vector<std::string> example_vec_str_;
+  // example_vec_int
   std::vector<std::int32_t> example_vec_int_;
+  // example_vec_nested_struct
   std::vector<NestedStruct> example_vec_nested_struct_;
+  // example_vec_vec_int
   std::vector<std::vector<std::int32_t>> example_vec_vec_int_;
+  // example_vec_map_str_int
   std::vector<std::map<std::string, std::int32_t>> example_vec_map_str_int_;
   
 }; // class StructB
@@ -903,6 +930,7 @@ class NestedStruct {
   
 
  private:
+  // a
   std::int32_t a_ = 0;
   
 }; // class NestedStruct
@@ -1010,12 +1038,19 @@ class NestedStruct {
   
 
  private:
+  // example_map_bool_bool
   std::map<bool, bool> example_map_bool_bool_;
+  // example_map_char_char
   std::map<char32_t, char32_t> example_map_char_char_;
+  // example_map_str_str
   std::map<std::string, std::string> example_map_str_str_;
+  // example_map_int_int
   std::map<std::int32_t, std::int32_t> example_map_int_int_;
+  // example_map_str_nested_struct
   std::map<std::string, NestedStruct> example_map_str_nested_struct_;
+  // example_map_str_vec
   std::map<std::string, std::vector<std::int32_t>> example_map_str_vec_;
+  // example_map_str_map
   std::map<std::string, std::map<std::string, std::int32_t>> example_map_str_map_;
   
 }; // class StructC

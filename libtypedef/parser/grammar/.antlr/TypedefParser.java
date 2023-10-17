@@ -1257,11 +1257,11 @@ public class TypedefParser extends Parser {
 		}
 		public TerminalNode TMPL_LPAREN() { return getToken(TypedefParser.TMPL_LPAREN, 0); }
 		public TerminalNode TMPL_RPAREN() { return getToken(TypedefParser.TMPL_RPAREN, 0); }
-		public List<TmplValueReferencePathContext> tmplValueReferencePath() {
-			return getRuleContexts(TmplValueReferencePathContext.class);
+		public List<TmplExpressionContext> tmplExpression() {
+			return getRuleContexts(TmplExpressionContext.class);
 		}
-		public TmplValueReferencePathContext tmplValueReferencePath(int i) {
-			return getRuleContext(TmplValueReferencePathContext.class,i);
+		public TmplExpressionContext tmplExpression(int i) {
+			return getRuleContext(TmplExpressionContext.class,i);
 		}
 		public List<TerminalNode> TMPL_COMMA() { return getTokens(TypedefParser.TMPL_COMMA); }
 		public TerminalNode TMPL_COMMA(int i) {
@@ -1288,10 +1288,10 @@ public class TypedefParser extends Parser {
 			setState(226);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==TMPL_NON_KEYWORD_IDENTIFIER) {
+			if (((((_la - 170)) & ~0x3f) == 0 && ((1L << (_la - 170)) & 131081L) != 0)) {
 				{
 				setState(225);
-				tmplValueReferencePath();
+				tmplExpression();
 				}
 			}
 
@@ -1304,7 +1304,7 @@ public class TypedefParser extends Parser {
 				setState(228);
 				match(TMPL_COMMA);
 				setState(229);
-				tmplValueReferencePath();
+				tmplExpression();
 				}
 				}
 				setState(234);
@@ -2521,7 +2521,7 @@ public class TypedefParser extends Parser {
 			match(CHAR_LITERAL);
 			}
 			_ctx.stop = _input.LT(-1);
-			td::SetCharLiteral(_localctx.char_literal, _localctx);
+			((CharLiteralContext)_localctx).char_literal =  0;
 		}
 		catch (RecognitionException re) {
 			_localctx.exception = re;
@@ -3108,9 +3108,9 @@ public class TypedefParser extends Parser {
 		"\u0001\u0000\u0000\u0000\u00dd\u00db\u0001\u0000\u0000\u0000\u00dd\u00dc"+
 		"\u0001\u0000\u0000\u0000\u00de\u001b\u0001\u0000\u0000\u0000\u00df\u00e0"+
 		"\u00036\u001b\u0000\u00e0\u00e2\u0005\u00aa\u0000\u0000\u00e1\u00e3\u0003"+
-		"0\u0018\u0000\u00e2\u00e1\u0001\u0000\u0000\u0000\u00e2\u00e3\u0001\u0000"+
+		"\u001a\r\u0000\u00e2\u00e1\u0001\u0000\u0000\u0000\u00e2\u00e3\u0001\u0000"+
 		"\u0000\u0000\u00e3\u00e8\u0001\u0000\u0000\u0000\u00e4\u00e5\u0005\u00a8"+
-		"\u0000\u0000\u00e5\u00e7\u00030\u0018\u0000\u00e6\u00e4\u0001\u0000\u0000"+
+		"\u0000\u0000\u00e5\u00e7\u0003\u001a\r\u0000\u00e6\u00e4\u0001\u0000\u0000"+
 		"\u0000\u00e7\u00ea\u0001\u0000\u0000\u0000\u00e8\u00e6\u0001\u0000\u0000"+
 		"\u0000\u00e8\u00e9\u0001\u0000\u0000\u0000\u00e9\u00eb\u0001\u0000\u0000"+
 		"\u0000\u00ea\u00e8\u0001\u0000\u0000\u0000\u00eb\u00ec\u0005\u00ab\u0000"+

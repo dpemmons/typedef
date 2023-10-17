@@ -3394,7 +3394,7 @@ TypedefParser::CharLiteralContext* TypedefParser::charLiteral() {
     setState(414);
     match(TypedefParser::CHAR_LITERAL);
    _ctx->stop = _input->LT(-1);
-    td::SetCharLiteral(_localctx->char_literal, _localctx);
+    dynamic_cast<CharLiteralContext *>(_localctx)->char_literal =  0;
   }
   catch (RecognitionException &e) {
     _errHandler->reportError(this, e);
