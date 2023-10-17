@@ -79,3 +79,4 @@ code generation
 
 * [x] self-hosting!
 * [x] JSON rendering
+* [x] defaults
