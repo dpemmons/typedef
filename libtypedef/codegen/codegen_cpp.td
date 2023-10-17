@@ -2,19 +2,19 @@ typedef=alpha;
 module td::codegen::cpp;
 
 variant TdType {
-  bool_t: bool;
-  char_t: bool;
-  string_t: bool;
-  f32_t: bool;
-  f64_t: bool;
-  u8_t: bool;
-  u16_t: bool;
-  u32_t: bool;
-  u64_t: bool;
-  i8_t: bool;
-  i16_t: bool;
-  i32_t: bool;
-  i64_t: bool;
+  bool_t: struct { default_val: bool; };
+  char_t: struct { default_val: char; };
+  str_t: struct { default_val: str; };
+  f32_t: struct { default_val: f32; };
+  f64_t: struct { default_val: f64; };
+  u8_t: struct { default_val: u8; };
+  u16_t: struct { default_val: u16; };
+  u32_t: struct { default_val: u32; };
+  u64_t: struct { default_val: u64; };
+  i8_t: struct { default_val: i8; };
+  i16_t: struct { default_val: i16; };
+  i32_t: struct { default_val: i32; };
+  i64_t: struct { default_val: i64; };
   vector_t: struct {
     val: AccessInfo;
     // qualified name set when access_by is pointer
@@ -68,6 +68,7 @@ variant UserTypeDeclaration {
 
 struct TmplValueDereference {
   val_ref_path: vector<str>;
+  access_info: AccessInfo;
 }
 
 struct TmplFuncCall {
@@ -246,14 +247,32 @@ class <s.identifier> {
   </for>
 
  private:
-  <for field in s.fields><switch field.access_by>
-  <case field.access_by.pointer>std::unique_ptr\<<CppType(field)>\> <field.identifier>_;</case>
-  <case field.access_by.value><CppType(field)> <field.identifier>_ = 0;</case>
-  <default><CppType(field)> <field.identifier>_;</default>
-  </switch>
+  <for field in s.fields>// <field.identifier>
+  <StructField(field)>
   </for>
 }; // class <s.identifier>
 "
+
+template StructField(field: AccessInfo)
+t"<switch field.td_type>
+<case field.td_type.bool_t><CppType(field)> <field.identifier>_ = <field.td_type.bool_t.default_val>;</case>
+<case field.td_type.char_t><CppType(field)> <field.identifier>_ = <field.td_type.char_t.default_val>;</case>
+<case field.td_type.str_t><CppType(field)> <field.identifier>_ = \"<field.td_type.str_t.default_val>\";</case>
+<case field.td_type.f32_t><CppType(field)> <field.identifier>_ = <field.td_type.f32_t.default_val>;</case>
+<case field.td_type.f64_t><CppType(field)> <field.identifier>_ = <field.td_type.f64_t.default_val>;</case>
+<case field.td_type.u8_t><CppType(field)> <field.identifier>_ = <field.td_type.u8_t.default_val>;</case>
+<case field.td_type.u16_t><CppType(field)> <field.identifier>_ = <field.td_type.u16_t.default_val>;</case>
+<case field.td_type.u32_t><CppType(field)> <field.identifier>_ = <field.td_type.u32_t.default_val>;</case>
+<case field.td_type.u64_t><CppType(field)> <field.identifier>_ = <field.td_type.u64_t.default_val>;</case>
+<case field.td_type.i8_t><CppType(field)> <field.identifier>_ = <field.td_type.i8_t.default_val>;</case>
+<case field.td_type.i16_t><CppType(field)> <field.identifier>_ = <field.td_type.i16_t.default_val>;</case>
+<case field.td_type.i32_t><CppType(field)> <field.identifier>_ = <field.td_type.i32_t.default_val>;</case>
+<case field.td_type.i64_t><CppType(field)> <field.identifier>_ = <field.td_type.i64_t.default_val>;</case>
+<case field.td_type.vector_t><CppType(field)> <field.identifier>_;</case>
+<case field.td_type.map_t><CppType(field)> <field.identifier>_;</case>
+<case field.td_type.struct_t>std::unique_ptr\<<CppType(field)>\> <field.identifier>_;</case>
+<case field.td_type.variant_t>std::unique_ptr\<<CppType(field)>\> <field.identifier>_;</case>
+</switch>"
 
 template TmplStructDefinition(s: StructDecl, opt: Options) t"
 // <QualifiedName(s.nqn)> member definitions
@@ -696,6 +715,42 @@ bool GetBoolFromString(const rapidjson::GenericValue<rapidjson::UTF8<>>& val) {
 "#
 
 template CppSrcHelpers() r#"
+std::string escape_char32_t_as_literal(char32_t c) {
+  switch (c) {
+    case U'\a':
+      return R"(U'\a')";
+    case U'\b':
+      return R"(U'\b')";
+    case U'\f':
+      return R"(U'\f')";
+    case U'\n':
+      return R"(U'\n')";
+    case U'\r':
+      return R"(U'\r')";
+    case U'\t':
+      return R"(U'\t')";
+    case U'\v':
+      return R"(U'\v')";
+    case U'\'':
+      return R"(U'\'')";
+    case U'\"':
+      return R"(U'\"')";
+    case U'\\':
+      return R"(U'\\')";
+    default:
+      if (c < 32 || c >= 0x7F) {
+        // For characters outside of the ASCII range
+        std::ostringstream oss;
+        oss << "U'\\U" << std::setw(8) << std::setfill('0') << std::hex
+            << std::uppercase << static_cast<int>(c) << "'";
+        return oss.str();
+      } else {
+        // For all other characters, return as is
+        return "U'" + std::string(1, static_cast<char>(c)) + "'";
+      }
+  }
+}
+
 template <typename T>
 inline bool IsEmpty(const std::vector<T>& v) {
   return v.size() == 0;
@@ -712,15 +767,16 @@ template CppSource(d: CppData, opt: Options) t"
 
 #include \<string\>
 #include \<sstream\>
+#include \<locale\>
+#include \<codecvt\>
+#include \<iomanip\>
 <if opt.generate_json_parser>// JSON parser required headers
 #include \"rapidjson/document.h\"
 #include \<charconv\>
-#include \<codecvt\>
 #include \<iomanip\>
 #include \<locale\>
 </if><if opt.generate_json_writer>// JSON writer required headers
 #include \<charconv\>
-#include \<codecvt\>
 #include \<iomanip\>
 #include \<locale\>
 </if>
@@ -793,7 +849,7 @@ for (size_t ii = 0; ii \< arr.size(); ii++) {
   <case value_type.td_type.char_t>os \<\< \"\\\"\" \<\< char32ToJsonString(val) \<\< \"\\\"\";</case>
   <case value_type.td_type.u8_t>os \<\< (int)val;</case>
   <case value_type.td_type.i8_t>os \<\< (int)val;</case>
-  <case value_type.td_type.string_t>os \<\< \"\\\"\" \<\< escape_json(val) \<\< \"\\\"\";</case>
+  <case value_type.td_type.str_t>os \<\< \"\\\"\" \<\< escape_json(val) \<\< \"\\\"\";</case>
   <case value_type.td_type.vector_t>{
     auto& arr = val;
     <JsonPrintArray(value_type.td_type.vector_t.val)>
@@ -825,7 +881,7 @@ while (iter != map.end()) {
   <case key_type.td_type.char_t>os \<\< \"\\\"\" \<\< char32ToJsonString(key) \<\< \"\\\"\";</case>
   <case key_type.td_type.u8_t>os \<\< \"\\\"\" \<\< std::to_string((int)key) \<\< \"\\\"\";</case>
   <case key_type.td_type.i8_t>os \<\< \"\\\"\" \<\< std::to_string((int)key) \<\< \"\\\"\";</case>
-  <case key_type.td_type.string_t>os \<\< \"\\\"\" \<\< escape_json(key) \<\< \"\\\"\";</case>
+  <case key_type.td_type.str_t>os \<\< \"\\\"\" \<\< escape_json(key) \<\< \"\\\"\";</case>
   <default>os \<\< \"\\\"\" \<\< std::to_string(key) \<\< \"\\\"\";</default>
   </switch>
   }
@@ -837,7 +893,7 @@ while (iter != map.end()) {
   <case val_type.td_type.char_t>os \<\< \"\\\"\" \<\< char32ToJsonString(val) \<\< \"\\\"\";</case>
   <case val_type.td_type.u8_t>os \<\< (int)val;</case>
   <case val_type.td_type.i8_t>os \<\< (int)val;</case>
-  <case val_type.td_type.string_t>os \<\< \"\\\"\" \<\< escape_json(val) \<\< \"\\\"\";</case>
+  <case val_type.td_type.str_t>os \<\< \"\\\"\" \<\< escape_json(val) \<\< \"\\\"\";</case>
   <case val_type.td_type.vector_t>{
     auto& arr = val;
     <JsonPrintArray(val_type.td_type.vector_t.val)>
@@ -866,7 +922,7 @@ template JsonPrintValue(t: AccessInfo) t"
 <case t.td_type.char_t><JsonPrintKey(t)>; os \<\< \"\\\"\" \<\< char32ToJsonString(from.<t.identifier>()) \<\< \"\\\"\";</case>
 <case t.td_type.u8_t><JsonPrintKey(t)>; os \<\< (int)from.<t.identifier>();</case>
 <case t.td_type.i8_t><JsonPrintKey(t)>; os \<\< (int)from.<t.identifier>();</case>
-<case t.td_type.string_t><JsonPrintKey(t)>; os \<\< \"\\\"\" \<\< escape_json(from.<t.identifier>()) \<\< \"\\\"\";</case>
+<case t.td_type.str_t><JsonPrintKey(t)>; os \<\< \"\\\"\" \<\< escape_json(from.<t.identifier>()) \<\< \"\\\"\";</case>
 <case t.td_type.vector_t><JsonPrintKey(t)>;
 {
   auto& arr = from.<t.identifier>();
@@ -970,7 +1026,7 @@ auto json_parse_array_lambda = [](auto& value_type, const rapidjson::Value& src)
     <switch from_type.td_type>
     <case from_type.td_type.bool_t>vec.push_back(JsonParseBool(src[ii]));</case>
     <case from_type.td_type.char_t>vec.push_back(JsonParseChar(src[ii]));</case>
-    <case from_type.td_type.string_t>vec.push_back(JsonParseStr(src[ii]));</case>
+    <case from_type.td_type.str_t>vec.push_back(JsonParseStr(src[ii]));</case>
     <case from_type.td_type.f32_t>vec.push_back(JsonParseF32(src[ii]));</case>
     <case from_type.td_type.f64_t>vec.push_back(JsonParseF64(src[ii]));</case>
     <case from_type.td_type.u8_t>vec.push_back(JsonParseU8(src[ii]));</case>
@@ -1015,7 +1071,7 @@ auto json_parse_map_lambda = [](auto& value_type, const rapidjson::Value& src) {
     <switch key_type.td_type>
     <case key_type.td_type.bool_t>KeyType key = GetBoolFromString(m.name);</case>
     <case key_type.td_type.char_t>KeyType key = JsonParseChar(m.name);</case>
-    <case key_type.td_type.string_t>KeyType key = JsonParseStr(m.name);</case>
+    <case key_type.td_type.str_t>KeyType key = JsonParseStr(m.name);</case>
     <case key_type.td_type.u8_t>KeyType key = GetIntFromString\<std::uint8_t\>(m.name);</case>
     <case key_type.td_type.u16_t>KeyType key = GetIntFromString\<std::uint16_t\>(m.name);</case>
     <case key_type.td_type.u32_t>KeyType key = GetIntFromString\<std::uint32_t\>(m.name);</case>
@@ -1030,7 +1086,7 @@ auto json_parse_map_lambda = [](auto& value_type, const rapidjson::Value& src) {
     <switch val_type.td_type>
     <case val_type.td_type.bool_t>ValType map_val = JsonParseBool(m.value);</case>
     <case val_type.td_type.char_t>ValType map_val = JsonParseChar(m.value);</case>
-    <case val_type.td_type.string_t>ValType map_val = JsonParseStr(m.value);</case>
+    <case val_type.td_type.str_t>ValType map_val = JsonParseStr(m.value);</case>
     <case val_type.td_type.f32_t>ValType map_val = JsonParseF32(m.value);</case>
     <case val_type.td_type.f64_t>ValType map_val = JsonParseF64(m.value);</case>
     <case val_type.td_type.u8_t>ValType map_val = JsonParseU8(m.value);</case>
@@ -1100,7 +1156,7 @@ t"<if opt.generate_json_parser>
     <switch field.td_type>
     <case field.td_type.bool_t>ret.<field.identifier>() = JsonParseBool(val);</case>
     <case field.td_type.char_t>ret.<field.identifier>() = JsonParseChar(val);</case>
-    <case field.td_type.string_t>ret.<field.identifier>() = JsonParseStr(val);</case>
+    <case field.td_type.str_t>ret.<field.identifier>() = JsonParseStr(val);</case>
     <case field.td_type.f32_t>ret.<field.identifier>() = JsonParseF32(val);</case>
     <case field.td_type.f64_t>ret.<field.identifier>() = JsonParseF64(val);</case>
     <case field.td_type.u8_t>ret.<field.identifier>() = JsonParseU8(val);</case>
@@ -1180,6 +1236,14 @@ void ToJson(std::ostream& os, const <QualifiedName(s.nqn)>& from);
 
 template TmplValueDereferenceT(v: TmplValueDereference) t"<for part in v.val_ref_path><part><if !IsFirst()>()</if><if !IsLast()>.</if></for>"
 
+template TmplValueDereferenceToString(v: TmplValueDereference)
+t"<switch v.access_info.td_type>
+<case v.access_info.td_type.char_t>escape_char32_t_as_literal(<TmplValueDereferenceT(v)>)</case>
+<case v.access_info.td_type.u8_t>(uint32_t)<TmplValueDereferenceT(v)></case>
+<case v.access_info.td_type.i8_t>(int32_t)<TmplValueDereferenceT(v)></case>
+<default><TmplValueDereferenceT(v)></default>
+</switch>"
+
 template TmplStringExpression(i: TmplExpression) t"<switch i>
 <case i.call><i.call.identifier>(<for arg in i.call.args><TmplValueDereferenceT(arg.val_ref)><if !IsLast()>,</if></for>)</case>
 <case i.val_ref><TmplValueDereferenceT(i.val_ref)></case>
@@ -1190,7 +1254,7 @@ template TmplStringExpression(i: TmplExpression) t"<switch i>
 // Expressions that expect an std::ostream "os" object in scope
 template TmplOStreamExpression(i: TmplExpression) t"<switch i>
 <case i.call><i.call.identifier>(os<for arg in i.call.args>, <TmplStringExpression(arg)></for>)</case>
-<case i.val_ref>os \<\< <TmplValueDereferenceT(i.val_ref)></case>
+<case i.val_ref>os \<\< <TmplValueDereferenceToString(i.val_ref)></case>
 <case i.expr>(<TmplOStreamExpression(i.expr)>)</case>
 <default>#error If this was emitted then there's a problem with type checking.</default>
 </switch>"

@@ -18,6 +18,7 @@ using namespace std;
 using namespace td::codegen::cpp;
 
 // Forward declarations
+std::string escapeStringForCpp(const std::string& input);
 vector<TmplItem> GetTemplateItems(
     vector<TypedefParser::TmplItemContext*> itm_ctxs);
 UserTypeDeclaration GetTypeDeclaration(
@@ -55,61 +56,116 @@ vector<std::string> GetNQN(TypedefParser::TypeDefinitionContext* type) {
   return GetQN(type, false);
 }
 
-AccessInfo GetAccessInfoForType(TypedefParser::TypeAnnotationContext* ctx) {
+AccessInfo GetAccessInfoForType(
+    TypedefParser::TypeAnnotationContext* ctx,
+    TypedefParser::PrimitiveLiteralContext* default_val_ctx = nullptr) {
   AccessInfo ai;
   if (ReferencesPrimitiveType(ctx)) {
     if (IsBool(ctx)) {
       ai.cpp_type() = "bool";
       ai.access_by().value() = true;
-      ai.td_type().bool_t() = true;
+      if (default_val_ctx) {
+        ai.td_type().bool_t().default_val() = GetBool(default_val_ctx);
+      } else {
+        ai.td_type().bool_t().default_val() = false;
+      }
     } else if (IsChar(ctx)) {
       ai.cpp_type() = "char32_t";
       ai.access_by().value() = true;
-      ai.td_type().char_t() = true;
+      if (default_val_ctx) {
+        ai.td_type().char_t().default_val() = GetChar(default_val_ctx);
+      } else {
+        ai.td_type().char_t().default_val() = 0;
+      }
     } else if (IsStr(ctx)) {
       ai.cpp_type() = "std::string";
       ai.access_by().reference() = true;
-      ai.td_type().string_t() = true;
+      if (default_val_ctx) {
+        ai.td_type().str_t().default_val() =
+            escapeStringForCpp(*GetStr(default_val_ctx));
+      } else {
+        ai.td_type().str_t().default_val() = escapeStringForCpp("");
+      }
     } else if (IsF32(ctx)) {
       ai.cpp_type() = "float";
       ai.access_by().value() = true;
-      ai.td_type().f32_t() = true;
+      if (default_val_ctx) {
+        ai.td_type().f32_t().default_val() = GetF32(default_val_ctx);
+      } else {
+        ai.td_type().f32_t().default_val() = 0;
+      }
     } else if (IsF64(ctx)) {
       ai.cpp_type() = "double";
       ai.access_by().value() = true;
-      ai.td_type().f64_t() = true;
+      if (default_val_ctx) {
+        ai.td_type().f64_t().default_val() = GetF64(default_val_ctx);
+      } else {
+        ai.td_type().f64_t().default_val() = 0;
+      }
     } else if (IsU8(ctx)) {
       ai.cpp_type() = "std::uint8_t";
       ai.access_by().value() = true;
-      ai.td_type().u8_t() = true;
+      if (default_val_ctx) {
+        ai.td_type().u8_t().default_val() = GetU8(default_val_ctx);
+      } else {
+        ai.td_type().u8_t().default_val() = 0;
+      }
     } else if (IsU16(ctx)) {
       ai.cpp_type() = "std::uint16_t";
       ai.access_by().value() = true;
-      ai.td_type().u16_t() = true;
+      if (default_val_ctx) {
+        ai.td_type().u16_t().default_val() = GetU16(default_val_ctx);
+      } else {
+        ai.td_type().u16_t().default_val() = 0;
+      }
     } else if (IsU32(ctx)) {
       ai.cpp_type() = "std::uint32_t";
       ai.access_by().value() = true;
-      ai.td_type().u32_t() = true;
+      if (default_val_ctx) {
+        ai.td_type().u32_t().default_val() = GetU32(default_val_ctx);
+      } else {
+        ai.td_type().u32_t().default_val() = 0;
+      }
     } else if (IsU64(ctx)) {
       ai.cpp_type() = "std::uint64_t";
       ai.access_by().value() = true;
-      ai.td_type().u64_t() = true;
+      if (default_val_ctx) {
+        ai.td_type().u64_t().default_val() = GetU64(default_val_ctx);
+      } else {
+        ai.td_type().u64_t().default_val() = 0;
+      }
     } else if (IsI8(ctx)) {
       ai.cpp_type() = "std::int8_t";
       ai.access_by().value() = true;
-      ai.td_type().i8_t() = true;
+      if (default_val_ctx) {
+        ai.td_type().i8_t().default_val() = GetI8(default_val_ctx);
+      } else {
+        ai.td_type().i8_t().default_val() = 0;
+      }
     } else if (IsI16(ctx)) {
       ai.cpp_type() = "std::int16_t";
       ai.access_by().value() = true;
-      ai.td_type().i16_t() = true;
+      if (default_val_ctx) {
+        ai.td_type().i16_t().default_val() = GetI16(default_val_ctx);
+      } else {
+        ai.td_type().i16_t().default_val() = 0;
+      }
     } else if (IsI32(ctx)) {
       ai.cpp_type() = "std::int32_t";
       ai.access_by().value() = true;
-      ai.td_type().i32_t() = true;
+      if (default_val_ctx) {
+        ai.td_type().i32_t().default_val() = GetI32(default_val_ctx);
+      } else {
+        ai.td_type().i32_t().default_val() = 0;
+      }
     } else if (IsI64(ctx)) {
       ai.cpp_type() = "std::int64_t";
       ai.access_by().value() = true;
-      ai.td_type().i64_t() = true;
+      if (default_val_ctx) {
+        ai.td_type().i64_t().default_val() = GetI64(default_val_ctx);
+      } else {
+        ai.td_type().i64_t().default_val() = 0;
+      }
     } else {
       throw_logic_error("invalid state");
     }
@@ -160,25 +216,43 @@ AccessInfo GetAccessInfoForType(TypedefParser::TypeAnnotationContext* ctx) {
   return ai;
 }
 
+AccessInfo GetAccessInfo(TypedefParser::TypeDefinitionContext* ctx) {
+  AccessInfo a;
+  a.access_by().pointer() = true;
+  if (DefinesStruct(ctx)) {
+    a.td_type().struct_t().fqn() = GetFQN(ctx);
+    a.td_type().struct_t().nqn() = GetNQN(ctx);
+  } else if (DefinesVariant(ctx)) {
+    a.td_type().variant_t().fqn() = GetFQN(ctx);
+    a.td_type().variant_t().nqn() = GetNQN(ctx);
+  } else {
+    throw_logic_error("invalid state");
+  }
+  return a;
+}
+
 AccessInfo GetField(TypedefParser::FieldDefinitionContext* field) {
   AccessInfo a;
   if (DefinesAndUsesInlineUserType(field)) {
+    a = GetAccessInfo(GetInlineUserType(field));
     a.cpp_type() = GetNestedTypeIdentifier(field);
-    a.access_by().pointer() = true;
-    if (DefinesStruct(GetInlineUserType(field))) {
-      a.td_type().struct_t().fqn() = GetFQN(GetInlineUserType(field));
-      a.td_type().struct_t().nqn() = GetNQN(GetInlineUserType(field));
-    } else if (DefinesVariant(GetInlineUserType(field))) {
-      a.td_type().variant_t().fqn() = GetFQN(GetInlineUserType(field));
-      a.td_type().variant_t().nqn() = GetNQN(GetInlineUserType(field));
-    } else {
-      throw_logic_error("invalid state");
-    }
   } else {
-    a = GetAccessInfoForType(field->typeAnnotation());
+    a = GetAccessInfoForType(field->typeAnnotation(),
+                             field->primitiveLiteral());
   }
   a.identifier() = escape_utf8_to_cpp_identifier(field->field_identifier->id);
   return a;
+}
+
+AccessInfo GetAccessInfo(
+    TypedefParser::TmplValueReferencePathContext* path_ctx) {
+  if (/*TypeAnnotationContext*/ path_ctx->leaf_annotation) {
+    return GetAccessInfoForType(path_ctx->leaf_annotation);
+  } else if (/*TypeDefinitionContext*/ path_ctx->leaf_definition) {
+    return GetAccessInfo(path_ctx->leaf_definition);
+  } else {
+    throw_logic_error("invalid state");
+  }
 }
 
 vector<std::string> GetQN(TypedefParser::TypeDefinitionContext* type,
@@ -269,6 +343,7 @@ TmplValueDereference GetTemplateValueDereference(
     d.val_ref_path().emplace_back(
         escape_utf8_to_cpp_identifier(val_ref->tmplIdentifier()->id));
   }
+  d.access_info() = GetAccessInfo(ctx);
   return d;
 }
 

@@ -5,9 +5,48 @@
 
 #include <string>
 #include <sstream>
+#include <locale>
+#include <codecvt>
+#include <iomanip>
 
 
 namespace {
+
+std::string escape_char32_t_as_literal(char32_t c) {
+  switch (c) {
+    case U'\a':
+      return R"(U'\a')";
+    case U'\b':
+      return R"(U'\b')";
+    case U'\f':
+      return R"(U'\f')";
+    case U'\n':
+      return R"(U'\n')";
+    case U'\r':
+      return R"(U'\r')";
+    case U'\t':
+      return R"(U'\t')";
+    case U'\v':
+      return R"(U'\v')";
+    case U'\'':
+      return R"(U'\'')";
+    case U'\"':
+      return R"(U'\"')";
+    case U'\\':
+      return R"(U'\\')";
+    default:
+      if (c < 32 || c >= 0x7F) {
+        // For characters outside of the ASCII range
+        std::ostringstream oss;
+        oss << "U'\\U" << std::setw(8) << std::setfill('0') << std::hex
+            << std::uppercase << static_cast<int>(c) << "'";
+        return oss.str();
+      } else {
+        // For all other characters, return as is
+        return "U'" + std::string(1, static_cast<char>(c)) + "'";
+      }
+  }
+}
 
 template <typename T>
 inline bool IsEmpty(const std::vector<T>& v) {
@@ -61,6 +100,45 @@ namespace cpp {
 // CppData member definitions
 
 // Struct and variant JSON declarations
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -297,26 +375,10 @@ for (size_t td_iter_ = 0; td_iter_ < s.fields().size(); td_iter_++) {
   auto IsLast = [&]() { return td_iter_ == s.fields().size() - 1; };
   auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
   auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
-// Switch field.access_by()
-
-if (field.access_by().is_pointer()) {
-os << "std::unique_ptr<";
-CppType(os, field);
-os << "> ";
+os << "// ";
 os << field.identifier();
-os << "_;";
-} else 
-if (field.access_by().is_value()) {
-CppType(os, field);
-os << " ";
-os << field.identifier();
-os << "_ = 0;";
-} else  {
-CppType(os, field);
-os << " ";
-os << field.identifier();
-os << "_;";
-}
+os << "\n  ";
+StructField(os, field);
 os << "\n  ";
 }
 
@@ -328,6 +390,147 @@ os << "\n";
 std::string TmplStructDeclaration(const StructDecl& s, const Options& opt) {
   std::stringstream oss;
   TmplStructDeclaration(oss, s, opt);
+  return oss.str();
+}
+void StructField(std::ostream& os, const AccessInfo& field) {
+// Switch field.td_type()
+
+if (field.td_type().is_bool_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_ = ";
+os << field.td_type().bool_t().default_val();
+os << ";";
+} else 
+if (field.td_type().is_char_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_ = ";
+os << escape_char32_t_as_literal(field.td_type().char_t().default_val());
+os << ";";
+} else 
+if (field.td_type().is_str_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_ = \"";
+os << field.td_type().str_t().default_val();
+os << "\";";
+} else 
+if (field.td_type().is_f32_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_ = ";
+os << field.td_type().f32_t().default_val();
+os << ";";
+} else 
+if (field.td_type().is_f64_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_ = ";
+os << field.td_type().f64_t().default_val();
+os << ";";
+} else 
+if (field.td_type().is_u8_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_ = ";
+os << (uint32_t)field.td_type().u8_t().default_val();
+os << ";";
+} else 
+if (field.td_type().is_u16_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_ = ";
+os << field.td_type().u16_t().default_val();
+os << ";";
+} else 
+if (field.td_type().is_u32_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_ = ";
+os << field.td_type().u32_t().default_val();
+os << ";";
+} else 
+if (field.td_type().is_u64_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_ = ";
+os << field.td_type().u64_t().default_val();
+os << ";";
+} else 
+if (field.td_type().is_i8_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_ = ";
+os << (int32_t)field.td_type().i8_t().default_val();
+os << ";";
+} else 
+if (field.td_type().is_i16_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_ = ";
+os << field.td_type().i16_t().default_val();
+os << ";";
+} else 
+if (field.td_type().is_i32_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_ = ";
+os << field.td_type().i32_t().default_val();
+os << ";";
+} else 
+if (field.td_type().is_i64_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_ = ";
+os << field.td_type().i64_t().default_val();
+os << ";";
+} else 
+if (field.td_type().is_vector_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_;";
+} else 
+if (field.td_type().is_map_t()) {
+CppType(os, field);
+os << " ";
+os << field.identifier();
+os << "_;";
+} else 
+if (field.td_type().is_struct_t()) {
+os << "std::unique_ptr<";
+CppType(os, field);
+os << "> ";
+os << field.identifier();
+os << "_;";
+} else 
+if (field.td_type().is_variant_t()) {
+os << "std::unique_ptr<";
+CppType(os, field);
+os << "> ";
+os << field.identifier();
+os << "_;";
+} else  {
+}
+
+}
+std::string StructField(const AccessInfo& field) {
+  std::stringstream oss;
+  StructField(oss, field);
   return oss.str();
 }
 void TmplStructDefinition(std::ostream& os, const StructDecl& s, const Options& opt) {
@@ -719,7 +922,7 @@ std::string CppSrcJsonParserHelpers() {
   return oss.str();
 }
 void CppSrcHelpers(std::ostream& os) {
-os << "\ntemplate <typename T>\ninline bool IsEmpty(const std::vector<T>& v) {\n  return v.size() == 0;\n}\n";
+os << "\nstd::string escape_char32_t_as_literal(char32_t c) {\n  switch (c) {\n    case U'\\a':\n      return R\"(U'\\a')\";\n    case U'\\b':\n      return R\"(U'\\b')\";\n    case U'\\f':\n      return R\"(U'\\f')\";\n    case U'\\n':\n      return R\"(U'\\n')\";\n    case U'\\r':\n      return R\"(U'\\r')\";\n    case U'\\t':\n      return R\"(U'\\t')\";\n    case U'\\v':\n      return R\"(U'\\v')\";\n    case U'\\'':\n      return R\"(U'\\'')\";\n    case U'\\\"':\n      return R\"(U'\\\"')\";\n    case U'\\\\':\n      return R\"(U'\\\\')\";\n    default:\n      if (c < 32 || c >= 0x7F) {\n        // For characters outside of the ASCII range\n        std::ostringstream oss;\n        oss << \"U'\\\\U\" << std::setw(8) << std::setfill('0') << std::hex\n            << std::uppercase << static_cast<int>(c) << \"'\";\n        return oss.str();\n      } else {\n        // For all other characters, return as is\n        return \"U'\" + std::string(1, static_cast<char>(c)) + \"'\";\n      }\n  }\n}\n\ntemplate <typename T>\ninline bool IsEmpty(const std::vector<T>& v) {\n  return v.size() == 0;\n}\n";
 
 }
 std::string CppSrcHelpers() {
@@ -730,13 +933,13 @@ std::string CppSrcHelpers() {
 void CppSource(std::ostream& os, const CppData& d, const Options& opt) {
 os << "\n#include \"";
 os << d.header_filename();
-os << "\"\n\n// Generated by the Typedef compiler\n\n#include <string>\n#include <sstream>\n";
+os << "\"\n\n// Generated by the Typedef compiler\n\n#include <string>\n#include <sstream>\n#include <locale>\n#include <codecvt>\n#include <iomanip>\n";
 if (opt.generate_json_parser()) {
-os << "// JSON parser required headers\n#include \"rapidjson/document.h\"\n#include <charconv>\n#include <codecvt>\n#include <iomanip>\n#include <locale>\n";
+os << "// JSON parser required headers\n#include \"rapidjson/document.h\"\n#include <charconv>\n#include <iomanip>\n#include <locale>\n";
 } else {
 }
 if (opt.generate_json_writer()) {
-os << "// JSON writer required headers\n#include <charconv>\n#include <codecvt>\n#include <iomanip>\n#include <locale>\n";
+os << "// JSON writer required headers\n#include <charconv>\n#include <iomanip>\n#include <locale>\n";
 } else {
 }
 os << "\n\nnamespace {\n";
@@ -1010,7 +1213,7 @@ os << "os << (int)val;";
 if (value_type.td_type().is_i8_t()) {
 os << "os << (int)val;";
 } else 
-if (value_type.td_type().is_string_t()) {
+if (value_type.td_type().is_str_t()) {
 os << "os << \"\\\"\" << escape_json(val) << \"\\\"\";";
 } else 
 if (value_type.td_type().is_vector_t()) {
@@ -1055,7 +1258,7 @@ os << "os << \"\\\"\" << std::to_string((int)key) << \"\\\"\";";
 if (key_type.td_type().is_i8_t()) {
 os << "os << \"\\\"\" << std::to_string((int)key) << \"\\\"\";";
 } else 
-if (key_type.td_type().is_string_t()) {
+if (key_type.td_type().is_str_t()) {
 os << "os << \"\\\"\" << escape_json(key) << \"\\\"\";";
 } else  {
 os << "os << \"\\\"\" << std::to_string(key) << \"\\\"\";";
@@ -1075,7 +1278,7 @@ os << "os << (int)val;";
 if (val_type.td_type().is_i8_t()) {
 os << "os << (int)val;";
 } else 
-if (val_type.td_type().is_string_t()) {
+if (val_type.td_type().is_str_t()) {
 os << "os << \"\\\"\" << escape_json(val) << \"\\\"\";";
 } else 
 if (val_type.td_type().is_vector_t()) {
@@ -1132,7 +1335,7 @@ os << "; os << (int)from.";
 os << t.identifier();
 os << "();";
 } else 
-if (t.td_type().is_string_t()) {
+if (t.td_type().is_str_t()) {
 JsonPrintKey(os, t);
 os << "; os << \"\\\"\" << escape_json(from.";
 os << t.identifier();
@@ -1419,7 +1622,7 @@ os << "vec.push_back(JsonParseBool(src[ii]));";
 if (from_type.td_type().is_char_t()) {
 os << "vec.push_back(JsonParseChar(src[ii]));";
 } else 
-if (from_type.td_type().is_string_t()) {
+if (from_type.td_type().is_str_t()) {
 os << "vec.push_back(JsonParseStr(src[ii]));";
 } else 
 if (from_type.td_type().is_f32_t()) {
@@ -1486,7 +1689,7 @@ os << "KeyType key = GetBoolFromString(m.name);";
 if (key_type.td_type().is_char_t()) {
 os << "KeyType key = JsonParseChar(m.name);";
 } else 
-if (key_type.td_type().is_string_t()) {
+if (key_type.td_type().is_str_t()) {
 os << "KeyType key = JsonParseStr(m.name);";
 } else 
 if (key_type.td_type().is_u8_t()) {
@@ -1524,7 +1727,7 @@ os << "ValType map_val = JsonParseBool(m.value);";
 if (val_type.td_type().is_char_t()) {
 os << "ValType map_val = JsonParseChar(m.value);";
 } else 
-if (val_type.td_type().is_string_t()) {
+if (val_type.td_type().is_str_t()) {
 os << "ValType map_val = JsonParseStr(m.value);";
 } else 
 if (val_type.td_type().is_f32_t()) {
@@ -1618,7 +1821,7 @@ os << "ret.";
 os << field.identifier();
 os << "() = JsonParseChar(val);";
 } else 
-if (field.td_type().is_string_t()) {
+if (field.td_type().is_str_t()) {
 os << "ret.";
 os << field.identifier();
 os << "() = JsonParseStr(val);";
@@ -1841,6 +2044,31 @@ std::string TmplValueDereferenceT(const TmplValueDereference& v) {
   TmplValueDereferenceT(oss, v);
   return oss.str();
 }
+void TmplValueDereferenceToString(std::ostream& os, const TmplValueDereference& v) {
+// Switch v.access_info().td_type()
+
+if (v.access_info().td_type().is_char_t()) {
+os << "escape_char32_t_as_literal(";
+TmplValueDereferenceT(os, v);
+os << ")";
+} else 
+if (v.access_info().td_type().is_u8_t()) {
+os << "(uint32_t)";
+TmplValueDereferenceT(os, v);
+} else 
+if (v.access_info().td_type().is_i8_t()) {
+os << "(int32_t)";
+TmplValueDereferenceT(os, v);
+} else  {
+TmplValueDereferenceT(os, v);
+}
+
+}
+std::string TmplValueDereferenceToString(const TmplValueDereference& v) {
+  std::stringstream oss;
+  TmplValueDereferenceToString(oss, v);
+  return oss.str();
+}
 void TmplStringExpression(std::ostream& os, const TmplExpression& i) {
 // Switch i
 
@@ -1903,7 +2131,7 @@ os << ")";
 } else 
 if (i.is_val_ref()) {
 os << "os << ";
-TmplValueDereferenceT(os, i.val_ref());
+TmplValueDereferenceToString(os, i.val_ref());
 } else 
 if (i.is_expr()) {
 os << "(";

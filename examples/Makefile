@@ -10,7 +10,7 @@ TYPEDEF_BIN := ${CURDIR}/../build/${BUILD}/typedef
 
 EXAMPLE_CPPFLAGS := $(GLOBAL_CPPFLAGS) -I${CURDIR}/../include -I${CURDIR}/../
 
-TD_FLAGS := --cpp_json_writer --cpp_json_parser --experimental_cpp_out
+TD_FLAGS := --cpp_json_writer --cpp_json_parser --cpp_out
 
 json/json_demo.td.cpp:
 	$(TYPEDEF_BIN) -f json/json_demo.td $(TD_FLAGS) ${CURDIR}/json
