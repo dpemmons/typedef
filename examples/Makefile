@@ -21,6 +21,15 @@ $(BASE_BUILD_DIR)/json: json/json_demo.td.cpp json/main.cpp
 	json/main.cpp
 example-json: json/json_demo.td.cpp $(BASE_BUILD_DIR)/json
 
+s11n/s11n.td.cpp:
+	$(TYPEDEF_BIN) -f s11n/s11n.td $(TD_FLAGS) ${CURDIR}/s11n
+$(BASE_BUILD_DIR)/s11n: s11n/s11n.td.cpp s11n/main.cpp
+	mkdir -p $(dir $@)
+	$(CXX) -o $@ $(EXAMPLE_CPPFLAGS) $(CXXFLAGS) \
+	s11n/s11n.td.cpp \
+	s11n/main.cpp
+example-s11n: s11n/s11n.td.cpp $(BASE_BUILD_DIR)/s11n
+
 simple_values/simple_values.td.cpp:
 	$(TYPEDEF_BIN) -f simple_values/simple_values.td $(TD_FLAGS) ${CURDIR}/simple_values
 $(BASE_BUILD_DIR)/simple_values: simple_values/simple_values.td.cpp simple_values/main.cpp
@@ -40,7 +49,7 @@ $(BASE_BUILD_DIR)/template: template/template_example.td.cpp template/main.cpp
 example-template: template/template_example.td.cpp $(BASE_BUILD_DIR)/template
 
 .DEFAULT_GOAL:= all
-all: example-json example-simple_values example-template
+all: example-json example-s11n example-simple_values example-template
 
 .PHONY: clean
 clean:
