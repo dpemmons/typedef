@@ -49,11 +49,31 @@
       ],
       "cwd": "${workspaceFolder}",
     },
+
+    {
+      "name": "(lldb) typedef: examples/simple_values",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceRoot}/build/debug/typedef",
+      "args": [
+        "${workspaceRoot}/examples/simple_values/simple_values.td",
+        "--experimental_cpp_out=${workspaceFolder}/examples/simple_values"
+      ],
+      "cwd": "${workspaceFolder}",
+    },
     {
       "name": "(lldb) examples/template",
       "type": "lldb",
       "request": "launch",
       "program": "${workspaceRoot}/build/debug/examples/template",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+    },
+    {
+      "name": "(lldb) examples/simple_values",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceRoot}/build/debug/examples/simple_values",
       "args": [],
       "cwd": "${workspaceFolder}",
     },
