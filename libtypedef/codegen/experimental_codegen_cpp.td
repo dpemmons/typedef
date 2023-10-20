@@ -253,8 +253,7 @@ class <s.identifier> {
 }; // class <s.identifier>
 "
 
-template StructField(field: AccessInfo)
-t"<switch field.td_type>
+template StructField(field: AccessInfo) t"<switch field.td_type>
 <case field.td_type.bool_t><CppType(field)> <field.identifier>_ = <field.td_type.bool_t.default_val>;</case>
 <case field.td_type.char_t><CppType(field)> <field.identifier>_ = <field.td_type.char_t.default_val>;</case>
 <case field.td_type.str_t><CppType(field)> <field.identifier>_ = \"<field.td_type.str_t.default_val>\";</case>
@@ -818,8 +817,7 @@ namespace {
 
 // ****************************** Utils *************************************
 
-template VecUserTypeDeclarationT(ut: vector<UserTypeDeclaration>, opt: Options)
-t"<for n in ut>
+template VecUserTypeDeclarationT(ut: vector<UserTypeDeclaration>, opt: Options) t"<for n in ut>
 <switch n>
 <case n.struct_decl><TmplStructDeclaration(n.struct_decl, opt)></case>
 <case n.variant_decl><TmplVariantDeclaration(n.variant_decl, opt)></case>
@@ -829,6 +827,22 @@ t"<for n in ut>
 template CppType(a: AccessInfo) t"<a.cpp_type><if !IsEmpty(a.type_arguments)>\<<for arg in a.type_arguments><CppType(arg)><if !IsLast()>, </if></for>\></if>"
 template QualifiedName(fqn: vector<str>) t"<for n in fqn><n><if !IsLast()>::</if></for>"
 template QualifiedSnakeName(fqn: vector<str>) t"<for n in fqn><n><if !IsLast()>_</if></for>"
+
+// **************************************************************************
+// **************************************************************************
+//                  s26n (Serialization / Deserialization)
+// **************************************************************************
+// **************************************************************************
+
+template StructS26nFixedSection(s: StructDecl) t"
+typedef struct {
+  std::uint32_t total_length = 0;
+  std::uint32_t fixed_length = 0;
+  std::uint32_t variable_length = 0;
+
+  
+} <s.identifier>_s26n_ __attribute__((packed));
+"
 
 // **************************************************************************
 // **************************************************************************
@@ -942,8 +956,7 @@ template JsonPrintValue(t: AccessInfo) t"
 // **************************************************************************
 // JSON Src Struct Definitions
 // **************************************************************************
-template JsonStructDefinitions(s: StructDecl, opt: Options)
-t"<if opt.generate_json_writer>
+template JsonStructDefinitions(s: StructDecl, opt: Options) t"<if opt.generate_json_writer>
 std::string ToJson(const <QualifiedName(s.nqn)>& from) {
   std::stringstream ss;
   ToJson(ss, from);
@@ -972,8 +985,7 @@ void ToJson(std::ostream& os, const <QualifiedName(s.nqn)>& from) {
 // **************************************************************************
 // JSON Src Variant Definitions
 // **************************************************************************
-template JsonVariantDefinitions(s: StructDecl, opt: Options)
-t"<if opt.generate_json_writer>
+template JsonVariantDefinitions(s: StructDecl, opt: Options) t"<if opt.generate_json_writer>
 std::string ToJson(const <QualifiedName(s.nqn)>& from) {
   std::stringstream ss;
   ToJson(ss, from);
@@ -1007,8 +1019,7 @@ void ToJson(std::ostream& os, const <QualifiedName(s.nqn)>& from) {
 // **************************************************************************
 // JSON Src Forward Declarations
 // **************************************************************************
-template JsonSrcForwardDeclarations(s: StructDecl, opt: Options)
-t"<if opt.generate_json_parser>
+template JsonSrcForwardDeclarations(s: StructDecl, opt: Options) t"<if opt.generate_json_parser>
 <QualifiedName(s.fqn)> JsonParse<QualifiedSnakeName(s.nqn)>(const rapidjson::Value& obj);
 <for n in s.nested_type_decls><switch n>
 <case n.struct_decl><JsonSrcForwardDeclarations(n.struct_decl, opt)></case>
@@ -1141,8 +1152,7 @@ auto json_parse_map_lambda = [](auto& value_type, const rapidjson::Value& src) {
 // **************************************************************************
 // JSON Src Definitions
 // **************************************************************************
-template JsonSrcDefinitions(s: StructDecl, opt: Options)
-t"<if opt.generate_json_parser>
+template JsonSrcDefinitions(s: StructDecl, opt: Options) t"<if opt.generate_json_parser>
 <QualifiedName(s.fqn)> JsonParse<QualifiedSnakeName(s.nqn)>(const rapidjson::Value& val) {
   if (!val.IsObject()) {
     throw std::runtime_error(\"JSON format error: expected 'object'.\");
@@ -1214,8 +1224,7 @@ t"<if opt.generate_json_parser>
 // **************************************************************************
 // JSON Header Declarations
 // **************************************************************************
-template JsonDeclarations(s: StructDecl, opt: Options)
-t"<if opt.generate_json_writer>
+template JsonDeclarations(s: StructDecl, opt: Options) t"<if opt.generate_json_writer>
 std::string ToJson(const <QualifiedName(s.nqn)>& from);
 void ToJson(std::ostream& os, const <QualifiedName(s.nqn)>& from);
 </if>
@@ -1236,8 +1245,7 @@ void ToJson(std::ostream& os, const <QualifiedName(s.nqn)>& from);
 
 template TmplValueDereferenceT(v: TmplValueDereference) t"<for part in v.val_ref_path><part><if !IsFirst()>()</if><if !IsLast()>.</if></for>"
 
-template TmplValueDereferenceToString(v: TmplValueDereference)
-t"<switch v.access_info.td_type>
+template TmplValueDereferenceToString(v: TmplValueDereference) t"<switch v.access_info.td_type>
 <case v.access_info.td_type.char_t>escape_char32_t_as_literal(<TmplValueDereferenceT(v)>)</case>
 <case v.access_info.td_type.u8_t>(uint32_t)<TmplValueDereferenceT(v)></case>
 <case v.access_info.td_type.i8_t>(int32_t)<TmplValueDereferenceT(v)></case>
@@ -1270,8 +1278,7 @@ template TmplBoolExpression(i: TmplExpression) t"<switch i>
 
 // TODO it would be useful to be able to template TmplIfBlock::TmplIf
 // as a sub-struct.
-template TmplIfT(i: TmplIf)
-t"if (<TmplBoolExpression(i.expr)>) {
+template TmplIfT(i: TmplIf) t"if (<TmplBoolExpression(i.expr)>) {
 <TmplItemsT(i.items)>}"
 
 template TmplIfBlockT(i: TmplIfBlock) t"<TmplIfT(i.if_sublock)><for e in i.elifs> else <TmplIfT(e)></for> else {
@@ -1304,8 +1311,7 @@ if (<TmplHasValRef(c.label)>) {
 template TmplItemsT(v: vector<TmplItem>) t"<for i in v><TmplItemT(i)>
 </for>"
 
-template TmplItemT(i: TmplItem)
-t"<switch i>
+template TmplItemT(i: TmplItem) t"<switch i>
 <case i.text>os \<\< \"<i.text>\";</case>
 <case i.expression><TmplOStreamExpression(i.expression)>;</case>
 <case i.if_block><TmplIfBlockT(i.if_block)></case>
@@ -1316,15 +1322,12 @@ t"<switch i>
 // **************************************************************************
 // Tempalte Function declaration and definition
 // **************************************************************************
-template OStreamParamsList(params: vector<AccessInfo>)
-t"std::ostream& os<for param in params>, const <CppType(param)>& <param.identifier></for>"
-template ParamsList(params: vector<AccessInfo>)
-t"<for param in params>const <CppType(param)>& <param.identifier><if !IsLast()>, </if></for>"
+template OStreamParamsList(params: vector<AccessInfo>) t"std::ostream& os<for param in params>, const <CppType(param)>& <param.identifier></for>"
+template ParamsList(params: vector<AccessInfo>) t"<for param in params>const <CppType(param)>& <param.identifier><if !IsLast()>, </if></for>"
 // template CallOSFunctionParamsList(params: vector<AccessInfo>)
 // t"os<for param in params>, <param.identifier></for>"
 
-template TmplFuncDeclaration(t: TmplFunction)
-t"void <t.identifier>(<OStreamParamsList(t.params)>);
+template TmplFuncDeclaration(t: TmplFunction) t"void <t.identifier>(<OStreamParamsList(t.params)>);
 std::string <t.identifier>(<ParamsList(t.params)>);"
 
 template TmplFuncDefinition(t: TmplFunction) t"
