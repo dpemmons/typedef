@@ -13,6 +13,7 @@ zxcv: <sc.zxcv>
 jkl: <sc.jkl>
 "
 
+// A struct containing some fields.
 struct TemplateData {
   name: str;
   has_name: bool;
@@ -23,29 +24,33 @@ struct TemplateData {
   structC: StructC;
 };
 
+/*************************************************************
+ * This is a "string template function". It takes one or more
+ * named typedef types as arguments, follows the logic
+ * enclosed within angle brackets <> and returns a rendered
+ * string. 
+ *************************************************************/
 template PrintTemplateData(t: TemplateData) t"
-  here's an if:
-  <if t.has_name>
-    yo name: <t.name>
-  <elif t.has_name2>
-    hi name2: <t.name2>
-  <else>
-    neither name or name2.
+  Print either name or name2, or neither:
+  <if t.has_name>name: <t.name>
+  <elif t.has_name2>name2: <t.name2>
+  <else>neither name or name2.
   </if>
 
-  here's a for statement over a vector:
-  <for i in t.someVec>
-    for value number: <i>
+  Iterate over a vector:
+  <for i in t.someVec>for value number: <i>
   </for>
 
-  here's a for statement over a map:
-  <for key, val in t.someMap>
-    <key> -> <val>
+  Iterate over an unordered map:
+  <for key, val in t.someMap><key> -> <val>
   </for>
-  Here's structC
+  
+  Call another string template \"PrintStructC\":
   <PrintStructC(t.structC)>
 "
 
+// Typedef has "variants" which are like tagged unions
+// in other languages.
 variant SomeVariant {
   a_string: str;
   b_int: i32;
@@ -54,6 +59,7 @@ variant SomeVariant {
 }
 
 template DoSomeVariant(v: SomeVariant) t"
+  Switch statement example:
   <switch v>
    <case v.a_string>It's a string: <v.a_string></case>
    <case v.b_int>It's an int: <v.b_int></case>
