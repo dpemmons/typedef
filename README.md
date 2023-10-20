@@ -6,6 +6,8 @@ Typedef is a statically typed data declaration language and code generator, inte
 
 The language is ***in active development***; the gramamr is stabilizing but still incomplete and may change. Code generation is incomplete. Docs are very incomplete. As are tests. It may not compile. It will probably eat your homework.
 
+A [Visual Studio Code](https://code.visualstudio.com/) extension for syntax highlighting is [available here](https://github.com/dpemmons/typedef-vscode).
+
 ## Documentation
 
 * For Users:
