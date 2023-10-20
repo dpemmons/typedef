@@ -312,7 +312,6 @@ StructDecl GetStruct(TypedefParser::TypeDefinitionContext* type) {
   }
 
   for (int ii = 0; ii < type->fieldBlock()->fieldDefinition().size(); ii++) {
-    // f["index"] = ii + 1;  // 1 indexed because std::variant monostate is 0
     s.fields().emplace_back(
         GetField(type->fieldBlock()->fieldDefinition()[ii]));
   }
