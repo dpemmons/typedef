@@ -24,12 +24,10 @@ struct TemplateData {
   structC: StructC;
 };
 
-/*************************************************************
- * This is a "string template function". It takes one or more
- * named typedef types as arguments, follows the logic
- * enclosed within angle brackets <> and returns a rendered
- * string. 
- *************************************************************/
+// This is a "string template function". It takes one or more
+// named typedef types as arguments, follows the logic
+// enclosed within angle brackets <> and returns a rendered
+// string. 
 template PrintTemplateData(t: TemplateData) t"
   Print either name or name2, or neither:
   <if t.has_name>name: <t.name>
