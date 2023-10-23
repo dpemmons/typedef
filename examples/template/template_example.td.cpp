@@ -661,19 +661,19 @@ std::string PrintStructC(const StructC& sc) {
   return oss.str();
 }
 void PrintTemplateData(std::ostream& os, const TemplateData& t) {
-os << "\n  here's an if:\n  ";
+os << "\n  Print either name or name2, or neither:\n  ";
 if (t.has_name()) {
-os << "\n    yo name: ";
+os << "name: ";
 os << t.name();
 os << "\n  ";
 } else if (t.has_name2()) {
-os << "\n    hi name2: ";
+os << "name2: ";
 os << t.name2();
 os << "\n  ";
 } else {
-os << "\n    neither name or name2.\n  ";
+os << "neither name or name2.\n  ";
 }
-os << "\n\n  here's a for statement over a vector:\n  ";
+os << "\n\n  Iterate over a vector:\n  ";
 
 
 for (size_t td_iter_ = 0; td_iter_ < t.someVec().size(); td_iter_++) {
@@ -682,23 +682,22 @@ for (size_t td_iter_ = 0; td_iter_ < t.someVec().size(); td_iter_++) {
   auto IsLast = [&]() { return td_iter_ == t.someVec().size() - 1; };
   auto Index0 = [&](std::ostream& os) { os << std::to_string(td_iter_); };
   auto Index1 = [&](std::ostream& os) { os << std::to_string(td_iter_ + 1); };
-os << "\n    for value number: ";
+os << "for value number: ";
 os << i;
 os << "\n  ";
 }
 
-os << "\n\n  here's a for statement over a map:\n  ";
+os << "\n\n  Iterate over an unordered map:\n  ";
 
 
 for (auto const& [key, val] : t.someMap()) {
-os << "\n    ";
 os << key;
 os << " -> ";
 os << val;
 os << "\n  ";
 }
 
-os << "\n  Here's structC\n  ";
+os << "\n  \n  Call another string template \"PrintStructC\":\n  ";
 PrintStructC(os, t.structC());
 os << "\n";
 
@@ -709,7 +708,7 @@ std::string PrintTemplateData(const TemplateData& t) {
   return oss.str();
 }
 void DoSomeVariant(std::ostream& os, const SomeVariant& v) {
-os << "\n  ";
+os << "\n  Switch statement example:\n  ";
 // Switch v
 
 if (v.is_a_string()) {

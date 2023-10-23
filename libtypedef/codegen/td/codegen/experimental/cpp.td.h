@@ -137,7 +137,7 @@ class char_tT {
 
  private:
   // default_val
-  char32_t default_val_ = U'\u0000';
+  char32_t default_val_ = U'\U00000000';
   
 }; // class char_tT
 
@@ -815,6 +815,18 @@ class map_tT {
   
   
   
+  void set_val_name(std::string&& val) {
+    val_name_ = std::move(val);
+  }
+  std::string& val_name() {
+    return val_name_;
+  }
+  const std::string& val_name() const {
+    return val_name_;
+  }
+  
+  
+  
   void set_val_fqn(std::vector<std::string>&& val) {
     val_fqn_ = std::move(val);
   }
@@ -844,6 +856,8 @@ class map_tT {
   std::unique_ptr<AccessInfo> key_;
   // val
   std::unique_ptr<AccessInfo> val_;
+  // val_name
+  std::string val_name_ = "";
   // val_fqn
   std::vector<std::string> val_fqn_;
   // val_nqn
@@ -873,6 +887,18 @@ class struct_tT {
 
   
   
+  void set_name(std::string&& val) {
+    name_ = std::move(val);
+  }
+  std::string& name() {
+    return name_;
+  }
+  const std::string& name() const {
+    return name_;
+  }
+  
+  
+  
   void set_fqn(std::vector<std::string>&& val) {
     fqn_ = std::move(val);
   }
@@ -898,6 +924,8 @@ class struct_tT {
   
 
  private:
+  // name
+  std::string name_ = "";
   // fqn
   std::vector<std::string> fqn_;
   // nqn
@@ -927,6 +955,18 @@ class variant_tT {
 
   
   
+  void set_name(std::string&& val) {
+    name_ = std::move(val);
+  }
+  std::string& name() {
+    return name_;
+  }
+  const std::string& name() const {
+    return name_;
+  }
+  
+  
+  
   void set_fqn(std::vector<std::string>&& val) {
     fqn_ = std::move(val);
   }
@@ -952,6 +992,8 @@ class variant_tT {
   
 
  private:
+  // name
+  std::string name_ = "";
   // fqn
   std::vector<std::string> fqn_;
   // nqn
@@ -1841,18 +1883,6 @@ class access_byT {
   
   
   
-  void set_cpp_type(std::string&& val) {
-    cpp_type_ = std::move(val);
-  }
-  std::string& cpp_type() {
-    return cpp_type_;
-  }
-  const std::string& cpp_type() const {
-    return cpp_type_;
-  }
-  
-  
-  
   bool has_access_by() const {
     return access_by_.operator bool();
   }
@@ -1927,8 +1957,6 @@ class access_byT {
   std::string identifier_ = "";
   // td_type
   std::unique_ptr<TdType> td_type_;
-  // cpp_type
-  std::string cpp_type_ = "";
   // access_by
   std::unique_ptr<access_byT> access_by_;
   // is_required
@@ -3677,10 +3705,12 @@ std::string CppSrcJsonWriterHelpers();void CppSrcJsonParserHelpers(std::ostream&
 std::string CppSrcJsonParserHelpers();void CppSrcHelpers(std::ostream& os);
 std::string CppSrcHelpers();void CppSource(std::ostream& os, const CppData& d, const Options& opt);
 std::string CppSource(const CppData& d, const Options& opt);void VecUserTypeDeclarationT(std::ostream& os, const std::vector<UserTypeDeclaration>& ut, const Options& opt);
-std::string VecUserTypeDeclarationT(const std::vector<UserTypeDeclaration>& ut, const Options& opt);void CppType(std::ostream& os, const AccessInfo& a);
+std::string VecUserTypeDeclarationT(const std::vector<UserTypeDeclaration>& ut, const Options& opt);void CppBaseType(std::ostream& os, const AccessInfo& a);
+std::string CppBaseType(const AccessInfo& a);void CppType(std::ostream& os, const AccessInfo& a);
 std::string CppType(const AccessInfo& a);void QualifiedName(std::ostream& os, const std::vector<std::string>& fqn);
 std::string QualifiedName(const std::vector<std::string>& fqn);void QualifiedSnakeName(std::ostream& os, const std::vector<std::string>& fqn);
-std::string QualifiedSnakeName(const std::vector<std::string>& fqn);void JsonPrintKey(std::ostream& os, const AccessInfo& field);
+std::string QualifiedSnakeName(const std::vector<std::string>& fqn);void StructS26nFixedSection(std::ostream& os, const StructDecl& s);
+std::string StructS26nFixedSection(const StructDecl& s);void JsonPrintKey(std::ostream& os, const AccessInfo& field);
 std::string JsonPrintKey(const AccessInfo& field);void JsonPrintArray(std::ostream& os, const AccessInfo& value_type);
 std::string JsonPrintArray(const AccessInfo& value_type);void JsonPrintMap(std::ostream& os, const AccessInfo& key_type, const AccessInfo& val_type);
 std::string JsonPrintMap(const AccessInfo& key_type, const AccessInfo& val_type);void JsonPrintValue(std::ostream& os, const AccessInfo& t);

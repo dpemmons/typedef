@@ -1112,8 +1112,70 @@ std::string VecUserTypeDeclarationT(const std::vector<UserTypeDeclaration>& ut, 
   VecUserTypeDeclarationT(oss, ut, opt);
   return oss.str();
 }
+void CppBaseType(std::ostream& os, const AccessInfo& a) {
+// Switch a.td_type()
+
+if (a.td_type().is_bool_t()) {
+os << "bool";
+} else 
+if (a.td_type().is_char_t()) {
+os << "char32_t";
+} else 
+if (a.td_type().is_str_t()) {
+os << "std::string";
+} else 
+if (a.td_type().is_f32_t()) {
+os << "float";
+} else 
+if (a.td_type().is_f64_t()) {
+os << "double";
+} else 
+if (a.td_type().is_u8_t()) {
+os << "std::uint8_t";
+} else 
+if (a.td_type().is_u16_t()) {
+os << "std::uint16_t";
+} else 
+if (a.td_type().is_u32_t()) {
+os << "std::uint32_t";
+} else 
+if (a.td_type().is_u64_t()) {
+os << "std::uint64_t";
+} else 
+if (a.td_type().is_i8_t()) {
+os << "std::int8_t";
+} else 
+if (a.td_type().is_i16_t()) {
+os << "std::int16_t";
+} else 
+if (a.td_type().is_i32_t()) {
+os << "std::int32_t";
+} else 
+if (a.td_type().is_i64_t()) {
+os << "std::int64_t";
+} else 
+if (a.td_type().is_vector_t()) {
+os << "std::vector";
+} else 
+if (a.td_type().is_map_t()) {
+os << "std::map";
+} else 
+if (a.td_type().is_struct_t()) {
+os << a.td_type().struct_t().name();
+} else 
+if (a.td_type().is_variant_t()) {
+os << a.td_type().variant_t().name();
+} else  {
+}
+
+}
+std::string CppBaseType(const AccessInfo& a) {
+  std::stringstream oss;
+  CppBaseType(oss, a);
+  return oss.str();
+}
 void CppType(std::ostream& os, const AccessInfo& a) {
-os << a.cpp_type();
+CppBaseType(os, a);
 if (!IsEmpty(a.type_arguments())) {
 os << "<";
 
@@ -1185,6 +1247,17 @@ os << "_";
 std::string QualifiedSnakeName(const std::vector<std::string>& fqn) {
   std::stringstream oss;
   QualifiedSnakeName(oss, fqn);
+  return oss.str();
+}
+void StructS26nFixedSection(std::ostream& os, const StructDecl& s) {
+os << "\ntypedef struct {\n  std::uint32_t total_length = 0;\n  std::uint32_t fixed_length = 0;\n  std::uint32_t variable_length = 0;\n\n  \n} ";
+os << s.identifier();
+os << "_s26n_ __attribute__((packed));\n";
+
+}
+std::string StructS26nFixedSection(const StructDecl& s) {
+  std::stringstream oss;
+  StructS26nFixedSection(oss, s);
   return oss.str();
 }
 void JsonPrintKey(std::ostream& os, const AccessInfo& field) {

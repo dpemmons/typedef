@@ -26,14 +26,17 @@ variant TdType {
     val: AccessInfo;
 
     // qualified name set when val.access_by is pointer
+    val_name: str;
     val_fqn: vector<str>; // Fully qualified name
     val_nqn: vector<str>; // Namespace-qualified name
   };
   struct_t: struct {
+    name: str;
     fqn: vector<str>; // Fully qualified name
     nqn: vector<str>; // Namespace-qualified name
   };
   variant_t: struct {
+    name: str;
     fqn: vector<str>; // Fully qualified name
     nqn: vector<str>; // Namespace-qualified name
   };
@@ -42,7 +45,6 @@ variant TdType {
 struct AccessInfo {
   identifier: str;
   td_type: TdType;
-  cpp_type: str;
   access_by: variant {
     value: bool;
     reference: bool;
@@ -824,7 +826,27 @@ template VecUserTypeDeclarationT(ut: vector<UserTypeDeclaration>, opt: Options) 
 </switch>
 </for>"
 
-template CppType(a: AccessInfo) t"<a.cpp_type><if !IsEmpty(a.type_arguments)>\<<for arg in a.type_arguments><CppType(arg)><if !IsLast()>, </if></for>\></if>"
+// TODO: need a cpp escape function (or regex replace?)
+template CppBaseType(a: AccessInfo) t"<switch a.td_type>
+<case a.td_type.bool_t>bool</case>
+<case a.td_type.char_t>char32_t</case>
+<case a.td_type.str_t>std::string</case>
+<case a.td_type.f32_t>float</case>
+<case a.td_type.f64_t>double</case>
+<case a.td_type.u8_t>std::uint8_t</case>
+<case a.td_type.u16_t>std::uint16_t</case>
+<case a.td_type.u32_t>std::uint32_t</case>
+<case a.td_type.u64_t>std::uint64_t</case>
+<case a.td_type.i8_t>std::int8_t</case>
+<case a.td_type.i16_t>std::int16_t</case>
+<case a.td_type.i32_t>std::int32_t</case>
+<case a.td_type.i64_t>std::int64_t</case>
+<case a.td_type.vector_t>std::vector</case>
+<case a.td_type.map_t>std::map</case>
+<case a.td_type.struct_t><a.td_type.struct_t.name></case>
+<case a.td_type.variant_t><a.td_type.variant_t.name></case>
+</switch>"
+template CppType(a: AccessInfo) t"<CppBaseType(a)><if !IsEmpty(a.type_arguments)>\<<for arg in a.type_arguments><CppType(arg)><if !IsLast()>, </if></for>\></if>"
 template QualifiedName(fqn: vector<str>) t"<for n in fqn><n><if !IsLast()>::</if></for>"
 template QualifiedSnakeName(fqn: vector<str>) t"<for n in fqn><n><if !IsLast()>_</if></for>"
 

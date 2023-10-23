@@ -63,6 +63,9 @@ vector<std::string> GetFQN(TypedefParser::TypeDefinitionContext* type) {
 vector<std::string> GetNQN(TypedefParser::TypeDefinitionContext* type) {
   return GetQN(type, false);
 }
+std::string GetName(TypedefParser::TypeDefinitionContext* type) {
+  return GetQN(type, false).back();
+}
 
 AccessInfo GetAccessInfoForType(
     TypedefParser::TypeAnnotationContext* ctx,
@@ -70,7 +73,6 @@ AccessInfo GetAccessInfoForType(
   AccessInfo ai;
   if (ReferencesPrimitiveType(ctx)) {
     if (IsBool(ctx)) {
-      ai.cpp_type() = "bool";
       ai.access_by().value() = true;
       if (default_val_ctx) {
         ai.td_type().bool_t().default_val() = GetBool(default_val_ctx);
@@ -78,7 +80,6 @@ AccessInfo GetAccessInfoForType(
         ai.td_type().bool_t().default_val() = false;
       }
     } else if (IsChar(ctx)) {
-      ai.cpp_type() = "char32_t";
       ai.access_by().value() = true;
       if (default_val_ctx) {
         ai.td_type().char_t().default_val() = GetChar(default_val_ctx);
@@ -86,7 +87,6 @@ AccessInfo GetAccessInfoForType(
         ai.td_type().char_t().default_val() = 0;
       }
     } else if (IsStr(ctx)) {
-      ai.cpp_type() = "std::string";
       ai.access_by().reference() = true;
       if (default_val_ctx) {
         ai.td_type().str_t().default_val() =
@@ -95,7 +95,6 @@ AccessInfo GetAccessInfoForType(
         ai.td_type().str_t().default_val() = escapeStringForCpp("");
       }
     } else if (IsF32(ctx)) {
-      ai.cpp_type() = "float";
       ai.access_by().value() = true;
       if (default_val_ctx) {
         ai.td_type().f32_t().default_val() = GetF32(default_val_ctx);
@@ -103,7 +102,6 @@ AccessInfo GetAccessInfoForType(
         ai.td_type().f32_t().default_val() = 0;
       }
     } else if (IsF64(ctx)) {
-      ai.cpp_type() = "double";
       ai.access_by().value() = true;
       if (default_val_ctx) {
         ai.td_type().f64_t().default_val() = GetF64(default_val_ctx);
@@ -111,7 +109,6 @@ AccessInfo GetAccessInfoForType(
         ai.td_type().f64_t().default_val() = 0;
       }
     } else if (IsU8(ctx)) {
-      ai.cpp_type() = "std::uint8_t";
       ai.access_by().value() = true;
       if (default_val_ctx) {
         ai.td_type().u8_t().default_val() = GetU8(default_val_ctx);
@@ -119,7 +116,6 @@ AccessInfo GetAccessInfoForType(
         ai.td_type().u8_t().default_val() = 0;
       }
     } else if (IsU16(ctx)) {
-      ai.cpp_type() = "std::uint16_t";
       ai.access_by().value() = true;
       if (default_val_ctx) {
         ai.td_type().u16_t().default_val() = GetU16(default_val_ctx);
@@ -127,7 +123,6 @@ AccessInfo GetAccessInfoForType(
         ai.td_type().u16_t().default_val() = 0;
       }
     } else if (IsU32(ctx)) {
-      ai.cpp_type() = "std::uint32_t";
       ai.access_by().value() = true;
       if (default_val_ctx) {
         ai.td_type().u32_t().default_val() = GetU32(default_val_ctx);
@@ -135,7 +130,6 @@ AccessInfo GetAccessInfoForType(
         ai.td_type().u32_t().default_val() = 0;
       }
     } else if (IsU64(ctx)) {
-      ai.cpp_type() = "std::uint64_t";
       ai.access_by().value() = true;
       if (default_val_ctx) {
         ai.td_type().u64_t().default_val() = GetU64(default_val_ctx);
@@ -143,7 +137,6 @@ AccessInfo GetAccessInfoForType(
         ai.td_type().u64_t().default_val() = 0;
       }
     } else if (IsI8(ctx)) {
-      ai.cpp_type() = "std::int8_t";
       ai.access_by().value() = true;
       if (default_val_ctx) {
         ai.td_type().i8_t().default_val() = GetI8(default_val_ctx);
@@ -151,7 +144,6 @@ AccessInfo GetAccessInfoForType(
         ai.td_type().i8_t().default_val() = 0;
       }
     } else if (IsI16(ctx)) {
-      ai.cpp_type() = "std::int16_t";
       ai.access_by().value() = true;
       if (default_val_ctx) {
         ai.td_type().i16_t().default_val() = GetI16(default_val_ctx);
@@ -159,7 +151,6 @@ AccessInfo GetAccessInfoForType(
         ai.td_type().i16_t().default_val() = 0;
       }
     } else if (IsI32(ctx)) {
-      ai.cpp_type() = "std::int32_t";
       ai.access_by().value() = true;
       if (default_val_ctx) {
         ai.td_type().i32_t().default_val() = GetI32(default_val_ctx);
@@ -167,7 +158,6 @@ AccessInfo GetAccessInfoForType(
         ai.td_type().i32_t().default_val() = 0;
       }
     } else if (IsI64(ctx)) {
-      ai.cpp_type() = "std::int64_t";
       ai.access_by().value() = true;
       if (default_val_ctx) {
         ai.td_type().i64_t().default_val() = GetI64(default_val_ctx);
@@ -178,7 +168,6 @@ AccessInfo GetAccessInfoForType(
       throw_logic_error("invalid state");
     }
   } else if (ReferencesBuiltinVectorType(ctx)) {
-    ai.cpp_type() = "std::vector";
     ai.access_by().reference() = true;
     ai.type_arguments().emplace_back(
         GetAccessInfoForType(GetTypeArgument(ctx, 0)));
@@ -191,7 +180,6 @@ AccessInfo GetAccessInfoForType(
           GetNQN(GetReferencedUserType(GetTypeArgument(ctx, 0)));
     }
   } else if (ReferencesBuiltinMapType(ctx)) {
-    ai.cpp_type() = "std::map";
     ai.access_by().reference() = true;
     ai.type_arguments().emplace_back(
         GetAccessInfoForType(GetTypeArgument(ctx, 0)));
@@ -200,19 +188,21 @@ AccessInfo GetAccessInfoForType(
     ai.td_type().map_t().key() = GetAccessInfoForType(GetTypeArgument(ctx, 0));
     ai.td_type().map_t().val() = GetAccessInfoForType(GetTypeArgument(ctx, 1));
     if (ReferencesUserType(GetTypeArgument(ctx, 1))) {
+      ai.td_type().map_t().val_name() =
+          GetName(GetReferencedUserType(GetTypeArgument(ctx, 1)));
       ai.td_type().map_t().val_fqn() =
           GetFQN(GetReferencedUserType(GetTypeArgument(ctx, 1)));
       ai.td_type().map_t().val_nqn() =
           GetNQN(GetReferencedUserType(GetTypeArgument(ctx, 1)));
     }
   } else if (ReferencesUserType(ctx)) {
-    ai.cpp_type() = escape_utf8_to_cpp_identifier(
-        GetReferencedUserType(ctx)->type_identifier->id);
     ai.access_by().pointer() = true;
     if (DefinesStruct(GetReferencedUserType(ctx))) {
+      ai.td_type().struct_t().name() = GetName(GetReferencedUserType(ctx));
       ai.td_type().struct_t().fqn() = GetFQN(GetReferencedUserType(ctx));
       ai.td_type().struct_t().nqn() = GetNQN(GetReferencedUserType(ctx));
     } else if (DefinesVariant(GetReferencedUserType(ctx))) {
+      ai.td_type().variant_t().name() = GetName(GetReferencedUserType(ctx));
       ai.td_type().variant_t().fqn() = GetFQN(GetReferencedUserType(ctx));
       ai.td_type().variant_t().nqn() = GetNQN(GetReferencedUserType(ctx));
     } else {
@@ -228,9 +218,11 @@ AccessInfo GetAccessInfo(TypedefParser::TypeDefinitionContext* ctx) {
   AccessInfo a;
   a.access_by().pointer() = true;
   if (DefinesStruct(ctx)) {
+    a.td_type().struct_t().name() = GetName(ctx);
     a.td_type().struct_t().fqn() = GetFQN(ctx);
     a.td_type().struct_t().nqn() = GetNQN(ctx);
   } else if (DefinesVariant(ctx)) {
+    a.td_type().variant_t().name() = GetName(ctx);
     a.td_type().variant_t().fqn() = GetFQN(ctx);
     a.td_type().variant_t().nqn() = GetNQN(ctx);
   } else {
@@ -243,7 +235,6 @@ AccessInfo GetField(TypedefParser::FieldDefinitionContext* field) {
   AccessInfo a;
   if (DefinesAndUsesInlineUserType(field)) {
     a = GetAccessInfo(GetInlineUserType(field));
-    a.cpp_type() = GetNestedTypeIdentifier(field);
   } else {
     a = GetAccessInfoForType(field->typeAnnotation(),
                              field->primitiveLiteral());
